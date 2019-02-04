@@ -1,4 +1,4 @@
-# P2 - Projekt navn her!!
+# P2 - Decentralized technologies
 
 ## Resourcer
 
