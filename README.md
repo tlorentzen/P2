@@ -20,6 +20,5 @@ https://drive.google.com/drive/folders/1l7tTU4KZo-XR6WaBhbQvfrLpGL0eXOYl?fbclid=
 |AMN| Alexander Nykjær| anykja18@student.aau.dk| 21860918|
 
 ## Vejledere
-**Hovedvejleder:**<br>Jonathan Toftegaard Hansen (jonathan@cs.aau.dk)<br><br>
-**Bivejleder:**<br>Rasmus Revsbeck (revsbeck@plan.aau.dk)
+**Hovedvejleder:**<br>Mads Vestergaard Carlsen (madpyro@cs.aau.dk)<br><br>
 
