@@ -20,6 +20,6 @@ https://drive.google.com/drive/folders/1l7tTU4KZo-XR6WaBhbQvfrLpGL0eXOYl?fbclid=
 |AMN| Alexander Nykjær| anykja18@student.aau.dk| 21860918|
 
 ## Vejledere
-**Hovedvejleder:**<br>Mads Vestergaard Carlsen (madpyro@cs.aau.dk) 61248562
+**Hovedvejleder:**<br>Mads Vestergaard Carlsen (madpyro@cs.aau.dk/ mvc@netcompany.com) 61248562
 <br><br>
 
