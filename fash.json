@@ -1,0 +1,9 @@
+{
+    "title":"Dette er et test repo!",
+    "members":[
+        {"name":"Thomas Lorentzen", "github_alias":"tlorentzen"},
+        {"name":"Niels Vistisen", "github_alias":"Nielswps"}
+    ],
+    "start_date":"2019-02-04",
+    "end_date":"2019-05-29"
+}
