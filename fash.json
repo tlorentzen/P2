@@ -1,9 +1,13 @@
 {
-    "title":"Dette er et test repo!",
+    "title":"P2 - Decentralized technologies",
     "members":[
         {"name":"Thomas Lorentzen", "github_alias":"tlorentzen"},
-        {"name":"Niels Vistisen", "github_alias":"Nielswps"}
+        {"name":"Niels Vistisen", "github_alias":"Nielswps"},
+        {"name":"Christopher Lykke Davids", "github_alias":"Enyumin"},
+        {"name":"Adrian Zippor Plesner", "github_alias":"AdrianPlesner"},
+        {"name":"Rikke Husted Østergaard", "github_alias":"Rosmarium"},
+        {"name":"Alexander Nykjær", "github_alias":"dkalaxdk"}
     ],
-    "start_date":"2019-02-04",
+    "start_date":"2019-02-01",
     "end_date":"2019-05-29"
 }
