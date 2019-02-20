@@ -5,7 +5,9 @@ using System.Security.Cryptography;
 namespace CompleteTest{
     public class FileEncryption{
         private string _path;
+
         private string _extension;
+
         //Sets Buffersize for encryption and decryption.
         private const int BUFFERSIZE = 100048576;
 
@@ -49,7 +51,7 @@ namespace CompleteTest{
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             AES.Key = key.GetBytes(AES.KeySize / 8);
             AES.IV = key.GetBytes(AES.BlockSize / 8);
-            
+
             //Ciphermode helps mask potential patterns within the encrypted text.
             AES.Mode = CipherMode.CFB;
 
@@ -85,7 +87,7 @@ namespace CompleteTest{
             }
         }
 
-        public void doDecrypt(string password,string outputPath){
+        public void doDecrypt(string password, string outputPath){
             //Setup to read the salt from the start of the file
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
@@ -107,16 +109,16 @@ namespace CompleteTest{
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             AES.Key = key.GetBytes(AES.KeySize / 8);
             AES.IV = key.GetBytes(AES.BlockSize / 8);
-            
+
             //The padding is used to make it harder to see the length of the encrypted text.
             AES.Padding = PaddingMode.PKCS7;
-            
+
             //Cipher mode is a way to mask potential patterns within the encrypted text, to make it harder to decrypt.
             AES.Mode = CipherMode.CFB;
-            
+
             //Runs through the encrypted files, and decrypts it using AES.
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateDecryptor(), CryptoStreamMode.Read);
-            
+
             //Creates the output file
             FileStream fsOut = new FileStream(outputPath, FileMode.Create);
 
