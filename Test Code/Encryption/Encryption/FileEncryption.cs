@@ -6,6 +6,8 @@ namespace Encryption{
     public class FileEncryption{
         private string _path;
         private string _extension;
+        //Sets Buffersize for encryption and decryption.
+        private const int BUFFERSIZE = 100048576;
 
         private string Path{
             get{ return _path; }
@@ -47,6 +49,7 @@ namespace Encryption{
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             AES.Key = key.GetBytes(AES.KeySize / 8);
             AES.IV = key.GetBytes(AES.BlockSize / 8);
+            
             //Ciphermode helps mask potential patterns within the encrypted text.
             AES.Mode = CipherMode.CFB;
 
@@ -60,7 +63,7 @@ namespace Encryption{
             FileStream fsIn = new FileStream(this._path + this._extension, FileMode.Open);
 
             //Buffer on 1 mb
-            byte[] buffer = new byte[1048576];
+            byte[] buffer = new byte[BUFFERSIZE];
 
 
             //Tries and catches regarding opening and reading file
@@ -95,7 +98,7 @@ namespace Encryption{
             fsCrypt.Read(salt, 0, salt.Length);
 
 
-            //Openeing a new instance of Rijandeal AES
+            //Opening a new instance of Rijandeal AES
             RijndaelManaged AES = new RijndaelManaged();
             AES.KeySize = 256;
             AES.BlockSize = 128;
@@ -104,17 +107,22 @@ namespace Encryption{
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             AES.Key = key.GetBytes(AES.KeySize / 8);
             AES.IV = key.GetBytes(AES.BlockSize / 8);
+            
             //The padding is used to make it harder to see the length of the encrypted text.
             AES.Padding = PaddingMode.PKCS7;
+            
             //Cipher mode is a way to mask potential patterns within the encrypted text, to make it harder to decrypt.
             AES.Mode = CipherMode.CFB;
-
+            
+            //Runs through the encrypted files, and decrypts it using AES.
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateDecryptor(), CryptoStreamMode.Read);
-
+            
+            //Creates the output file
             FileStream fsOut = new FileStream("./Output" + this._extension, FileMode.Create);
 
-            byte[] buffer = new byte[1048576];
+            byte[] buffer = new byte[BUFFERSIZE];
 
+            //Outputs the read file into the output file.
             try{
                 int read;
                 while ((read = cs.Read(buffer, 0, buffer.Length)) > 0){
