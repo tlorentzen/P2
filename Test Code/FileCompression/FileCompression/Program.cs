@@ -1,35 +1,34 @@
 ﻿using System;
 using System.IO.Compression;
-
-class Program
+using SevenZip;
+namespace FileCompression
 {
-    static void Main(string[] args)
+    class Program
     {
-        string startPath = @"./start";
-        string zipPath = @"./result.zip";
-        string extractPath = @"./extract";
-        string mode = "";
+        static void Main(string[] args)
+        {
+            string mode = "";
 
-        while (mode != "E" && mode != "C")
-        {
-            Console.WriteLine("Compress or extract? (C/E)");
-            mode = Console.ReadLine();
-        }
+            Compressor coder = new Compressor();
 
-        if (mode == "C")
-        {
+            while (mode != "E" && mode != "C")
+            {
+                Console.WriteLine("Compress or extract? (C/E)");
+                mode = Console.ReadLine();
+            }
 
-            Console.WriteLine("Compressing");
-            ZipFile.CreateFromDirectory(startPath, zipPath);
-        }
-        else if (mode == "E")
-        {
-            Console.WriteLine("Extracting");
-            ZipFile.ExtractToDirectory(zipPath, extractPath);
-        }
-        else
-        {
-            Console.WriteLine("Unknown error");
+            if (mode == "C")
+            {
+                coder.Compress("", "");
+            }
+            else if (mode == "E")
+            {
+                coder.Extract("", "");
+            }
+            else
+            {
+                Console.WriteLine("Unknown error");
+            }
         }
     }
 }
