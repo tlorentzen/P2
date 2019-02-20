@@ -5,8 +5,8 @@
             string Extension = ".png";
             string password = "400EncryptionMe";
             FileEncryption File = new FileEncryption(Path,Extension);
-            File.DoEncrypt(password);
-            File.DoDecrypt(password);
+            File.doEncrypt(password);
+            File.doDecrypt(password);
         }
     }
 }

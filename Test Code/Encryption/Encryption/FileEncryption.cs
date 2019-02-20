@@ -22,10 +22,11 @@ namespace Encryption{
             _extension = extension;
         }
 
-        public void DoEncrypt(string password){
-            byte[] salt = GetSalt();
-            
-            
+        public void doEncrypt(string password){
+            //Uses the GetSalt function to create the salt for the encryption.
+            byte[] salt = getSalt();
+
+
             //The encrypted output file.
             FileStream fsCrypt = new FileStream(this._path + ".aes", FileMode.Create);
 
@@ -34,8 +35,11 @@ namespace Encryption{
 
             //Set up AES for encryption
             RijndaelManaged AES = new RijndaelManaged();
+
+            //Keysize is the 
             AES.KeySize = 256;
             AES.BlockSize = 128;
+
             //Padding modes helps mask the length of the plain text.
             AES.Padding = PaddingMode.PKCS7;
 
@@ -51,14 +55,14 @@ namespace Encryption{
 
             //Runs through the file using CryptoStream
             CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write);
-             
+
             //The input stream, this is the input file, based on the inputs given in the file creation.
-            FileStream fsIn = new FileStream(this._path+this._extension, FileMode.Open);
+            FileStream fsIn = new FileStream(this._path + this._extension, FileMode.Open);
 
             //Buffer on 1 mb
             byte[] buffer = new byte[1048576];
-            
-            
+
+
             //Tries and catches regarding opening and reading file
             try{
                 int read;
@@ -78,7 +82,7 @@ namespace Encryption{
             }
         }
 
-        public void DoDecrypt(string password){
+        public void doDecrypt(string password){
             //Setup to read the salt from the start of the file
             byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
@@ -95,7 +99,7 @@ namespace Encryption{
             RijndaelManaged AES = new RijndaelManaged();
             AES.KeySize = 256;
             AES.BlockSize = 128;
-            
+
             //Takes the password, and verifies it towards the salt, read from the start of the file.
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             AES.Key = key.GetBytes(AES.KeySize / 8);
@@ -127,7 +131,7 @@ namespace Encryption{
             }
         }
 
-        private static byte[] GetSalt(){
+        private static byte[] getSalt(){
             byte[] data = new byte[64];
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider()){
                 for (int i = 0; i < 10; i++){
