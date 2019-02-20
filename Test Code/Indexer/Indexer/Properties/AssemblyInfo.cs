@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("P2PNetwork")]
+[assembly: AssemblyTitle("Indexer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("P2PNetwork")]
+[assembly: AssemblyProduct("Indexer")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0af05e0a-5c62-4409-a543-3c4958396e7e")]
+[assembly: Guid("9b96e359-ac94-4112-9f4f-30312681f2d8")]
 
 // Version information for an assembly consists of the following four values:
 //

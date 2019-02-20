@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9671284C-5F4A-4A61-8F52-C5C8FCC71649}</ProjectGuid>
+    <ProjectGuid>{5692034A-A7CF-4037-AE50-9A00A04A39DB}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>P2PRunner</RootNamespace>
-    <AssemblyName>P2PRunner</AssemblyName>
+    <RootNamespace>Tester</RootNamespace>
+    <AssemblyName>Tester</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -48,6 +48,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Indexer\Indexer.csproj">
+      <Project>{9b96e359-ac94-4112-9f4f-30312681f2d8}</Project>
+      <Name>Indexer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
