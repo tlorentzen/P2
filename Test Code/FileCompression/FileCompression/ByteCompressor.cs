@@ -31,16 +31,16 @@ namespace FileCompression
 
         public void CompressFile(string inPath, string outPath)
         {
-            const int BUFFER_SIZE = 1024 * 1024;
+            const int BUFFER_SIZE = 1024 * 1024*12;
 
             using (Stream inStream = File.OpenRead(inPath))
             {
                 using (Stream outStream = File.Create(outPath))
                 {
-                    long remaining;
-                    do
+                    long remaining = inStream.Length - inStream.Position;
+                    while (remaining > 0)
                     {
-                        remaining = inStream.Length - inStream.Position;
+
                         int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
                         byte[] buffer = new byte[BytesToRead];
                         int BytesRead = inStream.Read(buffer, 0, BytesToRead);
@@ -54,12 +54,17 @@ namespace FileCompression
                             byte[] compressed = CompressBytes(buffer);
                             outStream.Write(compressed,0, compressed.Length);
                         }
-                    } while (remaining > 0);
+                        remaining = inStream.Length - inStream.Position;
+                    }
                 }
             }
         }
 
-        
+        public void DecompressFile(string inPath, string outPath)
+        {
+
+        }
+
     }
 
 }
