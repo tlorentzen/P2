@@ -31,65 +31,89 @@ namespace FileCompression
 
         public void CompressFile(string inPath, string outPath)
         {
-            const int BUFFER_SIZE = 1024 * 1024*12;
-
-            using (Stream inStream = File.OpenRead(inPath))
+            if (FileExists(inPath))
             {
-                using (Stream outStream = File.Create(outPath))
-                {
-                    long remaining = inStream.Length - inStream.Position;
-                    while (remaining > 0)
-                    {
 
-                        int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
-                        byte[] buffer = new byte[BytesToRead];
-                        int BytesRead = inStream.Read(buffer, 0, BytesToRead);
-                        if (BytesRead != BytesToRead)
+                const int BUFFER_SIZE = 1024 * 1024 * 12;
+
+                using (Stream inStream = File.OpenRead(inPath))
+                {
+                    using (Stream outStream = File.Create(outPath))
+                    {
+                        long remaining = inStream.Length - inStream.Position;
+                        while (remaining > 0)
                         {
-                            //throw exception
-                            Console.WriteLine("Woopsie :)");
+
+                            int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
+                            byte[] buffer = new byte[BytesToRead];
+                            int BytesRead = inStream.Read(buffer, 0, BytesToRead);
+                            if (BytesRead != BytesToRead)
+                            {
+                                //throw exception
+                                Console.WriteLine("Woopsie :)");
+                            }
+                            else
+                            {
+                                byte[] compressed = CompressBytes(buffer);
+                                outStream.Write(compressed, 0, compressed.Length);
+                            }
+                            remaining = inStream.Length - inStream.Position;
                         }
-                        else
-                        {   
-                            byte[] compressed = CompressBytes(buffer);
-                            outStream.Write(compressed,0, compressed.Length);
-                        }
-                        remaining = inStream.Length - inStream.Position;
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine("The file you wish to compress does not exist");
             }
         }
 
         public void DecompressFile(string inPath, string outPath)
         {
-            const int BUFFER_SIZE = 1024 * 1024 * 12;
-            using (Stream inStream = File.OpenRead(inPath))
+            if (FileExists(inPath))
             {
-                using (Stream outStream = File.Create(outPath))
+                const int BUFFER_SIZE = 1024 * 1024 * 12;
+                using (Stream inStream = File.OpenRead(inPath))
                 {
-                    long remaining = inStream.Length - inStream.Position;
-                    while (remaining > 0)
+                    using (Stream outStream = File.Create(outPath))
                     {
+                        long remaining = inStream.Length - inStream.Position;
+                        while (remaining > 0)
+                        {
 
-                        int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
-                        byte[] buffer = new byte[BytesToRead];
-                        int BytesRead = inStream.Read(buffer, 0, BytesToRead);
-                        if (BytesRead != BytesToRead)
-                        {
-                            //throw exception
-                            Console.WriteLine("Woopsie :)");
+                            int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
+                            byte[] buffer = new byte[BytesToRead];
+                            int BytesRead = inStream.Read(buffer, 0, BytesToRead);
+                            if (BytesRead != BytesToRead)
+                            {
+                                //throw exception
+                                Console.WriteLine("Woopsie :)");
+                            }
+                            else
+                            {
+                                byte[] decompressed = DecompressBytes(buffer);
+                                outStream.Write(decompressed, 0, decompressed.Length);
+                            }
+                            remaining = inStream.Length - inStream.Position;
                         }
-                        else
-                        {
-                            byte[] decompressed = DecompressBytes(buffer);
-                            outStream.Write(decompressed, 0, decompressed.Length);
-                        }
-                        remaining = inStream.Length - inStream.Position;
                     }
                 }
             }
+            else
+            {
+                Console.WriteLine("The file you wish to decompress does not exist");
+            }
 
         }
+
+        private bool FileExists(string path)
+        {
+            if (File.Exists(path))
+                return true;
+            else
+                return false;
+        }
+
 
     }
 
