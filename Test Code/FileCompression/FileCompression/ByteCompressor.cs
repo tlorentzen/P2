@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
-using SevenZip;
-using System.Text;
 
 namespace FileCompression
 {
@@ -34,20 +31,35 @@ namespace FileCompression
 
         public void CompressFile(string inPath, string outPath)
         {
-            Stream inStream = File.Open(inPath, FileMode.Open);
-            Stream outStream = File.Open(outPath, FileMode.CreateNew);
+            const int BUFFER_SIZE = 1024 * 1024;
 
-            byte[] buffer = new byte[1024 * 1024];
-            MemoryStream bufferStream = new MemoryStream();
-            inStream.CopyTo(bufferStream, 1024);
-
-            buffer = bufferStream.ToArray();
-
-
-
+            using (Stream inStream = File.OpenRead(inPath))
+            {
+                using (Stream outStream = File.Create(outPath))
+                {
+                    long remaining;
+                    do
+                    {
+                        remaining = inStream.Length - inStream.Position;
+                        int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
+                        byte[] buffer = new byte[BytesToRead];
+                        int BytesRead = inStream.Read(buffer, 0, BytesToRead);
+                        if (BytesRead != BytesToRead)
+                        {
+                            //throw exception
+                            Console.WriteLine("Woopsie :)");
+                        }
+                        else
+                        {   
+                            byte[] compressed = CompressBytes(buffer);
+                            outStream.Write(compressed,0, compressed.Length);
+                        }
+                    } while (remaining > 0);
+                }
+            }
         }
 
-
+        
     }
 
 }
