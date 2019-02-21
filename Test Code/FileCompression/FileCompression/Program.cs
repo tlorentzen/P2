@@ -20,8 +20,18 @@ namespace FileCompression
 
             comp.CompressFile(@"" + comPath,@"" + outPath);
 
-            Console.WriteLine("done :)");
+            Console.WriteLine("done cmpressing :)");
 
+            Console.ReadKey();
+
+
+            Console.WriteLine("Provide path to compressed file:");
+            string compressedPath = Console.ReadLine();
+
+            Console.WriteLine("Provide result path:");
+            string resPath = Console.ReadLine();
+
+            comp.DecompressFile(@"" + compressedPath, @"" + resPath);
         }
     }
 
