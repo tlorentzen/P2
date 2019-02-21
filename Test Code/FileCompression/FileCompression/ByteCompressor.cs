@@ -9,7 +9,7 @@ namespace FileCompression
         {
         }
 
-        public byte[] CompressBytes(byte[] inData)
+        public static byte[] CompressBytes(byte[] inData)
         {
             Console.WriteLine("Original data is {0} bytes", inData.Length);
             byte[] Compressed = SevenZip.Compression.LZMA.SevenZipHelper.Compress(inData);
@@ -19,7 +19,7 @@ namespace FileCompression
 
         }
 
-        public byte[] DecompressBytes(byte[] inData)
+        public static byte[] DecompressBytes(byte[] inData)
         {
             Console.WriteLine("Compressed data is {0} bytes", inData.Length);
 
@@ -29,7 +29,7 @@ namespace FileCompression
             return Decompressed;
         }
 
-        public void CompressFile(string inPath, string outPath)
+        public static void CompressFile(string inPath, string outPath)
         {
             if (FileExists(inPath))
             {
@@ -74,7 +74,7 @@ namespace FileCompression
             }
         }
 
-        public void DecompressFile(string inPath, string outPath)
+        public static void DecompressFile(string inPath, string outPath)
         {
             if (FileExists(inPath)) { 
                 if (!FileExists(outPath))
