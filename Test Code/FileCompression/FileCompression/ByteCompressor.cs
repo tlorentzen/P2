@@ -1,13 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace FileCompression
 {
     public class ByteCompressor
     {
-        public ByteCompressor()
-        {
-        }
 
         public static byte[] CompressBytes(byte[] inData)
         {
@@ -31,16 +29,23 @@ namespace FileCompression
 
         public static void CompressFile(string inPath, string outPath)
         {
-            if (FileExists(inPath))
+            if (File.Exists(inPath))
             {
-                if (!FileExists(outPath))
+                if (!File.Exists(outPath))
                 {
+
                     const int BUFFER_SIZE = 1024 * 1024 * 12;
 
                     using (Stream inStream = File.OpenRead(inPath))
                     {
                         using (Stream outStream = File.Create(outPath))
                         {
+                            // Save file extension
+                            string ext = Path.GetExtension(inPath);
+                            ext = ext.Length + ext;
+
+                            //outStream.Write(Encoding.ASCII.GetBytes(ext));
+                            
                             long remaining = inStream.Length - inStream.Position;
                             while (remaining > 0)
                             {
@@ -65,7 +70,7 @@ namespace FileCompression
                 }
                 else
                 {
-                    CompressFile(inPath, outPath + "2");
+                    CompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
                 }
             }
             else
@@ -76,8 +81,8 @@ namespace FileCompression
 
         public static void DecompressFile(string inPath, string outPath)
         {
-            if (FileExists(inPath)) { 
-                if (!FileExists(outPath))
+            if (File.Exists(inPath)) { 
+                if (!File.Exists(outPath))
                 {
                     const int BUFFER_SIZE = 1024 * 1024 * 12;
                     using (Stream inStream = File.OpenRead(inPath))
@@ -108,7 +113,8 @@ namespace FileCompression
                 }
                 else
                 {
-                    DecompressFile(inPath, outPath + "2");
+                    //Appends 2 to tile name if file already exists
+                    DecompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath);
                 }
             }
             else
@@ -118,13 +124,6 @@ namespace FileCompression
 
         }
 
-        private bool FileExists(string path)
-        {
-            if (File.Exists(path))
-                return true;
-            else
-                return false;
-        }
 
 
     }
