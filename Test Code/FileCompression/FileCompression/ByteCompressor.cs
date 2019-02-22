@@ -44,8 +44,8 @@ namespace FileCompression
                             string ext = Path.GetExtension(inPath);
                             ext = ext.Length + ext;
 
-                            //outStream.Write(Encoding.ASCII.GetBytes(ext));
-                            
+                            outStream.Write(Encoding.ASCII.GetBytes(ext));
+
                             long remaining = inStream.Length - inStream.Position;
                             while (remaining > 0)
                             {
@@ -81,12 +81,30 @@ namespace FileCompression
 
         public static void DecompressFile(string inPath, string outPath)
         {
-            if (File.Exists(inPath)) { 
-                if (!File.Exists(outPath))
+            if (File.Exists(inPath))
+            {
+                using (Stream inStream = File.OpenRead(inPath))
                 {
-                    const int BUFFER_SIZE = 1024 * 1024 * 12;
-                    using (Stream inStream = File.OpenRead(inPath))
+                    byte[] extbyte = new byte[1];
+                    extbyte[0] = (byte)inStream.ReadByte();
+
+                    int extlen = Convert.ToInt32(Encoding.ASCII.GetString(extbyte));
+
+                    byte[] extbuf = new byte[extlen];
+
+                    inStream.Read(extbuf, 0, extlen);
+
+                    string ext = Encoding.ASCII.GetString(extbuf);
+
+                    if (!Path.HasExtension(outPath))
                     {
+                        outPath = outPath + ext;
+                    }
+
+                    if (!File.Exists(outPath))
+                    {
+                        const int BUFFER_SIZE = 1024 * 1024 * 12;
+
                         using (Stream outStream = File.Create(outPath))
                         {
                             long remaining = inStream.Length - inStream.Position;
@@ -109,23 +127,19 @@ namespace FileCompression
                                 remaining = inStream.Length - inStream.Position;
                             }
                         }
+
                     }
-                }
-                else
-                {
-                    //Appends 2 to tile name if file already exists
-                    DecompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath);
+                    else
+                    {
+                        //Appends 2 to tile name if file already exists
+                        DecompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
+                    }
                 }
             }
             else
             {
                 Console.WriteLine("The file you wish to decompress does not exist");
             }
-
         }
-
-
-
     }
-
 }
