@@ -31,13 +31,17 @@ namespace FileCompression
         {
             if (File.Exists(inPath))
             {
+                if (!Path.HasExtension(outPath))
+                {
+                    outPath = outPath + ".lzma";
+                }
                 if (!File.Exists(outPath))
                 {
-
                     const int BUFFER_SIZE = 1024 * 1024 * 12;
 
                     using (Stream inStream = File.OpenRead(inPath))
                     {
+
                         using (Stream outStream = File.Create(outPath))
                         {
                             // Save file extension
@@ -81,21 +85,21 @@ namespace FileCompression
 
         public static void DecompressFile(string inPath, string outPath)
         {
+            if (!Path.HasExtension(inPath))
+            {
+                inPath = inPath + ".lzma";
+            }
             if (File.Exists(inPath))
             {
                 using (Stream inStream = File.OpenRead(inPath))
                 {
+                    // REad file extension
                     byte[] extbyte = new byte[1];
                     extbyte[0] = (byte)inStream.ReadByte();
-
                     int extlen = Convert.ToInt32(Encoding.ASCII.GetString(extbyte));
-
                     byte[] extbuf = new byte[extlen];
-
                     inStream.Read(extbuf, 0, extlen);
-
                     string ext = Encoding.ASCII.GetString(extbuf);
-
                     if (!Path.HasExtension(outPath))
                     {
                         outPath = outPath + ext;
