@@ -1,34 +1,37 @@
 ﻿using System;
-using System.IO.Compression;
-using SevenZip;
+using System.IO;
+using System.Text;
+
 namespace FileCompression
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            string mode = "";
 
-            Compressor coder = new Compressor();
 
-            while (mode != "E" && mode != "C")
-            {
-                Console.WriteLine("Compress or extract? (C/E)");
-                mode = Console.ReadLine();
-            }
+            Console.WriteLine("Provide path to compress:");
+            string comPath = Console.ReadLine();
 
-            if (mode == "C")
-            {
-                coder.Compress("", "");
-            }
-            else if (mode == "E")
-            {
-                coder.Extract("", "");
-            }
-            else
-            {
-                Console.WriteLine("Unknown error");
-            }
+            Console.WriteLine("Provide result path:");
+            string outPath = Console.ReadLine();
+
+
+            ByteCompressor.CompressFile(@"" + comPath, @"" + outPath);
+
+            Console.WriteLine("done cmpressing :)");
+
+            Console.ReadKey();
+
+
+            Console.WriteLine("Provide path to compressed file:");
+            string compressedPath = Console.ReadLine();
+
+            Console.WriteLine("Provide result path:");
+            string resPath = Console.ReadLine();
+
+            ByteCompressor.DecompressFile(@"" + compressedPath, @"" + resPath);
         }
     }
+
 }
