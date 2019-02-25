@@ -8,6 +8,7 @@ namespace Indexer
     public class Index
     {
         private String _path;
+        private Boolean _debug = false;
 
         // Events
         public event EventHandler FileAdded;
@@ -18,7 +19,7 @@ namespace Indexer
         List<IndexFile> index = new List<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();
 
-        //[PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(String path) {
             if (Directory.Exists(path)){
                 this._path = path;
@@ -37,19 +38,6 @@ namespace Indexer
                 
             // Begin watching.
             watcher.EnableRaisingEvents = true;
-
-            this.buildIndex();
-
-            int count_paths = 0;
-            Console.WriteLine("### Index ###");
-            Console.WriteLine("-------------");
-            Console.WriteLine("Files: "+index.Count);
-
-            foreach (IndexFile file in index) {
-                count_paths += file.paths.Count;
-            }
-
-            Console.WriteLine("Paths: " + count_paths);
         }
 
         public void reIndex() {
@@ -87,7 +75,15 @@ namespace Indexer
                 if (!foundInIndex) {
                     index.Add(file);
                 }
+
+                if (this._debug) {
+                    Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash()+" - "+filePath);
+                }
             }
+        }
+
+        public void debug(Boolean value) {
+            this._debug = value;
         }
 
         public void listFiles() {
@@ -174,18 +170,6 @@ namespace Indexer
                     index.Remove(file);
                 }
             }
-            
-            int count_paths = 0;
-            Console.WriteLine("### Index ###");
-            Console.WriteLine("-------------");
-            Console.WriteLine("Files: " + index.Count);
-
-            foreach (IndexFile file in index)
-            {
-                count_paths += file.paths.Count;
-            }
-
-            Console.WriteLine("Paths: " + count_paths);
         }
 
         ~Index()  // finalizer
