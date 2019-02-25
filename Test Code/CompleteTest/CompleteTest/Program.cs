@@ -7,7 +7,7 @@ namespace CompleteTest{
     internal class Program{
         public static void Main(string[] args){
             string path = "testFile";
-            string extension = ".exe";
+            string extension = ".pdf";
             string outExtension = extension;
             string username;
             string password;
@@ -49,17 +49,20 @@ namespace CompleteTest{
                     FileSplitter.mergeFiles("./output", FileSplitter.createMd5(path + ".aes"),
                         tempFileName + ".lzma");
                     //Checks whether was created.
-                    if (File.Exists(tempFileName + ".aes")){
-                        FileEncryption fileToDecrypt = new FileEncryption("./" + tempFileName, ".aes");
+                    if (File.Exists(tempFileName + ".lzma")){
+                        FileEncryption fileToDecrypt = new FileEncryption("./" + tempFileName, ".lzma");
                        
                         //Decrypts the files, after merge.
-                        fileToDecrypt.doDecrypt(hash, path + "-new" + outExtension);
+                        fileToDecrypt.doDecrypt(hash, path + ".lzma");
                         
-                        compress.DecompressFile(path+".lzma",path+outExtension);
+                        compress.DecompressFile(path+".lzma",path+"-new"+outExtension);
 
 
                         //Deletes temporary files.
                         File.Delete(tempFileName + ".aes");
+                        File.Delete(tempFileName + ".lzma");
+                        File.Delete(path + ".lzma");
+                        
                     } else{
                         Console.WriteLine("Error in creating file");
                     }
@@ -70,6 +73,7 @@ namespace CompleteTest{
                     Console.WriteLine("Not a valid option, terminating software");
                     break;
             }
+            Console.ReadKey();
         }
     }
 }
