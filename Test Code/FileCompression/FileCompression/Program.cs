@@ -16,9 +16,8 @@ namespace FileCompression
             Console.WriteLine("Provide result path:");
             string outPath = Console.ReadLine();
 
-            ByteCompressor comp = new ByteCompressor();
 
-            comp.CompressFile(@"" + comPath,@"" + outPath);
+            ByteCompressor.CompressFile(@"" + comPath, @"" + outPath);
 
             Console.WriteLine("done cmpressing :)");
 
@@ -31,7 +30,7 @@ namespace FileCompression
             Console.WriteLine("Provide result path:");
             string resPath = Console.ReadLine();
 
-            comp.DecompressFile(@"" + compressedPath, @"" + resPath);
+            ByteCompressor.DecompressFile(@"" + compressedPath, @"" + resPath);
         }
     }
 
