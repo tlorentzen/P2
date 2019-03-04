@@ -7,7 +7,7 @@ namespace CompleteTest{
     internal class Program{
         public static void Main(string[] args){
             string path = "testFile";
-            string extension = ".pdf";
+            string extension = ".zip";
             string outExtension = extension;
             string username;
             string password;
