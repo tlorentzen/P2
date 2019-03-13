@@ -5,9 +5,11 @@ using System.Security.Cryptography;
 
 namespace Indexer
 {
+    [Serializable]
     class IndexFile
     {
-        private String _hash;
+        public String hash;
+        public long size;
         private Boolean _ghost;
 
         public List<String> paths = new List<string>();
@@ -26,6 +28,10 @@ namespace Indexer
                 this.makeFileHash();
             }
 
+            if(this.paths.Count == 1){
+                this.size = new FileInfo(path).Length;
+            }
+
             this._ghost = ghost;
         }
 
@@ -34,7 +40,7 @@ namespace Indexer
         }
 
         public String getHash() {
-            return this._hash;
+            return this.hash;
         }
 
         public String getPath() {
@@ -47,7 +53,7 @@ namespace Indexer
                 using (var stream = File.OpenRead(this.paths[0]))
                 {
                     var hash = md5.ComputeHash(stream);
-                    this._hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                    this.hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
                 }
             }
         }
@@ -57,7 +63,7 @@ namespace Indexer
         }
 
         public override bool Equals(Object obj){
-            return (obj is IndexFile) && ((IndexFile)obj)._hash == this._hash;
+            return (obj is IndexFile) && ((IndexFile)obj).hash == this.hash;
         }
 
     }

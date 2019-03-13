@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Security.Permissions;
+using Newtonsoft.Json;
 
 namespace Indexer
 {
     public class Index
     {
         private String _path;
+        private String _indexFilePath = null;
         private Boolean _debug = false;
-
+        
         // Events
         public event EventHandler FileAdded;
         public event EventHandler FileDeleted;
@@ -43,43 +46,45 @@ namespace Indexer
         public void reIndex() {
             this.index.Clear();
             this.buildIndex();
-
-            int count_paths = 0;
-            Console.WriteLine("### Index ###");
-            Console.WriteLine("-------------");
-            Console.WriteLine("Files: " + index.Count);
-
-            foreach (IndexFile file in index)
-            {
-                count_paths += file.paths.Count;
-            }
-
-            Console.WriteLine("Paths: " + count_paths);
         }
 
-        private void buildIndex() {
+        public void buildIndex() {
 
             string[] files = Directory.GetFiles(this._path, "*", SearchOption.AllDirectories); //TODO rewrite windows functionality D://
             
             foreach (String filePath in files) {
-                Boolean foundInIndex = false;
-                IndexFile file = new IndexFile(filePath);
+                
+                if(!this._indexFilePath.Equals(filePath))
+                {
+                    Boolean foundInIndex = false;
+                    IndexFile file = new IndexFile(filePath);
 
-                foreach (IndexFile ifile in index) {
-                    if (ifile.Equals(file)) {
-                        ifile.addPath(file.getPath());
-                        foundInIndex = true;
+                    foreach (IndexFile ifile in index)
+                    {
+                        if (ifile.Equals(file))
+                        {
+                            ifile.addPath(file.getPath());
+                            foundInIndex = true;
+                        }
+                    }
+
+                    if (!foundInIndex)
+                    {
+                        index.Add(file);
+                    }
+
+                    if (this._debug)
+                    {
+                        Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
                     }
                 }
-
-                if (!foundInIndex) {
-                    index.Add(file);
-                }
-
-                if (this._debug) {
-                    Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash()+" - "+filePath);
-                }
             }
+
+            this.save();
+        }
+
+        public void setIndexFilePath(String path){
+            this._indexFilePath = path;
         }
 
         public void debug(Boolean value) {
@@ -90,6 +95,10 @@ namespace Indexer
             foreach (IndexFile file in index) {
                 Console.WriteLine(file.getPath() + " Paths: "+file.paths.Count);
             }
+        }
+
+        public int getIndexSize(){
+            return this.index.Count;
         }
 
         // Define the event handlers.
@@ -170,6 +179,46 @@ namespace Indexer
                     index.Remove(file);
                 }
             }
+        }
+
+        public Boolean load()
+        {
+            if(_indexFilePath != null && File.Exists(this._indexFilePath)){
+                String json = File.ReadAllText(this._indexFilePath);
+                this.index = JsonConvert.DeserializeObject<List<IndexFile>>(json);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void save()
+        {
+            if(_indexFilePath != null){
+                String json = JsonConvert.SerializeObject(index);
+
+                using (var fileStream = new FileStream(this._indexFilePath, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    byte[] jsonIndex = new UTF8Encoding(true).GetBytes(json);
+                    fileStream.Write(jsonIndex, 0, jsonIndex.Length);
+                }
+            }
+        }
+
+        public void status(){
+            Console.WriteLine("");
+            Console.WriteLine("#### Index status ####");
+            Console.WriteLine("Unique files: "+this.index.Count);
+
+            int pathCount = 0;
+
+            foreach (IndexFile file in index)
+            {
+                pathCount += file.paths.Count;
+            }
+
+            Console.WriteLine("Paths: "+pathCount);
+            Console.WriteLine("");
         }
 
         ~Index()  // finalizer
