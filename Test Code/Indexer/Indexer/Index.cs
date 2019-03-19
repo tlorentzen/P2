@@ -106,6 +106,24 @@ namespace Indexer
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
 
+            Boolean foundInIndex = false;
+            IndexFile eventFile = new IndexFile(e.FullPath);
+
+            foreach (IndexFile file in index) {
+                if (file.Equals(eventFile)) {
+                    foundInIndex = true;
+                }
+            }
+
+            if (foundInIndex) {
+                foreach (IndexFile file in index) {
+                    if (file.Equals(eventFile)) {
+                        file.addPath(eventFile.paths[0]);
+                    }
+                }
+            } else {
+                index.Add(eventFile);
+            }
         }
 
         // Define the event handlers.
@@ -116,12 +134,15 @@ namespace Indexer
                 return;
 
             Boolean foundInIndex = false;
+            Boolean fileRemoved = false;
             IndexFile eventFile = new IndexFile(e.FullPath);
+            IndexFile foundMatch = eventFile;
 
             // Handle change
             foreach (IndexFile file in index) {
                 if (file.Equals(eventFile)) {
                     foundInIndex = true;
+                    foundMatch = file;
                 }
             }
 
@@ -144,17 +165,23 @@ namespace Indexer
                         foreach (string path in file.paths) {
                             if (path == eventFile.paths[0] && !eventFile.Equals(file)) {
                                 file.paths.Remove(path);
-
+                                break;
                             }
                         }
                     } else {
                         foreach (string path in file.paths) {
                             if (path == eventFile.paths[0] && !eventFile.Equals(file)) {
-                                file.paths.Remove(path);
                                 index.Remove(file);
+                                fileRemoved = true;
                             }
                         }
                     }
+                    if (fileRemoved) {
+                        break;
+                    }
+                }
+                if (!foundMatch.paths.Contains(eventFile.paths[0])) {
+                    foundMatch.addPath(eventFile.paths[0]);
                 }
             }
         }
