@@ -35,7 +35,7 @@ namespace Indexer
 
             // Add event handlers.
             watcher.Changed += OnChanged;
-            watcher.Created += OnChanged;
+            watcher.Created += OnCreate;
             watcher.Deleted += OnDeleted;
             watcher.Renamed += OnRenamed;
                 
@@ -101,6 +101,13 @@ namespace Indexer
             return this.index.Count;
         }
 
+        private void OnCreate(object source, FileSystemEventArgs e) {
+            // Ignore folder changes
+            if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
+                return;
+
+        }
+
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
@@ -131,6 +138,24 @@ namespace Indexer
                 }
 
                 index.Add(eventFile);
+            } else {
+                foreach (IndexFile file in index) {
+                    if(file.paths.Count > 1) {
+                        foreach (string path in file.paths) {
+                            if (path == eventFile.paths[0] && !eventFile.Equals(file)) {
+                                file.paths.Remove(path);
+
+                            }
+                        }
+                    } else {
+                        foreach (string path in file.paths) {
+                            if (path == eventFile.paths[0] && !eventFile.Equals(file)) {
+                                file.paths.Remove(path);
+                                index.Remove(file);
+                            }
+                        }
+                    }
+                }
             }
         }
         
@@ -219,6 +244,19 @@ namespace Indexer
 
             Console.WriteLine("Paths: "+pathCount);
             Console.WriteLine("");
+        }
+
+        public void printInfo() {
+            int pathNum;
+            foreach (IndexFile file in index) {
+                pathNum = 0;
+                Console.WriteLine("Hash: {0}", file.hash);
+                foreach(string path in file.paths) {
+                    pathNum += 1;
+                    Console.WriteLine("Path {0}: {1}", pathNum.ToString(), path);
+                }
+                Console.WriteLine("Size: {0}", file.size);
+            }
         }
 
         ~Index()  // finalizer

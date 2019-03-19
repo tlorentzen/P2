@@ -10,7 +10,7 @@ namespace Indexer
     {
         public String hash;
         public long size;
-        private Boolean _ghost;
+        public Boolean ghost;
 
         public List<String> paths = new List<string>();
 
@@ -32,11 +32,11 @@ namespace Indexer
                 this.size = new FileInfo(path).Length;
             }
 
-            this._ghost = ghost;
+            this.ghost = ghost;
         }
 
         public Boolean isGhostFile() {
-            return this._ghost;
+            return this.ghost;
         }
 
         public String getHash() {
