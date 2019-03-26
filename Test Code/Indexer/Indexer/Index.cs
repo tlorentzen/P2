@@ -11,7 +11,9 @@ namespace Indexer
     {
         private String _path;
         private String _indexFilePath = null;
+        private string _hiddenPath;
         private Boolean _debug = false;
+        private DirectoryInfo _hiddenDir;
         
         // Events
         public event EventHandler FileAdded;
@@ -32,6 +34,20 @@ namespace Indexer
 
             watcher.Path = this._path;
             watcher.IncludeSubdirectories = true;
+            // Make hidden directory
+            _hiddenPath = _path + @"\.hidden";
+            if(!Directory.Exists(_hiddenPath))
+            {
+                _hiddenDir = Directory.CreateDirectory(_hiddenPath);
+            }else{
+                _hiddenDir = new DirectoryInfo(_hiddenPath);
+            }
+
+            //See if directory has hidden flag, if not, make hidden
+            if ((_hiddenDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden) {
+                //Add Hidden flag    
+                _hiddenDir.Attributes |= FileAttributes.Hidden;
+            }
 
             // Add event handlers.
             watcher.Changed += OnChanged;
