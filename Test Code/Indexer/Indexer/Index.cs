@@ -34,6 +34,7 @@ namespace Indexer
 
             watcher.Path = this._path;
             watcher.IncludeSubdirectories = true;
+
             // Make hidden directory
             _hiddenPath = _path + @"\.hidden";
             if(!Directory.Exists(_hiddenPath))
@@ -42,7 +43,6 @@ namespace Indexer
             }else{
                 _hiddenDir = new DirectoryInfo(_hiddenPath);
             }
-
             //See if directory has hidden flag, if not, make hidden
             if ((_hiddenDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden) {
                 //Add Hidden flag    
@@ -69,29 +69,25 @@ namespace Indexer
             string[] files = Directory.GetFiles(this._path, "*", SearchOption.AllDirectories); //TODO rewrite windows functionality D://
             
             foreach (String filePath in files) {
-                
-                if(!this._indexFilePath.Equals(filePath))
-                {
-                    Boolean foundInIndex = false;
-                    IndexFile file = new IndexFile(filePath);
+                if (!IgnoreHidden(filePath)) {
+                    if (!this._indexFilePath.Equals(filePath)) {
+                        Boolean foundInIndex = false;
+                        IndexFile file = new IndexFile(filePath);
 
-                    foreach (IndexFile ifile in index)
-                    {
-                        if (ifile.Equals(file))
-                        {
-                            ifile.addPath(file.getPath());
-                            foundInIndex = true;
+                        foreach (IndexFile ifile in index) {
+                            if (ifile.Equals(file)) {
+                                ifile.addPath(file.getPath());
+                                foundInIndex = true;
+                            }
                         }
-                    }
 
-                    if (!foundInIndex)
-                    {
-                        index.Add(file);
-                    }
+                        if (!foundInIndex) {
+                            index.Add(file);
+                        }
 
-                    if (this._debug)
-                    {
-                        Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
+                        if (this._debug) {
+                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
+                        }
                     }
                 }
             }
@@ -118,6 +114,11 @@ namespace Indexer
         }
 
         private void OnCreate(object source, FileSystemEventArgs e) {
+
+            // Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
             // Ignore folder changes
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
@@ -145,6 +146,9 @@ namespace Indexer
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
             // Ignore folder changes
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
@@ -204,6 +208,10 @@ namespace Indexer
         
         private void OnRenamed(object source, RenamedEventArgs e)
         {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)){
                 foreach (IndexFile file in index) {
                     for (int i = 0; i < file.paths.Count; i++){
@@ -230,6 +238,10 @@ namespace Indexer
 
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
             List<IndexFile> toDelete = new List<IndexFile>();
 
             foreach (IndexFile file in index){
@@ -247,6 +259,18 @@ namespace Indexer
                     index.Remove(file);
                 }
             }
+        }
+        
+        //Ignore file events in .hidden folder
+        private bool IgnoreHidden(string filePath)
+        {
+            string[] parents = filePath.Split('\\');
+            foreach(string path in parents) {
+                if (path == ".hidden") {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public Boolean load()
