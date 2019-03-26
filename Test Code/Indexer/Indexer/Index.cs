@@ -38,7 +38,7 @@ namespace Indexer
             watcher.IncludeSubdirectories = true;
 
             // Make hidden directory
-            _hiddenFolder = new HiddenFolder(_path + @"\.hidden");
+            _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
 
 
             // Add event handlers.
