@@ -15,7 +15,7 @@ namespace IndexRunner
             Boolean shutdown = false;
             Index idx = new Index(@"C:\Users\aplesn18\Desktop\P2");
             idx.debug(false);
-            idx.setIndexFilePath(@"C:\Users\aplesn18\Desktop\P2\index.json");
+            idx.setIndexFilePath(@"C:\Users\aplesn18\Desktop\P2\.hidden\index.json");
 
             while (!shutdown)
             {

@@ -27,6 +27,7 @@ namespace Indexer
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(String path) {
+
             if (Directory.Exists(path)){
                 this._path = path;
             }else{
@@ -38,7 +39,7 @@ namespace Indexer
 
             // Make hidden directory
             _hiddenFolder = new HiddenFolder(_path + @"\.hidden");
-            
+
 
             // Add event handlers.
             watcher.Changed += OnChanged;
@@ -280,8 +281,7 @@ namespace Indexer
             if(_indexFilePath != null){
                 String json = JsonConvert.SerializeObject(index);
 
-                using (var fileStream = new FileStream(this._indexFilePath, FileMode.OpenOrCreate, FileAccess.Write))
-                {
+                using (var fileStream = _hiddenFolder.WriteToFile(this._indexFilePath)) {
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(json);
                     fileStream.Write(jsonIndex, 0, jsonIndex.Length);
                 }
