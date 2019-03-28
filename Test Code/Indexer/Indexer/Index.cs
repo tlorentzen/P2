@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using System.Security.Permissions;
 using Newtonsoft.Json;
+using HiddenFolders;
+
 
 namespace Indexer
 {
@@ -12,6 +14,7 @@ namespace Indexer
         private String _path;
         private String _indexFilePath = null;
         private Boolean _debug = false;
+        private HiddenFolder _hiddenFolder;
         
         // Events
         public event EventHandler FileAdded;
@@ -24,6 +27,7 @@ namespace Indexer
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(String path) {
+
             if (Directory.Exists(path)){
                 this._path = path;
             }else{
@@ -32,6 +36,10 @@ namespace Indexer
 
             watcher.Path = this._path;
             watcher.IncludeSubdirectories = true;
+
+            // Make hidden directory
+            _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
+
 
             // Add event handlers.
             watcher.Changed += OnChanged;
@@ -53,29 +61,25 @@ namespace Indexer
             string[] files = Directory.GetFiles(this._path, "*", SearchOption.AllDirectories); //TODO rewrite windows functionality D://
             
             foreach (String filePath in files) {
-                
-                if(!this._indexFilePath.Equals(filePath))
-                {
-                    Boolean foundInIndex = false;
-                    IndexFile file = new IndexFile(filePath);
+                if (!IgnoreHidden(filePath)) {
+                    if (!this._indexFilePath.Equals(filePath)) {
+                        Boolean foundInIndex = false;
+                        IndexFile file = new IndexFile(filePath);
 
-                    foreach (IndexFile ifile in index)
-                    {
-                        if (ifile.Equals(file))
-                        {
-                            ifile.addPath(file.getPath());
-                            foundInIndex = true;
+                        foreach (IndexFile ifile in index) {
+                            if (ifile.Equals(file)) {
+                                ifile.addPath(file.getPath());
+                                foundInIndex = true;
+                            }
                         }
-                    }
 
-                    if (!foundInIndex)
-                    {
-                        index.Add(file);
-                    }
+                        if (!foundInIndex) {
+                            index.Add(file);
+                        }
 
-                    if (this._debug)
-                    {
-                        Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
+                        if (this._debug) {
+                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
+                        }
                     }
                 }
             }
@@ -102,6 +106,11 @@ namespace Indexer
         }
 
         private void OnCreate(object source, FileSystemEventArgs e) {
+
+            // Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
             // Ignore folder changes
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
@@ -129,6 +138,9 @@ namespace Indexer
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
             // Ignore folder changes
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
@@ -188,6 +200,10 @@ namespace Indexer
         
         private void OnRenamed(object source, RenamedEventArgs e)
         {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)){
                 foreach (IndexFile file in index) {
                     for (int i = 0; i < file.paths.Count; i++){
@@ -214,6 +230,10 @@ namespace Indexer
 
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
             List<IndexFile> toDelete = new List<IndexFile>();
 
             foreach (IndexFile file in index){
@@ -232,6 +252,18 @@ namespace Indexer
                 }
             }
         }
+        
+        //Ignore file events in .hidden folder
+        private bool IgnoreHidden(string filePath)
+        {
+            string[] parents = filePath.Split('\\');
+            foreach(string path in parents) {
+                if (path == ".hidden") {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public Boolean load()
         {
@@ -249,8 +281,7 @@ namespace Indexer
             if(_indexFilePath != null){
                 String json = JsonConvert.SerializeObject(index);
 
-                using (var fileStream = new FileStream(this._indexFilePath, FileMode.OpenOrCreate, FileAccess.Write))
-                {
+                using (var fileStream = _hiddenFolder.WriteToFile(this._indexFilePath)) {
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(json);
                     fileStream.Write(jsonIndex, 0, jsonIndex.Length);
                 }
