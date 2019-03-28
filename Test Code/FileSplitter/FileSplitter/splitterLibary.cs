@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -30,8 +31,33 @@ namespace FileSplitter{
 
                         _files.Add(CreateMD5(writingBuffer));
                     }
+                }
+            } else{
+                throw new FileNotFoundException();
+            }
 
-                    Console.WriteLine("Field count: " + _files.Count);
+            return _files;
+        }
+        
+        public List<string> splitFile(String inputFilePath, string OutputFolderpath, int chunkSize,NetworkStream outputStream){
+            if (!Directory.Exists(OutputFolderpath)){
+                Directory.CreateDirectory(OutputFolderpath);
+            }
+
+            //Based on https://stackoverflow.com/questions/3967541/how-to-split-large-files-efficiently
+
+
+            if (File.Exists(inputFilePath)){
+                using (Stream input = File.OpenRead(inputFilePath)){
+                    int index = 0;
+                    while (input.Position < input.Length){
+                        var writingBuffer = fileStreamReader(input, chunkSize);
+                        Console.WriteLine(writingBuffer.Length);
+                        //TODO PLZ ADD MSG TO ZEND HASH TO RECEIVER
+                        outputStream.Write(writingBuffer, 0, writingBuffer.Length);
+                        
+                        _files.Add(CreateMD5(writingBuffer));
+                    }
                 }
             } else{
                 throw new FileNotFoundException();
