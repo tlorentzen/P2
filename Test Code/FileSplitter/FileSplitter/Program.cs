@@ -5,9 +5,9 @@ using System.IO;
 namespace FileSplitter{
     static class Program{
         static void Main(string[] args){
-            String filePath = "JetMSBuild.zip";
+            String filePath = "ruskursus.pdf";
             String outputFolder = "output/";
-            String newFile = "JetMSBuild-new.zip";
+            String newFile = "ruskursus-new.pdf";
             int chuncSize = 1000000;
             splitterLibary splitterLibary= new splitterLibary();
             
@@ -18,8 +18,6 @@ namespace FileSplitter{
             Console.WriteLine("Merging file again:");
             splitterLibary.mergeFiles(outputFolder, newFile,filelist);
             Console.WriteLine("File Merged again.");
-
-            Console.ReadKey();
         }
     }
 }
