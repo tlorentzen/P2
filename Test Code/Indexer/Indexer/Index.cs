@@ -141,6 +141,7 @@ namespace Indexer
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            LinkedList<IndexFile> filesToRemove = new LinkedList<IndexFile>();
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
@@ -168,7 +169,7 @@ namespace Indexer
                         if (file.paths.Count > 1){
                             file.paths.Remove(e.FullPath);
                         }else{
-                            index.Remove(file);
+                            filesToRemove.AddAfter(filesToRemove.Last, file);
                         }
                     }
                 }
@@ -199,8 +200,10 @@ namespace Indexer
                     foundMatch.addPath(eventFile.paths[0]);
                 }
             }
-
             FileChanged(eventFile);
+            while (filesToRemove.First != null) {
+                filesToRemove.Remove(filesToRemove.Last);
+            }
         }
         
         private void OnRenamed(object source, RenamedEventArgs e)
@@ -239,22 +242,20 @@ namespace Indexer
             if (IgnoreHidden(e.FullPath))
                 return;
 
-            List<IndexFile> toDelete = new List<IndexFile>();
+            LinkedList<IndexFile> filesToRemove = new LinkedList<IndexFile>();
 
             foreach (IndexFile file in index){
                 if (file.paths.Contains(e.FullPath)){
                     if (file.paths.Count > 1){
                         file.paths.Remove(e.FullPath);
                     }else{
-                        toDelete.Add(file);
+                        filesToRemove.AddLast(file);
                     }
                 }
             }
 
-            if (toDelete.Count > 0) {
-                foreach (IndexFile file in toDelete){
-                    index.Remove(file);
-                }
+            while (filesToRemove.First != null) {
+                filesToRemove.Remove(filesToRemove.Last);
             }
 
             // TODO: Deepcopy deleted file for DeletedFile event.
