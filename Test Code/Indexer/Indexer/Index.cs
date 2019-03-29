@@ -202,6 +202,7 @@ namespace Indexer
             }
             FileChanged(eventFile);
             while (filesToRemove.First != null) {
+                index.Remove(filesToRemove.Last);
                 filesToRemove.Remove(filesToRemove.Last);
             }
         }
@@ -255,6 +256,7 @@ namespace Indexer
             }
 
             while (filesToRemove.First != null) {
+                index.Remove(filesToRemove.Last);
                 filesToRemove.Remove(filesToRemove.Last);
             }
 
