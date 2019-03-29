@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Linq;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HiddenFolders
+namespace Indexer
 {
     public class HiddenFolder
     {
         public HiddenFolder(string path)
         {
             _path = path;
-            if (!Directory.Exists(_path)) {
+            if (!Directory.Exists(_path))
+            {
                 _directory = Directory.CreateDirectory(_path);
-            } else {
+            }
+            else
+            {
                 _directory = new DirectoryInfo(_path);
             }
             //See if directory has hidden flag, if not, make hidden
-            if ((_directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden) {
+            if ((_directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+            {
                 //Add Hidden flag    
                 _directory.Attributes |= FileAttributes.Hidden;
             }
@@ -51,5 +51,4 @@ namespace HiddenFolders
         }
 
     }
-
 }

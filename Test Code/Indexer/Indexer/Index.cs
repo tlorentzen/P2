@@ -4,8 +4,6 @@ using System.IO;
 using System.Text;
 using System.Security.Permissions;
 using Newtonsoft.Json;
-using HiddenFolders;
-
 
 namespace Indexer
 {
@@ -15,12 +13,15 @@ namespace Indexer
         private String _indexFilePath = null;
         private Boolean _debug = false;
         private HiddenFolder _hiddenFolder;
-        
+
+        //This delegate can be used to point to methods
+        //which return void and take a string.
+        public delegate void FileEventHandler(IndexFile file);
+
         // Events
-        public event EventHandler FileAdded;
-        public event EventHandler FileDeleted;
-        public event EventHandler FileChanged;
-        public event EventHandler FileRenamed;
+        public event FileEventHandler FileAdded;
+        public event FileEventHandler FileDeleted;
+        public event FileEventHandler FileChanged;
 
         List<IndexFile> index = new List<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();
@@ -133,6 +134,8 @@ namespace Indexer
             } else {
                 index.Add(eventFile);
             }
+
+            FileAdded(eventFile);
         }
 
         // Define the event handlers.
@@ -196,6 +199,8 @@ namespace Indexer
                     foundMatch.addPath(eventFile.paths[0]);
                 }
             }
+
+            FileChanged(eventFile);
         }
         
         private void OnRenamed(object source, RenamedEventArgs e)
@@ -246,11 +251,15 @@ namespace Indexer
                 }
             }
 
+            IndexFile deleted_file;
+
             if (toDelete.Count > 0) {
                 foreach (IndexFile file in toDelete){
+                    FileDeleted(file);
                     index.Remove(file);
                 }
             }
+
         }
         
         //Ignore file events in .hidden folder

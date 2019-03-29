@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 namespace Indexer
 {
     [Serializable]
-    class IndexFile
+    public class IndexFile
     {
         public String hash;
         public long size;

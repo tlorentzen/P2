@@ -48,18 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HiddenFolder.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="IndexFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HiddenFolder\HiddenFolder.csproj">
-      <Project>{62ece6b9-a685-4e6b-a3fc-67b0d96c29b0}</Project>
-      <Name>HiddenFolder</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
