@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Security.Permissions;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace Indexer
 {
@@ -23,7 +24,7 @@ namespace Indexer
         public event FileEventHandler FileDeleted;
         public event FileEventHandler FileChanged;
 
-        List<IndexFile> index = new List<IndexFile>();
+        LinkedList<IndexFile> index = new LinkedList<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -40,7 +41,6 @@ namespace Indexer
 
             // Make hidden directory
             _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
-
 
             // Add event handlers.
             watcher.Changed += OnChanged;
@@ -75,7 +75,7 @@ namespace Indexer
                         }
 
                         if (!foundInIndex) {
-                            index.Add(file);
+                            index.AddLast(file);
                         }
 
                         if (this._debug) {
@@ -132,7 +132,7 @@ namespace Indexer
                     }
                 }
             } else {
-                index.Add(eventFile);
+                index.AddLast(eventFile);
             }
 
             FileAdded(eventFile);
@@ -173,7 +173,7 @@ namespace Indexer
                     }
                 }
 
-                index.Add(eventFile);
+                index.AddLast(eventFile);
             } else {
                 foreach (IndexFile file in index) {
                     if(file.paths.Count > 1) {
@@ -277,7 +277,7 @@ namespace Indexer
         {
             if(_indexFilePath != null && File.Exists(this._indexFilePath)){
                 String json = File.ReadAllText(this._indexFilePath);
-                this.index = JsonConvert.DeserializeObject<List<IndexFile>>(json);
+                this.index = JsonConvert.DeserializeObject<LinkedList<IndexFile>>(json);
                 return true;
             }
 
