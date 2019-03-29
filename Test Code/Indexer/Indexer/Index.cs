@@ -251,14 +251,13 @@ namespace Indexer
                 }
             }
 
-            IndexFile deleted_file;
-
             if (toDelete.Count > 0) {
                 foreach (IndexFile file in toDelete){
-                    FileDeleted(file);
                     index.Remove(file);
                 }
             }
+
+            // TODO: Deepcopy deleted file for DeletedFile event.
 
         }
         
