@@ -18,7 +18,7 @@ namespace P2P_lib
         private DateTime _lastSeen;
         private int _pings_without_response = 0;
         private long _nextPing = 0;
-        private Boolean _online = false;
+        private bool _online = false;
 
         public Peer() : this(null, null){}
 
@@ -40,11 +40,11 @@ namespace P2P_lib
             Rating = 100;
         }
 
-        public Boolean isOnline(){
+        public bool isOnline(){
             return this._online;
         }
 
-        public void setOnline(Boolean online){
+        public void setOnline(bool online){
             this._online = online;
             this._pings_without_response = 0;
         }
@@ -88,11 +88,11 @@ namespace P2P_lib
             _lastSeen = lastSeen;
         }
 
-        public void SetIP(String ip){
+        public void SetIP(string ip){
             this._ip = IPAddress.Parse(ip);
         }
 
-        public String GetIP(){
+        public string GetIP(){
             return this._ip.ToString();
         }
 
