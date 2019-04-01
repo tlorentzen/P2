@@ -141,6 +141,7 @@ namespace Index_lib
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
@@ -169,6 +170,7 @@ namespace Index_lib
                             file.paths.Remove(e.FullPath);
                         }else{
                             index.Remove(file);
+                            break;
                         }
                     }
                 }
