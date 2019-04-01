@@ -13,13 +13,14 @@ namespace P2P_lib.Messages
         public string filename;
         public long filesize;
         public string path;
+        public int port;
 
-        public UploadMessage(String to) : base(to)
+        public UploadMessage(string to) : base(to)
         {
 
         } 
 
-        public override String GetHash()
+        public override string GetHash()
         {
             return null;
         }

@@ -58,7 +58,31 @@ namespace P2P_lib
                 }
 
                 if(message.type.Equals(Messages.TypeCode.REQUEST)){
-                    ping.reply();
+                    ping.CreateReply();
+                    ping.statuscode = StatusCode.OK;
+                    ping.Send();
+                }
+            }
+            if (message.GetMessageType() == typeof(UploadMessage)) {
+                UploadMessage upload = (UploadMessage)message;
+
+                if (upload.type.Equals(Messages.TypeCode.REQUEST)) {
+                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize) {
+                        upload.statuscode = StatusCode.ACCEPTED;
+                    } else {
+                        upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
+                    }
+                    upload.CreateReply();
+                    upload.Send();
+
+                }else if (message.type.Equals(Messages.TypeCode.RESPONSE)) {
+                    if (upload.statuscode == StatusCode.ACCEPTED) {
+                        FileSender fileSender = new FileSender(upload.from, upload.port);
+                        fileSender.Send(upload.path);
+                    } else {
+                        //Change rank of peer
+                        //Send request to new peer
+                    }
                 }
             }
         }
