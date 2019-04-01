@@ -88,9 +88,9 @@ namespace TorPdos
             btnTryAgain.ForeColor = ColorTranslator.FromHtml("#5E5C6C");
             btnTryAgain.Click += new System.EventHandler(BtnClickTryAgain);
 
-            Controls.Add(btnLogin);
-            Controls.Add(txtPassword);
             Controls.Add(txtUsername);
+            Controls.Add(txtPassword);
+            Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
         }
@@ -119,9 +119,9 @@ namespace TorPdos
 
         void BtnClickTryAgain(object sender, System.EventArgs e)
         {
-            Controls.Add(btnLogin);
-            Controls.Add(txtPassword);
             Controls.Add(txtUsername);
+            Controls.Add(txtPassword);
+            Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
             Controls.Remove(lblNope);
