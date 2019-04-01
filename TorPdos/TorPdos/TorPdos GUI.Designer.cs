@@ -73,7 +73,7 @@ namespace TorPdos
             lblYouDidIt.ForeColor = ColorTranslator.FromHtml("#0B5563");
             lblYouDidIt.Font = new Font("Arial", 20, FontStyle.Regular);
 
-            lblNope.Location = new Point(70, 50);
+            lblNope.Location = new Point(60, 50);
             lblNope.Height = 40;
             lblNope.Width = 300;
             lblNope.Text = "Wrong username or password";
@@ -93,7 +93,6 @@ namespace TorPdos
             Controls.Add(txtUsername);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
-
         }
 
         void BtnClickLogin(object sender, System.EventArgs e)
@@ -106,9 +105,7 @@ namespace TorPdos
                 Controls.Remove(txtUsername);
                 Controls.Remove(lblUsername);
                 Controls.Remove(lblPassword);
-            }
-
-            else
+            } else
             {
                 Controls.Add(lblNope);
                 Controls.Add(btnTryAgain);
