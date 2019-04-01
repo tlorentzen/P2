@@ -8,9 +8,9 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using P2P_lib.Messages;
-using Index_lib;
+//using Index_lib;
 using P2P_lib;
-using TorPdos;
+//using TorPdos;
 
 namespace P2P_lib {
     public class NetworkProtocols {
