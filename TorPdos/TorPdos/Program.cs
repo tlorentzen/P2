@@ -16,7 +16,7 @@ namespace TorPdos
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-        
+            
             // Load Index
             Index idx = new Index(@"C:\\TorPdos\");
             idx.setIndexFilePath(@"C:\\TorPdos\.hidden\index.json");
