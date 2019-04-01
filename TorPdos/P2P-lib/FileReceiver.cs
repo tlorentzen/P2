@@ -7,7 +7,6 @@ using P2P_lib.Messages;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using P2P_lib.Messages;
 using System.IO;
 
 namespace P2P_lib

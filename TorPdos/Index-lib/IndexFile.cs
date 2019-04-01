@@ -50,9 +50,8 @@ namespace Index_lib
         private void makeFileHash() {
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(this.paths[0]))
-                {
-                    var hash = md5.ComputeHash(stream);
+                using (FileStream fs = new FileStream(this.paths[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
+                    var hash = md5.ComputeHash(fs);
                     this.hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
                 }
             }
