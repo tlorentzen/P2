@@ -5,6 +5,7 @@ using System.Text;
 using System.Security.Permissions;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 
 namespace Index_lib
 {
@@ -38,14 +39,15 @@ namespace Index_lib
 
             watcher.Path = this._path;
             watcher.IncludeSubdirectories = true;
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
 
             // Make hidden directory
             _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
 
             // Add event handlers.
-            watcher.Changed += OnChanged;
-            watcher.Created += OnCreate;
-            watcher.Deleted += OnDeleted;
+            watcher.Changed += OnEventHandler;
+            watcher.Created += OnEventHandler;
+            watcher.Deleted += OnEventHandler;
             watcher.Renamed += OnRenamed;
                 
             // Begin watching.
@@ -71,6 +73,7 @@ namespace Index_lib
                             if (ifile.Equals(file)) {
                                 ifile.addPath(file.getPath());
                                 foundInIndex = true;
+                                break;
                             }
                         }
 
@@ -106,7 +109,31 @@ namespace Index_lib
             return this.index.Count;
         }
 
-        private void OnCreate(object source, FileSystemEventArgs e) {
+        private void OnEventHandler(object source, FileSystemEventArgs e) {
+
+            if(this.IsFileReady(e.FullPath)){
+                // TODO: Håndter som normalt i added, modified og deleted. 
+            }else{
+                // TODO: Lav en thread som kan holde øje med den er klar. 
+
+                /*
+                    Noget med while(!file.IsFileReady){
+                        vent...
+                    }
+
+                    kør kode!
+                */
+            }
+
+            if (e.ChangeType == WatcherChangeTypes.Changed){
+
+            }else if(e.ChangeType == WatcherChangeTypes.Created){
+
+            }else if(e.ChangeType == WatcherChangeTypes.Deleted){
+
+            }else{
+                throw new NotImplementedException();
+            }
 
             // Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
@@ -122,6 +149,7 @@ namespace Index_lib
             foreach (IndexFile file in index) {
                 if (file.Equals(eventFile)) {
                     foundInIndex = true;
+                    break;
                 }
             }
 
@@ -129,6 +157,7 @@ namespace Index_lib
                 foreach (IndexFile file in index) {
                     if (file.Equals(eventFile)) {
                         file.addPath(eventFile.paths[0]);
+                        break;
                     }
                 }
             } else {
@@ -137,7 +166,7 @@ namespace Index_lib
 
             FileAdded(eventFile);
         }
-
+        /*
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
@@ -159,6 +188,7 @@ namespace Index_lib
                 if (file.Equals(eventFile)) {
                     foundInIndex = true;
                     foundMatch = file;
+                    break;
                 }
             }
 
@@ -205,38 +235,12 @@ namespace Index_lib
             FileChanged(eventFile);
         }
         
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            //Ignore hidden folder
-            if (IgnoreHidden(e.FullPath))
-                return;
-
-            if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)){
-                foreach (IndexFile file in index) {
-                    for (int i = 0; i < file.paths.Count; i++){
-                        if (file.paths[i].StartsWith(this._path + @"\" + e.OldName)){
-                            file.paths[i] = file.paths[i].Replace(this._path + @"\" + e.OldName, this._path + @"\" + e.Name);
-                        }
-                    }
-                }
-            }else{
-                IndexFile renamedFile = new IndexFile(e.FullPath);
-
-                foreach (IndexFile file in index){
-                    if (file.Equals(renamedFile)) {
-                        for (int i = 0; i < file.paths.Count; i++){
-                            if (file.paths[i].Equals(e.OldFullPath)) {
-                                file.paths.RemoveAt(i);
-                                file.addPath(e.FullPath);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        
 
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
+           
+
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
@@ -262,7 +266,63 @@ namespace Index_lib
             // TODO: Deepcopy deleted file for DeletedFile event.
 
         }
-        
+
+        */
+
+        private void OnRenamed(object source, RenamedEventArgs e)
+        {
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
+
+            if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
+            {
+                foreach (IndexFile file in index)
+                {
+                    for (int i = 0; i < file.paths.Count; i++)
+                    {
+                        if (file.paths[i].StartsWith(this._path + @"\" + e.OldName))
+                        {
+                            file.paths[i] = file.paths[i].Replace(this._path + @"\" + e.OldName, this._path + @"\" + e.Name);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                IndexFile renamedFile = new IndexFile(e.FullPath);
+
+                foreach (IndexFile file in index)
+                {
+                    if (file.Equals(renamedFile))
+                    {
+                        for (int i = 0; i < file.paths.Count; i++)
+                        {
+                            if (file.paths[i].Equals(e.OldFullPath))
+                            {
+                                file.paths.RemoveAt(i);
+                                file.addPath(e.FullPath);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public bool IsFileReady(string path)
+        {
+            //https://stackoverflow.com/questions/1406808/wait-for-file-to-be-freed-by-process
+            try
+            {
+                using (FileStream inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                    return inputStream.Length > 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         //Ignore file events in .hidden folder
         private bool IgnoreHidden(string filePath)
         {
@@ -331,5 +391,9 @@ namespace Index_lib
         {
             watcher.EnableRaisingEvents = false;
         }
+
+        // TODO: https://codereview.stackexchange.com/questions/59385/filesystemwatcher-with-threaded-fifo-processing
+
     }
+
 }
