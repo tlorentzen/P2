@@ -21,16 +21,11 @@ namespace P2P_lib{
 
         public List<Peer> getPeerList(){
             List<Peer> newPeerList = new List<Peer>();
-            int i = 0;
+
             foreach(Peer peer in peers) {
-                newPeerList[i] = peer;
-                i++;
+                newPeerList.Add(peer);
             }
-            i = 0;
-            foreach(Peer peer in newPeerList) {
-                Console.WriteLine(newPeerList[i].getUUID());
-                i++;
-            }
+
             return newPeerList;
         }
 
