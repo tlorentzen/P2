@@ -24,7 +24,7 @@ namespace Index_lib{
         public event FileEventHandler FileDeleted;
         public event FileEventHandler FileChanged;
 
-        LinkedList<IndexFile> index = new LinkedList<IndexFile>();
+        List<IndexFile> index = new List<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -73,9 +73,7 @@ namespace Index_lib{
         }
 
         public void buildIndex(){
-            string[] files =
-                Directory.GetFiles(this._path, "*",
-                    SearchOption.AllDirectories); //TODO rewrite windows functionality D://
+            string[] files = Directory.GetFiles(this._path, "*", SearchOption.AllDirectories); //TODO rewrite windows functionality D://
 
             foreach (string filePath in files){
                 if (!IgnoreHidden(filePath)){
@@ -92,12 +90,11 @@ namespace Index_lib{
                         }
 
                         if (!foundInIndex){
-                            index.AddLast(file);
+                            index.Add(file);
                         }
 
                         if (this._debug){
-                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() +
-                                              " - " + filePath);
+                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
                         }
                     }
                 }
@@ -252,7 +249,7 @@ namespace Index_lib{
                     }
                 }
             } else{
-                index.AddLast(eventFile);
+                index.Add(eventFile);
             }
 
             FileAdded(eventFile);
@@ -300,7 +297,7 @@ namespace Index_lib{
                     }
                 }
 
-                index.AddLast(eventFile);
+                index.Add(eventFile);
             } else {
                 foreach (IndexFile file in index) {
                     if(file.paths.Count > 1) {
@@ -402,20 +399,13 @@ namespace Index_lib{
 
         //Ignore file events in .hidden folder
         private bool IgnoreHidden(string filePath){
-            string[] parents = filePath.Split('\\');
-            foreach (string path in parents){
-                if (path == ".hidden"){
-                    return true;
-                }
-            }
-
-            return false;
+            return filePath.Contains(".hidden");
         }
 
         public bool load(){
             if (_indexFilePath != null && File.Exists(this._indexFilePath)){
                 string json = File.ReadAllText(this._indexFilePath);
-                this.index = JsonConvert.DeserializeObject<LinkedList<IndexFile>>(json);
+                this.index = JsonConvert.DeserializeObject<List<IndexFile>>(json);
                 return true;
             }
 
