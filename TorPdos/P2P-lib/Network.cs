@@ -76,7 +76,6 @@ namespace P2P_lib{
                 upload.CreateReply();
                 upload.Send();
             }
-
         }
 
         private void RechievedPing(PingMessage ping)
@@ -86,7 +85,6 @@ namespace P2P_lib{
                 if (peer.GetIP().Equals(ping.from)) {
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
-
                 }
             }
 
