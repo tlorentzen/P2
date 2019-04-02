@@ -66,6 +66,15 @@ namespace TorPdos{
             Console.ReadKey();
         }
 
+        private static void Idx_FileDeleted(IndexFile file)
+        {
+            if(file == null){
+                Console.WriteLine("File deleted: null...");
+            }else{
+                Console.WriteLine("File deleted: " + file.hash);
+            }
+        }
+
         private static void Idx_FileAdded(IndexFile file){
             Console.WriteLine("File added: " + file.hash);
         }
