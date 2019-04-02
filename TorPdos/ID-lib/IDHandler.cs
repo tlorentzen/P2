@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IDHandler
+namespace ID_lib
 {
     class IDHandler
     {
-        static void SetUID(string UID)
+        static void Main(string[] args)
         {
-
         }
     }
 }
