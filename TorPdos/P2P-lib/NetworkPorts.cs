@@ -18,7 +18,7 @@ namespace P2P_lib
         {
             for (int i = begin_range; i <= end_range; i++)
             {
-                if (isPortAvailable(i) && !ports.Contains(i))
+                if (this.isPortAvailable(i) && !ports.Contains(i))
                 {
                     ports.Add(i);
                     return i;
