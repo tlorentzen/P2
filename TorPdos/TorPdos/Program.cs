@@ -14,8 +14,24 @@ namespace TorPdos{
         [STAThread]
         static void Main(string[] args){
 
-            IDHandler.CreateUser("this is a password");
-            Console.ReadKey();
+            /*
+            //User validation testing
+            Console.Write("Generate user with random UUID and...\n" +
+                "Pass:");
+            IDHandler.CreateUser(Console.ReadLine());
+            Console.Write("See if the following credentials are valid...\n" +
+                "UUID: ");
+            string uuid = Console.ReadLine();
+            Console.Write("Pass: ");
+            if (IDHandler.IsValidUser(uuid, Console.ReadLine()))
+            {
+                Console.WriteLine("Match!");
+            }
+            else
+            {
+                Console.WriteLine("Mismatch!");
+            }
+            */
 
             MyForm TorPdos = new MyForm();
 

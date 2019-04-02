@@ -6,12 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Index_lib;
 using P2P_lib;
+using System.Security.Cryptography;
 
 namespace ID_lib
 {
     public class IDHandler
     {
-        private static string userdatafolder = "userdata";
+        private static readonly string userdatafolder = "userdata";
+        private static readonly int iterations = 10000;
+        private static readonly int hashlength = 20;
+        private static readonly int saltlength = 16;
 
         public static void CreateUser(string password)
         {
@@ -22,14 +26,34 @@ namespace ID_lib
             }
 
             string uuid = GenerateUUID();
+
+            string key = GenerateKey(string.Concat(uuid, password));
+
             using (StreamWriter userFile = File.CreateText(userdatafolder + "\\" + uuid))
             {
-                userFile.WriteLine(password);
+                userFile.WriteLine(key);
             }
-
         }
 
-        public static string GenerateUUID()
+        private static string GenerateKey(string keymold)
+        {
+            //Randomise salt
+            byte[] salt;
+            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+
+            //Get hash
+            Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(keymold, salt, iterations);
+            byte[] hash = key.GetBytes(hashlength);
+
+            //Combine salt and hash into key
+            byte[] hashBytes = new byte[hashlength + saltlength];
+            Array.Copy(salt, 0, hashBytes, 0, saltlength);
+            Array.Copy(hash, 0, hashBytes, saltlength, hashlength);
+
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        private static string GenerateUUID()
         {
             String guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             List<string> macAddresses = NetworkHelper.getMacAddresses();
@@ -40,28 +64,31 @@ namespace ID_lib
             return DiskHelper.CreateMD5(guid);
         }
 
-        public static bool IsUserPresent()
+        public static bool IsValidUser(string uuid, string password)
         {
-            //Test for validators in hidden subfolder
-            if (true)
+            try
             {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+                using (StreamReader userFile = new StreamReader(userdatafolder + "\\" + uuid))
+                {
+                    //Hash userdata, load 
+                    byte[] hashBytes = Convert.FromBase64String(userFile.ReadLine());
+                    byte[] salt = new byte[saltlength];
+                    Array.Copy(hashBytes, 0, salt, 0, saltlength);
+                    Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
+                    byte[] hash = key.GetBytes(hashlength);
 
-        public static bool ValidateUser(string uid, string password)
-        {
-            //find matching UID file
-            //compare password hash
-            if (true)
-            {
-                return true;
+                    //Compare hashes
+                    for (int i = 0; i < hashlength; i++)
+                    {
+                        if (hashBytes[i+saltlength] != hash[i])
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
             }
-            else
+            catch (Exception)
             {
                 return false;
             }
