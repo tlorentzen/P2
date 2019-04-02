@@ -1,45 +1,37 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace TorPdos
-{
-    public class MyForm : Form
-    {
-        Label lblUsername = new Label
-        {
+namespace TorPdos {
+    public class MyForm : Form {
+        Label lblUsername = new Label {
             Location = new Point(20, 20),
             Height = 40, Width = 200,
             Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Username",
             ForeColor = ColorTranslator.FromHtml("#CC7178")
         };
-
-        Label lblPassword = new Label()
-        {
+        Label lblPassword = new Label() {
             Location = new Point(20, 70),
             Height = 40, Width = 200,
             Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Password:",
             ForeColor = ColorTranslator.FromHtml("#CC7178")
         };
-        Label lblYouDidIt = new Label()
-        {
+        Label lblYouDidIt = new Label() {
             Location = new Point(100, 100),
             Height = 40, Width = 200,
             Text = "You did it o/",
             ForeColor = ColorTranslator.FromHtml("#CC7178"),
             Font = new Font("Consolas", 20, FontStyle.Regular)
         };
-        Label lblNope = new Label()
-        {
+        Label lblNope = new Label() {
             Location = new Point(60, 110),
             Height = 40, Width = 300,
             Text = "Wrong username or password",
             ForeColor = ColorTranslator.FromHtml("#FFF8F7"),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
-        TextBox txtUsername = new TextBox()
-        {
+        TextBox txtUsername = new TextBox() {
             Location = new Point(170, 20),
             Height = 50,Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
@@ -47,8 +39,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml("#320117"),
             BackColor = ColorTranslator.FromHtml("#FFD9DA")
         };
-        TextBox txtPassword = new TextBox()
-        {
+        TextBox txtPassword = new TextBox() {
             Location = new Point(170, 70),
             Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
@@ -57,8 +48,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml("#320117"),
             BackColor = ColorTranslator.FromHtml("#FFD9DA")
         };
-        Button btnLogin = new Button()
-        {
+        Button btnLogin = new Button() {
             Location = new Point(70, 150),
             Width = 250,
             Height = 70,
@@ -67,8 +57,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml("#F3E1DD")
         };
 
-        public MyForm()
-        {
+        public MyForm() {
             SuspendLayout();
             FormBorderStyle = FormBorderStyle.FixedSingle;
             StartPosition = FormStartPosition.CenterScreen;
@@ -90,10 +79,8 @@ namespace TorPdos
             btnLogin.Click += new System.EventHandler(BtnClickLogin);
         }
 
-        void BtnClickLogin(object sender, System.EventArgs e)
-        {
-            if ((txtUsername.Text == "Admin") && (txtPassword.Text == "Password"))
-            {
+        void BtnClickLogin(object sender, System.EventArgs e) {
+            if ((txtUsername.Text == "Admin") && (txtPassword.Text == "Password")) {
                 Controls.Add(lblYouDidIt);
                 Controls.Remove(btnLogin);
                 Controls.Remove(txtPassword);
@@ -101,7 +88,7 @@ namespace TorPdos
                 Controls.Remove(lblUsername);
                 Controls.Remove(lblPassword);
                 Controls.Remove(lblNope);
-            } else{
+            } else {
                 Controls.Add(lblNope);
             }
         }

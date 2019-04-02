@@ -9,10 +9,8 @@ using System.Net;
 using System.Threading;
 using System.IO;
 
-namespace P2P_lib
-{
-    public class FileReceiver
-    {
+namespace P2P_lib {
+    public class FileReceiver {
         private IPAddress ip;
         private int port;
         private TcpListener server = null;
@@ -21,16 +19,14 @@ namespace P2P_lib
         private byte[] buffer;
         private String filename;
 
-        public FileReceiver(String filename, int bufferSize = 1024)
-        {
+        public FileReceiver(String filename, int bufferSize = 1024) {
             this.filename = filename;
             this.ip = IPAddress.Any;
             this.port = NetworkHelper.getAvailablePort(55000, 56000);
             this.buffer = new byte[bufferSize];
         }
 
-        public void start()
-        {
+        public void start() {
             server = new TcpListener(this.ip, this.port);
             server.AllowNatTraversal(true);
             server.Start();
@@ -40,30 +36,24 @@ namespace P2P_lib
             listener.Start();
         }
 
-        public void stop()
-        {
+        public void stop() {
             this.listening = false;
             server.Stop();
         }
 
-        private void connectionHandler()
-        {
+        private void connectionHandler()  {
 
-            while (this.listening)
-            {
+            while (this.listening) {
                 TcpClient client = server.AcceptTcpClient();
 
-                using (NetworkStream stream = client.GetStream())
-                {
-                    if (!Directory.Exists("output"))
-                    {
+                using (NetworkStream stream = client.GetStream()) {
+                    if (!Directory.Exists("output")) {
                         Directory.CreateDirectory("output");
                     }
 
                     Console.WriteLine("Receiving file");
 
-                    using (var fileStream = File.Open(@"output/" + this.filename, FileMode.OpenOrCreate, FileAccess.Write))
-                    {
+                    using (var fileStream = File.Open(@"output/" + this.filename, FileMode.OpenOrCreate, FileAccess.Write)) {
                         Console.WriteLine("Creating file: " + this.filename);
                         int i;
                         /*long initialFileSize = stream.Length;
@@ -72,8 +62,7 @@ namespace P2P_lib
 
                         /*Console.WriteLine(initialFileSize.ToString());*/
 
-                        while ((i = stream.Read(buffer, 0, buffer.Length)) > 0)
-                        {
+                        while ((i = stream.Read(buffer, 0, buffer.Length)) > 0) {
                             //fileStream.Write(buffer, 0, (i < buffer.Length) ? i : buffer.Length);
                             fileStream.Write(buffer, 0, buffer.Length);
                         }
@@ -105,7 +94,7 @@ namespace P2P_lib
             }
         }
 
-        public int getPort(){
+        public int getPort() {
             return this.port;
         }
         
