@@ -11,6 +11,8 @@ using System.Net.Sockets;
 using P2P_lib.Messages;
 using P2P_lib;
 using Index_lib;
+using Compression;
+using Encryption;
 
 namespace P2P_lib {
     public class NetworkProtocols {
@@ -21,10 +23,32 @@ namespace P2P_lib {
             _index = index;
             _network = network;
         }
+
+        //This is the function called to upload a file to the network
+        //It takes a path to the file, the number of copies and a seed
+        //The seed is to ensure that the same nodes doesn't end up with the files every time
         public void UploadFileToNetwork (string filePath, int copies, int seed = 0) {
+            
+            //This keeps the number of copies between 0 and 50
             copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
-            for(int i = 0; i < copies; i++) {
-                Task.Factory.StartNew(() => SendUploadRequest(filePath, seed + i));
+
+            //Then the current time is found, to create a unique name for the temporary files
+            DateTime utc = DateTime.UtcNow;
+
+            //Then a path is made for the temporary files
+            string compressedFilePath = _index.GetPath() + utc.ToString();
+
+            //The file is then compressed
+            ByteCompressor.CompressFile(filePath, compressedFilePath);
+
+            //And then encrypted
+            FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
+            encryption.doEncrypt("password");
+            string readyFile = compressedFilePath + ".aes";
+
+            //A copy of the compressed and encrypted file is then send to peers
+            for (int i = 0; i < copies; i++) {
+                Task.Factory.StartNew(() => SendUploadRequest(readyFile, seed + i));
             }
         }
 
