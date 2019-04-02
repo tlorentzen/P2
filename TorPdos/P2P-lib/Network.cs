@@ -30,8 +30,8 @@ namespace P2P_lib{
             receive.MessageReceived += Receive_MessageReceived;
             receive.start();
 
-            //_pingThread = new Thread(this.PingHandler);
-            //_pingThread.Start();
+            _pingThread = new Thread(this.PingHandler);
+            _pingThread.Start();
         }
 
         public void AddPeer(string uuid, string ip){
