@@ -146,6 +146,7 @@ namespace P2P_lib{
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
+                peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress()));
                 peerFetch.statuscode = StatusCode.OK;
                 peerFetch.type = Messages.TypeCode.REQUEST;
                 peerFetch.Send();
