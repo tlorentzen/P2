@@ -64,5 +64,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Index-lib\Index-lib.csproj">
+      <Project>{ddf158f6-a177-4088-9455-20e909e9d313}</Project>
+      <Name>Index-lib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
