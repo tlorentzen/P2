@@ -21,11 +21,7 @@ namespace P2P_lib{
         public Peer() : this(null, null){}
 
         public Peer(string uuid, string ip){
-            if(uuid == null || uuid.Equals("")) {
-                this.createUUID();
-            } else{
-                this._UUID = uuid;
-            }
+            this._UUID = uuid;
 
             if(ip == null || ip.Equals("")){
                 this.SetIP(NetworkHelper.getLocalIPAddress());
@@ -110,16 +106,6 @@ namespace P2P_lib{
                     _rating += value;
                 }
             }
-        }
-
-        private void createUUID(){
-            String guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-            List<string> macAddresses = NetworkHelper.getMacAddresses();
-
-            foreach(string mac in macAddresses){
-                guid += mac;
-            }
-            this._UUID = DiskHelper.CreateMD5(guid);
         }
 
         public int CompareTo(object obj){
