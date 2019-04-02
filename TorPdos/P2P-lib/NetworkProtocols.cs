@@ -14,12 +14,12 @@ using Index_lib;
 using Compression;
 using Encryption;
 
-namespace P2P_lib {
-    public class NetworkProtocols {
+namespace P2P_lib{
+    public class NetworkProtocols{
         Receiver receiver;
         private Index _index { get; set; }
         private Network _network { get; set; }
-        public NetworkProtocols(Index index, Network network) {
+        public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
         }
@@ -27,7 +27,7 @@ namespace P2P_lib {
         //This is the function called to upload a file to the network
         //It takes a path to the file, the number of copies and a seed
         //The seed is to ensure that the same nodes doesn't end up with the files every time
-        public void UploadFileToNetwork (string filePath, int copies, int seed = 0) {
+        public void UploadFileToNetwork (string filePath, int copies, int seed = 0){
             
             //This keeps the number of copies between 0 and 50
             copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
@@ -52,7 +52,7 @@ namespace P2P_lib {
             }
         }
 
-        private void SendUploadRequest(string filePath, int seed = 0) {
+        private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count - 1;
             UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
@@ -69,19 +69,19 @@ namespace P2P_lib {
             upload.Send();
         }
 
-        private void Receiver_MessageReceived(BaseMessage msg) {
-            if (msg.GetMessageType() == typeof(UploadMessage)) {
+        private void Receiver_MessageReceived(BaseMessage msg){
+            if (msg.GetMessageType() == typeof(UploadMessage)){
                 UploadMessage upload = (UploadMessage)msg;
 
-                if (upload.type.Equals(Messages.TypeCode.REQUEST)) {
-                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize) {
+                if (upload.type.Equals(Messages.TypeCode.REQUEST)){
+                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                         upload.statuscode = StatusCode.ACCEPTED;
                     } else {
                         upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                     }
                     upload.CreateReply();
                     upload.Send();
-                }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
+                }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
                     if(upload.statuscode == StatusCode.ACCEPTED) {
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
                         string filePath = indexFile.getPath();
