@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Indexer">
@@ -95,6 +97,10 @@
     <ProjectReference Include="..\Encryption\Encryption.csproj">
       <Project>{e15f2f49-a146-4f29-a5be-23df6d1fe0c8}</Project>
       <Name>Encryption</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ID-lib\ID-lib.csproj">
+      <Project>{86cc7574-31c7-463c-90d8-a5a0db5c0630}</Project>
+      <Name>ID-lib</Name>
     </ProjectReference>
     <ProjectReference Include="..\Index-lib\Index-lib.csproj">
       <Project>{ddf158f6-a177-4088-9455-20e909e9d313}</Project>

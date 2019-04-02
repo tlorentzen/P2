@@ -7,14 +7,12 @@ using System.Windows.Forms;
 using System.Drawing;
 using Index_lib;
 using P2P_lib;
+using ID_lib;
 
-namespace TorPdos
-{
-    class Program
-    {
+namespace TorPdos{
+    class Program{
         [STAThread]
-        static void Main(string[] args)
-        {
+        static void Main(string[] args){
 
             MyForm TorPdos = new MyForm();
 
@@ -29,6 +27,7 @@ namespace TorPdos
             idx.load();
             idx.FileAdded += Idx_FileAdded;
             idx.FileChanged += Idx_FileChanged;
+            idx.FileDeleted += Idx_FileDeleted;
 
             if(!idx.load()){
                 idx.buildIndex();
@@ -38,28 +37,27 @@ namespace TorPdos
             Network p2p = new Network(25565);
             p2p.Start();
 
-            while (running)
-            {
+            while (running){
                 string console = Console.ReadLine();
                 string[] param = console.Split(' ');
 
-                if (console.Equals("quit") || console.Equals("q"))
-                {
+                if (console.Equals("quit") || console.Equals("q")){
                     Console.WriteLine("Quitting...");
                     idx.save();
                     p2p.Stop();
                     running = false;
-                }
-                else
-                {
-                    if (console.StartsWith("add") && param.Length == 3)
-                    {
+                } else{
+                    if (console.StartsWith("add") && param.Length == 3){
                         p2p.AddPeer(param[1], param[2]);
-                    }else if(console.Equals("gui")){
+                    } else if(console.Equals("gui")){
                         Application.Run(TorPdos);
-                    }
-                    else
-                    {
+                    } else if (console.Equals("upload") && param.Length == 3) {
+                        if(int.TryParse(param[2], out int n)) {
+                            new NetworkProtocols(idx, p2p).UploadFileToNetwork(param[1], int.Parse(param[2]));
+                        } else{
+                            Console.WriteLine("Second parameter must be an integer");
+                        }
+                    } else{
                         Console.WriteLine("Unknown command");
                     }
                 }
@@ -68,13 +66,20 @@ namespace TorPdos
             Console.ReadKey();
         }
 
-        private static void Idx_FileAdded(IndexFile file)
+        private static void Idx_FileDeleted(IndexFile file)
         {
-            Console.WriteLine("File added: "+file.hash);
+            if(file == null){
+                Console.WriteLine("File deleted: null...");
+            }else{
+                Console.WriteLine("File deleted: " + file.hash);
+            }
         }
 
-        private static void Idx_FileChanged(IndexFile file)
-        {
+        private static void Idx_FileAdded(IndexFile file){
+            Console.WriteLine("File added: " + file.hash);
+        }
+
+        private static void Idx_FileChanged(IndexFile file){
             Console.WriteLine("File changed: " + file.hash);
         }
         /*

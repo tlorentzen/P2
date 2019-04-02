@@ -2,10 +2,8 @@
 using System.IO;
 //Fecthed from https://github.com/episage/lzma-compressor
 
-namespace SevenZip.Compression.LZMA
-{
-    public static class SevenZipHelper
-    {
+namespace SevenZip.Compression.LZMA{
+    public static class SevenZipHelper{
         static int dictionary = 1 << 23;
 
         // static Int32 posStateBits = 2;
@@ -18,7 +16,7 @@ namespace SevenZip.Compression.LZMA
 
         static bool eos = false;
 
-        static CoderPropID[] propIDs = {
+        static CoderPropID[] propIDs ={
             CoderPropID.DictionarySize,
             CoderPropID.PosStateBits,
             CoderPropID.LitContextBits,
@@ -30,7 +28,7 @@ namespace SevenZip.Compression.LZMA
         };
 
         // these are the default properties, keeping it simple for now:
-        static object[] properties = {
+        static object[] properties ={
             (Int32)(dictionary),
             (Int32)(2),
             (Int32)(3),
@@ -41,8 +39,7 @@ namespace SevenZip.Compression.LZMA
             eos
         };
 
-        public static byte[] Compress(byte[] inputBytes)
-        {
+        public static byte[] Compress(byte[] inputBytes){
             MemoryStream inStream = new MemoryStream(inputBytes);
             MemoryStream outStream = new MemoryStream();
             SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
@@ -55,8 +52,7 @@ namespace SevenZip.Compression.LZMA
             return outStream.ToArray();
         }
 
-        public static byte[] Decompress(byte[] inputBytes)
-        {
+        public static byte[] Decompress(byte[] inputBytes){
             MemoryStream newInStream = new MemoryStream(inputBytes);
 
             SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();
@@ -69,8 +65,7 @@ namespace SevenZip.Compression.LZMA
                 throw (new Exception("input .lzma is too short"));
 
             long outSize = 0;
-            for (int i = 0; i < 8; i++)
-            {
+            for (int i = 0; i < 8; i++){
                 int v = newInStream.ReadByte();
                 if (v < 0)
                     throw (new Exception("Can't Read 1"));

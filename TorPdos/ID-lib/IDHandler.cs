@@ -8,8 +8,50 @@ namespace ID_lib
 {
     class IDHandler
     {
-        static void Main(string[] args)
+        static void CreateUserFolder()
         {
+            /*string test = System.IO.Path.GetDirectoryName(Application.ExecutablePath);*/
+            if (true)
+            {
+
+            }
+            //System.IO.Path.GetDirectoryName(Application.ExecutablePath)
         }
+
+        static void CreateUser(string password)
+        {
+            //Generate UID
+            //
+        }
+
+        static bool IsUserPresent()
+        {
+            //Test for validators in hidden subfolder
+            if (true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        static bool ValidateUser(string uid, string password)
+        {
+            //find matching UID file
+            //compare password hash
+            if (true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
     }
 }

@@ -7,10 +7,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using P2P_lib.Messages;
 
-namespace P2P_lib
-{
-    public class Network
-    {
+namespace P2P_lib{
+    public class Network{
         private int _port;
         private bool _running = false;
         private Thread _pingThread;
@@ -21,8 +19,7 @@ namespace P2P_lib
             this._port = port;
         }
 
-        public List<Peer> getPeerList()
-        {
+        public List<Peer> getPeerList(){
             return peers.ToList<Peer>();
         }
 
@@ -79,6 +76,7 @@ namespace P2P_lib
                 upload.CreateReply();
                 upload.Send();
             }
+
         }
 
         private void RechievedPing(PingMessage ping)
@@ -88,6 +86,7 @@ namespace P2P_lib
                 if (peer.GetIP().Equals(ping.from)) {
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
+
                 }
             }
 
@@ -108,18 +107,14 @@ namespace P2P_lib
             receive.stop();
         }
         
-        private void PingHandler()
-        {
-            while(this._running)
-            {
+        private void PingHandler(){
+            while(this._running){
                 long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-                foreach (Peer peer in peers)
-                {
+                foreach (Peer peer in peers){
                     peer.Ping(millis);
 
-                    if(!this._running)
-                    {
+                    if(!this._running){
                         break;
                     }
                 }
