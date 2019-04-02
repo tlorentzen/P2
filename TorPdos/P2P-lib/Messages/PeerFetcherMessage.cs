@@ -11,12 +11,11 @@ namespace P2P_lib.Messages{
 
         public List<Peer> Peers;
 
-        
         /// <summary>
         /// This is the response function to a request of a list of peers.
         /// </summary>
         /// <param name="input"></param>
-        public void sendPeers(List<Peer> input){
+        public void SendPeers(List<Peer> input){
             this.type = TypeCode.RESPONSE;
             this.statuscode = StatusCode.OK;
             string from_Ip = this.@from;

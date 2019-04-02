@@ -56,6 +56,11 @@ namespace TorPdos{
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml("#F3E1DD")
         };
+        NotifyIcon noiTorPdos = new NotifyIcon() {
+            Text = "TorPdos",
+            Icon = new Icon("TorPdos.ico"),
+            Visible = true
+        };
 
         public MyForm(){
             SuspendLayout();
@@ -76,7 +81,10 @@ namespace TorPdos{
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
 
-            btnLogin.Click += new System.EventHandler(BtnClickLogin);
+
+            btnLogin.Click += BtnClickLogin;
+            noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
+            Resize += MyformResize;
         }
 
         void BtnClickLogin(object sender, System.EventArgs e){
@@ -91,6 +99,21 @@ namespace TorPdos{
             } else{
                 Controls.Add(lblNope);
             }
+        }
+
+        void MyformResize(object sender, System.EventArgs e){
+            if (this.WindowState == FormWindowState.Minimized){
+                Hide();
+                noiTorPdos.Visible = true;
+            } else if(this.WindowState == FormWindowState.Normal){
+                noiTorPdos.Visible = false;
+            }
+        }
+
+        void noiTorPdosDoubleClick(object sender, System.EventArgs e){
+            this.Show();
+            noiTorPdos.Visible = false;
+            WindowState = FormWindowState.Normal;
         }
     }
 }
