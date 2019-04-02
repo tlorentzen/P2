@@ -43,7 +43,8 @@ namespace P2P_lib{
         public void AddPeer(string uuid, string ip){
             Peer peer = new Peer(uuid, ip);
             this.peers.Add(peer);
-            peer.Ping();
+            long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            peer.Ping(millis);
         }
 
         private void Receive_MessageReceived(BaseMessage message)
