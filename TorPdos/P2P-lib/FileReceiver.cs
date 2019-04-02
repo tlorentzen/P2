@@ -22,7 +22,7 @@ namespace P2P_lib{
         public FileReceiver(String filename, int bufferSize = 1024){
             this.filename = filename;
             this.ip = IPAddress.Any;
-            this.port = NetworkHelper.getAvailablePort(55000, 56000);
+            this.port = 0; //NetworkHelper.getAvailablePort(55000, 56000);
             this.buffer = new byte[bufferSize];
         }
 
