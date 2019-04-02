@@ -23,13 +23,13 @@ namespace P2P_lib{
         public Peer(string uuid, string ip){
             if(uuid == null || uuid.Equals("")) {
                 this.createUUID();
-            }else{
+            } else{
                 this._UUID = uuid;
             }
 
             if(ip == null || ip.Equals("")){
                 this.SetIP(NetworkHelper.getLocalIPAddress());
-            } else {
+            } else{
                 this.SetIP(ip);
             }
 
