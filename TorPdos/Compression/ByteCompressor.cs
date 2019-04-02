@@ -3,13 +3,10 @@ using System.IO;
 using System.Text;
 using SevenZip.Compression.LZMA;
 
-namespace Compression
-{
-    public class ByteCompressor
-    {
+namespace Compression{
+    public class ByteCompressor{
 
-        public static byte[] CompressBytes(byte[] inData)
-        {
+        public static byte[] CompressBytes(byte[] inData){
             Console.WriteLine("Original data is {0} bytes", inData.Length);
             //Compress byte array
             byte[] Compressed = SevenZipHelper.Compress(inData);
@@ -19,8 +16,7 @@ namespace Compression
 
         }
 
-        public static byte[] DecompressBytes(byte[] inData)
-        {
+        public static byte[] DecompressBytes(byte[] inData){
             Console.WriteLine("Compressed data is {0} bytes", inData.Length);
             //Decompress byte array
             byte[] Decompressed = SevenZipHelper.Decompress(inData);
@@ -29,24 +25,18 @@ namespace Compression
             return Decompressed;
         }
 
-        public static void CompressFile(string inPath, string outPath)
-        {
-            if (File.Exists(inPath))
-            {
+        public static void CompressFile(string inPath, string outPath){
+            if (File.Exists(inPath)){
                 //Add .lzma extension to output file, if no other extension provided
-                if (!Path.HasExtension(outPath))
-                {
+                if (!Path.HasExtension(outPath)){
                     outPath = outPath + ".lzma";
                 }
-                if (!File.Exists(outPath))
-                {
+                if (!File.Exists(outPath)){
                     //Buffersize 12 MB
                     const int BUFFER_SIZE = 1024 * 1024 * 12;
 
-                    using (Stream inStream = File.OpenRead(inPath))
-                    {
-                        using (Stream outStream = File.Create(outPath))
-                        {
+                    using (Stream inStream = File.OpenRead(inPath)){
+                        using (Stream outStream = File.Create(outPath)){
                             // Save file extension
                             string ext = Path.GetExtension(inPath);
                             ext = ext.Length + ext;
@@ -54,20 +44,16 @@ namespace Compression
 
                             long remaining = inStream.Length - inStream.Position;
                             //Compress file 
-                            while (remaining > 0)
-                            {
+                            while (remaining > 0){
                                 //Read buffer from file
                                 int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
                                 byte[] buffer = new byte[BytesToRead];
                                 int BytesRead = inStream.Read(buffer, 0, BytesToRead);
 
-                                if (BytesRead != BytesToRead)
-                                {
+                                if (BytesRead != BytesToRead){
                                     //throw exception
                                     Console.WriteLine("Woopsie :)");
-                                }
-                                else
-                                {
+                                } else{
                                     //Compress buffer and write to outfile
                                     byte[] compressed = CompressBytes(buffer);
                                     outStream.Write(compressed, 0, compressed.Length);
@@ -76,30 +62,22 @@ namespace Compression
                             }
                         }
                     }
-                }
-                else
-                {
+                } else{
                     //Outfile already exists, add 2 to name
                     CompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
                 }
-            }
-            else
-            {
+            } else{
                 Console.WriteLine("The file you wish to compress does not exist");
             }
         }
 
-        public static void DecompressFile(string inPath, string outPath)
-        {
+        public static void DecompressFile(string inPath, string outPath){
             //Add .lzma to infile, if extesion not provided
-            if (!Path.HasExtension(inPath))
-            {
+            if (!Path.HasExtension(inPath)){
                 inPath = inPath + ".lzma";
             }
-            if (File.Exists(inPath))
-            {
-                using (Stream inStream = File.OpenRead(inPath))
-                {
+            if (File.Exists(inPath)){
+                using (Stream inStream = File.OpenRead(inPath)){
                     // Read file extension - Kan måske gøres simplere
                     byte[] extbyte = new byte[1];
                     extbyte[0] = (byte)inStream.ReadByte();
@@ -107,33 +85,27 @@ namespace Compression
                     byte[] extbuf = new byte[extlen];
                     inStream.Read(extbuf, 0, extlen);
                     string ext = Encoding.ASCII.GetString(extbuf);
-                    if (!Path.HasExtension(outPath) || Path.GetExtension(outPath) != ext)
-                    {
+                    if (!Path.HasExtension(outPath) || Path.GetExtension(outPath) != ext){
                         outPath = outPath + ext;
                     }
 
-                    if (!File.Exists(outPath))
-                    {
+                    if (!File.Exists(outPath)){
                         //Readbuffer 12MB
                         const int BUFFER_SIZE = 1024 * 1024 * 12;
 
-                        using (Stream outStream = File.Create(outPath))
-                        {
+                        using (Stream outStream = File.Create(outPath)){
                             long remaining = inStream.Length - inStream.Position;
                             //Decompress file
-                            while (remaining > 0)
-                            {
+                            while (remaining > 0){
                                 //Read buffer from file
                                 int BytesToRead = (int)(remaining > BUFFER_SIZE ? BUFFER_SIZE : remaining);
                                 byte[] buffer = new byte[BytesToRead];
                                 int BytesRead = inStream.Read(buffer, 0, BytesToRead);
-                                if (BytesRead != BytesToRead)
-                                {
+
+                                if (BytesRead != BytesToRead){
                                     //throw exception
                                     Console.WriteLine("Woopsie :)");
-                                }
-                                else
-                                {
+                                } else{
                                     //Decompress buffer
                                     byte[] decompressed = DecompressBytes(buffer);
                                     outStream.Write(decompressed, 0, decompressed.Length);
@@ -142,16 +114,12 @@ namespace Compression
                             }
                         }
 
-                    }
-                    else
-                    {
+                    } else{
                         //Appends 2 to tile name if file already exists
                         DecompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
                     }
                 }
-            }
-            else
-            {
+            } else{
                 Console.WriteLine("The file you wish to decompress does not exist");
             }
         }
