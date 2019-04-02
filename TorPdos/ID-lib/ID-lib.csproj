@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ID_lib</RootNamespace>
     <AssemblyName>ID-lib</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +44,16 @@
   <ItemGroup>
     <Compile Include="IDHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Index-lib\Index-lib.csproj">
+      <Project>{ddf158f6-a177-4088-9455-20e909e9d313}</Project>
+      <Name>Index-lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\P2P-lib\P2P-lib.csproj">
+      <Project>{f3998136-4dd4-49f8-b388-e4a67c808bfc}</Project>
+      <Name>P2P-lib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

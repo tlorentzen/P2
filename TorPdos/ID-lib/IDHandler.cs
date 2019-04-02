@@ -1,30 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Index_lib;
+using P2P_lib;
 
 namespace ID_lib
 {
-    class IDHandler
+    public class IDHandler
     {
-        static void CreateUserFolder()
+        private static string userdatafolder = "userdata";
+
+        public static void CreateUser(string password)
         {
-            /*string test = System.IO.Path.GetDirectoryName(Application.ExecutablePath);*/
-            if (true)
+            if (!Directory.Exists(userdatafolder))
             {
-
+                DirectoryInfo userdataDirectory = Directory.CreateDirectory(userdatafolder);
+                userdataDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
             }
-            //System.IO.Path.GetDirectoryName(Application.ExecutablePath)
+
+            string uuid = GenerateUUID();
+            using (StreamWriter userFile = File.CreateText(userdatafolder + "\\" + uuid))
+            {
+                userFile.WriteLine(password);
+            }
+
         }
 
-        static void CreateUser(string password)
+        public static string GenerateUUID()
         {
-            //Generate UID
-            //
+            String guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+            List<string> macAddresses = NetworkHelper.getMacAddresses();
+
+            foreach(string mac in macAddresses){
+                guid += mac;
+            }
+            return DiskHelper.CreateMD5(guid);
         }
 
-        static bool IsUserPresent()
+        public static bool IsUserPresent()
         {
             //Test for validators in hidden subfolder
             if (true)
@@ -37,7 +53,7 @@ namespace ID_lib
             }
         }
 
-        static bool ValidateUser(string uid, string password)
+        public static bool ValidateUser(string uid, string password)
         {
             //find matching UID file
             //compare password hash

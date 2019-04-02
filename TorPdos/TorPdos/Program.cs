@@ -14,6 +14,9 @@ namespace TorPdos{
         [STAThread]
         static void Main(string[] args){
 
+            IDHandler.CreateUser("this is a password");
+            Console.ReadKey();
+
             MyForm TorPdos = new MyForm();
 
             Boolean running = true;
