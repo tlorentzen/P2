@@ -43,8 +43,6 @@ namespace P2P_lib{
         public void AddPeer(string uuid, string ip){
             Peer peer = new Peer(uuid, ip);
             this.peers.Add(peer);
-            long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            peer.Ping(millis);
         }
 
         private void Receive_MessageReceived(BaseMessage message)
@@ -77,7 +75,7 @@ namespace P2P_lib{
                 foreach(Peer myPeer in peers) {
                     inPeers = false;
                     foreach(Peer yourPeer in message.Peers) {
-                        if(myPeer.GetIP() == yourPeer.GetIP()) {
+                        if(myPeer.GetIP() == yourPeer.GetIP() || yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()) {
                             message.Peers.Remove(yourPeer);
                             inPeers = true;
                             break;
@@ -95,8 +93,18 @@ namespace P2P_lib{
                 message.Send();
                 Console.WriteLine("Send peers back");
             } else {
+                bool inPeers = false;
                 foreach (Peer yourPeer in message.Peers) {
-                    peers.Add(yourPeer);
+                    inPeers = false;
+                    foreach (Peer myPeer in peers) {
+                        if (myPeer.GetIP() == yourPeer.GetIP() || yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()) {
+                            inPeers = true;
+                            break;
+                        }
+                    }
+                    if (!inPeers) {
+                        peers.Add(yourPeer);
+                    }
                 }
 
             }
@@ -138,6 +146,8 @@ namespace P2P_lib{
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
+                //TODO Insert username in place of "MyName"
+                peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress()));
                 peerFetch.statuscode = StatusCode.OK;
                 peerFetch.type = Messages.TypeCode.REQUEST;
                 peerFetch.Send();
