@@ -8,10 +8,8 @@ using System.Net.Sockets;
 using System.Threading;
 using P2P_lib.Messages;
 
-namespace P2P_lib
-{
-    public class Receiver
-    {
+namespace P2P_lib {
+    public class Receiver {
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void DidReceive(BaseMessage msg);
@@ -27,13 +25,13 @@ namespace P2P_lib
         private Thread listener;
         private byte[] buffer;
 
-        public Receiver(int port, int bufferSize=512){
+        public Receiver(int port, int bufferSize=512) {
             this.ip = IPAddress.Any;
             this.port = port;
             this.buffer = new byte[bufferSize];
         }
 
-        public void start(){
+        public void start() {
             server = new TcpListener(this.ip, port);
             server.AllowNatTraversal(true);
             server.Start();
@@ -44,26 +42,23 @@ namespace P2P_lib
             listener.Start();
         }
 
-        public void stop(){
+        public void stop() {
             server.Stop();
             this.listening = false;
         }
 
-        private void connectionHandler(){
+        private void connectionHandler() {
 
-            while (this.listening)
-            {
-                try{
+            while (this.listening) {
+                try {
                     TcpClient client = server.AcceptTcpClient();
                     NetworkStream stream = client.GetStream();
 
                     int i;
 
                     // Loop to receive all the data sent by the client.
-                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
-                    {
-                        if (!this.listening)
-                        {
+                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0) {
+                        if (!this.listening) {
                             break;
                         }
                     }
