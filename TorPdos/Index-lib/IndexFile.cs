@@ -35,6 +35,20 @@ namespace Index_lib
             this.ghost = ghost;
         }
 
+        // Deep copy.
+        public IndexFile Copy(){
+            IndexFile file = new  IndexFile();
+            file.hash = this.hash;
+            file.size = this.size;
+            file.ghost = this.ghost;
+
+            foreach (String path in this.paths){
+                file.paths.Add(path);
+            }
+
+            return file;
+        }
+
         public bool isGhostFile() {
             return this.ghost;
         }

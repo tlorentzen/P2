@@ -30,6 +30,7 @@ namespace TorPdos
             idx.load();
             idx.FileAdded += Idx_FileAdded;
             idx.FileChanged += Idx_FileChanged;
+            idx.FileDeleted += Idx_FileDeleted;
 
             if(!idx.load()){
                 idx.buildIndex();
@@ -83,6 +84,11 @@ namespace TorPdos
         private static void Idx_FileChanged(IndexFile file)
         {
             Console.WriteLine("File changed: " + file.hash);
+        }
+
+        private static void Idx_FileDeleted(IndexFile file)
+        {
+            Console.WriteLine("File deleted: " + file.hash);
         }
         /*
 
