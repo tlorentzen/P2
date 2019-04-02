@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+//Fecthed from https://github.com/episage/lzma-compressor
 
 namespace SevenZip.Compression.LZMA
 {
