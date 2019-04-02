@@ -16,11 +16,11 @@ namespace P2P_lib.Messages
     [Serializable]
     public abstract class BaseMessage
     {
-        public String ToUUID;
-        public String FromUUID;
-        public String to;
-        public String from;
-        private String hash;
+        public string ToUUID;
+        public string FromUUID;
+        public string to;
+        public string from;
+        private string hash;
         public StatusCode statuscode;
         public TypeCode type;
 
@@ -28,14 +28,14 @@ namespace P2P_lib.Messages
             return this.GetType();
         }
 
-        public abstract String GetHash();
+        public abstract string GetHash();
 
-        public BaseMessage(String to)
+        public BaseMessage(string to)
         {
             this.to = to;
         }
 
-        public Boolean Send()
+        public bool Send()
         {
             try{
                 using (TcpClient client = new TcpClient(this.to, 25565))
@@ -79,6 +79,13 @@ namespace P2P_lib.Messages
                 object obj = bf.Deserialize(ms);
                 return (BaseMessage)obj;
             }
+        }
+
+        public void CreateReply() {
+            this.type = TypeCode.RESPONSE;
+            string from_ip = this.from;
+            this.from = this.to;
+            this.to = from_ip;
         }
     }
 }

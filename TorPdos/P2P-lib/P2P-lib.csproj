@@ -52,6 +52,7 @@
     <Compile Include="Messages\PeerFetcherMessage.cs" />
     <Compile Include="Messages\PingMessage.cs" />
     <Compile Include="Messages\TextMessage.cs" />
+    <Compile Include="Messages\TransferStatusMessage.cs" />
     <Compile Include="Messages\UploadMessage.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkHelper.cs" />
