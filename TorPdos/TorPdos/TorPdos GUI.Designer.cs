@@ -5,7 +5,13 @@ namespace TorPdos
 {
     public class MyForm : Form
     {
-        Label lblUsername = new Label();
+        Label lblUsername = new Label {
+            Location = new Point(20, 20),
+            Height = 40, Width = 200,
+            Font = new Font("Arial", 20, FontStyle.Regular),
+            Text = "Username",
+            ForeColor = ColorTranslator.FromHtml("#CC7178")
+        };
         Label lblPassword = new Label();
         Label lblYouDidIt = new Label();
         Label lblNope = new Label();
@@ -27,13 +33,6 @@ namespace TorPdos
             this.ResumeLayout(false);
             this.BackColor = ColorTranslator.FromHtml("#320117");
             this.Icon = new Icon("TorPdos.ico");
-
-            lblUsername.Location = new Point(20, 20);
-            lblUsername.Height = 40;
-            lblUsername.Width = 200;
-            lblUsername.Font = new Font("Arial", 20, FontStyle.Regular);
-            lblUsername.Text = "Username:";
-            lblUsername.ForeColor = ColorTranslator.FromHtml("#CC7178");
 
             txtUsername.Location = new Point(170, 20);
             txtUsername.Height = 50;
