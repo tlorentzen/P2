@@ -41,13 +41,14 @@ namespace P2P_lib{
             receive.MessageReceived += Receive_MessageReceived;
             receive.start();
 
-            //_pingThread = new Thread(this.PingHandler);
-            //_pingThread.Start();
+            _pingThread = new Thread(this.PingHandler);
+            _pingThread.Start();
         }
 
         public void AddPeer(string uuid, string ip){
             Peer peer = new Peer(uuid, ip);
             this.peers.Add(peer);
+            peer.Ping();
         }
 
         private void Receive_MessageReceived(BaseMessage message)
