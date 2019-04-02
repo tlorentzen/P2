@@ -25,7 +25,7 @@ namespace TorPdos
             this.Name = "TorPdos";
             this.Text = "TorPdos";
             this.ResumeLayout(false);
-            this.BackColor = ColorTranslator.FromHtml("#A2BCE0");
+            this.BackColor = ColorTranslator.FromHtml("#320117");
             this.Icon = new Icon("TorPdos.ico");
 
             lblUsername.Location = new Point(20, 20);
@@ -33,21 +33,22 @@ namespace TorPdos
             lblUsername.Width = 200;
             lblUsername.Font = new Font("Arial", 20, FontStyle.Regular);
             lblUsername.Text = "Username:";
-            lblUsername.ForeColor = ColorTranslator.FromHtml("#0B5563");
+            lblUsername.ForeColor = ColorTranslator.FromHtml("#CC7178");
 
             txtUsername.Location = new Point(170, 20);
             txtUsername.Height = 50;
             txtUsername.Width = 150;
             txtUsername.Font = new Font("Arial", 15, FontStyle.Regular);
             txtUsername.MaxLength = 15;
-            txtUsername.ForeColor = ColorTranslator.FromHtml("#5299D3");
+            txtUsername.ForeColor = ColorTranslator.FromHtml("#320117");
+            txtUsername.BackColor = ColorTranslator.FromHtml("#FFD9DA");
 
             lblPassword.Location = new Point(20, 70);
             lblPassword.Height = 40;
             lblPassword.Width = 200;
             lblPassword.Font = new Font("Arial", 20, FontStyle.Regular);
             lblPassword.Text = "Password:";
-            lblPassword.ForeColor = ColorTranslator.FromHtml("#0B5563");
+            lblPassword.ForeColor = ColorTranslator.FromHtml("#CC7178");
 
             txtPassword.Location = new Point(170, 70);
             txtPassword.Height = 50;
@@ -55,14 +56,15 @@ namespace TorPdos
             txtPassword.Font = new Font("Arial", 15, FontStyle.Regular);
             txtPassword.MaxLength = 15;
             txtPassword.PasswordChar = '*';
-            txtPassword.ForeColor = ColorTranslator.FromHtml("#5299D3");
+            txtPassword.ForeColor = ColorTranslator.FromHtml("#320117");
+            txtPassword.BackColor = ColorTranslator.FromHtml("#FFD9DA");
 
-            btnLogin.Location = new Point(70, 120);
+            btnLogin.Location = new Point(70, 150);
             btnLogin.Width = 250;
-            btnLogin.Height = 100;
+            btnLogin.Height = 70;
             btnLogin.Text = "Login";
             btnLogin.Font = new Font("Arial", 25, FontStyle.Regular);
-            btnLogin.ForeColor = ColorTranslator.FromHtml("#5E5C6C");
+            btnLogin.ForeColor = ColorTranslator.FromHtml("#F3E1DD");
             btnLogin.Click += new System.EventHandler(BtnClickLogin);
 
 
@@ -70,23 +72,15 @@ namespace TorPdos
             lblYouDidIt.Height = 40;
             lblYouDidIt.Width = 200;
             lblYouDidIt.Text = "You did it o/";
-            lblYouDidIt.ForeColor = ColorTranslator.FromHtml("#0B5563");
+            lblYouDidIt.ForeColor = ColorTranslator.FromHtml("#CC7178");
             lblYouDidIt.Font = new Font("Arial", 20, FontStyle.Regular);
 
-            lblNope.Location = new Point(60, 50);
+            lblNope.Location = new Point(60, 110);
             lblNope.Height = 40;
             lblNope.Width = 300;
             lblNope.Text = "Wrong username or password";
-            lblNope.ForeColor = ColorTranslator.FromHtml("#0B5563");
+            lblNope.ForeColor = ColorTranslator.FromHtml("#FFF8F7");
             lblNope.Font = new Font("Arial", 15, FontStyle.Regular);
-
-            btnTryAgain.Location = new Point(70, 120);
-            btnTryAgain.Width = 250;
-            btnTryAgain.Height = 100;
-            btnTryAgain.Text = "Try Again";
-            btnTryAgain.Font = new Font("Arial", 25, FontStyle.Regular);
-            btnTryAgain.ForeColor = ColorTranslator.FromHtml("#5E5C6C");
-            btnTryAgain.Click += new System.EventHandler(BtnClickTryAgain);
 
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
@@ -97,7 +91,7 @@ namespace TorPdos
 
         void BtnClickLogin(object sender, System.EventArgs e)
         {
-            if (txtPassword.Text == "Welcome" && txtUsername.Text == "Hello")
+            if (txtPassword.Text == "Password" && txtUsername.Text == "Admin")
             {
                 Controls.Add(lblYouDidIt);
                 Controls.Remove(btnLogin);
@@ -105,27 +99,11 @@ namespace TorPdos
                 Controls.Remove(txtUsername);
                 Controls.Remove(lblUsername);
                 Controls.Remove(lblPassword);
+                Controls.Remove(lblNope);
             } else
             {
                 Controls.Add(lblNope);
-                Controls.Add(btnTryAgain);
-                Controls.Remove(btnLogin);
-                Controls.Remove(txtPassword);
-                Controls.Remove(txtUsername);
-                Controls.Remove(lblUsername);
-                Controls.Remove(lblPassword);
             }
-        }
-
-        void BtnClickTryAgain(object sender, System.EventArgs e)
-        {
-            Controls.Add(txtUsername);
-            Controls.Add(txtPassword);
-            Controls.Add(btnLogin);
-            Controls.Add(lblUsername);
-            Controls.Add(lblPassword);
-            Controls.Remove(lblNope);
-            Controls.Remove(btnTryAgain);
         }
     }
 }
