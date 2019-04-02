@@ -17,20 +17,20 @@ namespace P2P_lib {
         Receiver receiver;
         private Index _index { get; set; }
         private Network _network { get; set; }
-        private bool _threadPool = false;
         public NetworkProtocols(Index index, Network network) {
             _index = index;
             _network = network;
-            _threadPool = ThreadPool.SetMaxThreads(10, 10);
         }
         public void UploadFileToNetwork (string filePath, int copies, int seed = 0) {
+            copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
             for(int i = 0; i < copies; i++) {
-                Task.Factory.StartNew(() => SendUploadRequest(filePath, copies, seed));
+                Task.Factory.StartNew(() => SendUploadRequest(filePath, seed + i));
             }
         }
 
-        private void SendUploadRequest(string filePath, int copies, int seed = 0) {
+        private void SendUploadRequest(string filePath, int seed = 0) {
             List<Peer> peerlist = _network.getPeerList();
+            seed = seed % peerlist.Count - 1;
             UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
@@ -59,9 +59,10 @@ namespace P2P_lib {
                     upload.Send();
                 }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
                     if(upload.statuscode == StatusCode.ACCEPTED) {
-                        
+                        IndexFile indexFile = _index.GetEntry(upload.filehash);
+                        string filePath = indexFile.getPath();
                         FileSender fileSender = new FileSender(upload.from, upload.port);
-                        //fileSender.Send();
+                        fileSender.Send(filePath);
                     }
                 }
             }
