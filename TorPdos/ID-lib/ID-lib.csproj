@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C2845F45-FEFE-4B65-B20F-041A6BD40E3E}</ProjectGuid>
+    <ProjectGuid>{7FBCC988-5CCE-4496-93D7-A9FE4DC84B8D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>IDHandler</RootNamespace>
-    <AssemblyName>IDHandler</AssemblyName>
+    <RootNamespace>ID_lib</RootNamespace>
+    <AssemblyName>ID_lib</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
