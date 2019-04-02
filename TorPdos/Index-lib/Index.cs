@@ -57,6 +57,17 @@ namespace Index_lib{
             this.buildIndex();
         }
 
+        public IndexFile GetEntry(string hash){
+
+            foreach (IndexFile ifile in index){
+                if (ifile.hash.Equals(hash)){
+                    return ifile;
+                }
+            }
+
+            return null;
+        }
+
         public void buildIndex(){
             string[] files =
                 Directory.GetFiles(this._path, "*",
