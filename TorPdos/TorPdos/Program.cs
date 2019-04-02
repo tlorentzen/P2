@@ -17,8 +17,8 @@ namespace TorPdos
         static void Main(string[] args)
         {
 
-            MyForm TorPdos = new MyForm();
-            Application.Run(TorPdos);
+           // MyForm TorPdos = new MyForm();
+           // Application.Run(TorPdos);
 
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
