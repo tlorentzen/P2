@@ -75,7 +75,7 @@ namespace P2P_lib{
                 foreach(Peer myPeer in peers) {
                     inPeers = false;
                     foreach(Peer yourPeer in message.Peers) {
-                        if(myPeer.GetIP() == yourPeer.GetIP()) {
+                        if(myPeer.GetIP() == yourPeer.GetIP() || yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()) {
                             message.Peers.Remove(yourPeer);
                             inPeers = true;
                             break;
