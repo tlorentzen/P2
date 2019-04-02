@@ -17,6 +17,7 @@ using Encryption;
 namespace P2P_lib{
     public class NetworkProtocols{
         Receiver receiver;
+        private NetworkPorts port = new NetworkPorts();
         private Index _index { get; set; }
         private Network _network { get; set; }
         public NetworkProtocols(Index index, Network network){
@@ -57,7 +58,7 @@ namespace P2P_lib{
 
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
-            //seed = seed % peerlist.Count - 1;
+            seed = seed % peerlist.Count;
             UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
@@ -65,7 +66,7 @@ namespace P2P_lib{
             upload.path = filePath;
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
-            upload.port = 0; // NetworkHelper.getAvailablePort(55000, 56000);
+            upload.port = port.GetAvailablePort();
             receiver = new Receiver(upload.port);
             receiver.start();
             receiver.MessageReceived += Receiver_MessageReceived;
@@ -84,6 +85,7 @@ namespace P2P_lib{
                     }
                     upload.CreateReply();
                     upload.Send();
+
                 }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
                     if(upload.statuscode == StatusCode.ACCEPTED) {
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
