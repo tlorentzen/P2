@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IDHandler")]
+[assembly: AssemblyTitle("ID-lib")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("IDHandler")]
+[assembly: AssemblyProduct("ID-lib")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c2845f45-fefe-4b65-b20f-041a6bd40e3e")]
+[assembly: Guid("7fbcc988-5cce-4496-93d7-a9fe4dc84b8d")]
 
 // Version information for an assembly consists of the following four values:
 //
