@@ -59,7 +59,17 @@ namespace TorPdos{
                         } else{
                             Console.WriteLine("Third parameter must be an integer");
                         }
-                    } else{
+                    }else if(console.Equals("reindex")){
+                        idx.reIndex();
+                    }else if(console.Equals("status")){
+                        idx.status();
+                    }
+                    else if (console.Equals("save"))
+                    {
+                        idx.save();
+                    }
+                    else
+                    {
                         Console.WriteLine("Unknown command");
                     }
                 }
