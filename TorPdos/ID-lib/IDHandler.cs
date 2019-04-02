@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Index_lib;
 
 namespace ID_lib
 {
@@ -11,13 +10,12 @@ namespace ID_lib
     {
         static void CreateUserFolder()
         {
-            string test = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
-            if ()
+            /*string test = System.IO.Path.GetDirectoryName(Application.ExecutablePath);*/
+            if (true)
             {
 
             }
             //System.IO.Path.GetDirectoryName(Application.ExecutablePath)
-            HiddenFolder.Add();
         }
 
         static void CreateUser(string password)
