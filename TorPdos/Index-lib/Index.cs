@@ -10,9 +10,9 @@ using System.Threading;
 
 namespace Index_lib{
     public class Index{
-        private String _path;
-        private String _indexFilePath = null;
-        private Boolean _debug = false;
+        private string _path;
+        private string _indexFilePath = null;
+        private bool _debug = false;
         private HiddenFolder _hiddenFolder;
 
         //This delegate can be used to point to methods
@@ -52,6 +52,10 @@ namespace Index_lib{
             watcher.EnableRaisingEvents = true;
         }
 
+        public string GetPath() {
+            return _path;
+        }
+
         public void reIndex(){
             this.index.Clear();
             this.buildIndex();
@@ -62,10 +66,10 @@ namespace Index_lib{
                 Directory.GetFiles(this._path, "*",
                     SearchOption.AllDirectories); //TODO rewrite windows functionality D://
 
-            foreach (String filePath in files){
+            foreach (string filePath in files){
                 if (!IgnoreHidden(filePath)){
                     if (!this._indexFilePath.Equals(filePath)){
-                        Boolean foundInIndex = false;
+                        bool foundInIndex = false;
                         IndexFile file = new IndexFile(filePath);
 
                         foreach (IndexFile ifile in index){
@@ -91,11 +95,11 @@ namespace Index_lib{
             this.save();
         }
 
-        public void setIndexFilePath(String path){
+        public void setIndexFilePath(string path){
             this._indexFilePath = path;
         }
 
-        public void debug(Boolean value){
+        public void debug(bool value){
             this._debug = value;
         }
 
@@ -120,8 +124,8 @@ namespace Index_lib{
                 if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                     return;
 
-                Boolean foundInIndex = false;
-                Boolean fileRemoved = false;
+                bool foundInIndex = false;
+                bool fileRemoved = false;
                 IndexFile eventFile = new IndexFile(e.FullPath);
                 IndexFile foundMatch = eventFile;
 
@@ -213,7 +217,7 @@ namespace Index_lib{
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
 
-            Boolean foundInIndex = false;
+            bool foundInIndex = false;
             IndexFile eventFile = new IndexFile(e.FullPath);
 
             foreach (IndexFile file in index){
@@ -392,9 +396,9 @@ namespace Index_lib{
             return false;
         }
 
-        public Boolean load(){
+        public bool load(){
             if (_indexFilePath != null && File.Exists(this._indexFilePath)){
-                String json = File.ReadAllText(this._indexFilePath);
+                string json = File.ReadAllText(this._indexFilePath);
                 this.index = JsonConvert.DeserializeObject<LinkedList<IndexFile>>(json);
                 return true;
             }
@@ -404,7 +408,7 @@ namespace Index_lib{
 
         public void save(){
             if (_indexFilePath != null){
-                String json = JsonConvert.SerializeObject(index);
+                string json = JsonConvert.SerializeObject(index);
 
                 using (var fileStream = _hiddenFolder.WriteToFile(this._indexFilePath)){
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(json);

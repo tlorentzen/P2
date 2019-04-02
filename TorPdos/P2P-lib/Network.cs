@@ -12,7 +12,7 @@ namespace P2P_lib
     public class Network
     {
         private int _port;
-        private Boolean _running = false;
+        private bool _running = false;
         private Thread _pingThread;
         private Receiver receive;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
@@ -61,28 +61,6 @@ namespace P2P_lib
                     ping.CreateReply();
                     ping.statuscode = StatusCode.OK;
                     ping.Send();
-                }
-            }
-            if (message.GetMessageType() == typeof(UploadMessage)) {
-                UploadMessage upload = (UploadMessage)message;
-
-                if (upload.type.Equals(Messages.TypeCode.REQUEST)) {
-                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize) {
-                        upload.statuscode = StatusCode.ACCEPTED;
-                    } else {
-                        upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
-                    }
-                    upload.CreateReply();
-                    upload.Send();
-
-                }else if (message.type.Equals(Messages.TypeCode.RESPONSE)) {
-                    if (upload.statuscode == StatusCode.ACCEPTED) {
-                        FileSender fileSender = new FileSender(upload.from, upload.port);
-                        fileSender.Send(upload.path);
-                    } else {
-                        //Change rank of peer
-                        //Send request to new peer
-                    }
                 }
             }
         }

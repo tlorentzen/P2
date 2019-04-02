@@ -8,21 +8,21 @@ namespace Index_lib
     [Serializable]
     public class IndexFile
     {
-        public String hash;
+        public string hash;
         public long size;
-        public Boolean ghost;
+        public bool ghost;
 
-        public List<String> paths = new List<string>();
+        public List<string> paths = new List<string>();
 
         public IndexFile():this(null) { }
 
-        public IndexFile(String path) {
+        public IndexFile(string path) {
             if (path != null) {
                 this.addPath(path);
             }
         }
 
-        public void addPath(String path, Boolean ghost=false) {
+        public void addPath(string path, bool ghost=false) {
             if (!ghost && File.Exists(path)) {
                 this.paths.Add(path);
                 this.makeFileHash();
@@ -35,16 +35,17 @@ namespace Index_lib
             this.ghost = ghost;
         }
 
-        public Boolean isGhostFile() {
+        public bool isGhostFile() {
             return this.ghost;
         }
 
-        public String getHash() {
+        public string getHash() {
             return this.hash;
         }
 
-        public String getPath() {
-            return this.paths[0];
+        public string getPath(int pathNumber = 0) {
+            int _pathNumber = (pathNumber > paths.Count ? paths.Count -1 : pathNumber);
+            return this.paths[_pathNumber];
         }
 
         private void makeFileHash() {
@@ -61,7 +62,7 @@ namespace Index_lib
             this.makeFileHash();
         }
 
-        public override bool Equals(Object obj){
+        public override bool Equals(object obj){
             return (obj is IndexFile) && ((IndexFile)obj).hash == this.hash;
         }
 

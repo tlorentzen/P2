@@ -5,6 +5,10 @@ namespace Index_lib
 {
     public class HiddenFolder
     {
+
+        private string _path;
+        private DirectoryInfo _directory;
+
         public HiddenFolder(string path)
         {
             _path = path;
@@ -23,9 +27,6 @@ namespace Index_lib
                 _directory.Attributes |= FileAttributes.Hidden;
             }
         }
-
-        private string _path;
-        private DirectoryInfo _directory;
 
         //Adds file or directory from path to the hidden directory
         public void Add(string path)

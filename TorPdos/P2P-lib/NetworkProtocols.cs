@@ -10,22 +10,22 @@ using System.Net;
 using System.Net.Sockets;
 using P2P_lib.Messages;
 using P2P_lib;
+using Index_lib;
 
 namespace P2P_lib {
     public class NetworkProtocols {
         Receiver receiver;
-        private string _indexerPath { get; set; }
+        private Index _index { get; set; }
         private Network _network { get; set; }
         private bool _threadPool = false;
-        public NetworkProtocols(string indexerPath, Network network) {
-            _indexerPath = indexerPath;
+        public NetworkProtocols(Index index, Network network) {
+            _index = index;
             _network = network;
             _threadPool = ThreadPool.SetMaxThreads(10, 10);
         }
         public void UploadFileToNetwork (string filePath, int copies, int seed = 0) {
             for(int i = 0; i < copies; i++) {
-                Thread t = new Thread(() => { SendUploadRequest(filePath, copies, seed); });
-                t.Start();
+                Task.Factory.StartNew(() => SendUploadRequest(filePath, copies, seed));
             }
         }
 
@@ -59,6 +59,7 @@ namespace P2P_lib {
                     upload.Send();
                 }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
                     if(upload.statuscode == StatusCode.ACCEPTED) {
+                        
                         FileSender fileSender = new FileSender(upload.from, upload.port);
                         fileSender.Send();
                     }
