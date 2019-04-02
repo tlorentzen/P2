@@ -37,7 +37,7 @@ namespace Index_lib
 
         // Deep copy.
         public IndexFile Copy(){
-            IndexFile file = new  IndexFile();
+            IndexFile file = new IndexFile();
             file.hash = this.hash;
             file.size = this.size;
             file.ghost = this.ghost;

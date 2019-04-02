@@ -343,6 +343,7 @@ namespace Index_lib{
                     if (file.paths.Count > 1){
                         deleted_file = file;
                         file.paths.Remove(e.FullPath);
+                        break;
                     }else{
                         deleted_file = file.Copy();
                         index.Remove(file);
