@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 
 namespace Encryption{
+
     public class FileEncryption{
         private string _path;
         private string _extension;

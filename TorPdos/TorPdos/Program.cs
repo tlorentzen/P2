@@ -13,12 +13,10 @@ namespace TorPdos
     class Program
     {
         [STAThread]
-
         static void Main(string[] args)
         {
 
-           // MyForm TorPdos = new MyForm();
-           // Application.Run(TorPdos);
+            MyForm TorPdos = new MyForm();
 
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
@@ -57,6 +55,8 @@ namespace TorPdos
                     if (console.StartsWith("add") && param.Length == 3)
                     {
                         p2p.AddPeer(param[1], param[2]);
+                    }else if(console.Equals("gui")){
+                        Application.Run(TorPdos);
                     }
                     else
                     {

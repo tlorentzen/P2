@@ -60,7 +60,7 @@ namespace P2P_lib {
                 }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
                     if(upload.statuscode == StatusCode.ACCEPTED) {
                         FileSender fileSender = new FileSender(upload.from, upload.port);
-                        fileSender.Send();
+                        //fileSender.Send();
                     }
                 }
             }
