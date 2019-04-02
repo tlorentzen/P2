@@ -90,9 +90,9 @@ namespace TorPdos
             btnLogin.Click += new System.EventHandler(BtnClickLogin);
         }
 
-        public void BtnClickLogin(object sender, System.EventArgs e)
+        void BtnClickLogin(object sender, System.EventArgs e)
         {
-            if (txtPassword.Text == "Password" && txtUsername.Text == "Admin")
+            if ((txtUsername.Text == "Admin") && (txtPassword.Text == "Password"))
             {
                 Controls.Add(lblYouDidIt);
                 Controls.Remove(btnLogin);
@@ -101,8 +101,7 @@ namespace TorPdos
                 Controls.Remove(lblUsername);
                 Controls.Remove(lblPassword);
                 Controls.Remove(lblNope);
-            } else
-            {
+            } else{
                 Controls.Add(lblNope);
             }
         }
