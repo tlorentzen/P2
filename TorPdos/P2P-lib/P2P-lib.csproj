@@ -60,6 +60,7 @@
     <Compile Include="NetworkHelper.cs" />
     <Compile Include="NetworkProtocols.cs" />
     <Compile Include="Peer.cs" />
+    <Compile Include="NetworkPorts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Receiver.cs" />
   </ItemGroup>
