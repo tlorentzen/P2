@@ -7,22 +7,18 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 
-namespace P2P_lib
-{
-    public class FileSender
-    {
+namespace P2P_lib {
+    public class FileSender {
         IPAddress ip;
         private int port;
         const int chunkSize = 1024;
 
-        public FileSender(string ip, int port)
-        {
+        public FileSender(string ip, int port) {
             this.ip = IPAddress.Parse(ip);
             this.port = port;
         }
 
-        public void Send(string path)
-        {
+        public void Send(string path) {
             if (File.Exists(path)) {
                 using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)) {
                     using (NetworkStream stream = client.GetStream()) {
