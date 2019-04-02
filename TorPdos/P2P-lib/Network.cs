@@ -63,6 +63,19 @@ namespace P2P_lib
                     ping.Send();
                 }
             }
+            if (message.GetMessageType() == typeof(UploadMessage)) {
+                UploadMessage upload = (UploadMessage)message;
+
+                if (upload.type.Equals(Messages.TypeCode.REQUEST)) {
+                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize) {
+                        upload.statuscode = StatusCode.ACCEPTED;
+                    } else {
+                        upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
+                    }
+                    upload.CreateReply();
+                    upload.Send();
+                }
+            }
         }
 
         public void Stop(){
