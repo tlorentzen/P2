@@ -59,7 +59,7 @@ namespace TorPdos{
         NotifyIcon noiTorPdos = new NotifyIcon() {
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
-            Visible = false
+            Visible = true
         };
 
         public MyForm(){
@@ -82,9 +82,9 @@ namespace TorPdos{
             Controls.Add(lblPassword);
 
 
-            btnLogin.Click += new System.EventHandler(BtnClickLogin);
-            noiTorPdos.DoubleClick += new System.EventHandler(noiTorPdosDoubleClick);
-
+            btnLogin.Click += BtnClickLogin;
+            noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
+            Resize += MyformResize;
         }
 
         void BtnClickLogin(object sender, System.EventArgs e){
@@ -110,8 +110,7 @@ namespace TorPdos{
             }
         }
 
-        void noiTorPdosDoubleClick(object sender, System.EventArgs e)
-        {
+        void noiTorPdosDoubleClick(object sender, System.EventArgs e){
             this.Show();
             noiTorPdos.Visible = false;
             WindowState = FormWindowState.Normal;
