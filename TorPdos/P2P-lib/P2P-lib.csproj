@@ -67,6 +67,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Compression\Compression.csproj">
+      <Project>{a09d164e-1dfa-48ac-ba87-dc3d2b20c4c6}</Project>
+      <Name>Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Encryption\Encryption.csproj">
+      <Project>{e15f2f49-a146-4f29-a5be-23df6d1fe0c8}</Project>
+      <Name>Encryption</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Index-lib\Index-lib.csproj">
       <Project>{ddf158f6-a177-4088-9455-20e909e9d313}</Project>
       <Name>Index-lib</Name>

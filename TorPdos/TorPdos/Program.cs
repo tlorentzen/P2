@@ -88,7 +88,12 @@ namespace TorPdos
 
         private static void Idx_FileDeleted(IndexFile file)
         {
-            Console.WriteLine("File deleted: " + file.hash);
+            if(file == null){
+                Console.WriteLine("File deleted: null...");
+            }
+            else{
+                Console.WriteLine("File deleted: " + file.hash);
+            }
         }
         /*
 
