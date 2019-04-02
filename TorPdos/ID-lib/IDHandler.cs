@@ -1,30 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Index_lib;
 
 namespace ID_lib
 {
-    class IDHandler
+    public class IDHandler
     {
-        static void CreateUserFolder()
+        public static void CreateUserFolder()
         {
-            /*string test = System.IO.Path.GetDirectoryName(Application.ExecutablePath);*/
-            if (true)
-            {
+            string userdata = "userdata";
+            DirectoryInfo userdataDirectory = Directory.CreateDirectory(userdata);
+            userdataDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 
+            string uid = "0123456789abcdef";
+            string pass = "let_us_go";
+            using (StreamWriter userFile = File.CreateText(userdata + "\\" + uid))
+            {
+                userFile.WriteLine(pass);
             }
-            //System.IO.Path.GetDirectoryName(Application.ExecutablePath)
+
         }
 
-        static void CreateUser(string password)
+        public static void CreateUser(string password)
         {
             //Generate UID
             //
         }
 
-        static bool IsUserPresent()
+        public static bool IsUserPresent()
         {
             //Test for validators in hidden subfolder
             if (true)
@@ -37,7 +44,7 @@ namespace ID_lib
             }
         }
 
-        static bool ValidateUser(string uid, string password)
+        public static bool ValidateUser(string uid, string password)
         {
             //find matching UID file
             //compare password hash
