@@ -9,6 +9,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using P2P_lib.Messages;
+using P2P_lib;
 
 namespace P2P_lib {
     public class NetworkProtocols {

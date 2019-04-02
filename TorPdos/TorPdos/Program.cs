@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Drawing;
 using Index_lib;
 using P2P_lib;
 
@@ -10,8 +12,14 @@ namespace TorPdos
 {
     class Program
     {
+        [STAThread]
+
         static void Main(string[] args)
         {
+
+           // MyForm TorPdos = new MyForm();
+           // Application.Run(TorPdos);
+
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
