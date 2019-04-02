@@ -51,19 +51,40 @@ namespace TorPdos{
                         p2p.AddPeer(param[1], param[2]);
                     } else if(console.Equals("gui")){
                         Application.Run(TorPdos);
-                    } else if (console.Equals("upload") && param.Length == 3) {
-                        if(int.TryParse(param[2], out int n)) {
+                    } else if (console.StartsWith("upload") && param.Length == 3) {
+                        //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
+                        if (int.TryParse(param[2], out int n)) {
+                            Console.WriteLine("Shit hit da fan");
                             new NetworkProtocols(idx, p2p).UploadFileToNetwork(param[1], int.Parse(param[2]));
                         } else{
-                            Console.WriteLine("Second parameter must be an integer");
+                            Console.WriteLine("Third parameter must be an integer");
                         }
-                    } else{
+                    }else if(console.Equals("reindex")){
+                        idx.reIndex();
+                    }else if(console.Equals("status")){
+                        idx.status();
+                    }
+                    else if (console.Equals("save"))
+                    {
+                        idx.save();
+                    }
+                    else
+                    {
                         Console.WriteLine("Unknown command");
                     }
                 }
             }
 
             Console.ReadKey();
+        }
+
+        private static void Idx_FileDeleted(IndexFile file)
+        {
+            if(file == null){
+                Console.WriteLine("File deleted: null...");
+            }else{
+                Console.WriteLine("File deleted: " + file.hash);
+            }
         }
 
         private static void Idx_FileAdded(IndexFile file){

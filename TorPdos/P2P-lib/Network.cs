@@ -20,7 +20,13 @@ namespace P2P_lib{
         }
 
         public List<Peer> getPeerList(){
-            return peers.ToList<Peer>();
+            List<Peer> newPeerList = new List<Peer>();
+
+            foreach(Peer peer in peers) {
+                newPeerList.Add(peer);
+            }
+
+            return newPeerList;
         }
 
         public void Start(){
@@ -30,49 +36,75 @@ namespace P2P_lib{
             receive.MessageReceived += Receive_MessageReceived;
             receive.start();
 
-            //_pingThread = new Thread(this.PingHandler);
-            //_pingThread.Start();
+            _pingThread = new Thread(this.PingHandler);
+            _pingThread.Start();
         }
 
         public void AddPeer(string uuid, string ip){
             Peer peer = new Peer(uuid, ip);
             this.peers.Add(peer);
+            peer.Ping();
         }
 
         private void Receive_MessageReceived(BaseMessage message)
         {
             Console.WriteLine(message.GetMessageType());
 
-            if (message.GetMessageType() == typeof(PingMessage)){
-                PingMessage ping = (PingMessage)message;
+            Type msgType = message.GetMessageType();
 
-                foreach (Peer peer in peers)
-                {
-                    if(peer.GetIP().Equals(ping.from)){
-                        peer.UpdateLastSeen();
-                        peer.setOnline(true);
-                    }
+            if (msgType == typeof(PingMessage)){
+                RechievedPing((PingMessage)message);
+                
+            } else if (msgType == typeof(UploadMessage)) {
+                RechievedUpload((UploadMessage)message);
+                
+            } else if (msgType == typeof(DownloadMessage)) {
+                RechievedDownload((DownloadMessage)message);
+
+            } else if (msgType == typeof(PeerFetcherMessage)) {
+                RechievedPeerFetch((PeerFetcherMessage)message);
+
+            } 
+        }
+
+        private void RechievedPeerFetch(PeerFetcherMessage message)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RechievedUpload(UploadMessage upload)
+        {
+            if (upload.type.Equals(Messages.TypeCode.REQUEST)) {
+                if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize) {
+                    upload.statuscode = StatusCode.ACCEPTED;
+                } else {
+                    upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
+                upload.CreateReply();
+                upload.Send();
+            }
+        }
 
-                if(message.type.Equals(Messages.TypeCode.REQUEST)){
-                    ping.CreateReply();
-                    ping.statuscode = StatusCode.OK;
-                    ping.Send();
+        private void RechievedPing(PingMessage ping)
+        {
+
+            foreach (Peer peer in peers) {
+                if (peer.GetIP().Equals(ping.from)) {
+                    peer.UpdateLastSeen();
+                    peer.setOnline(true);
                 }
             }
-            if (message.GetMessageType() == typeof(UploadMessage)){
-                UploadMessage upload = (UploadMessage)message;
 
-                if (upload.type.Equals(Messages.TypeCode.REQUEST)){
-                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
-                        upload.statuscode = StatusCode.ACCEPTED;
-                    } else{
-                        upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
-                    }
-                    upload.CreateReply();
-                    upload.Send();
-                }
+            if (ping.type.Equals(Messages.TypeCode.REQUEST)) {
+                ping.CreateReply();
+                ping.statuscode = StatusCode.OK;
+                ping.Send();
             }
+        }
+
+        private void RechievedDownload(DownloadMessage download)
+        {
+            throw new NotImplementedException();
         }
 
         public void Stop(){
@@ -95,6 +127,6 @@ namespace P2P_lib{
 
             Console.WriteLine("PingHandler stopped...");
         }
-    
+
     }
 }
