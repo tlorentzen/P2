@@ -34,9 +34,10 @@ namespace P2P_lib{
 
             //Then the current time is found, to create a unique name for the temporary files
             DateTime utc = DateTime.UtcNow;
+            int time = utc.Millisecond + utc.Second * 10 + utc.Minute * 100 + utc.Hour * 1000 + utc.Month * 10000;
 
             //Then a path is made for the temporary files
-            string compressedFilePath = _index.GetPath() + utc.ToString();
+            string compressedFilePath = _index.GetPath() + "\\.hidden" + time.ToString();
 
             //The file is then compressed
             ByteCompressor.CompressFile(filePath, compressedFilePath);
@@ -44,6 +45,8 @@ namespace P2P_lib{
             //And then encrypted
             FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
             encryption.doEncrypt("password");
+            //HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
+            //hiddenFolder.Remove(compressedFilePath + ".lzma");
             string readyFile = compressedFilePath + ".aes";
 
             //A copy of the compressed and encrypted file is then send to peers
@@ -87,6 +90,8 @@ namespace P2P_lib{
                         string filePath = indexFile.getPath();
                         FileSender fileSender = new FileSender(upload.from, upload.port);
                         fileSender.Send(filePath);
+                        HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
+                        hiddenFolder.Remove(filePath);
                     }
                 }
             }
