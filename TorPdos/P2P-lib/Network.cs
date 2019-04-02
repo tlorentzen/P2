@@ -97,7 +97,7 @@ namespace P2P_lib{
                 foreach (Peer yourPeer in message.Peers) {
                     inPeers = false;
                     foreach (Peer myPeer in peers) {
-                        if (myPeer.GetIP() == yourPeer.GetIP()) {
+                        if (myPeer.GetIP() == yourPeer.GetIP() || yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()) {
                             inPeers = true;
                             break;
                         }
@@ -146,6 +146,7 @@ namespace P2P_lib{
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
+                //TODO Insert username in place of "MyName"
                 peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress()));
                 peerFetch.statuscode = StatusCode.OK;
                 peerFetch.type = Messages.TypeCode.REQUEST;
