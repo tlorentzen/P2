@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using static P2P_lib.Network;
 
 namespace P2P_lib.Messages{
-    public class PeerFetcherMessage : BaseMessage{
+
+    [Serializable]
+    public class PeerFetcherMessage : BaseMessage {
         public PeerFetcherMessage(string to) : base(to){ }
 
         public override string GetHash(){
