@@ -93,8 +93,18 @@ namespace P2P_lib{
                 message.Send();
                 Console.WriteLine("Send peers back");
             } else {
+                bool inPeers = false;
                 foreach (Peer yourPeer in message.Peers) {
-                    peers.Add(yourPeer);
+                    inPeers = false;
+                    foreach (Peer myPeer in peers) {
+                        if (myPeer.GetIP() == yourPeer.GetIP()) {
+                            inPeers = true;
+                            break;
+                        }
+                    }
+                    if (!inPeers) {
+                        peers.Add(yourPeer);
+                    }
                 }
 
             }
