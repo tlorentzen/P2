@@ -9,7 +9,7 @@ namespace TorPdos
         {
             Location = new Point(20, 20),
             Height = 40, Width = 200,
-            Font = new Font("Arial", 20, FontStyle.Regular),
+            Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Username",
             ForeColor = ColorTranslator.FromHtml("#CC7178")
         };
@@ -18,7 +18,7 @@ namespace TorPdos
         {
             Location = new Point(20, 70),
             Height = 40, Width = 200,
-            Font = new Font("Arial", 20, FontStyle.Regular),
+            Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Password:",
             ForeColor = ColorTranslator.FromHtml("#CC7178")
         };
@@ -28,7 +28,7 @@ namespace TorPdos
             Height = 40, Width = 200,
             Text = "You did it o/",
             ForeColor = ColorTranslator.FromHtml("#CC7178"),
-            Font = new Font("Arial", 20, FontStyle.Regular)
+            Font = new Font("Consolas", 20, FontStyle.Regular)
         };
         Label lblNope = new Label()
         {
@@ -36,13 +36,13 @@ namespace TorPdos
             Height = 40, Width = 300,
             Text = "Wrong username or password",
             ForeColor = ColorTranslator.FromHtml("#FFF8F7"),
-            Font = new Font("Arial", 15, FontStyle.Regular)
+            Font = new Font("Consolas", 15, FontStyle.Regular)
         };
         TextBox txtUsername = new TextBox()
         {
             Location = new Point(170, 20),
             Height = 50,Width = 150,
-            Font = new Font("Arial", 15, FontStyle.Regular),
+            Font = new Font("Consolas", 15, FontStyle.Regular),
             MaxLength = 15,
             ForeColor = ColorTranslator.FromHtml("#320117"),
             BackColor = ColorTranslator.FromHtml("#FFD9DA")
@@ -51,8 +51,8 @@ namespace TorPdos
         {
             Location = new Point(170, 70),
             Height = 50, Width = 150,
-            Font = new Font("Arial", 15, FontStyle.Regular),
-            MaxLength = 15,
+            Font = new Font("Consolas", 15, FontStyle.Regular),
+            MaxLength = 20,
             PasswordChar = '*',
             ForeColor = ColorTranslator.FromHtml("#320117"),
             BackColor = ColorTranslator.FromHtml("#FFD9DA")
@@ -63,7 +63,7 @@ namespace TorPdos
             Width = 250,
             Height = 70,
             Text = "Login",
-            Font = new Font("Arial", 25, FontStyle.Regular),
+            Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml("#F3E1DD")
         };
 
