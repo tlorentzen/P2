@@ -37,15 +37,15 @@ namespace Index_lib{
 
             watcher.Path = this._path;
             watcher.IncludeSubdirectories = true;
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
+            //watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
 
             // Make hidden directory
             _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
 
             // Add event handlers.
-            watcher.Changed += OnEventHandler;
-            watcher.Created += OnEventHandler;
-            watcher.Deleted += OnEventHandler;
+            watcher.Changed += OnChanged;
+            watcher.Created += OnCreate;
+            watcher.Deleted += OnDeleted;
             watcher.Renamed += OnRenamed;
 
             // Begin watching.
@@ -123,81 +123,83 @@ namespace Index_lib{
         public int getIndexSize(){
             return this.index.Count;
         }
-
+        /*
         private void fileThreadHandler(FileSystemEventArgs e){
-            {
-                while (!IsFileReady(e.FullPath)){ }
+        
+            while (!IsFileReady(e.FullPath)){ }
 
-                //Ignore hidden folder
-                if (IgnoreHidden(e.FullPath))
-                    return;
-                // Ignore folder changes
-                if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
-                    return;
+            //Ignore hidden folder
+            if (IgnoreHidden(e.FullPath))
+                return;
 
-                bool foundInIndex = false;
-                bool fileRemoved = false;
-                IndexFile eventFile = new IndexFile(e.FullPath);
-                IndexFile foundMatch = eventFile;
+            // Ignore folder changes
+            if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
+                return;
 
-                // Handle change
+            bool foundInIndex = false;
+            bool fileRemoved = false;
+            IndexFile eventFile = new IndexFile(e.FullPath);
+            IndexFile foundMatch = eventFile;
+
+            // Handle change
+            foreach (IndexFile file in index){
+                if (file.Equals(eventFile)){
+                    foundInIndex = true;
+                    foundMatch = file;
+                    break;
+                }
+            }
+
+            // handle create event
+            if (!foundInIndex){
                 foreach (IndexFile file in index){
-                    if (file.Equals(eventFile)){
-                        foundInIndex = true;
-                        foundMatch = file;
+                    if (file.paths.Contains(e.FullPath)){
+                        if (file.paths.Count > 1){
+                            file.paths.Remove(e.FullPath);
+                            break;
+                        } else{
+                            index.Remove(file);
+                            break;
+                        }
+                    }
+                }
+
+                index.AddLast(eventFile);
+            } else{
+                foreach (IndexFile file in index){
+                    if (file.paths.Count > 1){
+                        foreach (string path in file.paths){
+                            if (path == eventFile.paths[0] && !eventFile.Equals(file)){
+                                file.paths.Remove(path);
+                                break;
+                            }
+                        }
+                    } else{
+                        foreach (string path in file.paths){
+                            if (path == eventFile.paths[0] && !eventFile.Equals(file)){
+                                index.Remove(file);
+                                fileRemoved = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (fileRemoved){
                         break;
                     }
                 }
 
-                // handle create event
-                if (!foundInIndex){
-                    foreach (IndexFile file in index){
-                        if (file.paths.Contains(e.FullPath)){
-                            if (file.paths.Count > 1){
-                                file.paths.Remove(e.FullPath);
-                                break;
-                            } else{
-                                index.Remove(file);
-                                break;
-                            }
-                        }
-                    }
-
-                    index.AddLast(eventFile);
-                } else{
-                    foreach (IndexFile file in index){
-                        if (file.paths.Count > 1){
-                            foreach (string path in file.paths){
-                                if (path == eventFile.paths[0] && !eventFile.Equals(file)){
-                                    file.paths.Remove(path);
-                                    break;
-                                }
-                            }
-                        } else{
-                            foreach (string path in file.paths){
-                                if (path == eventFile.paths[0] && !eventFile.Equals(file)){
-                                    index.Remove(file);
-                                    fileRemoved = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (fileRemoved){
-                            break;
-                        }
-                    }
-
-                    if (!foundMatch.paths.Contains(eventFile.paths[0])){
-                        foundMatch.addPath(eventFile.paths[0]);
-                    }
+                if (!foundMatch.paths.Contains(eventFile.paths[0])){
+                    foundMatch.addPath(eventFile.paths[0]);
                 }
-
-                FileChanged(eventFile);
             }
-        }
 
-        private void OnEventHandler(object source, FileSystemEventArgs e){
+            FileChanged(eventFile);
+            
+        }
+        */
+        private void OnCreate(object source, FileSystemEventArgs e){
+            /*
             if (e.ChangeType == WatcherChangeTypes.Changed){
                 if (this.IsFileReady(e.FullPath)){
                     // TODO: Håndter som normalt i added, modified og deleted. 
@@ -219,6 +221,7 @@ namespace Index_lib{
             } else{
                 throw new NotImplementedException();
             }
+            */
 
             // Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
@@ -227,6 +230,9 @@ namespace Index_lib{
             // Ignore folder changes
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
+
+            // Wait until the file is ready 
+            while (!IsFileReady(e.FullPath)){}
 
             bool foundInIndex = false;
             IndexFile eventFile = new IndexFile(e.FullPath);
@@ -251,7 +257,8 @@ namespace Index_lib{
 
             FileAdded(eventFile);
         }
-        /*
+        
+        
         // Define the event handlers.
         private void OnChanged(object source, FileSystemEventArgs e)
         {
@@ -262,6 +269,9 @@ namespace Index_lib{
             // Ignore folder changes
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
                 return;
+
+            // Wait until the file is ready 
+            while (!IsFileReady(e.FullPath)) { }
 
             Boolean foundInIndex = false;
             Boolean fileRemoved = false;
@@ -319,40 +329,32 @@ namespace Index_lib{
 
             FileChanged(eventFile);
         }
-        
-        
 
         private void OnDeleted(object source, FileSystemEventArgs e)
         {
-           
-
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
 
-            List<IndexFile> toDelete = new List<IndexFile>();
+            IndexFile deleted_file = null;
 
             foreach (IndexFile file in index){
                 if (file.paths.Contains(e.FullPath)){
                     if (file.paths.Count > 1){
+                        deleted_file = file;
                         file.paths.Remove(e.FullPath);
+                        break;
                     }else{
-                        toDelete.Add(file);
+                        deleted_file = file.Copy();
+                        index.Remove(file);
+                        break;
                     }
                 }
             }
 
-            if (toDelete.Count > 0) {
-                foreach (IndexFile file in toDelete){
-                    index.Remove(file);
-                }
-            }
-
             // TODO: Deepcopy deleted file for DeletedFile event.
-
+            FileDeleted(deleted_file);
         }
-
-        */
 
         private void OnRenamed(object source, RenamedEventArgs e){
             //Ignore hidden folder
@@ -384,15 +386,18 @@ namespace Index_lib{
             }
         }
 
-        public bool IsFileReady(string path){
-            //https://stackoverflow.com/questions/1406808/wait-for-file-to-be-freed-by-process
+        public Boolean IsFileReady(string path){
+
+            bool exist = false;
             try{
-                using (FileStream inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
-                    return inputStream.Length > 0;
+                using (FileStream inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)){
+                    exist = true;
+                }    
+            }catch (Exception){
+                exist = false;
             }
-            catch (Exception){
-                return false;
-            }
+
+            return exist;
         }
 
         //Ignore file events in .hidden folder

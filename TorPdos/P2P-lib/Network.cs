@@ -7,26 +7,23 @@ using System.Collections.Concurrent;
 using System.Threading;
 using P2P_lib.Messages;
 
-namespace P2P_lib
-{
-    public class Network
-    {
+namespace P2P_lib {
+    public class Network {
         private int _port;
         private bool _running = false;
         private Thread _pingThread;
         private Receiver receive;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
 
-        public Network(int port){
+        public Network(int port) {
             this._port = port;
         }
 
-        public List<Peer> getPeerList()
-        {
+        public List<Peer> getPeerList() {
             return peers.ToList<Peer>();
         }
 
-        public void Start(){
+        public void Start() {
             this._running = true;
 
             receive = new Receiver(this._port, 2048);
@@ -37,7 +34,7 @@ namespace P2P_lib
             //_pingThread.Start();
         }
 
-        public void AddPeer(string uuid, string ip){
+        public void AddPeer(string uuid, string ip) {
             Peer peer = new Peer(uuid, ip);
             this.peers.Add(peer);
         }
@@ -46,7 +43,7 @@ namespace P2P_lib
         {
             Console.WriteLine(message.GetMessageType());
 
-            if (message.GetMessageType() == typeof(PingMessage)){
+            if (message.GetMessageType() == typeof(PingMessage)) {
                 PingMessage ping = (PingMessage)message;
 
                 foreach (Peer peer in peers)
@@ -57,7 +54,7 @@ namespace P2P_lib
                     }
                 }
 
-                if(message.type.Equals(Messages.TypeCode.REQUEST)){
+                if(message.type.Equals(Messages.TypeCode.REQUEST)) {
                     ping.CreateReply();
                     ping.statuscode = StatusCode.OK;
                     ping.Send();
@@ -78,23 +75,19 @@ namespace P2P_lib
             }
         }
 
-        public void Stop(){
+        public void Stop() {
             this._running = false;
             receive.stop();
         }
         
-        private void PingHandler()
-        {
-            while(this._running)
-            {
+        private void PingHandler() {
+            while(this._running) {
                 long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-                foreach (Peer peer in peers)
-                {
+                foreach (Peer peer in peers) {
                     peer.Ping(millis);
 
-                    if(!this._running)
-                    {
+                    if(!this._running) {
                         break;
                     }
                 }
