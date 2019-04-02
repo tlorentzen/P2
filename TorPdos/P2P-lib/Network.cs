@@ -20,7 +20,18 @@ namespace P2P_lib{
         }
 
         public List<Peer> getPeerList(){
-            return peers.ToList<Peer>();
+            List<Peer> newPeerList = new List<Peer>();
+            int i = 0;
+            foreach(Peer peer in peers) {
+                newPeerList[i] = peer;
+                i++;
+            }
+            i = 0;
+            foreach(Peer peer in newPeerList) {
+                Console.WriteLine(newPeerList[i].getUUID());
+                i++;
+            }
+            return newPeerList;
         }
 
         public void Start(){

@@ -37,7 +37,7 @@ namespace P2P_lib{
             int time = utc.Millisecond + utc.Second * 10 + utc.Minute * 100 + utc.Hour * 1000 + utc.Month * 10000;
 
             //Then a path is made for the temporary files
-            string compressedFilePath = _index.GetPath() + "\\.hidden" + time.ToString();
+            string compressedFilePath = _index.GetPath() + "\\.hidden\\" + time.ToString();
 
             //The file is then compressed
             ByteCompressor.CompressFile(filePath, compressedFilePath);
@@ -57,7 +57,7 @@ namespace P2P_lib{
 
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
-            seed = seed % peerlist.Count - 1;
+            //seed = seed % peerlist.Count - 1;
             UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
