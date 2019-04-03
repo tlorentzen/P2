@@ -64,7 +64,7 @@ namespace P2P_lib{
 
         private void RechievedPeerFetch(PeerFetcherMessage message){
             if (message.type.Equals(Messages.TypeCode.REQUEST)){
-                Console.WriteLine("Receiving files");
+                Console.WriteLine("Receiving peers");
                 List<Peer> incomming = new List<Peer>();
                 List<Peer> outgoing = new List<Peer>();
                 incomming = message.Peers;
@@ -75,13 +75,14 @@ namespace P2P_lib{
 
                 //Checks whether a incomming peer exists in the peerlist.
                 foreach (var incommingPeer in incomming){
-                    if (inPeerList(incommingPeer.getUUID(),peers)) return;
+                    if (inPeerList(incommingPeer.getUUID(),peers)) break;
                     peers.Add(incommingPeer);
+                    Console.WriteLine("Peer added"+incommingPeer.getUUID());
                 }
 
                 foreach (var outGoingPeer in peers){
-                    if (inPeerList(outGoingPeer.getUUID(),incomming)) return;
-                    if (outGoingPeer.getUUID() == message.FromUUID) return;
+                    if (inPeerList(outGoingPeer.getUUID(),incomming)) break;
+                    if (outGoingPeer.getUUID() == message.FromUUID) break;
                     outgoing.Add(outGoingPeer);
                 }
 
@@ -98,12 +99,12 @@ namespace P2P_lib{
                 // Don't add yourself to your own list
                 // TODO(might not be nessesary, as it should not be send)
                 foreach (Peer incommingPeer in message.Peers){
-                    if (inPeerList(incommingPeer.getUUID(), peers)) return;
+                    if (inPeerList(incommingPeer.getUUID(), peers)) break;
                         peers.Add(incommingPeer);
                 }
             }
 
-            // List peers in console. TODO this is for debugging purpossed and should be removed 
+            // List peers in console. TODO this is for debugging purposes and should be removed 
             Console.WriteLine("My peers:");
             foreach (Peer peer in peers){
                 Console.WriteLine(peer.getUUID() + " : " + peer.GetIP());
