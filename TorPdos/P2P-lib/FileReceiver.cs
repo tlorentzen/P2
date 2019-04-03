@@ -11,50 +11,56 @@ using System.IO;
 
 namespace P2P_lib{
     public class FileReceiver{
-        private IPAddress ip;
-        private int port;
-        private TcpListener server = null;
-        private Boolean listening = false;
-        private Thread listener;
-        private byte[] buffer;
-        private String filename;
+        private IPAddress _ip;
+        private int _port;
+        private TcpListener _server = null;
+        private bool _listening = false;
+        private Thread _listener;
+        private byte[] _buffer;
+        private string _filename;
+        private bool _hidden;
+        private string _outputPath = @"C:\\TorPdos\";
 
-        public FileReceiver(String filename, int bufferSize = 1024){
-            this.filename = filename;
-            this.ip = IPAddress.Any;
-            this.port = 0; //NetworkHelper.getAvailablePort(55000, 56000);
-            this.buffer = new byte[bufferSize];
+        public FileReceiver(string filename, bool hidden, int port, int bufferSize = 1024){
+            this._filename = filename;
+            this._ip = IPAddress.Any;
+            this._port = port;
+            this._buffer = new byte[bufferSize];
+            this._hidden = hidden;
+            if (hidden) {
+                this._outputPath += ".hidden\";
+            }
         }
 
         public void start(){
-            server = new TcpListener(this.ip, this.port);
-            server.AllowNatTraversal(true);
-            server.Start();
+            _server = new TcpListener(this._ip, this._port);
+            _server.AllowNatTraversal(true);
+            _server.Start();
 
-            listening = true;
-            listener = new Thread(this.connectionHandler);
-            listener.Start();
+            _listening = true;
+            _listener = new Thread(this.connectionHandler);
+            _listener.Start();
         }
 
         public void stop(){
-            this.listening = false;
-            server.Stop();
+            this._listening = false;
+            _server.Stop();
         }
 
         private void connectionHandler(){
 
-            while (this.listening){
-                TcpClient client = server.AcceptTcpClient();
+            while (this._listening){
+                TcpClient client = _server.AcceptTcpClient();
 
                 using (NetworkStream stream = client.GetStream()){
-                    if (!Directory.Exists("output")) {
+                    /*if (!Directory.Exists("output")) {
                         Directory.CreateDirectory("output");
-                    }
+                    }*/
 
                     Console.WriteLine("Receiving file");
 
-                    using (var fileStream = File.Open(@"output/" + this.filename, FileMode.OpenOrCreate, FileAccess.Write)){
-                        Console.WriteLine("Creating file: " + this.filename);
+                    using (var fileStream = File.Open(this._outputPath + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
+                        Console.WriteLine("Creating file: " + this._filename);
                         int i;
                         /*long initialFileSize = stream.Length;
                         long remainingFileSize = stream.Length;
@@ -62,9 +68,9 @@ namespace P2P_lib{
 
                         /*Console.WriteLine(initialFileSize.ToString());*/
 
-                        while ((i = stream.Read(buffer, 0, buffer.Length)) > 0){
+                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
                             //fileStream.Write(buffer, 0, (i < buffer.Length) ? i : buffer.Length);
-                            fileStream.Write(buffer, 0, buffer.Length);
+                            fileStream.Write(_buffer, 0, _buffer.Length);
                         }
                         /*
                         while (stream.DataAvailable) {
@@ -95,7 +101,7 @@ namespace P2P_lib{
         }
 
         public int getPort(){
-            return this.port;
+            return this._port;
         }
         
     }

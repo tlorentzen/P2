@@ -20,6 +20,7 @@ namespace P2P_lib{
         private NetworkPorts port = new NetworkPorts();
         private Index _index { get; set; }
         private Network _network { get; set; }
+        private List<Peer> _recieverList { get; set; }
         public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
@@ -59,18 +60,21 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count;
-            UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
-            upload.filesize = new FileInfo(filePath).Length;
-            upload.filename = new FileInfo(filePath).Name;
-            upload.filehash = DiskHelper.CreateMD5(filePath);
-            upload.path = filePath;
-            upload.type = Messages.TypeCode.REQUEST;
-            upload.statuscode = StatusCode.OK;
-            upload.port = port.GetAvailablePort();
-            receiver = new Receiver(upload.port);
-            receiver.start();
-            receiver.MessageReceived += Receiver_MessageReceived;
-            upload.Send();
+            if (_recieverList.Contains(peerlist[seed])) {
+                _recieverList.Add(peerlist[seed]);
+                UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
+                upload.filesize = new FileInfo(filePath).Length;
+                upload.filename = new FileInfo(filePath).Name;
+                upload.filehash = DiskHelper.CreateMD5(filePath);
+                upload.path = filePath;
+                upload.type = Messages.TypeCode.REQUEST;
+                upload.statuscode = StatusCode.OK;
+                upload.port = port.GetAvailablePort();
+                receiver = new Receiver(upload.port);
+                receiver.start();
+                receiver.MessageReceived += Receiver_MessageReceived;
+                upload.Send();
+            }
         }
 
         private void Receiver_MessageReceived(BaseMessage msg){

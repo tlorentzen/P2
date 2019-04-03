@@ -13,6 +13,7 @@ namespace P2P_lib{
         private bool _running = false;
         private Thread _pingThread;
         private Receiver receive;
+        private FileReceiver fileReceiver;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
 
         public Network(int port){
@@ -124,6 +125,8 @@ namespace P2P_lib{
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
                 upload.CreateReply();
+                fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
+                fileReceiver.start();
                 upload.Send();
             }
         }
