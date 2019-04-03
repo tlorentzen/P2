@@ -68,7 +68,6 @@ namespace P2P_lib{
                 upload.path = filePath;
                 upload.type = Messages.TypeCode.REQUEST;
                 upload.statuscode = StatusCode.OK;
-                upload.port = port.GetAvailablePort();
                 receiver = new Receiver(upload.port);
                 receiver.start();
                 receiver.MessageReceived += Receiver_MessageReceived;
