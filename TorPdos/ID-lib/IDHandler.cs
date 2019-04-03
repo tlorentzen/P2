@@ -17,21 +17,29 @@ namespace ID_lib
         private static readonly int hashlength = 20;
         private static readonly int saltlength = 16;
 
-        public static void CreateUser(string password)
+        public static string CreateUser(string password)
         {
-            if (!Directory.Exists(userdatafolder))
+            try
             {
-                DirectoryInfo userdataDirectory = Directory.CreateDirectory(userdatafolder);
-                userdataDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+                if (!Directory.Exists(userdatafolder))
+                {
+                    DirectoryInfo userdataDirectory = Directory.CreateDirectory(userdatafolder);
+                    userdataDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+                }
+
+                string uuid = GenerateUUID();
+
+                string key = GenerateKey(string.Concat(uuid, password));
+
+                using (StreamWriter userFile = File.CreateText(userdatafolder + "\\" + uuid))
+                {
+                    userFile.WriteLine(key);
+                }
+                return uuid;
             }
-
-            string uuid = GenerateUUID();
-
-            string key = GenerateKey(string.Concat(uuid, password));
-
-            using (StreamWriter userFile = File.CreateText(userdatafolder + "\\" + uuid))
+            catch (Exception)
             {
-                userFile.WriteLine(key);
+                return "err";
             }
         }
 
