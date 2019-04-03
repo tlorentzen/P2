@@ -54,6 +54,7 @@ namespace TorPdos{
             // Prepare P2PNetwork
             Network p2p = new Network(25565);
             p2p.Start();
+            
 
             while (running){
                 string console = Console.ReadLine();

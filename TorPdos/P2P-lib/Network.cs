@@ -138,6 +138,7 @@ namespace P2P_lib{
 
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(Messages.TypeCode.REQUEST)){
+                int portToRespondTo = upload.port;
                 Console.WriteLine("This is an upload request");
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
@@ -148,7 +149,7 @@ namespace P2P_lib{
                 }
                 upload.CreateReply();
                 upload.type = Messages.TypeCode.RESPONSE;
-                int portToRespondTo = upload.port;
+                Console.WriteLine("Responding to port: " + upload.port);
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
                 Console.WriteLine("Port for receiving the file: " + upload.port);
