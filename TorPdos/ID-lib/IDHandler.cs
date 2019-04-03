@@ -13,10 +13,9 @@ namespace ID_lib
     public class IDHandler
     {
         private static readonly string userdatafolder = "userdata";
-        private static readonly int iterations = 10000;
-        private static readonly int hashlength = 20;
-        private static readonly int saltlength = 16;
+        private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
 
+        //Create user file using generated UUID and input password
         public static string CreateUser(string password)
         {
             try
@@ -29,7 +28,7 @@ namespace ID_lib
 
                 string uuid = GenerateUUID();
 
-                string key = GenerateKey(string.Concat(uuid, password));
+                string key = GenerateKeymold(string.Concat(uuid, password));
 
                 using (StreamWriter userFile = File.CreateText(userdatafolder + "\\" + uuid))
                 {
@@ -43,15 +42,16 @@ namespace ID_lib
             }
         }
 
-        private static string GenerateKey(string keymold)
+        //Generate keymold (hash) from key
+        private static string GenerateKeymold(string key)
         {
             //Randomise salt
             byte[] salt;
             new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
 
             //Get hash
-            Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(keymold, salt, iterations);
-            byte[] hash = key.GetBytes(hashlength);
+            Rfc2898DeriveBytes keymold = new Rfc2898DeriveBytes(key, salt, iterations);
+            byte[] hash = keymold.GetBytes(hashlength);
 
             //Combine salt and hash into key
             byte[] hashBytes = new byte[hashlength + saltlength];
@@ -61,6 +61,7 @@ namespace ID_lib
             return Convert.ToBase64String(hashBytes);
         }
 
+        //Generate UUID based on mac addresses and current time
         private static string GenerateUUID()
         {
             String guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
@@ -72,6 +73,9 @@ namespace ID_lib
             return DiskHelper.CreateMD5(guid);
         }
 
+        //Check if UUID and password match existing local user
+        //Compare keymolds (hashes)
+        //Returns true if user details are valid, false if not
         public static bool IsValidUser(string uuid, string password)
         {
             try
@@ -82,8 +86,8 @@ namespace ID_lib
                     byte[] hashBytes = Convert.FromBase64String(userFile.ReadLine());
                     byte[] salt = new byte[saltlength];
                     Array.Copy(hashBytes, 0, salt, 0, saltlength);
-                    Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
-                    byte[] hash = key.GetBytes(hashlength);
+                    Rfc2898DeriveBytes keymold = new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
+                    byte[] hash = keymold.GetBytes(hashlength);
 
                     //Compare hashes
                     for (int i = 0; i < hashlength; i++)
@@ -102,6 +106,7 @@ namespace ID_lib
             }
         }
 
+        //Returns IEnumberable of all UUIDs in userdatafolder, or empty if error
         public static IEnumerable<string> GetUserList()
         {
             try
@@ -117,6 +122,8 @@ namespace ID_lib
             }
         }
 
+        //Removes user file from userdatafolder
+        //True if success, false if failed
         public static bool RemoveUser(string uuid)
         {
             try
