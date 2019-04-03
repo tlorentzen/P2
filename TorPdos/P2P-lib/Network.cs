@@ -4,7 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Net;
+using System.Security.Permissions;
 using System.Threading;
+using Index_lib;
+using Newtonsoft.Json;
 using P2P_lib.Messages;
 
 namespace P2P_lib{
@@ -12,12 +17,25 @@ namespace P2P_lib{
         private int _port;
         private bool _running = false;
         private Thread _pingThread;
-        private Receiver receive;
-        private FileReceiver fileReceiver;
+        private Receiver _receive;
+        private FileReceiver _fileReceiver;
+        private string _path;
+        private HiddenFolder _hiddenFolderPath;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
+        private string _peerFilePath = @"C:\\TorPdos\.hidden\peer.json";
 
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port){
             this._port = port;
+            this._path = "C:\\TorPdos\\";
+            _hiddenFolderPath = new HiddenFolder(_path + @"\.hidden\");
+            load();
+        }
+        public Network(int port, string path){
+            this._port = port;
+            this._path = path;
+            _hiddenFolderPath = new HiddenFolder(_path + @"\.hidden\");
+            load();
         }
 
         public List<Peer> getPeerList(){
@@ -29,13 +47,14 @@ namespace P2P_lib{
 
             return newPeerList;
         }
+        
 
         public void Start(){
             this._running = true;
 
-            receive = new Receiver(this._port, 2048);
-            receive.MessageReceived += Receive_MessageReceived;
-            receive.start();
+            _receive = new Receiver(this._port, 2048);
+            _receive.MessageReceived += Receive_MessageReceived;
+            _receive.start();
 
             _pingThread = new Thread(this.PingHandler);
             _pingThread.Start();
@@ -121,6 +140,29 @@ namespace P2P_lib{
             // Add unknown peers to own list
             return inPeers;
         }
+
+        public void saveFile(){
+            var json = JsonConvert.SerializeObject(peers);
+            if (_path == null) return;
+            using (var fileStream = _hiddenFolderPath.WriteToFile(_peerFilePath)){
+                var jsonIndex = new UTF8Encoding(true).GetBytes(json);
+                
+                fileStream.Write(jsonIndex, 0, jsonIndex.Length);
+            }
+        }
+        
+        public bool load(){
+            if (_peerFilePath != null && File.Exists(this._peerFilePath)){
+                string json = File.ReadAllText(this._peerFilePath);
+                List<Peer>input = JsonConvert.DeserializeObject<List<Peer>>(json);
+                foreach (var peer in input){
+                    peers.Add(peer);
+                }
+                return true;
+            }
+            return false;
+        }
+        
         private bool inPeerList(string UUID,BlockingCollection<Peer> input){
             bool inPeers = false;
             foreach (Peer peer in input){
@@ -151,8 +193,8 @@ namespace P2P_lib{
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
                 Console.WriteLine("Port for receiving the file: " + upload.port);
-                fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
-                fileReceiver.start();
+                _fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
+                _fileReceiver.start();
                 Console.WriteLine("File receiver started");
                 Console.WriteLine("Sending to IP: " + upload.to + " port: " + portToRespondTo);
                 upload.Send(portToRespondTo);
@@ -205,7 +247,7 @@ namespace P2P_lib{
 
         public void Stop(){
             this._running = false;
-            receive.stop();
+            _receive.stop();
         }
 
         private void PingHandler(){

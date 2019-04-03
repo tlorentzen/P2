@@ -60,7 +60,7 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count;
-            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
+            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.10.114");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
             upload.from = NetworkHelper.getLocalIPAddress();
