@@ -67,6 +67,7 @@ namespace P2P_lib{
                 Console.WriteLine("Rechived Peers");
                 List<Peer> newPeers = new List<Peer>();
                 bool inPeers = false;
+                // Clear already know peers from rechieved peerlist
                 foreach (Peer myPeer in peers){
                     inPeers = false;
                     foreach (Peer yourPeer in message.Peers){
@@ -77,24 +78,25 @@ namespace P2P_lib{
                             break;
                         }
                     }
-
+                    // Add unknown peers to return list
                     if (!inPeers){
                         newPeers.Add(myPeer);
                     }
                 }
-
+                //Add new peers to peerlist
                 foreach (Peer yourPeer in message.Peers){
                     if (String.Compare(NetworkHelper.getLocalIPAddress().Trim(), yourPeer.GetIP().Trim(), StringComparison.Ordinal) != 0) {
                         peers.Add(yourPeer);
                     }
                 }
-
+                // Return senders unknown peers
                 message.CreateReply();
                 message.Peers = newPeers;
                 message.Send();
                 Console.WriteLine("Send peers back");
-            } else{
+            } else{ // Rechieved response
                 bool inPeers = false;
+                // Don't add yourself to your own list TODO(might not be nessesary, as it should not be send)
                 foreach (Peer yourPeer in message.Peers){
                     inPeers = false;
                     foreach (Peer myPeer in peers){
@@ -104,13 +106,13 @@ namespace P2P_lib{
                             break;
                         }
                     }
-
+                    // Add unknown peers to own list
                     if (!inPeers){
                         peers.Add(yourPeer);
                     }
                 }
             }
-
+            // List peers in console. TODO this is for debugging purpossed and should be removed 
             Console.WriteLine("My peers:");
             foreach (Peer peer in peers){
                 Console.WriteLine(peer.getUUID() + " : " + peer.GetIP());
@@ -134,25 +136,28 @@ namespace P2P_lib{
         }
 
         private void RechievedPing(PingMessage ping){
+            // Update peer
             foreach (Peer peer in peers){
                 if (peer.GetIP().Equals(ping.from)){
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
                 }
             }
-
+            // Respond to ping
             if (ping.type.Equals(Messages.TypeCode.REQUEST)){
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
                 ping.Send();
-            } else{
+            } else{ // Recheved response, should send peerlist
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
+               
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
-                //TODO Insert username in place of "MyName"
-                peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress()));
+                //Add myself to the list. TODO Insert userID in place of "MyName"
+                peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress().Trim()));
+                //Removed the rechiever from the list, as he should not add himself
                 foreach(Peer peer in peerFetch.Peers) {
-                    if (String.Compare(peer.GetIP().Trim(), peerFetch.to, StringComparison.Ordinal) == 0) {
+                    if (String.Compare(peer.GetIP().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0) {
                         peerFetch.Peers.Remove(peer);
                         break;
                     }
