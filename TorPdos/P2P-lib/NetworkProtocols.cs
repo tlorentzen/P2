@@ -63,12 +63,16 @@ namespace P2P_lib{
             UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
+            upload.from = NetworkHelper.getLocalIPAddress();
             upload.filehash = DiskHelper.CreateMD5(filePath);
             upload.path = filePath;
-            upload.from = NetworkHelper.getLocalIPAddress();
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
             upload.port = port.GetAvailablePort();
+            Console.WriteLine("Filesize: " + upload.filesize);
+            Console.WriteLine("Filename: " + upload.filename);
+            Console.WriteLine("From: " + upload.from);
+            Console.WriteLine("Filepath: " + upload.path);
             receiver = new Receiver(upload.port);
             receiver.start();
             Console.WriteLine("Receiver on port: " + upload.port);
@@ -78,6 +82,7 @@ namespace P2P_lib{
         }
 
         private void Receiver_MessageReceived(BaseMessage msg){
+            Console.WriteLine("Message received");
             if (msg.GetMessageType() == typeof(UploadMessage)){
                 UploadMessage upload = (UploadMessage) msg;
                 Console.WriteLine("Upload message received");

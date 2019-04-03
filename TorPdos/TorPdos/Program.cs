@@ -54,7 +54,7 @@ namespace TorPdos{
             // Prepare P2PNetwork
             Network p2p = new Network(25565);
             p2p.Start();
-            
+            //p2p.AddPeer("MyName" + "192.168.0.109", "192.168.0.109".Trim());
 
             while (running){
                 string console = Console.ReadLine();
