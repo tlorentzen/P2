@@ -89,7 +89,9 @@ namespace P2P_lib{
                     upload.CreateReply();
                     upload.Send();
                 } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
+                    Console.WriteLine("This is an upload response");
                     if (upload.statuscode == StatusCode.ACCEPTED){
+                        Console.WriteLine("It's accepted");
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
                         string filePath = indexFile.getPath();
                         Console.WriteLine("Paht from indexfile is: " + indexFile.getPath());

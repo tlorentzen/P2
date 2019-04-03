@@ -135,6 +135,7 @@ namespace P2P_lib{
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
                 upload.CreateReply();
+                upload.type = Messages.TypeCode.RESPONSE;
                 NetworkPorts ports = new NetworkPorts();
                 int portForReceivingFile = ports.GetAvailablePort();
                 Console.WriteLine("Port for receiving the file: " + portForReceivingFile);
