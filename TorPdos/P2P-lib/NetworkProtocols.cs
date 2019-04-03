@@ -20,7 +20,7 @@ namespace P2P_lib{
         private NetworkPorts port = new NetworkPorts();
         private Index _index { get; set; }
         private Network _network { get; set; }
-        private List<Peer> _recieverList { get; set; }
+        private List<string> _recieverList = new List<string>();
         public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
@@ -49,6 +49,7 @@ namespace P2P_lib{
             //HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
             //hiddenFolder.Remove(compressedFilePath + ".lzma");
             string readyFile = compressedFilePath + ".aes";
+            Console.WriteLine("File is ready for upload");
 
             //A copy of the compressed and encrypted file is then send to peers
             for (int i = 0; i < copies; i++){
@@ -59,21 +60,19 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count;
-            if (_recieverList.Contains(peerlist[seed])) {
-                _recieverList.Add(peerlist[seed]);
-                UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
-                upload.filesize = new FileInfo(filePath).Length;
-                upload.filename = new FileInfo(filePath).Name;
-                upload.filehash = DiskHelper.CreateMD5(filePath);
-                upload.path = filePath;
-                upload.type = Messages.TypeCode.REQUEST;
-                upload.statuscode = StatusCode.OK;
-                upload.port = port.GetAvailablePort();
-                receiver = new Receiver(upload.port);
-                receiver.start();
-                receiver.MessageReceived += Receiver_MessageReceived;
-                upload.Send();
-            }
+            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.106");
+            upload.filesize = new FileInfo(filePath).Length;
+            upload.filename = new FileInfo(filePath).Name;
+            upload.filehash = DiskHelper.CreateMD5(filePath);
+            upload.path = filePath;
+            upload.type = Messages.TypeCode.REQUEST;
+            upload.statuscode = StatusCode.OK;
+            upload.port = port.GetAvailablePort();
+            receiver = new Receiver(upload.port);
+            receiver.start();
+            receiver.MessageReceived += Receiver_MessageReceived;
+            upload.Send();
+            Console.WriteLine("Upload request sent");
         }
 
         private void Receiver_MessageReceived(BaseMessage msg){
@@ -93,8 +92,11 @@ namespace P2P_lib{
                     if (upload.statuscode == StatusCode.ACCEPTED){
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
                         string filePath = indexFile.getPath();
+                        Console.WriteLine("Paht from indexfile is: " + indexFile.getPath());
                         FileSender fileSender = new FileSender(upload.from, upload.port);
+                        Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to: " + upload.port);
                         fileSender.Send(filePath);
+                        Console.WriteLine(filePath + " has been sent");
                         HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
                         hiddenFolder.Remove(filePath);
                     }

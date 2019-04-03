@@ -25,11 +25,18 @@ namespace TorPdos{
             Font = new Font("Consolas", 20, FontStyle.Regular)
         };
         Label lblNope = new Label(){
-            Location = new Point(60, 110),
-            Height = 40, Width = 300,
+            Location = new Point(50, 110),
+            Height = 40, Width = 350,
             Text = "Wrong username or password",
             ForeColor = ColorTranslator.FromHtml("#FFF8F7"),
             Font = new Font("Consolas", 15, FontStyle.Regular)
+        };
+        Label lblCreate = new Label(){
+            Location = new Point(275, 240),
+            Height = 100, Width = 200,
+            Text = "Create new user",
+            ForeColor = ColorTranslator.FromHtml("#FFF8F7"),
+            Font = new Font("Consolas", 8, FontStyle.Regular)
         };
         TextBox txtUsername = new TextBox(){
             Location = new Point(170, 20),
@@ -56,7 +63,7 @@ namespace TorPdos{
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml("#F3E1DD")
         };
-        NotifyIcon noiTorPdos = new NotifyIcon() {
+        NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
             Visible = true
@@ -80,11 +87,24 @@ namespace TorPdos{
             Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
+            Controls.Add(lblCreate);
 
 
             btnLogin.Click += BtnClickLogin;
+            lblCreate.Click += LblCreate_Click;
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
             Resize += MyformResize;
+        }
+
+        private void LblCreate_Click(object sender, System.EventArgs e){
+            Controls.Add(lblYouDidIt);
+            Controls.Remove(btnLogin);
+            Controls.Remove(txtPassword);
+            Controls.Remove(txtUsername);
+            Controls.Remove(lblUsername);
+            Controls.Remove(lblPassword);
+            Controls.Remove(lblNope);
+            Controls.Remove(lblCreate);
         }
 
         void BtnClickLogin(object sender, System.EventArgs e){
@@ -96,6 +116,7 @@ namespace TorPdos{
                 Controls.Remove(lblUsername);
                 Controls.Remove(lblPassword);
                 Controls.Remove(lblNope);
+                Controls.Remove(lblCreate);
             } else{
                 Controls.Add(lblNope);
             }
