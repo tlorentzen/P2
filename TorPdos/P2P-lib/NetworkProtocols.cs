@@ -65,6 +65,7 @@ namespace P2P_lib{
             upload.filename = new FileInfo(filePath).Name;
             upload.filehash = DiskHelper.CreateMD5(filePath);
             upload.path = filePath;
+            upload.from = NetworkHelper.getLocalIPAddress();
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
             upload.port = port.GetAvailablePort();
