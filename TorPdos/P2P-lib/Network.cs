@@ -131,12 +131,12 @@ namespace P2P_lib{
                 } else{
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
-                NetworkPorts ports = new NetworkPorts();
                 upload.CreateReply();
-                upload.port = ports.GetAvailablePort();
-                fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
+                NetworkPorts ports = new NetworkPorts();
+                int portForReceivingFile = ports.GetAvailablePort();
+                fileReceiver = new FileReceiver(upload.filehash, true, portForReceivingFile);
                 fileReceiver.start();
-                upload.Send();
+                upload.Send(upload.port);
             }
         }
 
