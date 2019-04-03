@@ -60,7 +60,7 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count;
-            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.106");
+            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.100");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
             upload.filehash = DiskHelper.CreateMD5(filePath);
@@ -89,7 +89,9 @@ namespace P2P_lib{
                     upload.CreateReply();
                     upload.Send();
                 } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
+                    Console.WriteLine("This is an upload response");
                     if (upload.statuscode == StatusCode.ACCEPTED){
+                        Console.WriteLine("It's accepted");
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
                         string filePath = indexFile.getPath();
                         Console.WriteLine("Paht from indexfile is: " + indexFile.getPath());
