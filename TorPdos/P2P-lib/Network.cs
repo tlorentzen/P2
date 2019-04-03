@@ -150,8 +150,8 @@ namespace P2P_lib{
                 int portToRespondTo = upload.port;
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
-                Console.WriteLine("Port for receiving the file: " + portForReceivingFile);
-                fileReceiver = new FileReceiver(upload.filehash, true, portForReceivingFile);
+                Console.WriteLine("Port for receiving the file: " + upload.port);
+                fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
                 fileReceiver.start();
                 Console.WriteLine("File receiver started");
                 upload.Send(portToRespondTo);
