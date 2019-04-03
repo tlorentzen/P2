@@ -136,13 +136,14 @@ namespace P2P_lib{
                 }
                 upload.CreateReply();
                 upload.type = Messages.TypeCode.RESPONSE;
+                int portToRespondTo = upload.port;
                 NetworkPorts ports = new NetworkPorts();
-                int portForReceivingFile = ports.GetAvailablePort();
+                upload.port = ports.GetAvailablePort();
                 Console.WriteLine("Port for receiving the file: " + portForReceivingFile);
                 fileReceiver = new FileReceiver(upload.filehash, true, portForReceivingFile);
                 fileReceiver.start();
                 Console.WriteLine("File receiver started");
-                upload.Send(upload.port);
+                upload.Send(portToRespondTo);
                 Console.WriteLine("Upload response send to port: " + upload.port + "on other computer");
             } else {
                 Console.WriteLine("This is not an upload request");
