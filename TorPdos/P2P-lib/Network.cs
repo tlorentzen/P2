@@ -148,7 +148,7 @@ namespace P2P_lib{
                 }
                 upload.CreateReply();
                 upload.type = Messages.TypeCode.RESPONSE;
-                Console.WriteLine("Responding to port: " + upload.port);
+                Console.WriteLine("Responding to port: " + portToRespondTo);
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
                 Console.WriteLine("Port for receiving the file: " + upload.port);

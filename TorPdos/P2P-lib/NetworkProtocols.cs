@@ -70,6 +70,7 @@ namespace P2P_lib{
             upload.port = port.GetAvailablePort();
             receiver = new Receiver(upload.port);
             receiver.start();
+            Console.WriteLine("Receiver on port: " + upload.port);
             receiver.MessageReceived += Receiver_MessageReceived;
             upload.Send();
             Console.WriteLine("Upload request sent");
@@ -78,6 +79,7 @@ namespace P2P_lib{
         private void Receiver_MessageReceived(BaseMessage msg){
             if (msg.GetMessageType() == typeof(UploadMessage)){
                 UploadMessage upload = (UploadMessage) msg;
+                Console.WriteLine("Upload message received");
 
                 if (upload.type.Equals(Messages.TypeCode.REQUEST)){
                     if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
