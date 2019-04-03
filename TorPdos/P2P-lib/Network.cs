@@ -193,7 +193,7 @@ namespace P2P_lib{
 
                 peerFetch.statuscode = StatusCode.OK;
                 peerFetch.type = Messages.TypeCode.REQUEST;
-                //peerFetch.Send();
+                peerFetch.Send();
             }
         }
 
