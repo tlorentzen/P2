@@ -98,7 +98,7 @@ namespace P2P_lib{
                 foreach (Peer yourPeer in message.Peers){
                     inPeers = false;
                     foreach (Peer myPeer in peers){
-                        if (myPeer.GetIP() == yourPeer.GetIP() ||
+                        if (String.Compare(myPeer.GetIP(), yourPeer.GetIP(), StringComparison.Ordinal)==0 ||
                             yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()){
                             inPeers = true;
                             break;
