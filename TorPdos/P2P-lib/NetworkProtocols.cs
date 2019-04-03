@@ -60,6 +60,7 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count;
+            //Setting up the information regarding sending the file.
             UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.10.114");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
@@ -69,10 +70,13 @@ namespace P2P_lib{
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
             upload.port = port.GetAvailablePort();
+            
+            
             Console.WriteLine("Filesize: " + upload.filesize);
             Console.WriteLine("Filename: " + upload.filename);
             Console.WriteLine("From: " + upload.from);
             Console.WriteLine("Filepath: " + upload.path);
+            
             receiver = new Receiver(upload.port);
             receiver.start();
             Console.WriteLine("Receiver on port: " + upload.port);

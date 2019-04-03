@@ -31,6 +31,7 @@ namespace P2P_lib{
             _hiddenFolderPath = new HiddenFolder(_path + @"\.hidden\");
             load();
         }
+
         public Network(int port, string path){
             this._port = port;
             this._path = path;
@@ -47,7 +48,7 @@ namespace P2P_lib{
 
             return newPeerList;
         }
-        
+
 
         public void Start(){
             this._running = true;
@@ -72,11 +73,14 @@ namespace P2P_lib{
 
             if (msgType == typeof(PingMessage)){
                 RechievedPing((PingMessage) message);
-            } else if (msgType == typeof(UploadMessage)){
+            }
+            else if (msgType == typeof(UploadMessage)){
                 RechievedUpload((UploadMessage) message);
-            } else if (msgType == typeof(DownloadMessage)){
+            }
+            else if (msgType == typeof(DownloadMessage)){
                 RechievedDownload((DownloadMessage) message);
-            } else if (msgType == typeof(PeerFetcherMessage)){
+            }
+            else if (msgType == typeof(PeerFetcherMessage)){
                 RechievedPeerFetch((PeerFetcherMessage) message);
             }
         }
@@ -88,19 +92,19 @@ namespace P2P_lib{
                 List<Peer> outgoing = new List<Peer>();
                 incomming = message.Peers;
                 // Adding sender to list
-                if (!inPeerList(message.FromUUID,peers)){
+                if (!inPeerList(message.FromUUID, peers)){
                     peers.Add(new Peer(message.FromUUID, message.from));
                 }
 
                 //Checks whether a incomming peer exists in the peerlist.
                 foreach (var incommingPeer in incomming){
-                    if (inPeerList(incommingPeer.getUUID(),peers)) break;
+                    if (inPeerList(incommingPeer.getUUID(), peers)) break;
                     peers.Add(incommingPeer);
-                    Console.WriteLine("Peer added"+incommingPeer.getUUID());
+                    Console.WriteLine("Peer added" + incommingPeer.getUUID());
                 }
 
                 foreach (var outGoingPeer in peers){
-                    if (inPeerList(outGoingPeer.getUUID(),incomming)) break;
+                    if (inPeerList(outGoingPeer.getUUID(), incomming)) break;
                     if (outGoingPeer.getUUID() == message.FromUUID) break;
                     outgoing.Add(outGoingPeer);
                 }
@@ -108,15 +112,14 @@ namespace P2P_lib{
                 message.CreateReply();
                 message.Peers = outgoing;
                 message.Send();
-
-
-            } else{
+            }
+            else{
                 // Rechieved response
 
-                
+
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
-                    if (("MyName"+NetworkHelper.getLocalIPAddress()).Equals(incommingPeer.getUUID())) break;
+                    if (("MyName" + NetworkHelper.getLocalIPAddress()).Equals(incommingPeer.getUUID())) break;
                     peers.Add(incommingPeer);
                 }
             }
@@ -128,7 +131,7 @@ namespace P2P_lib{
             }
         }
 
-        private bool inPeerList(string UUID,List<Peer> input){
+        private bool inPeerList(string UUID, List<Peer> input){
             bool inPeers = false;
             foreach (Peer peer in input){
                 if (peer.getUUID().Equals(UUID)){
@@ -146,24 +149,26 @@ namespace P2P_lib{
             if (_path == null) return;
             using (var fileStream = _hiddenFolderPath.WriteToFile(_peerFilePath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
-                
+
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
         }
-        
+
         public bool load(){
             if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath);
-                List<Peer>input = JsonConvert.DeserializeObject<List<Peer>>(json);
+                List<Peer> input = JsonConvert.DeserializeObject<List<Peer>>(json);
                 foreach (var peer in input){
                     peers.Add(peer);
                 }
+
                 return true;
             }
+
             return false;
         }
-        
-        private bool inPeerList(string UUID,BlockingCollection<Peer> input){
+
+        private bool inPeerList(string UUID, BlockingCollection<Peer> input){
             bool inPeers = false;
             foreach (Peer peer in input){
                 if (peer.getUUID().Equals(UUID)){
@@ -183,10 +188,12 @@ namespace P2P_lib{
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
                     Console.WriteLine("Request accepted");
-                } else{
+                }
+                else{
                     Console.WriteLine("Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
+
                 upload.CreateReply();
                 upload.type = Messages.TypeCode.RESPONSE;
                 Console.WriteLine("Responding to port: " + portToRespondTo);
@@ -199,7 +206,8 @@ namespace P2P_lib{
                 Console.WriteLine("Sending to IP: " + upload.to + " port: " + portToRespondTo);
                 upload.Send(portToRespondTo);
                 Console.WriteLine("Upload response send to port: " + upload.port + "on other computer");
-            } else {
+            }
+            else{
                 Console.WriteLine("This is not an upload request");
             }
         }
@@ -218,7 +226,8 @@ namespace P2P_lib{
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
                 ping.Send();
-            } else{
+            }
+            else{
                 // Recheved response, should send peerlist
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
 
@@ -226,7 +235,7 @@ namespace P2P_lib{
                 peerFetch.Peers = this.getPeerList();
 
                 //Add myself to the list. TODO Insert userID in place of "MyName"
-                peerFetch.FromUUID = "MyName"+NetworkHelper.getLocalIPAddress();
+                peerFetch.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
                 //Removed the rechiever from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.Peers){
                     if (String.Compare(peer.GetIP().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
