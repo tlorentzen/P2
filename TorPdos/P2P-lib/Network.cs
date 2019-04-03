@@ -70,7 +70,7 @@ namespace P2P_lib{
                 foreach (Peer myPeer in peers){
                     inPeers = false;
                     foreach (Peer yourPeer in message.Peers){
-                        if (myPeer.GetIP() == yourPeer.GetIP()){
+                        if (String.Compare(myPeer.GetIP(), yourPeer.GetIP(), StringComparison.Ordinal) == 0) {
 
                             message.Peers.Remove(yourPeer);
                             inPeers = true;
@@ -84,7 +84,7 @@ namespace P2P_lib{
                 }
 
                 foreach (Peer yourPeer in message.Peers){
-                    if (!(String.Compare(NetworkHelper.getLocalIPAddress(), yourPeer.GetIP(), StringComparison.Ordinal) == 0)) {
+                    if (String.Compare(NetworkHelper.getLocalIPAddress(), yourPeer.GetIP(), StringComparison.Ordinal) != 0) {
                         peers.Add(yourPeer);
                     }
                 }
