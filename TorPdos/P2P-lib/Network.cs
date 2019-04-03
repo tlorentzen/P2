@@ -66,7 +66,9 @@ namespace P2P_lib{
             if (message.type.Equals(Messages.TypeCode.REQUEST)){
                 Console.WriteLine("Rechived Peers");
                 List<Peer> newPeers = new List<Peer>();
-                bool inPeers = false;
+                //Add sender to list
+                newPeers.Add(new Peer(message.FromUUID.Trim() , message.from.Trim()));
+                bool inPeers;
                 // Clear already know peers from rechieved peerlist
                 foreach (Peer myPeer in peers){
                     inPeers = false;
@@ -153,10 +155,11 @@ namespace P2P_lib{
                
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
+
                 //Add myself to the list. TODO Insert userID in place of "MyName"
-                peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress().Trim()));
+                peerFetch.FromUUID = "MyName";
                 //Removed the rechiever from the list, as he should not add himself
-                foreach(Peer peer in peerFetch.Peers) {
+                foreach (Peer peer in peerFetch.Peers) {
                     if (String.Compare(peer.GetIP().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0) {
                         peerFetch.Peers.Remove(peer);
                         break;
