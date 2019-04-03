@@ -28,7 +28,7 @@ namespace P2P_lib{
             this._buffer = new byte[bufferSize];
             this._hidden = hidden;
             if (hidden) {
-                this._outputPath += ".hidden\";
+                this._outputPath += ".hidden\\";
             }
         }
 
