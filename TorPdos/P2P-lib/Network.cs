@@ -70,7 +70,7 @@ namespace P2P_lib{
                 foreach (Peer myPeer in peers){
                     inPeers = false;
                     foreach (Peer yourPeer in message.Peers){
-                        if (String.Compare(myPeer.GetIP(), yourPeer.GetIP(), StringComparison.Ordinal) == 0) {
+                        if (String.Compare(myPeer.GetIP().Trim(), yourPeer.GetIP().Trim(), StringComparison.Ordinal) == 0) {
 
                             message.Peers.Remove(yourPeer);
                             inPeers = true;
@@ -84,7 +84,7 @@ namespace P2P_lib{
                 }
 
                 foreach (Peer yourPeer in message.Peers){
-                    if (String.Compare(NetworkHelper.getLocalIPAddress(), yourPeer.GetIP(), StringComparison.Ordinal) != 0) {
+                    if (String.Compare(NetworkHelper.getLocalIPAddress().Trim(), yourPeer.GetIP().Trim(), StringComparison.Ordinal) != 0) {
                         peers.Add(yourPeer);
                     }
                 }
@@ -98,8 +98,8 @@ namespace P2P_lib{
                 foreach (Peer yourPeer in message.Peers){
                     inPeers = false;
                     foreach (Peer myPeer in peers){
-                        if (String.Compare(myPeer.GetIP(), yourPeer.GetIP(), StringComparison.Ordinal)==0 ||
-                            String.Compare(NetworkHelper.getLocalIPAddress(), yourPeer.GetIP(), StringComparison.Ordinal) == 0) {
+                        if (String.Compare(myPeer.GetIP().Trim(), yourPeer.GetIP().Trim(), StringComparison.Ordinal)==0 ||
+                            String.Compare(NetworkHelper.getLocalIPAddress().Trim(), yourPeer.GetIP().Trim(), StringComparison.Ordinal) == 0) {
                             inPeers = true;
                             break;
                         }
@@ -151,7 +151,7 @@ namespace P2P_lib{
                 //TODO Insert username in place of "MyName"
                 peerFetch.Peers.Add(new Peer("MyName", NetworkHelper.getLocalIPAddress()));
                 foreach(Peer peer in peerFetch.Peers) {
-                    if (String.Compare(peer.GetIP(), peerFetch.to, StringComparison.Ordinal) == 0) {
+                    if (String.Compare(peer.GetIP().Trim(), peerFetch.to, StringComparison.Ordinal) == 0) {
                         peerFetch.Peers.Remove(peer);
                         break;
                     }
