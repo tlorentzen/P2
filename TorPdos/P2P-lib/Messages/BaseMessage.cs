@@ -30,21 +30,17 @@ namespace P2P_lib.Messages
 
         public abstract string GetHash();
 
-        public BaseMessage(string to)
-        {
+        public BaseMessage(string to){
             this.to = to;
         }
 
-        public bool Send()
-        {
+        public bool Send(int receiverPort = 25565){
             try{
-                using (TcpClient client = new TcpClient(this.to, 25565))
-                {
+                using (TcpClient client = new TcpClient(this.to, receiverPort)){
                     client.SendTimeout = 2000;
 
                     byte[] data = this.ToByteArray();
-                    using (NetworkStream stream = client.GetStream())
-                    {
+                    using (NetworkStream stream = client.GetStream()){
                         stream.Write(data, 0, data.Length);
                     }
                 }
@@ -57,25 +53,21 @@ namespace P2P_lib.Messages
         }
 
         //https://stackoverflow.com/questions/33022660/how-to-convert-byte-array-to-any-type
-        private byte[] ToByteArray()
-        {
+        private byte[] ToByteArray(){
             if (this == null)
                 return null;
             BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
+            using (MemoryStream ms = new MemoryStream()){
                 bf.Serialize(ms, this);
                 return ms.ToArray();
             }
         }
 
-        public static BaseMessage FromByteArray(byte[] data)
-        {
+        public static BaseMessage FromByteArray(byte[] data){
             if (data == null)
                 return null;
             BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream(data))
-            {
+            using (MemoryStream ms = new MemoryStream(data)){
                 object obj = bf.Deserialize(ms);
                 return (BaseMessage)obj;
             }
