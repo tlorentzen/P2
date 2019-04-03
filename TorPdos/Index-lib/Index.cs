@@ -52,7 +52,7 @@ namespace Index_lib{
             watcher.EnableRaisingEvents = true;
         }
 
-        public string GetPath() {
+        public string GetPath(){
             return _path;
         }
 
@@ -62,7 +62,6 @@ namespace Index_lib{
         }
 
         public IndexFile GetEntry(string hash){
-
             foreach (IndexFile ifile in index){
                 if (ifile.hash.Equals(hash)){
                     return ifile;
@@ -73,7 +72,9 @@ namespace Index_lib{
         }
 
         public void buildIndex(){
-            string[] files = Directory.GetFiles(this._path, "*", SearchOption.AllDirectories); //TODO rewrite windows functionality D://
+            string[] files =
+                Directory.GetFiles(this._path, "*",
+                    SearchOption.AllDirectories); //TODO rewrite windows functionality D://
 
             foreach (string filePath in files){
                 if (!IgnoreHidden(filePath)){
@@ -94,7 +95,8 @@ namespace Index_lib{
                         }
 
                         if (this._debug){
-                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() + " - " + filePath);
+                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() +
+                                              " - " + filePath);
                         }
                     }
                 }
@@ -120,6 +122,7 @@ namespace Index_lib{
         public int getIndexSize(){
             return this.index.Count;
         }
+
         /*
         private void fileThreadHandler(FileSystemEventArgs e){
         
@@ -229,7 +232,7 @@ namespace Index_lib{
                 return;
 
             // Wait until the file is ready 
-            while (!IsFileReady(e.FullPath)){}
+            while (!IsFileReady(e.FullPath)){ }
 
             bool foundInIndex = false;
             IndexFile eventFile = new IndexFile(e.FullPath);
@@ -254,12 +257,10 @@ namespace Index_lib{
 
             FileAdded(eventFile);
         }
-        
-        
-        // Define the event handlers.
-        private void OnChanged(object source, FileSystemEventArgs e)
-        {
 
+
+        // Define the event handlers.
+        private void OnChanged(object source, FileSystemEventArgs e){
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
@@ -268,7 +269,7 @@ namespace Index_lib{
                 return;
 
             // Wait until the file is ready 
-            while (!IsFileReady(e.FullPath)) { }
+            while (!IsFileReady(e.FullPath)){ }
 
             Boolean foundInIndex = false;
             Boolean fileRemoved = false;
@@ -276,8 +277,8 @@ namespace Index_lib{
             IndexFile foundMatch = eventFile;
 
             // Handle change
-            foreach (IndexFile file in index) {
-                if (file.Equals(eventFile)) {
+            foreach (IndexFile file in index){
+                if (file.Equals(eventFile)){
                     foundInIndex = true;
                     foundMatch = file;
                     break;
@@ -285,12 +286,12 @@ namespace Index_lib{
             }
 
             // handle create event
-            if (!foundInIndex) {
+            if (!foundInIndex){
                 foreach (IndexFile file in index){
                     if (file.paths.Contains(e.FullPath)){
                         if (file.paths.Count > 1){
                             file.paths.Remove(e.FullPath);
-                        }else{
+                        } else{
                             index.Remove(file);
                             break;
                         }
@@ -298,28 +299,30 @@ namespace Index_lib{
                 }
 
                 index.Add(eventFile);
-            } else {
-                foreach (IndexFile file in index) {
-                    if(file.paths.Count > 1) {
-                        foreach (string path in file.paths) {
-                            if (path == eventFile.paths[0] && !eventFile.Equals(file)) {
+            } else{
+                foreach (IndexFile file in index){
+                    if (file.paths.Count > 1){
+                        foreach (string path in file.paths){
+                            if (path == eventFile.paths[0] && !eventFile.Equals(file)){
                                 file.paths.Remove(path);
                                 break;
                             }
                         }
-                    } else {
-                        foreach (string path in file.paths) {
-                            if (path == eventFile.paths[0] && !eventFile.Equals(file)) {
+                    } else{
+                        foreach (string path in file.paths){
+                            if (path == eventFile.paths[0] && !eventFile.Equals(file)){
                                 index.Remove(file);
                                 fileRemoved = true;
                             }
                         }
                     }
-                    if (fileRemoved) {
+
+                    if (fileRemoved){
                         break;
                     }
                 }
-                if (!foundMatch.paths.Contains(eventFile.paths[0])) {
+
+                if (!foundMatch.paths.Contains(eventFile.paths[0])){
                     foundMatch.addPath(eventFile.paths[0]);
                 }
             }
@@ -327,8 +330,7 @@ namespace Index_lib{
             FileChanged(eventFile);
         }
 
-        private void OnDeleted(object source, FileSystemEventArgs e)
-        {
+        private void OnDeleted(object source, FileSystemEventArgs e){
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
@@ -341,7 +343,7 @@ namespace Index_lib{
                         deleted_file = file;
                         file.paths.Remove(e.FullPath);
                         break;
-                    }else{
+                    } else{
                         deleted_file = file.Copy();
                         index.Remove(file);
                         break;
@@ -384,13 +386,13 @@ namespace Index_lib{
         }
 
         public Boolean IsFileReady(string path){
-
             bool exist = false;
             try{
                 using (FileStream inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)){
                     exist = true;
-                }    
-            }catch (Exception){
+                }
+            }
+            catch (Exception){
                 exist = false;
             }
 

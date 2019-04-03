@@ -8,17 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TorPdos
-{
-    public partial class AppForm : Form
-    {
-        public AppForm()
-        {
+namespace TorPdos{
+    public partial class AppForm : Form{
+        public AppForm(){
             InitializeComponent();
         }
 
-        private void InitializeComponent()
-        {
+        private void InitializeComponent(){
             this.SuspendLayout();
             // 
             // AppForm
@@ -28,7 +24,6 @@ namespace TorPdos
             this.ForeColor = System.Drawing.SystemColors.Window;
             this.Name = "AppForm";
             this.ResumeLayout(false);
-
         }
     }
 }

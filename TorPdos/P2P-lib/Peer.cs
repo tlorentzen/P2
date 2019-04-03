@@ -18,12 +18,12 @@ namespace P2P_lib{
         private long _nextPing = 0;
         private bool _online = false;
 
-        public Peer() : this(null, null){}
+        public Peer() : this(null, null){ }
 
         public Peer(string uuid, string ip){
             this._UUID = uuid;
 
-            if(ip == null || ip.Equals("")){
+            if (ip == null || ip.Equals("")){
                 this.SetIP(NetworkHelper.getLocalIPAddress());
             } else{
                 this.SetIP(ip);
@@ -44,9 +44,8 @@ namespace P2P_lib{
         public void Ping(){
             this.Ping(0);
         }
-        
-        public void Ping(long millis){
 
+        public void Ping(long millis){
             long time = (millis > 0) ? millis : DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             if (this._nextPing < time){
@@ -56,12 +55,13 @@ namespace P2P_lib{
                 ping.type = Messages.TypeCode.REQUEST;
                 ping.statuscode = StatusCode.OK;
                 ping.Send();
-                
+
                 // Ping every 60 seconds and if a peer didnt respond add extra time before retrying.
-                this._nextPing = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 10000 + (this._pings_without_response * 10000);
+                this._nextPing = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 10000 +
+                                 (this._pings_without_response * 10000);
                 this._pings_without_response++;
 
-                if(this._pings_without_response >= 2) {
+                if (this._pings_without_response >= 2){
                     this._online = false;
                     Console.WriteLine(this.GetIP() + " is now offline...");
                 }
@@ -97,30 +97,30 @@ namespace P2P_lib{
 
         public int Rating{
             get => _rating;
-            set {
-                if ((_rating + value) > 100) {
+            set{
+                if ((_rating + value) > 100){
                     _rating = 100;
-                } else if ((_rating + value) < 0) {
+                } else if ((_rating + value) < 0){
                     _rating = 0;
-                } else {
+                } else{
                     _rating += value;
                 }
             }
         }
 
         public int CompareTo(object obj){
-            return String.Compare(_UUID, ((Peer)obj)._UUID, StringComparison.Ordinal);
+            return String.Compare(_UUID, ((Peer) obj)._UUID, StringComparison.Ordinal);
         }
 
         public bool Equals(Peer peer){
             if (peer == null){
                 return false;
             }
+
             return this._UUID.Equals(peer._UUID);
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj){
             if (obj == null){
                 return false;
             }

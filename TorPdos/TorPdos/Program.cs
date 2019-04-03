@@ -13,7 +13,6 @@ namespace TorPdos{
     class Program{
         [STAThread]
         static void Main(string[] args){
-
             /*
             //User validation testing
             Console.Write("Generate user with random UUID and...\n" +
@@ -39,7 +38,7 @@ namespace TorPdos{
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-            
+
             // Load Index
             Index idx = new Index(@"C:\\TorPdos\");
             idx.setIndexFilePath(@"C:\\TorPdos\.hidden\index.json");
@@ -48,7 +47,7 @@ namespace TorPdos{
             idx.FileChanged += Idx_FileChanged;
             idx.FileDeleted += Idx_FileDeleted;
 
-            if(!idx.load()){
+            if (!idx.load()){
                 idx.buildIndex();
             }
 
@@ -68,27 +67,23 @@ namespace TorPdos{
                 } else{
                     if (console.StartsWith("add") && param.Length == 3){
                         p2p.AddPeer(param[1], param[2]);
-                    } else if(console.Equals("gui")){
+                    } else if (console.Equals("gui")){
                         Application.Run(TorPdos);
-                    } else if (console.StartsWith("upload") && param.Length == 3) {
+                    } else if (console.StartsWith("upload") && param.Length == 3){
                         //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
-                        if (int.TryParse(param[2], out int n)) {
+                        if (int.TryParse(param[2], out int n)){
                             Console.WriteLine("Shit hit da fan");
                             new NetworkProtocols(idx, p2p).UploadFileToNetwork(param[1], int.Parse(param[2]));
                         } else{
                             Console.WriteLine("Third parameter must be an integer");
                         }
-                    }else if(console.Equals("reindex")){
+                    } else if (console.Equals("reindex")){
                         idx.reIndex();
-                    }else if(console.Equals("status")){
+                    } else if (console.Equals("status")){
                         idx.status();
-                    }
-                    else if (console.Equals("save"))
-                    {
+                    } else if (console.Equals("save")){
                         idx.save();
-                    }
-                    else
-                    {
+                    } else{
                         Console.WriteLine("Unknown command");
                     }
                 }
@@ -97,11 +92,10 @@ namespace TorPdos{
             Console.ReadKey();
         }
 
-        private static void Idx_FileDeleted(IndexFile file)
-        {
-            if(file == null){
+        private static void Idx_FileDeleted(IndexFile file){
+            if (file == null){
                 Console.WriteLine("File deleted: null...");
-            }else{
+            } else{
                 Console.WriteLine("File deleted: " + file.hash);
             }
         }
@@ -113,6 +107,7 @@ namespace TorPdos{
         private static void Idx_FileChanged(IndexFile file){
             Console.WriteLine("File changed: " + file.hash);
         }
+
         /*
 
         private static void Idx_FileDeleted(IndexFile file)
@@ -120,6 +115,5 @@ namespace TorPdos{
             Console.WriteLine("File deleted: " + file.hash);
         }
         */
-
     }
 }

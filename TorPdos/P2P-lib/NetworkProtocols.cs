@@ -18,8 +18,9 @@ namespace P2P_lib{
     public class NetworkProtocols{
         Receiver receiver;
         private NetworkPorts port = new NetworkPorts();
-        private Index _index { get; set; }
-        private Network _network { get; set; }
+        private Index _index{ get; set; }
+        private Network _network{ get; set; }
+
         public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
@@ -28,8 +29,7 @@ namespace P2P_lib{
         //This is the function called to upload a file to the network
         //It takes a path to the file, the number of copies and a seed
         //The seed is to ensure that the same nodes doesn't end up with the files every time
-        public void UploadFileToNetwork (string filePath, int copies, int seed = 0){
-            
+        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
             //This keeps the number of copies between 0 and 50
             copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
 
@@ -51,7 +51,7 @@ namespace P2P_lib{
             string readyFile = compressedFilePath + ".aes";
 
             //A copy of the compressed and encrypted file is then send to peers
-            for (int i = 0; i < copies; i++) {
+            for (int i = 0; i < copies; i++){
                 Task.Factory.StartNew(() => SendUploadRequest(readyFile, seed + i));
             }
         }
@@ -75,19 +75,19 @@ namespace P2P_lib{
 
         private void Receiver_MessageReceived(BaseMessage msg){
             if (msg.GetMessageType() == typeof(UploadMessage)){
-                UploadMessage upload = (UploadMessage)msg;
+                UploadMessage upload = (UploadMessage) msg;
 
                 if (upload.type.Equals(Messages.TypeCode.REQUEST)){
                     if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                         upload.statuscode = StatusCode.ACCEPTED;
-                    } else {
+                    } else{
                         upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                     }
+
                     upload.CreateReply();
                     upload.Send();
-
-                }else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
-                    if(upload.statuscode == StatusCode.ACCEPTED) {
+                } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
+                    if (upload.statuscode == StatusCode.ACCEPTED){
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
                         string filePath = indexFile.getPath();
                         FileSender fileSender = new FileSender(upload.from, upload.port);

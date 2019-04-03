@@ -42,18 +42,18 @@ namespace P2P_lib{
         }
 
         private void connectionHandler(){
-
             while (this.listening){
                 TcpClient client = server.AcceptTcpClient();
 
                 using (NetworkStream stream = client.GetStream()){
-                    if (!Directory.Exists("output")) {
+                    if (!Directory.Exists("output")){
                         Directory.CreateDirectory("output");
                     }
 
                     Console.WriteLine("Receiving file");
 
-                    using (var fileStream = File.Open(@"output/" + this.filename, FileMode.OpenOrCreate, FileAccess.Write)){
+                    using (var fileStream =
+                        File.Open(@"output/" + this.filename, FileMode.OpenOrCreate, FileAccess.Write)){
                         Console.WriteLine("Creating file: " + this.filename);
                         int i;
                         /*long initialFileSize = stream.Length;
@@ -97,6 +97,5 @@ namespace P2P_lib{
         public int getPort(){
             return this.port;
         }
-        
     }
 }
