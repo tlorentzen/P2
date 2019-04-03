@@ -94,7 +94,33 @@ namespace ID_lib
             }
         }
 
+        public static IEnumerable<string> GetUserList()
+        {
+            try
+            {
+                string[] uuidList = new DirectoryInfo(userdatafolder).GetFiles().Select(o => o.Name).ToArray();
+                return uuidList;
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(" * Failed to get user list!\n\n" + err.Message);
+                string[] error = new string[0];
+                return error;
+            }
+        }
 
+        public static bool RemoveUser(string uuid)
+        {
+            try
+            {
+                File.Delete(userdatafolder + "\\" + uuid);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
     }
 }
