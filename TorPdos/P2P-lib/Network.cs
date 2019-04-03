@@ -70,8 +70,8 @@ namespace P2P_lib{
                 foreach (Peer myPeer in peers){
                     inPeers = false;
                     foreach (Peer yourPeer in message.Peers){
-                        if (myPeer.GetIP() == yourPeer.GetIP() ||
-                            yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()){
+                        if (myPeer.GetIP() == yourPeer.GetIP()){
+
                             message.Peers.Remove(yourPeer);
                             inPeers = true;
                             break;
@@ -84,7 +84,9 @@ namespace P2P_lib{
                 }
 
                 foreach (Peer yourPeer in message.Peers){
-                    peers.Add(yourPeer);
+                    if (!(yourPeer.GetIP() == NetworkHelper.getLocalIPAddress())) {
+                        peers.Add(yourPeer);
+                    }
                 }
 
                 message.CreateReply();
