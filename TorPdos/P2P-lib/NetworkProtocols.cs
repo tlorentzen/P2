@@ -96,7 +96,7 @@ namespace P2P_lib{
                         Console.WriteLine("It's accepted");
                         IndexFile indexFile = _index.GetEntry(upload.filehash);
                         string filePath = indexFile.getPath();
-                        Console.WriteLine("Paht from indexfile is: " + indexFile.getPath());
+                        Console.WriteLine("Path from indexfile is: " + indexFile.getPath());
                         FileSender fileSender = new FileSender(upload.from, upload.port);
                         Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to: " + upload.port);
                         fileSender.Send(filePath);

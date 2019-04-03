@@ -154,6 +154,7 @@ namespace P2P_lib{
                 fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
                 fileReceiver.start();
                 Console.WriteLine("File receiver started");
+                Console.WriteLine("Sending to IP: " + upload.to + " port: " + portToRespondTo);
                 upload.Send(portToRespondTo);
                 Console.WriteLine("Upload response send to port: " + upload.port + "on other computer");
             } else {
