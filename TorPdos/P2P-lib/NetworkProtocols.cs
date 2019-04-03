@@ -20,7 +20,7 @@ namespace P2P_lib{
         private NetworkPorts port = new NetworkPorts();
         private Index _index { get; set; }
         private Network _network { get; set; }
-        private List<Peer> _recieverList { get; set; }
+        private List<string> _recieverList = new List<string>();
         public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
@@ -59,8 +59,8 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
             seed = seed % peerlist.Count;
-            if (_recieverList.Contains(peerlist[seed])) {
-                _recieverList.Add(peerlist[seed]);
+            if (!_recieverList.Any() && _recieverList.Contains(peerlist[seed].getUUID())) {
+                _recieverList.Add(peerlist[seed].getUUID());
                 UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
                 upload.filesize = new FileInfo(filePath).Length;
                 upload.filename = new FileInfo(filePath).Name;
