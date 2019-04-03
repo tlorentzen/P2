@@ -1,72 +1,103 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using ID_lib;
 
 namespace TorPdos{
+    
+
     public class MyForm : Form{
+        private static readonly string backgroundColour = "#320117", lblColour = "#CC7178", btnColour = "#FFF8F7", txtColour = "#FFD9DA";
         Label lblUsername = new Label{
             Location = new Point(20, 20),
-            Height = 40, Width = 200,
+            Height = 40, Width = 150,
             Font = new Font("Consolas", 20, FontStyle.Regular),
-            Text = "Username",
-            ForeColor = ColorTranslator.FromHtml("#CC7178")
+            Text = "UserID",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
         };
         Label lblPassword = new Label(){
             Location = new Point(20, 70),
-            Height = 40, Width = 200,
+            Height = 40, Width = 150,
             Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Password:",
-            ForeColor = ColorTranslator.FromHtml("#CC7178")
+            ForeColor = ColorTranslator.FromHtml(lblColour)
         };
         Label lblYouDidIt = new Label(){
             Location = new Point(100, 100),
             Height = 40, Width = 200,
             Text = "You did it o/",
-            ForeColor = ColorTranslator.FromHtml("#CC7178"),
+            ForeColor = ColorTranslator.FromHtml(lblColour),
             Font = new Font("Consolas", 20, FontStyle.Regular)
         };
         Label lblNope = new Label(){
             Location = new Point(50, 110),
             Height = 40, Width = 350,
             Text = "Wrong username or password",
-            ForeColor = ColorTranslator.FromHtml("#FFF8F7"),
+            ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
         Label lblCreate = new Label(){
             Location = new Point(275, 240),
             Height = 100, Width = 200,
             Text = "Create new user",
-            ForeColor = ColorTranslator.FromHtml("#FFF8F7"),
+            ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 8, FontStyle.Regular)
+        };
+        Label lblKage= new Label{
+            Location = new Point(20, 20),
+            Height = 40,
+            Width = 150,
+            Font = new Font("Consolas", 20, FontStyle.Regular),
+            Text = "UserID",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
         };
         TextBox txtUsername = new TextBox(){
             Location = new Point(170, 20),
             Height = 50,Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
-            MaxLength = 15,
-            ForeColor = ColorTranslator.FromHtml("#320117"),
-            BackColor = ColorTranslator.FromHtml("#FFD9DA")
+            ForeColor = ColorTranslator.FromHtml(backgroundColour),
+            BackColor = ColorTranslator.FromHtml(txtColour)
         };
         TextBox txtPassword = new TextBox(){
             Location = new Point(170, 70),
             Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
-            MaxLength = 20,
             PasswordChar = '*',
-            ForeColor = ColorTranslator.FromHtml("#320117"),
-            BackColor = ColorTranslator.FromHtml("#FFD9DA")
+            ForeColor = ColorTranslator.FromHtml(backgroundColour),
+            BackColor = ColorTranslator.FromHtml(txtColour)
         };
         Button btnLogin = new Button(){
             Location = new Point(70, 150),
-            Width = 250,
-            Height = 70,
+            Width = 250, Height = 70,
             Text = "Login",
             Font = new Font("Consolas", 25, FontStyle.Regular),
-            ForeColor = ColorTranslator.FromHtml("#F3E1DD")
+            ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        NotifyIcon noiTorPdos = new NotifyIcon(){
+        Button btnExisting = new Button(){
+            Location = new Point(70, 50),
+            Width = 250, Height = 70,
+            Text = "Existing User",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
+        Button btnNew = new Button(){
+            Location = new Point(70, 150),
+            Width = 250, Height = 70,
+            Text = "New User",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
+        Button btnCreate = new Button()
+        {
+            Location = new Point(70, 150),
+            Width = 250, Height = 70,
+            Text = "Create",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
+        NotifyIcon noiTorPdos = new NotifyIcon() {
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
-            Visible = true
+            Visible = false,
         };
 
         public MyForm(){
@@ -79,44 +110,54 @@ namespace TorPdos{
             Name = "TorPdos";
             Text = "TorPdos";
             ResumeLayout(false);
-            BackColor = ColorTranslator.FromHtml("#320117");
+            BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
 
+
+            Controls.Add(btnExisting);
+            Controls.Add(btnNew);
+
+            btnExisting.Click += BtnExisting_Click;
+            btnNew.Click += BtnNew_Click;
+            btnLogin.Click += BtnClickLogin;
+            btnCreate.Click += BtnCreate_Click;
+            noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
+            Resize += MyformResize;
+        }
+
+        public void Login(){
+            Controls.Clear();
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
             Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
-            Controls.Add(lblCreate);
-
-
-            btnLogin.Click += BtnClickLogin;
-            lblCreate.Click += LblCreate_Click;
-            noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
-            Resize += MyformResize;
+        }
+        private void BtnCreate_Click(object sender, System.EventArgs e)
+        {
+            string uuid = IDHandler.CreateUser(txtPassword.Text);
+            
+            Login();
         }
 
-        private void LblCreate_Click(object sender, System.EventArgs e){
-            Controls.Add(lblYouDidIt);
-            Controls.Remove(btnLogin);
-            Controls.Remove(txtPassword);
-            Controls.Remove(txtUsername);
-            Controls.Remove(lblUsername);
-            Controls.Remove(lblPassword);
-            Controls.Remove(lblNope);
-            Controls.Remove(lblCreate);
+        private void BtnNew_Click(object sender, System.EventArgs e)
+        {
+            Controls.Clear();
+            Controls.Add(lblPassword);
+            Controls.Add(txtPassword);
+            Controls.Add(btnCreate);
+        }
+
+        private void BtnExisting_Click(object sender, System.EventArgs e){
+            Login();
         }
 
         void BtnClickLogin(object sender, System.EventArgs e){
-            if ((txtUsername.Text == "Admin") && (txtPassword.Text == "Password")){
+            string uuid = txtUsername.Text, pass = txtPassword.Text;
+            if (IDHandler.IsValidUser(uuid, pass)){
+                Controls.Clear();
                 Controls.Add(lblYouDidIt);
-                Controls.Remove(btnLogin);
-                Controls.Remove(txtPassword);
-                Controls.Remove(txtUsername);
-                Controls.Remove(lblUsername);
-                Controls.Remove(lblPassword);
-                Controls.Remove(lblNope);
-                Controls.Remove(lblCreate);
+                
             } else{
                 Controls.Add(lblNope);
             }
