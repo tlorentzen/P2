@@ -67,7 +67,7 @@ namespace P2P_lib{
                 Console.WriteLine("Rechived Peers");
                 List<Peer> newPeers = new List<Peer>();
                 //Add sender to list
-                newPeers.Add(new Peer(message.FromUUID.Trim() , message.from.Trim()));
+                message.Peers.Add(new Peer(message.FromUUID.Trim() , message.from.Trim()));
                 bool inPeers;
                 // Clear already know peers from rechieved peerlist
                 foreach (Peer myPeer in peers){
@@ -98,7 +98,7 @@ namespace P2P_lib{
                 Console.WriteLine("Send peers back");
             } else{ // Rechieved response
                 bool inPeers = false;
-                //Add rechiever to list
+                //Add sender to list
                 message.Peers.Add(new Peer(message.FromUUID.Trim(), message.from.Trim()));
 
                 // Don't add yourself to your own list TODO(might not be nessesary, as it should not be send)
@@ -170,7 +170,7 @@ namespace P2P_lib{
                 }
                 peerFetch.statuscode = StatusCode.OK;
                 peerFetch.type = Messages.TypeCode.REQUEST;
-                peerFetch.Send();
+                //peerFetch.Send();
             }
         }
 
