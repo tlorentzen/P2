@@ -5,13 +5,13 @@ using System.Security.Cryptography;
 
 namespace P2P_lib{
     public class DiskHelper{
-
         public static long GetTotalFreeSpace(string driveName){
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
                 if (drive.IsReady && drive.Name == driveName){
                     return drive.TotalFreeSpace;
                 }
             }
+
             return -1;
         }
 

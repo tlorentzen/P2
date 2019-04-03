@@ -11,8 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace P2P_lib{
     public class NetworkHelper{
-
-        public static String getLocalIPAddress() {
+        public static String getLocalIPAddress(){
             // https://stackoverflow.com/questions/6803073/get-local-ip-address
             string localIP;
 
@@ -35,7 +34,7 @@ namespace P2P_lib{
 
             foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces()){
                 if (nic.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet) ||
-                    nic.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || 
+                    nic.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) ||
                     nic.NetworkInterfaceType.Equals(NetworkInterfaceType.GigabitEthernet)){
                     macAddresses.Add(nic.GetPhysicalAddress().ToString());
                 }
@@ -43,6 +42,5 @@ namespace P2P_lib{
 
             return macAddresses;
         }
-
     }
 }

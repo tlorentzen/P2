@@ -23,7 +23,7 @@ namespace P2P_lib{
         public List<Peer> getPeerList(){
             List<Peer> newPeerList = new List<Peer>();
 
-            foreach(Peer peer in peers) {
+            foreach (Peer peer in peers){
                 newPeerList.Add(peer);
             }
 
@@ -46,84 +46,83 @@ namespace P2P_lib{
             this.peers.Add(peer);
         }
 
-        private void Receive_MessageReceived(BaseMessage message)
-        {
+        private void Receive_MessageReceived(BaseMessage message){
             Console.WriteLine(message.GetMessageType());
 
             Type msgType = message.GetMessageType();
 
             if (msgType == typeof(PingMessage)){
-                RechievedPing((PingMessage)message);
-                
-            } else if (msgType == typeof(UploadMessage)) {
-                RechievedUpload((UploadMessage)message);
-                
-            } else if (msgType == typeof(DownloadMessage)) {
-                RechievedDownload((DownloadMessage)message);
-
-            } else if (msgType == typeof(PeerFetcherMessage)) {
-                RechievedPeerFetch((PeerFetcherMessage)message);
-
-            } 
+                RechievedPing((PingMessage) message);
+            } else if (msgType == typeof(UploadMessage)){
+                RechievedUpload((UploadMessage) message);
+            } else if (msgType == typeof(DownloadMessage)){
+                RechievedDownload((DownloadMessage) message);
+            } else if (msgType == typeof(PeerFetcherMessage)){
+                RechievedPeerFetch((PeerFetcherMessage) message);
+            }
         }
 
-        private void RechievedPeerFetch(PeerFetcherMessage message)
-        {
-            if (message.type.Equals(Messages.TypeCode.REQUEST)) {
+        private void RechievedPeerFetch(PeerFetcherMessage message){
+            if (message.type.Equals(Messages.TypeCode.REQUEST)){
                 Console.WriteLine("Rechived Peers");
                 List<Peer> newPeers = new List<Peer>();
                 bool inPeers = false;
-                foreach(Peer myPeer in peers) {
+                foreach (Peer myPeer in peers){
                     inPeers = false;
-                    foreach(Peer yourPeer in message.Peers) {
-                        if(myPeer.GetIP() == yourPeer.GetIP() || yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()) {
+                    foreach (Peer yourPeer in message.Peers){
+                        if (myPeer.GetIP() == yourPeer.GetIP() ||
+                            yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()){
                             message.Peers.Remove(yourPeer);
                             inPeers = true;
                             break;
                         }
                     }
-                    if (!inPeers) {
+
+                    if (!inPeers){
                         newPeers.Add(myPeer);
                     }
                 }
-                foreach(Peer yourPeer in message.Peers) {
+
+                foreach (Peer yourPeer in message.Peers){
                     peers.Add(yourPeer);
                 }
+
                 message.CreateReply();
                 message.Peers = newPeers;
                 message.Send();
                 Console.WriteLine("Send peers back");
-            } else {
+            } else{
                 bool inPeers = false;
-                foreach (Peer yourPeer in message.Peers) {
+                foreach (Peer yourPeer in message.Peers){
                     inPeers = false;
-                    foreach (Peer myPeer in peers) {
-                        if (myPeer.GetIP() == yourPeer.GetIP() || yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()) {
+                    foreach (Peer myPeer in peers){
+                        if (myPeer.GetIP() == yourPeer.GetIP() ||
+                            yourPeer.GetIP() == NetworkHelper.getLocalIPAddress()){
                             inPeers = true;
                             break;
                         }
                     }
-                    if (!inPeers) {
+
+                    if (!inPeers){
                         peers.Add(yourPeer);
                     }
                 }
-
             }
+
             Console.WriteLine("My peers:");
-            foreach(Peer peer in peers) {
+            foreach (Peer peer in peers){
                 Console.WriteLine(peer.getUUID() + " : " + peer.GetIP());
             }
-
         }
 
-        private void RechievedUpload(UploadMessage upload)
-        {
-            if (upload.type.Equals(Messages.TypeCode.REQUEST)) {
-                if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize) {
+        private void RechievedUpload(UploadMessage upload){
+            if (upload.type.Equals(Messages.TypeCode.REQUEST)){
+                if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
-                } else {
+                } else{
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
+
                 upload.CreateReply();
                 fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
                 fileReceiver.start();
@@ -131,21 +130,19 @@ namespace P2P_lib{
             }
         }
 
-        private void RechievedPing(PingMessage ping)
-        {
-
-            foreach (Peer peer in peers) {
-                if (peer.GetIP().Equals(ping.from)) {
+        private void RechievedPing(PingMessage ping){
+            foreach (Peer peer in peers){
+                if (peer.GetIP().Equals(ping.from)){
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
                 }
             }
 
-            if (ping.type.Equals(Messages.TypeCode.REQUEST)) {
+            if (ping.type.Equals(Messages.TypeCode.REQUEST)){
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
                 ping.Send();
-            } else {
+            } else{
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
@@ -157,8 +154,7 @@ namespace P2P_lib{
             }
         }
 
-        private void RechievedDownload(DownloadMessage download)
-        {
+        private void RechievedDownload(DownloadMessage download){
             throw new NotImplementedException();
         }
 
@@ -166,15 +162,15 @@ namespace P2P_lib{
             this._running = false;
             receive.stop();
         }
-        
+
         private void PingHandler(){
-            while(this._running){
+            while (this._running){
                 long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
                 foreach (Peer peer in peers){
                     peer.Ping(millis);
 
-                    if(!this._running){
+                    if (!this._running){
                         break;
                     }
                 }
@@ -182,6 +178,5 @@ namespace P2P_lib{
 
             Console.WriteLine("PingHandler stopped...");
         }
-
     }
 }

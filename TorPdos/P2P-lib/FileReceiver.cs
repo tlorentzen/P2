@@ -58,7 +58,6 @@ namespace P2P_lib{
                     }*/
 
                     Console.WriteLine("Receiving file");
-
                     using (var fileStream = File.Open(this._outputPath + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
                         Console.WriteLine("Creating file: " + this._filename);
                         int i;
@@ -103,6 +102,5 @@ namespace P2P_lib{
         public int getPort(){
             return this._port;
         }
-        
     }
 }
