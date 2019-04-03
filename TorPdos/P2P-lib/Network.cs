@@ -93,14 +93,12 @@ namespace P2P_lib{
 
             } else{
                 // Rechieved response
-                //Add sender to list
-                message.Peers.Add(new Peer(message.FromUUID.Trim(), message.from.Trim()));
 
-                // Don't add yourself to your own list
-                // TODO(might not be nessesary, as it should not be send)
+                
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
-                        peers.Add(incommingPeer);
+                    if (("MyName"+NetworkHelper.getLocalIPAddress()).Equals(incommingPeer.getUUID())) break;
+                    peers.Add(incommingPeer);
                 }
             }
 
