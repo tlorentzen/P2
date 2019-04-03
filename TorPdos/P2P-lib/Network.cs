@@ -126,17 +126,25 @@ namespace P2P_lib{
 
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(Messages.TypeCode.REQUEST)){
+                Console.WriteLine("This is an upload request");
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
+                    Console.WriteLine("Request accepted");
                 } else{
+                    Console.WriteLine("Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
                 upload.CreateReply();
                 NetworkPorts ports = new NetworkPorts();
                 int portForReceivingFile = ports.GetAvailablePort();
+                Console.WriteLine("Port for receiving the file: " + portForReceivingFile);
                 fileReceiver = new FileReceiver(upload.filehash, true, portForReceivingFile);
                 fileReceiver.start();
+                Console.WriteLine("File receiver started");
                 upload.Send(upload.port);
+                Console.WriteLine("Upload response send to port: " + upload.port + "on other computer");
+            } else {
+                Console.WriteLine("This is not an upload request");
             }
         }
 
