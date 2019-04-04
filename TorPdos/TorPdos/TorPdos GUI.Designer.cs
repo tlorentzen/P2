@@ -1,4 +1,4 @@
-﻿/*using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ID_lib;
@@ -181,7 +181,7 @@ namespace TorPdos{
             Controls.Add(btnNew);
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
-            string uuid = IDHandler.CreateUser(txtPassword.Text);
+            string uuid = IDHandler.CreateUser(txtPath.Text + @"\.hidden", txtPassword.Text);
             Login();
             txtUsername.Text = uuid;
         }
@@ -200,7 +200,7 @@ namespace TorPdos{
 
         void BtnClickLogin(object sender, System.EventArgs e){
             string uuid = txtUsername.Text, pass = txtPassword.Text;
-            if (IDHandler.IsValidUser(uuid, pass)){
+            if (IDHandler.IsValidUser(txtPath.Text + @"\.hidden", uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
             } else{
@@ -224,4 +224,3 @@ namespace TorPdos{
         }
     }
 }
-*/
