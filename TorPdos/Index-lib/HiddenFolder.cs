@@ -40,6 +40,9 @@ namespace Index_lib
         {
             Directory.Delete(_path + path);
         }
+        public void RemoveFile(string path) {
+            File.Delete(path);
+        }
 
         public FileStream WriteToFile(string path)
         {

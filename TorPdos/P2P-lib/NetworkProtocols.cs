@@ -51,8 +51,8 @@ namespace P2P_lib{
             //And then encrypted
             FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
             encryption.doEncrypt("password");
+            _hiddenFolder.RemoveFile(compressedFilePath + ".lzma");
             string readyFile = compressedFilePath + ".aes";
-            _hiddenFolder.Remove(time.ToString() + ".lzma");
             Console.WriteLine("File is ready for upload");
 
             //A copy of the compressed and encrypted file is then send to the set number of peers
