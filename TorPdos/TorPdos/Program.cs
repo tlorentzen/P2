@@ -67,6 +67,7 @@ namespace TorPdos{
                 if (console.Equals("quit") || console.Equals("q")){
                     Console.WriteLine("Quitting...");
                     idx.save();
+                    p2p.saveFile();
                     p2p.Stop();
                     running = false;
                 } else{

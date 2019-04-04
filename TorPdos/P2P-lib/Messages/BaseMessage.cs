@@ -23,6 +23,7 @@ namespace P2P_lib.Messages
         private string hash;
         public StatusCode statuscode;
         public TypeCode type;
+        public int forwardCount;
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -78,6 +79,12 @@ namespace P2P_lib.Messages
             string from_ip = this.from;
             this.from = this.to;
             this.to = from_ip;
+        }
+
+        public void forwardMessage(string toIP){
+            this.to = toIP;
+            this.type = TypeCode.REQUEST;
+            forwardCount -= 1;
         }
     }
 }
