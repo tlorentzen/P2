@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,9 @@ namespace TorPdos{
         [STAThread]
         static void Main(string[] args){
             MyForm TorPdos = new MyForm();
-
+            
+            
+            
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
