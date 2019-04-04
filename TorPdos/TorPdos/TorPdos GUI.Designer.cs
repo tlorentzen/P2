@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿/*using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ID_lib;
@@ -197,3 +197,4 @@ namespace TorPdos{
         }
     }
 }
+*/
