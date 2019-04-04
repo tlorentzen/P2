@@ -197,6 +197,7 @@ namespace P2P_lib{
                 Console.WriteLine("This is an upload response");
                 if (upload.statuscode == StatusCode.ACCEPTED) {
                     Console.WriteLine("It's accepted");
+                    Console.WriteLine(upload.filehash.Equals("c28ef56e6bbcdd8ed452cbb860e620d1"));
                     IndexFile indexFile = _index.GetEntry(upload.filehash);
                     string filePath = indexFile.getPath();
                     Console.WriteLine("Filepath to upload: {0}", filePath);
