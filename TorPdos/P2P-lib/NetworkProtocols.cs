@@ -13,25 +13,28 @@ using P2P_lib;
 using Index_lib;
 using Compression;
 using Encryption;
+using System.Security.Cryptography;
 
 namespace P2P_lib{
     public class NetworkProtocols{
-        Receiver receiver;
         private NetworkPorts port = new NetworkPorts();
         private Index _index { get; set; }
         private Network _network { get; set; }
-        private List<string> _recieverList = new List<string>();
+        private HiddenFolder _hiddenFolder;
         public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
+            _hiddenFolder = new HiddenFolder(_index.GetPath() + @"\.hidden\");
         }
 
         //This is the function called to upload a file to the network
         //It takes a path to the file, the number of copies and a seed
         //The seed is to ensure that the same nodes doesn't end up with the files every time
-        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
+        public string UploadFileToNetwork(string filePath, int copies, int seed = 0){
             //This keeps the number of copies between 0 and 50
             copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
+
+            string hash = makeFileHash(filePath);
 
             //Then the current time is found, to create a unique name for the temporary files
             DateTime utc = DateTime.UtcNow;
@@ -49,21 +52,23 @@ namespace P2P_lib{
             FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
             encryption.doEncrypt("password");
             string readyFile = compressedFilePath + ".aes";
+            _hiddenFolder.Remove(compressedFilePath);
             Console.WriteLine("File is ready for upload");
 
             //A copy of the compressed and encrypted file is then send to the set number of peers
             for (int i = 0; i < copies; i++){
-                Task.Factory.StartNew(() => SendUploadRequest(readyFile, seed + i));
+                Task.Factory.StartNew(() => SendUploadRequest(readyFile, hash, seed + i));
             }
+            return compressedFilePath;
         }
-
-        private void SendUploadRequest(string filePath, int seed = 0){
+        private void SendUploadRequest(string filePath, string hash, int seed = 0){
             //List<Peer> peerlist = _network.getPeerList();
             //seed = seed % peerlist.Count;
             UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
-            upload.filehash = DiskHelper.CreateMD5(filePath);
+            upload.filehash = hash;
+            Console.WriteLine("Filehash: {0}", upload.filehash);
             upload.path = filePath;
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
@@ -71,45 +76,16 @@ namespace P2P_lib{
             Console.WriteLine("Filename: {0}", upload.filename);
             Console.WriteLine("From: {0}", upload.from);
             Console.WriteLine("Filepath: {0}", upload.path);
-            /*receiver = new Receiver(upload.port);
-            receiver.start();
-            Console.WriteLine("Receiver on port: " + upload.port);
-            receiver.MessageReceived += Receiver_MessageReceived;*/
             upload.Send();
             Console.WriteLine("Upload request sent");
         }
-
-        /*private void Receiver_MessageReceived(BaseMessage msg){
-            Console.WriteLine("Message received");
-            if (msg.GetMessageType() == typeof(UploadMessage)){
-                UploadMessage upload = (UploadMessage) msg;
-                Console.WriteLine("Upload message received");
-
-                if (upload.type.Equals(Messages.TypeCode.REQUEST)){
-                    if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
-                        upload.statuscode = StatusCode.ACCEPTED;
-                    } else{
-                        upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
-                    }
-
-                    upload.CreateReply();
-                    upload.Send();
-                } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
-                    Console.WriteLine("This is an upload response");
-                    if (upload.statuscode == StatusCode.ACCEPTED){
-                        Console.WriteLine("It's accepted");
-                        IndexFile indexFile = _index.GetEntry(upload.filehash);
-                        string filePath = indexFile.getPath();
-                        Console.WriteLine("Path from indexfile is: " + indexFile.getPath());
-                        FileSender fileSender = new FileSender(upload.from, upload.port);
-                        Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to: " + upload.port);
-                        fileSender.Send(filePath);
-                        Console.WriteLine(filePath + " has been sent");
-                        HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
-                        hiddenFolder.Remove(filePath);
-                    }
+        private string makeFileHash(string filePath) {
+            using (var md5 = MD5.Create()) {
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+                    var hash = md5.ComputeHash(fs);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLower();
                 }
             }
-        }*/
+        }
     }
 }
