@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ID-lib", "ID-lib\ID-lib.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splitter-lib", "Splitter-lib\Splitter-lib.csproj", "{FDB14159-6B5D-4E8C-9F5D-EA74A50F5FAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorPdos.TEST", "TorPdos.TEST\TorPdos.TEST.csproj", "{110AEC6D-442A-42A6-9A92-50B77150D0B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FDB14159-6B5D-4E8C-9F5D-EA74A50F5FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDB14159-6B5D-4E8C-9F5D-EA74A50F5FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDB14159-6B5D-4E8C-9F5D-EA74A50F5FAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{110AEC6D-442A-42A6-9A92-50B77150D0B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{110AEC6D-442A-42A6-9A92-50B77150D0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{110AEC6D-442A-42A6-9A92-50B77150D0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{110AEC6D-442A-42A6-9A92-50B77150D0B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
