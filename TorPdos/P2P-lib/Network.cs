@@ -6,18 +6,21 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Threading;
 using P2P_lib.Messages;
+using Index_lib;
 
 namespace P2P_lib{
     public class Network{
         private int _port;
         private bool _running = false;
+        private Index _index;
         private Thread _pingThread;
         private Receiver receive;
         private FileReceiver fileReceiver;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
 
-        public Network(int port){
+        public Network(int port, Index index){
             this._port = port;
+            this._index = index;
         }
 
         public List<Peer> getPeerList(){
@@ -136,7 +139,6 @@ namespace P2P_lib{
 
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(Messages.TypeCode.REQUEST)){
-                int portToRespondTo = upload.port;
                 Console.WriteLine("This is an upload request");
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
@@ -146,19 +148,29 @@ namespace P2P_lib{
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
                 upload.CreateReply();
-                upload.type = Messages.TypeCode.RESPONSE;
-                Console.WriteLine("Responding to port: " + portToRespondTo);
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
                 Console.WriteLine("Port for receiving the file: " + upload.port);
                 fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
                 fileReceiver.start();
                 Console.WriteLine("File receiver started");
-                Console.WriteLine("Sending to IP: " + upload.to + " port: " + portToRespondTo);
-                upload.Send(portToRespondTo);
-                Console.WriteLine("Upload response send to port: " + upload.port + "on other computer");
-            } else {
-                Console.WriteLine("This is not an upload request");
+                upload.Send();
+                Console.WriteLine("Upload response send to: " + upload.to);
+            } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
+                Console.WriteLine("This is an upload response");
+                if (upload.statuscode == StatusCode.ACCEPTED) {
+                    Console.WriteLine("It's accepted");
+                    IndexFile indexFile = _index.GetEntry(upload.filehash);
+                    string filePath = indexFile.getPath();
+                    Console.WriteLine("Path from indexfile is: " + indexFile.getPath());
+                    FileSender fileSender = new FileSender(upload.from, upload.port);
+                    Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to port: " + upload.port);
+                    fileSender.Send(filePath);
+                    Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);
+                    HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
+                    hiddenFolder.Remove(filePath);
+                }
+
             }
         }
 

@@ -51,37 +51,35 @@ namespace P2P_lib{
             string readyFile = compressedFilePath + ".aes";
             Console.WriteLine("File is ready for upload");
 
-            //A copy of the compressed and encrypted file is then send to peers
+            //A copy of the compressed and encrypted file is then send to the set number of peers
             for (int i = 0; i < copies; i++){
                 Task.Factory.StartNew(() => SendUploadRequest(readyFile, seed + i));
             }
         }
 
         private void SendUploadRequest(string filePath, int seed = 0){
-            List<Peer> peerlist = _network.getPeerList();
-            seed = seed % peerlist.Count;
+            //List<Peer> peerlist = _network.getPeerList();
+            //seed = seed % peerlist.Count;
             UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
-            upload.from = NetworkHelper.getLocalIPAddress();
             upload.filehash = DiskHelper.CreateMD5(filePath);
             upload.path = filePath;
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
-            upload.port = port.GetAvailablePort();
             Console.WriteLine("Filesize: " + upload.filesize);
             Console.WriteLine("Filename: " + upload.filename);
             Console.WriteLine("From: " + upload.from);
             Console.WriteLine("Filepath: " + upload.path);
-            receiver = new Receiver(upload.port);
+            /*receiver = new Receiver(upload.port);
             receiver.start();
             Console.WriteLine("Receiver on port: " + upload.port);
-            receiver.MessageReceived += Receiver_MessageReceived;
+            receiver.MessageReceived += Receiver_MessageReceived;*/
             upload.Send();
             Console.WriteLine("Upload request sent");
         }
 
-        private void Receiver_MessageReceived(BaseMessage msg){
+        /*private void Receiver_MessageReceived(BaseMessage msg){
             Console.WriteLine("Message received");
             if (msg.GetMessageType() == typeof(UploadMessage)){
                 UploadMessage upload = (UploadMessage) msg;
@@ -112,6 +110,6 @@ namespace P2P_lib{
                     }
                 }
             }
-        }
+        }*/
     }
 }
