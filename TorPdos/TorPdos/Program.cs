@@ -71,7 +71,7 @@ namespace TorPdos{
                     running = false;
                 } else{
                     if (console.StartsWith("add") && param.Length == 2){
-                        p2p.addPeer("MyName" + param[1].Trim(), param[1].Trim());
+                        p2p.AddPeer("MyName" + param[1].Trim(), param[1].Trim());
                     } else if (console.Equals("gui")){
                         Application.Run(TorPdos);
                     } else if (console.StartsWith("upload")/* && param.Length == 3*/){
