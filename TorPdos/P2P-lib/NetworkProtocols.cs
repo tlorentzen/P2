@@ -62,22 +62,24 @@ namespace P2P_lib{
             return compressedFilePath;
         }
         private void SendUploadRequest(string filePath, string hash, int seed = 0){
-            //List<Peer> peerlist = _network.getPeerList();
-            //seed = seed % peerlist.Count;
-            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
-            upload.filesize = new FileInfo(filePath).Length;
-            upload.filename = new FileInfo(filePath).Name;
-            upload.filehash = hash;
-            Console.WriteLine("Filehash: {0}", upload.filehash);
-            upload.path = filePath;
-            upload.type = Messages.TypeCode.REQUEST;
-            upload.statuscode = StatusCode.OK;
-            Console.WriteLine("Filesize: {0}", upload.filesize);
-            Console.WriteLine("Filename: {0}", upload.filename);
-            Console.WriteLine("From: {0}", upload.from);
-            Console.WriteLine("Filepath: {0}", upload.path);
-            upload.Send();
-            Console.WriteLine("Upload request sent");
+            List<Peer> peerlist = _network.getPeerList();
+            if(peerlist.Count > 0) {
+                seed = seed % peerlist.Count;
+                UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
+                upload.filesize = new FileInfo(filePath).Length;
+                upload.filename = new FileInfo(filePath).Name;
+                upload.filehash = hash;
+                Console.WriteLine("Filehash: {0}", upload.filehash);
+                upload.path = filePath;
+                upload.type = Messages.TypeCode.REQUEST;
+                upload.statuscode = StatusCode.OK;
+                Console.WriteLine("Filesize: {0}", upload.filesize);
+                Console.WriteLine("Filename: {0}", upload.filename);
+                Console.WriteLine("From: {0}", upload.from);
+                Console.WriteLine("Filepath: {0}", upload.path);
+                upload.Send();
+                Console.WriteLine("Upload request sent");
+            }
         }
         private string makeFileHash(string filePath) {
             using (var md5 = MD5.Create()) {

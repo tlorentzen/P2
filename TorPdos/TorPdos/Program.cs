@@ -74,15 +74,15 @@ namespace TorPdos{
                         p2p.AddPeer("MyName" + param[1].Trim(), param[1].Trim());
                     } else if (console.Equals("gui")){
                         Application.Run(TorPdos);
-                    } else if (console.StartsWith("upload")/* && param.Length == 3*/){
-                        //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
-                        /*if (int.TryParse(param[2], out int n)){*/
-                        idx.reIndex();
-                        string filesToDelete = new NetworkProtocols(idx, p2p).UploadFileToNetwork(path + "INEVAanalyse.pdf" /*param[1]*/, 1 /*int.Parse(param[2])*/);
+                    } else if (console.StartsWith("upload") && param.Length == 3){
+                        
+                        if (int.TryParse(param[2], out int n)){
+                            idx.reIndex();
+                            string filesToDelete = new NetworkProtocols(idx, p2p).UploadFileToNetwork(path + param[1], int.Parse(param[2]));
                         //Filerne i den skjulte mappe skal køres igennem og alle, der starter med filesToDelete, skal slettes
-                        /*} else{
+                        } else{
                             Console.WriteLine("Third parameter must be an integer");
-                        }*/
+                        }
                     } else if (console.Equals("reindex")){
                         idx.reIndex();
                     } else if (console.Equals("status")){
