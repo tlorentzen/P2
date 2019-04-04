@@ -31,8 +31,8 @@ namespace P2P_lib{
             this.UUID = input.FromUUID;
             if (hidden) {
                 this._outputPath += ".hidden\\"+UUID+"\\";
-                if (!Directory.Exists(".hidden\\"+UUID+"\\")){
-                    Directory.CreateDirectory(".hidden\\" + UUID + "\\");
+                if (!Directory.Exists(_outputPath)){
+                    Directory.CreateDirectory(_outputPath);
                 }
             }
         }
