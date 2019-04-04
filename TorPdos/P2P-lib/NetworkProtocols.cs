@@ -69,9 +69,13 @@ namespace P2P_lib{
                 upload.filesize = new FileInfo(filePath).Length;
                 upload.filename = new FileInfo(filePath).Name;
                 upload.filehash = hash;
+                
                 Console.WriteLine("Filehash: {0}", upload.filehash);
+                
                 upload.path = filePath;
                 upload.type = Messages.TypeCode.REQUEST;
+                //TODO This is wrong, please correct.
+                upload.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
                 upload.statuscode = StatusCode.OK;
                 Console.WriteLine("Filesize: {0}", upload.filesize);
                 Console.WriteLine("Filename: {0}", upload.filename);
