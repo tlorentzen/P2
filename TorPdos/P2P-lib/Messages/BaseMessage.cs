@@ -32,7 +32,7 @@ namespace P2P_lib.Messages
 
         public BaseMessage(string to){
             this.to = to;
-            //this.from = NetworkHelper.getLocalIPAddress(); This might be a good idea?
+            this.from = NetworkHelper.getLocalIPAddress();
         }
 
         public bool Send(int receiverPort = 25565){

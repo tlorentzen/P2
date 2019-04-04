@@ -58,7 +58,7 @@ namespace TorPdos{
             // Prepare P2PNetwork
             Network p2p = new Network(25565, idx);
             p2p.Start();
-            //p2p.AddPeer("MyName" + "192.168.0.109", "192.168.0.109".Trim());
+            p2p.AddPeer("MyName" + "192.168.0.106", "192.168.0.106".Trim());
 
             while (running){
                 string console = Console.ReadLine();
@@ -77,7 +77,7 @@ namespace TorPdos{
                     } else if (console.StartsWith("upload")/* && param.Length == 3*/){
                         //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
                         /*if (int.TryParse(param[2], out int n)){*/
-                            new NetworkProtocols(idx, p2p).UploadFileToNetwork(path+"sendMe.zip" /*param[1]*/, 1 /*int.Parse(param[2])*/);
+                            new NetworkProtocols(idx, p2p).UploadFileToNetwork("C:\\Users\\Niels\\Desktop\\INEVAanalyse.pdf" /*param[1]*/, 1 /*int.Parse(param[2])*/);
                         /*} else{
                             Console.WriteLine("Third parameter must be an integer");
                         }*/

@@ -22,7 +22,7 @@ namespace P2P_lib{
         private Receiver _receive;
         private FileReceiver _fileReceiver;
         private string _path;
-        private HiddenFolder _hiddenFolderPath;
+        private HiddenFolder _hiddenPath;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
         private string _peerFilePath = @"C:\\TorPdos\.hidden\peer.json";
 
@@ -31,7 +31,7 @@ namespace P2P_lib{
             this._port = port;
             this._path = path;
             this._index = index;
-            _hiddenFolderPath = new HiddenFolder(_path + @"\.hidden\");
+            _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
             load();
         }
 
@@ -143,7 +143,7 @@ namespace P2P_lib{
         public void saveFile(){
             var json = JsonConvert.SerializeObject(peers);
             if (_path == null) return;
-            using (var fileStream = _hiddenFolderPath.WriteToFile(_peerFilePath)){
+            using (var fileStream = _hiddenPath.WriteToFile(_peerFilePath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
 
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
@@ -209,8 +209,7 @@ namespace P2P_lib{
                     Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to port: " + upload.port);
                     fileSender.Send(filePath);
                     Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);
-                    HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
-                    hiddenFolder.Remove(filePath);
+                    _hiddenPath.Remove(filePath);
                 }
             }
         }

@@ -38,7 +38,9 @@ namespace P2P_lib{
             int time = utc.Millisecond + utc.Second * 10 + utc.Minute * 100 + utc.Hour * 1000 + utc.Month * 10000;
 
             //Then a path is made for the temporary files
-            string compressedFilePath = _index.GetPath() + "\\.hidden\\" + time.ToString();
+            string compressedFilePath = _index.GetPath() + ".hidden\\" + time.ToString();
+
+            Console.WriteLine("File to compress: {0} to path: {1}", filePath, compressedFilePath);
 
             //The file is then compressed
             ByteCompressor.CompressFile(filePath, compressedFilePath);
@@ -46,8 +48,6 @@ namespace P2P_lib{
             //And then encrypted
             FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
             encryption.doEncrypt("password");
-            //HiddenFolder hiddenFolder = new HiddenFolder(_index.GetPath());
-            //hiddenFolder.Remove(compressedFilePath + ".lzma");
             string readyFile = compressedFilePath + ".aes";
             Console.WriteLine("File is ready for upload");
 
@@ -60,17 +60,17 @@ namespace P2P_lib{
         private void SendUploadRequest(string filePath, int seed = 0){
             //List<Peer> peerlist = _network.getPeerList();
             //seed = seed % peerlist.Count;
-            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
+            UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.106");
             upload.filesize = new FileInfo(filePath).Length;
             upload.filename = new FileInfo(filePath).Name;
             upload.filehash = DiskHelper.CreateMD5(filePath);
             upload.path = filePath;
             upload.type = Messages.TypeCode.REQUEST;
             upload.statuscode = StatusCode.OK;
-            Console.WriteLine("Filesize: " + upload.filesize);
-            Console.WriteLine("Filename: " + upload.filename);
-            Console.WriteLine("From: " + upload.from);
-            Console.WriteLine("Filepath: " + upload.path);
+            Console.WriteLine("Filesize: {0}", upload.filesize);
+            Console.WriteLine("Filename: {0}", upload.filename);
+            Console.WriteLine("From: {0}", upload.from);
+            Console.WriteLine("Filepath: {0}", upload.path);
             /*receiver = new Receiver(upload.port);
             receiver.start();
             Console.WriteLine("Receiver on port: " + upload.port);
