@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using ID_lib;
 
@@ -6,7 +7,10 @@ namespace TorPdos{
     
 
     public class MyForm : Form{
-        private static readonly string backgroundColour = "#320117", lblColour = "#CC7178", btnColour = "#FFF8F7", txtColour = "#FFD9DA";
+        private static readonly string backgroundColour = "#320117", lblColour = "#CC7178", 
+                                       btnColour = "#FFF8F7", txtColour = "#FFD9DA";
+        static string dirPath = @"C:\TorPdos\.hidden\";
+        string[] fileNames = Directory.GetFiles(dirPath, "*.txt", SearchOption.TopDirectoryOnly);
         Label lblUsername = new Label{
             Location = new Point(20, 20),
             Height = 40, Width = 150,
@@ -113,7 +117,12 @@ namespace TorPdos{
             BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
 
-            FirstStartUp();
+            if(fileNames.Length != 0){
+                Login();
+            } else {
+                FirstStartUp();
+            }
+            
 
             btnExisting.Click += BtnExistingClick;
             btnNew.Click += BtnNewClick;
@@ -167,7 +176,6 @@ namespace TorPdos{
             if (IDHandler.IsValidUser(uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
-                
             } else{
                 Controls.Add(lblNope);
             }
