@@ -254,9 +254,6 @@ namespace P2P_lib{
                     download.CreateReply();
                     download.statuscode = StatusCode.ACCEPTED;
                     
-                    NetworkPorts ports = new NetworkPorts();
-                    
-                    
                     download.Send();
                 } else{
                     download.CreateReply();
