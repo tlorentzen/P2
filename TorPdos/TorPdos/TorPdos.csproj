@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\TorPdos.ico" />
+    <Content Include="TorPdos.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
