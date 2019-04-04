@@ -29,6 +29,8 @@ namespace Index_lib{
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(String path){
+            _indexFilePath = path + @"\.hidden\index.json";
+
             if (Directory.Exists(path)){
                 this._path = path;
             } else{
@@ -104,11 +106,7 @@ namespace Index_lib{
 
             this.save();
         }
-
-        public void setIndexFilePath(string path){
-            this._indexFilePath = path;
-        }
-
+        
         public void debug(bool value){
             this._debug = value;
         }

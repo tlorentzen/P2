@@ -24,13 +24,14 @@ namespace P2P_lib{
         private string _path;
         private HiddenFolder _hiddenPath;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
-        private string _peerFilePath = @"C:\\TorPdos\.hidden\peer.json";
+        private string _peerFilePath;
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
             this._port = port;
             this._path = path;
             this._index = index;
+            this._peerFilePath = path + @".hidden\peer.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
             load();
         }
