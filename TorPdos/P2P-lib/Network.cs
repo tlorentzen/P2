@@ -184,25 +184,35 @@ namespace P2P_lib{
                     Console.WriteLine("Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
+                
                 upload.CreateReply();
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
+                
                 Console.WriteLine("Port for receiving the file: " + upload.port);
-                _fileReceiver = new FileReceiver(upload.filehash, true, upload.port);
+                _fileReceiver = new FileReceiver(upload, true, upload.port);
                 _fileReceiver.start();
+                
                 Console.WriteLine("File receiver started");
                 upload.Send();
+                
                 Console.WriteLine("Upload response send to: " + upload.to);
+                
             } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
+                
                 Console.WriteLine("This is an upload response");
                 if (upload.statuscode == StatusCode.ACCEPTED) {
+                    
                     Console.WriteLine("It's accepted");
                     Console.WriteLine(upload.filehash.Equals("c28ef56e6bbcdd8ed452cbb860e620d1"));
                     IndexFile indexFile = _index.GetEntry(upload.filehash);
                     string filePath = indexFile.getPath();
+                    
                     Console.WriteLine("Filepath to upload: {0}", filePath);
                     Console.WriteLine("Path from indexfile is: " + indexFile.getPath());
+                    
                     FileSender fileSender = new FileSender(upload.from, upload.port);
+                    
                     Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to port: " + upload.port);
                     fileSender.Send(filePath);
                     Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);

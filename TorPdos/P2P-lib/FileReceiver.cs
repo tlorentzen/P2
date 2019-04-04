@@ -20,15 +20,17 @@ namespace P2P_lib{
         private string _filename;
         private bool _hidden;
         private string _outputPath = @"C:\\TorPdos\";
+        private string UUID;
 
-        public FileReceiver(string filename, bool hidden, int port, int bufferSize = 1024){
-            this._filename = filename;
+        public FileReceiver(UploadMessage input, bool hidden, int bufferSize = 1024){
+            this._filename = input.filehash;
             this._ip = IPAddress.Any;
-            this._port = port;
+            this._port = input.port;
             this._buffer = new byte[bufferSize];
             this._hidden = hidden;
+            this.UUID = input.FromUUID;
             if (hidden) {
-                this._outputPath += ".hidden\\";
+                this._outputPath += ".hidden\\"+UUID+"\\";
             }
         }
 

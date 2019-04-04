@@ -65,7 +65,7 @@ namespace P2P_lib{
             List<Peer> peerlist = _network.getPeerList();
             if(peerlist.Count > 0) {
                 seed = seed % peerlist.Count;
-                UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
+                UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.100");
                 upload.filesize = new FileInfo(filePath).Length;
                 upload.filename = new FileInfo(filePath).Name;
                 upload.filehash = hash;
