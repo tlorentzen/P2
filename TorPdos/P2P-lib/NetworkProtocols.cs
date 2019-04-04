@@ -52,7 +52,7 @@ namespace P2P_lib{
             FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
             encryption.doEncrypt("password");
             string readyFile = compressedFilePath + ".aes";
-            _hiddenFolder.Remove(compressedFilePath);
+            _hiddenFolder.Remove(time.ToString() + ".lzma");
             Console.WriteLine("File is ready for upload");
 
             //A copy of the compressed and encrypted file is then send to the set number of peers
@@ -65,7 +65,7 @@ namespace P2P_lib{
             List<Peer> peerlist = _network.getPeerList();
             if(peerlist.Count > 0) {
                 seed = seed % peerlist.Count;
-                UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
+                UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.109");
                 upload.filesize = new FileInfo(filePath).Length;
                 upload.filename = new FileInfo(filePath).Name;
                 upload.filehash = hash;
