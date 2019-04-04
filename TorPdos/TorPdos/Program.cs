@@ -14,7 +14,7 @@ namespace TorPdos{
     class Program{
         [STAThread]
         static void Main(string[] args){
-            /*MyForm TorPdos = new MyForm();*/
+            MyForm TorPdos = new MyForm();
 
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
@@ -55,7 +55,7 @@ namespace TorPdos{
                     if (console.StartsWith("add") && param.Length == 2){
                         p2p.AddPeer("MyName" + param[1].Trim(), param[1].Trim());
                     } else if (console.Equals("gui")){
-                        /*Application.Run(TorPdos);*/
+                        Application.Run(TorPdos);
                     } else if (console.StartsWith("upload")/* && param.Length == 3*/){
                         //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
                         /*if (int.TryParse(param[2], out int n)){*/
