@@ -11,7 +11,7 @@ namespace P2P_lib.Messages
     {
         private string message;
 
-        public TextMessage(String to) : base(to)
+        public TextMessage(string fromUUID, string toUUID) : base(fromUUID, toUUID)
         {
 
         }

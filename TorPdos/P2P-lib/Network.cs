@@ -46,7 +46,6 @@ namespace P2P_lib{
             return newPeerList;
         }
 
-
         public void Start(){
             this._running = true;
 
@@ -224,7 +223,7 @@ namespace P2P_lib{
         private void RechievedPing(PingMessage ping){
             // Update peer
             foreach (Peer peer in peers){
-                if (peer.GetIP().Equals(ping.from)){
+                if (peer.getUUID().Equals(ping.FromUUID)){
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
                 }
@@ -237,7 +236,7 @@ namespace P2P_lib{
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist
-                PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
+                PeerFetcherMessage peerFetch = new PeerFetcherMessage("My ID!" ,ping.FromUUID);
 
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();

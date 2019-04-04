@@ -31,8 +31,10 @@ namespace P2P_lib.Messages
 
         public abstract string GetHash();
 
-        public BaseMessage(string to){
-            this.to = to;
+        public BaseMessage(string fromUUID, string toUUID)
+        {
+            this.ToUUID = toUUID;
+            this.FromUUID = fromUUID;
             this.from = NetworkHelper.getLocalIPAddress();
         }
 

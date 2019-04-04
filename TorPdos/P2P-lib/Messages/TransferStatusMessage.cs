@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace P2P_lib.Messages {
     public class TransferStatusMessage : BaseMessage {
         public string filehash;
-        public TransferStatusMessage(string to) : base(to) {
+        public TransferStatusMessage(string fromUUID, string toUUID) : base(fromUUID, toUUID)
+        {
             this.to = to;
         }
 
