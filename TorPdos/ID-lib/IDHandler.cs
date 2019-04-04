@@ -12,33 +12,28 @@ namespace ID_lib
 {
     public class IDHandler
     {
-        private static readonly string userdatafolder = "userdata";
+        private static readonly string userdatafolder = "userdata", userdatafile = "userdata";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
 
         //Create user file using generated UUID and input password
-        public static string CreateUser(string password)
+        public static string CreateUser(string path, string password)
         {
             try
             {
-                if (!Directory.Exists(userdatafolder))
-                {
-                    DirectoryInfo userdataDirectory = Directory.CreateDirectory(userdatafolder);
-                    userdataDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
-                }
-
                 string uuid = GenerateUUID();
 
-                string key = GenerateKeymold(string.Concat(uuid, password));
+                string keymold = GenerateKeymold(string.Concat(uuid, password));
 
-                using (StreamWriter userFile = File.CreateText(userdatafolder + "\\" + uuid))
+                using (StreamWriter userFile = File.CreateText(path + "\\" + userdatafile))
                 {
-                    userFile.WriteLine(key);
+                    userFile.WriteLine(keymold);
+                    userFile.WriteLine(uuid);
                 }
                 return uuid;
             }
             catch (Exception)
             {
-                return "err";
+                return null;
             }
         }
 
@@ -76,11 +71,11 @@ namespace ID_lib
         //Check if UUID and password match existing local user
         //Compare keymolds (hashes)
         //Returns true if user details are valid, false if not
-        public static bool IsValidUser(string uuid, string password)
+        public static bool IsValidUser(string path, string uuid, string password)
         {
             try
             {
-                using (StreamReader userFile = new StreamReader(userdatafolder + "\\" + uuid))
+                using (StreamReader userFile = new StreamReader(path + "\\" + userdatafile))
                 {
                     //Hash userdata, load 
                     byte[] hashBytes = Convert.FromBase64String(userFile.ReadLine());
@@ -106,12 +101,39 @@ namespace ID_lib
             }
         }
 
+        //Return UUID if present, else return null
+        public static string GetUUID(string path)
+        {
+            string uuid = File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(1);
+            if (uuid != null)
+            {
+                return uuid;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static bool UserFileExists(string path)
+        {
+            if (File.Exists(path + "\\" + userdatafile))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /*
         //Returns IEnumberable of all UUIDs in userdatafolder, or empty if error
-        public static IEnumerable<string> GetUserList()
+        public static IEnumerable<string> GetUserList(string path)
         {
             try
             {
-                string[] uuidList = new DirectoryInfo(userdatafolder).GetFiles().Select(o => o.Name).ToArray();
+                string[] uuidList = new DirectoryInfo(path).GetFiles().Select(o => o.Name).ToArray();
                 return uuidList;
             }
             catch (Exception err)
@@ -135,7 +157,6 @@ namespace ID_lib
             {
                 return false;
             }
-        }
-
+        }*/
     }
 }
