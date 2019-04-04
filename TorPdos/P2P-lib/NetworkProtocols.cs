@@ -65,24 +65,30 @@ namespace P2P_lib{
             List<Peer> peerlist = _network.getPeerList();
             if(peerlist.Count > 0) {
                 seed = seed % peerlist.Count;
-                UploadMessage upload = new UploadMessage(/*peerlist[seed].GetIP()*/ "192.168.0.100");
-                upload.filesize = new FileInfo(filePath).Length;
-                upload.filename = new FileInfo(filePath).Name;
-                upload.filehash = hash;
-                
-                Console.WriteLine("Filehash: {0}", upload.filehash);
-                
-                upload.path = filePath;
-                upload.type = Messages.TypeCode.REQUEST;
-                //TODO This is wrong, please correct.
-                upload.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
-                upload.statuscode = StatusCode.OK;
-                Console.WriteLine("Filesize: {0}", upload.filesize);
-                Console.WriteLine("Filename: {0}", upload.filename);
-                Console.WriteLine("From: {0}", upload.from);
-                Console.WriteLine("Filepath: {0}", upload.path);
-                upload.Send();
-                Console.WriteLine("Upload request sent");
+                for (int i = 0; i < peerlist.Count; i++){
+
+                    if (!peerlist[seed].isOnline()) return;
+
+                    UploadMessage upload = new UploadMessage(peerlist[seed].GetIP());
+                    upload.filesize = new FileInfo(filePath).Length;
+                    upload.filename = new FileInfo(filePath).Name;
+                    upload.filehash = hash;
+
+                    Console.WriteLine("Filehash: {0}", upload.filehash);
+
+                    upload.path = filePath;
+                    upload.type = Messages.TypeCode.REQUEST;
+                    //TODO This is wrong, please correct.
+                    upload.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
+                    upload.statuscode = StatusCode.OK;
+                    Console.WriteLine("Filesize: {0}", upload.filesize);
+                    Console.WriteLine("Filename: {0}", upload.filename);
+                    Console.WriteLine("From: {0}", upload.@from);
+                    Console.WriteLine("Filepath: {0}", upload.path);
+                    upload.Send();
+                    Console.WriteLine("Upload request sent");
+                    i++;
+                }
             }
         }
         private string makeFileHash(string filePath) {
