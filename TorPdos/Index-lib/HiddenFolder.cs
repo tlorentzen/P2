@@ -43,7 +43,7 @@ namespace Index_lib
 
         public FileStream WriteToFile(string path)
         {
-            return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+            return new FileStream(path, FileMode.Create, FileAccess.Write);
         }
 
         public FileStream ReadFromFile(string path)
