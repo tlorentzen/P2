@@ -117,9 +117,9 @@ namespace P2P_lib{
             }
 
             // List peers in console. TODO this is for debugging purposes and should be removed
-            Console.WriteLine("My peers:");
+            //Console.WriteLine("My peers:");
             foreach (Peer peer in peers){
-                Console.WriteLine(peer.getUUID() + " : " + peer.GetIP());
+                //Console.WriteLine(peer.getUUID() + " : " + peer.GetIP());
             }
         }
 
@@ -199,12 +199,13 @@ namespace P2P_lib{
                     Console.WriteLine("It's accepted");
                     IndexFile indexFile = _index.GetEntry(upload.filehash);
                     string filePath = indexFile.getPath();
+                    Console.WriteLine("Filepath to upload: {0}", filePath);
                     Console.WriteLine("Path from indexfile is: " + indexFile.getPath());
                     FileSender fileSender = new FileSender(upload.from, upload.port);
                     Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to port: " + upload.port);
                     fileSender.Send(filePath);
                     Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);
-                    _hiddenPath.Remove(filePath);
+                    //_hiddenPath.Remove(filePath);
                 }
             }
         }
