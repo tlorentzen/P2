@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 using Index_lib;
 using P2P_lib;
 using ID_lib;
@@ -38,9 +39,12 @@ namespace TorPdos{
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-
+            string path = "C:\\TorPdos\\";
             // Load Index
-            Index idx = new Index(@"C:\\TorPdos\");
+            if (!Directory.Exists(path)){
+                Directory.CreateDirectory(path);
+            }
+            Index idx = new Index(path);
             idx.setIndexFilePath(@"C:\\TorPdos\.hidden\index.json");
             idx.load();
             idx.FileAdded += Idx_FileAdded;
@@ -73,7 +77,7 @@ namespace TorPdos{
                     } else if (console.StartsWith("upload")/* && param.Length == 3*/){
                         //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
                         /*if (int.TryParse(param[2], out int n)){*/
-                            new NetworkProtocols(idx, p2p).UploadFileToNetwork("C:\\Users\\Niels\\Desktop\\INEVAanalyse.pdf" /*param[1]*/, 1 /*int.Parse(param[2])*/);
+                            new NetworkProtocols(idx, p2p).UploadFileToNetwork(path+"sendMe.zip" /*param[1]*/, 1 /*int.Parse(param[2])*/);
                         /*} else{
                             Console.WriteLine("Third parameter must be an integer");
                         }*/
@@ -81,8 +85,10 @@ namespace TorPdos{
                         idx.reIndex();
                     } else if (console.Equals("status")){
                         idx.status();
-                    } else if (console.Equals("save")){
+                    } else if (console.Equals("idxsave")){
                         idx.save();
+                    } else if (console.Equals("peersave")){
+                        p2p.saveFile();
                     } else{
                         Console.WriteLine("Unknown command");
                     }

@@ -69,10 +69,10 @@ namespace P2P_lib{
         }
 
         [JsonConstructor]
-        private Peer(string uuid, string ip, int rating, DateTime lastSeen){
+        private Peer(string uuid, string stringIp, int rating, DateTime lastSeen){
             if (string.IsNullOrEmpty(uuid)) throw new NullReferenceException();
             _UUID = uuid;
-            this.SetIP(ip);
+            this.SetIP(stringIp);
             Rating = rating;
             _lastSeen = lastSeen;
         }
@@ -86,6 +86,9 @@ namespace P2P_lib{
         }
 
         public DateTime lastSeen => _lastSeen;
+        
+        public string stringIP => _ip.ToString();
+        public string UUID => _UUID;
 
         public void UpdateLastSeen(){
             _lastSeen = DateTime.Now;
