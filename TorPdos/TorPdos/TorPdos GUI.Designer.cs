@@ -42,12 +42,12 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 8, FontStyle.Regular)
         };
-        Label lblKage= new Label{
-            Location = new Point(20, 20),
+        Label lblGoBack= new Label{
+            Location = new Point(300, 230),
             Height = 40,
             Width = 150,
-            Font = new Font("Consolas", 20, FontStyle.Regular),
-            Text = "UserID",
+            Font = new Font("Consolas", 12, FontStyle.Regular),
+            Text = "Go Back",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
         TextBox txtUsername = new TextBox(){
@@ -113,42 +113,52 @@ namespace TorPdos{
             BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
 
+            FirstStartUp();
 
-            Controls.Add(btnExisting);
-            Controls.Add(btnNew);
-
-            btnExisting.Click += BtnExisting_Click;
-            btnNew.Click += BtnNew_Click;
+            btnExisting.Click += BtnExistingClick;
+            btnNew.Click += BtnNewClick;
             btnLogin.Click += BtnClickLogin;
-            btnCreate.Click += BtnCreate_Click;
+            btnCreate.Click += BtnCreateClick;
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
             Resize += MyformResize;
+            lblGoBack.Click += LblGoBackClick;
+        }
+
+        private void LblGoBackClick(object sender, System.EventArgs e){
+            FirstStartUp();
         }
 
         public void Login(){
             Controls.Clear();
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
+            txtPassword.Text = "";
             Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
-        }
-        private void BtnCreate_Click(object sender, System.EventArgs e)
-        {
-            string uuid = IDHandler.CreateUser(txtPassword.Text);
-            
-            Login();
+            Controls.Add(lblGoBack);
         }
 
-        private void BtnNew_Click(object sender, System.EventArgs e)
-        {
+        public void FirstStartUp(){
+            Controls.Clear();
+            Controls.Add(btnExisting);
+            Controls.Add(btnNew);
+        }
+        private void BtnCreateClick(object sender, System.EventArgs e){
+            string uuid = IDHandler.CreateUser(txtPassword.Text);
+            Login();
+            txtUsername.Text = uuid;
+        }
+
+        private void BtnNewClick(object sender, System.EventArgs e){
             Controls.Clear();
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
             Controls.Add(btnCreate);
+            Controls.Add(lblGoBack);
         }
 
-        private void BtnExisting_Click(object sender, System.EventArgs e){
+        private void BtnExistingClick(object sender, System.EventArgs e){
             Login();
         }
 

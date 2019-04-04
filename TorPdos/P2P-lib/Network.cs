@@ -69,14 +69,11 @@ namespace P2P_lib{
 
             if (msgType == typeof(PingMessage)){
                 RechievedPing((PingMessage) message);
-            }
-            else if (msgType == typeof(UploadMessage)){
+            } else if (msgType == typeof(UploadMessage)){
                 RechievedUpload((UploadMessage) message);
-            }
-            else if (msgType == typeof(DownloadMessage)){
-                RechievedDownload((DownloadMessage) message);
-            }
-            else if (msgType == typeof(PeerFetcherMessage)){
+            } else if (msgType == typeof(DownloadMessage)){
+                receivedDownloadMessage((DownloadMessage) message);
+            } else if (msgType == typeof(PeerFetcherMessage)){
                 RechievedPeerFetch((PeerFetcherMessage) message);
             }
         }
@@ -108,8 +105,7 @@ namespace P2P_lib{
                 message.CreateReply();
                 message.Peers = outgoing;
                 message.Send();
-            }
-            else{
+            } else{
                 // Rechieved response
 
 
@@ -183,8 +179,7 @@ namespace P2P_lib{
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
                     Console.WriteLine("Request accepted");
-                }
-                else{
+                } else{
                     Console.WriteLine("Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
@@ -228,8 +223,7 @@ namespace P2P_lib{
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
                 ping.Send();
-            }
-            else{
+            } else{
                 // Recheved response, should send peerlist
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(ping.from);
 
@@ -252,8 +246,27 @@ namespace P2P_lib{
             }
         }
 
-        private void RechievedDownload(DownloadMessage download){
-            throw new NotImplementedException();
+        private void receivedDownloadMessage(DownloadMessage download){
+            if (download.type.Equals(Messages.TypeCode.REQUEST)){
+                if (File.Exists(_path + @"\.hidden\" + download.filehash)){
+                    download.CreateReply();
+                    download.statuscode = StatusCode.ACCEPTED;
+                    
+                    NetworkPorts ports = new NetworkPorts();
+                    
+                    
+                    download.Send();
+                } else{
+                    download.CreateReply();
+                    download.statuscode = StatusCode.ERROR;
+                    download.from = NetworkHelper.getLocalIPAddress();
+                    download.Send();
+
+                    foreach (var peer in peers){
+                        download.forwardMessage(peer.GetIP());
+                    }
+                }
+            }
         }
 
         public void Stop(){

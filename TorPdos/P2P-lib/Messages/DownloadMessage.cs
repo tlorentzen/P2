@@ -15,9 +15,8 @@ namespace P2P_lib.Messages
         public long filesize;
         public int port;
 
-        public DownloadMessage(String to) : base(to)
-        {
-
+        public DownloadMessage(String to) : base(to){
+            forwardCount = 8;
         }
 
         public override String GetHash()
