@@ -4,10 +4,10 @@ using System.Windows.Forms;
 using ID_lib;
 
 namespace TorPdos{
-    
+
 
     public class MyForm : Form{
-        private static readonly string backgroundColour = "#320117", lblColour = "#CC7178", 
+        private static readonly string backgroundColour = "#320117", lblColour = "#CC7178",
                                        btnColour = "#FFF8F7", txtColour = "#FFD9DA";
         static string dirPath = @"C:\TorPdos\.hidden\";
         string[] fileNames = Directory.GetFiles(dirPath, "*.txt", SearchOption.TopDirectoryOnly);
@@ -69,6 +69,13 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
+        TextBox txtPath = new TextBox(){
+            Location = new Point(70, 70),
+            Height = 50, Width = 250,
+            Font = new Font("Consolas", 15, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(backgroundColour),
+            BackColor = ColorTranslator.FromHtml(txtColour)
+        };
         Button btnLogin = new Button(){
             Location = new Point(70, 150),
             Width = 250, Height = 70,
@@ -90,15 +97,22 @@ namespace TorPdos{
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnCreate = new Button()
-        {
+        Button btnCreate = new Button(){
             Location = new Point(70, 150),
             Width = 250, Height = 70,
             Text = "Create",
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        NotifyIcon noiTorPdos = new NotifyIcon() {
+        Button btnBrowse = new Button(){
+            Location = new Point(70, 120),
+            Width = 250, Height = 70,
+            Text = "Browse",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour),
+            //Image =
+        };
+        NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
             Visible = false,
@@ -117,12 +131,15 @@ namespace TorPdos{
             BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
 
-            if(fileNames.Length != 0){
-                Login();
-            } else {
-                FirstStartUp();
-            }
-            
+            Controls.Add(btnBrowse);
+            Controls.Add(txtPath);
+
+            //if(fileNames.Length != 0){
+            //    Login();
+            //} else {
+            //    FirstStartUp();
+            //}
+
 
             btnExisting.Click += BtnExistingClick;
             btnNew.Click += BtnNewClick;
@@ -131,6 +148,16 @@ namespace TorPdos{
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
             Resize += MyformResize;
             lblGoBack.Click += LblGoBackClick;
+            btnBrowse.Click += BtnBrowseClick;
+        }
+
+        private void BtnBrowseClick(object sender, System.EventArgs e)
+        {
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
+                if(fbd.ShowDialog() == DialogResult.OK)
+                txtPath.Text = fbd.SelectedPath;
+            }
         }
 
         private void LblGoBackClick(object sender, System.EventArgs e){
@@ -154,7 +181,7 @@ namespace TorPdos{
             Controls.Add(btnNew);
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
-            string uuid = IDHandler.CreateUser(txtPassword.Text);
+            string uuid = IDHandler.CreateUser(txtPath.Text + @"\.hidden", txtPassword.Text);
             Login();
             txtUsername.Text = uuid;
         }
@@ -173,7 +200,7 @@ namespace TorPdos{
 
         void BtnClickLogin(object sender, System.EventArgs e){
             string uuid = txtUsername.Text, pass = txtPassword.Text;
-            if (IDHandler.IsValidUser(uuid, pass)){
+            if (IDHandler.IsValidUser(txtPath.Text + @"\.hidden", uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
             } else{
