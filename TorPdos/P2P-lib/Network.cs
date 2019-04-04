@@ -93,7 +93,7 @@ namespace P2P_lib{
                 foreach (var incommingPeer in incomming){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
                     peers.Add(incommingPeer);
-                    Console.WriteLine("Peer added" + incommingPeer.getUUID());
+                    Console.WriteLine("Peer added " + incommingPeer.getUUID());
                 }
 
                 foreach (var outGoingPeer in peers){
