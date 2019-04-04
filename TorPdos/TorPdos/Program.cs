@@ -77,7 +77,8 @@ namespace TorPdos{
                     } else if (console.StartsWith("upload")/* && param.Length == 3*/){
                         //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
                         /*if (int.TryParse(param[2], out int n)){*/
-                            new NetworkProtocols(idx, p2p).UploadFileToNetwork("C:\\Users\\Niels\\Desktop\\INEVAanalyse.pdf" /*param[1]*/, 1 /*int.Parse(param[2])*/);
+                        idx.reIndex();
+                        new NetworkProtocols(idx, p2p).UploadFileToNetwork(path + "INEVAanalyse.pdf" /*param[1]*/, 1 /*int.Parse(param[2])*/);
                         /*} else{
                             Console.WriteLine("Third parameter must be an integer");
                         }*/
