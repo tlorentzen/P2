@@ -22,8 +22,8 @@ namespace TorPdos{
             
             MyForm TorPdos = new MyForm();
             Boolean running = true;
-            if (ConfigurationManager.AppSettings["path"] == null){
-                ConfigurationManager.AppSettings.Add("path", "C:\\TorPdos\\");
+            if (ConfigurationManager.AppSettings["Path"] == "Null"){
+                Application.Run(TorPdos);
             }
 
             if (ConfigurationManager.AppSettings["uuid"] == null){

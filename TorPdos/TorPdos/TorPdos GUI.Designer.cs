@@ -140,11 +140,11 @@ namespace TorPdos{
             Icon = new Icon("TorPdos.ico");
 
 
-            if (Directory.Exists(path))
+            if (ConfigurationManager.AppSettings["Path"] == "Null")
             {
-                Login();
+                FirstStartUp(); 
             } else{
-                FirstStartUp();
+                Login();
             }
 
 
@@ -160,7 +160,9 @@ namespace TorPdos{
         }
 
         private void LblOkayClick(object sender, System.EventArgs e){
-            ConfigurationManager.AppSettings.Add("path", PathName());
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.AppSettings.Settings["path"].Value = PathName();
+            config.Save(ConfigurationSaveMode.Modified);
             Controls.Clear();
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
