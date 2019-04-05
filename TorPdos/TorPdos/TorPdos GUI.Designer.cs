@@ -6,47 +6,47 @@ using ID_lib;
 namespace TorPdos{
 
 
-    public class MyForm : Form{
+    public class MyForm : Form {
         private static readonly string backgroundColour = "#320117", lblColour = "#CC7178",
                                        btnColour = "#FFF8F7", txtColour = "#FFD9DA";
-        static string dirPath = @"C:\TorPdos\.hidden\";
-        string[] fileNames = Directory.GetFiles(dirPath, "*.txt", SearchOption.TopDirectoryOnly);
-        Label lblUsername = new Label{
+        static string dirPath = @"D:\Filer\Dokumenter\Software bøger\2. semester\Projekt\P2\TorPdos\TorPdos\bin\Debug";
+        string[] fileNames = Directory.GetFiles(dirPath, "Path.txt", SearchOption.TopDirectoryOnly);
+        Label lblUsername = new Label {
             Location = new Point(20, 20),
             Height = 40, Width = 150,
             Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "UserID",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblPassword = new Label(){
+        Label lblPassword = new Label() {
             Location = new Point(20, 70),
             Height = 40, Width = 150,
             Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblYouDidIt = new Label(){
+        Label lblYouDidIt = new Label() {
             Location = new Point(100, 100),
             Height = 40, Width = 200,
             Text = "You did it o/",
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Font = new Font("Consolas", 20, FontStyle.Regular)
         };
-        Label lblNope = new Label(){
+        Label lblNope = new Label() {
             Location = new Point(50, 110),
             Height = 40, Width = 350,
             Text = "Wrong username or password",
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
-        Label lblCreate = new Label(){
+        Label lblCreate = new Label() {
             Location = new Point(275, 240),
             Height = 100, Width = 200,
             Text = "Create new user",
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 8, FontStyle.Regular)
         };
-        Label lblGoBack= new Label{
+        Label lblGoBack = new Label {
             Location = new Point(300, 230),
             Height = 40,
             Width = 150,
@@ -54,14 +54,23 @@ namespace TorPdos{
             Text = "Go Back",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        TextBox txtUsername = new TextBox(){
+        Label lblOkay = new Label()
+        {
+            Location = new Point(300, 230),
+            Height = 40,
+            Width = 150,
+            Font = new Font("Consolas", 12, FontStyle.Regular),
+            Text = "Okay",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
+        };
+        TextBox txtUsername = new TextBox() {
             Location = new Point(170, 20),
-            Height = 50,Width = 150,
+            Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtPassword = new TextBox(){
+        TextBox txtPassword = new TextBox() {
             Location = new Point(170, 70),
             Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
@@ -69,42 +78,42 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtPath = new TextBox(){
+        TextBox txtPath = new TextBox() {
             Location = new Point(70, 70),
             Height = 50, Width = 250,
             Font = new Font("Consolas", 15, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        Button btnLogin = new Button(){
+        Button btnLogin = new Button() {
             Location = new Point(70, 150),
             Width = 250, Height = 70,
             Text = "Login",
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnExisting = new Button(){
+        Button btnExisting = new Button() {
             Location = new Point(70, 50),
             Width = 250, Height = 70,
             Text = "Existing User",
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnNew = new Button(){
+        Button btnNew = new Button() {
             Location = new Point(70, 150),
             Width = 250, Height = 70,
             Text = "New User",
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnCreate = new Button(){
+        Button btnCreate = new Button() {
             Location = new Point(70, 150),
             Width = 250, Height = 70,
             Text = "Create",
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnBrowse = new Button(){
+        Button btnBrowse = new Button() {
             Location = new Point(70, 120),
             Width = 250, Height = 70,
             Text = "Browse",
@@ -112,13 +121,13 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(btnColour),
             //Image =
         };
-        NotifyIcon noiTorPdos = new NotifyIcon(){
+        NotifyIcon noiTorPdos = new NotifyIcon() {
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
             Visible = false,
         };
 
-        public MyForm(){
+        public MyForm() {
             SuspendLayout();
             FormBorderStyle = FormBorderStyle.FixedSingle;
             StartPosition = FormStartPosition.CenterScreen;
@@ -131,14 +140,13 @@ namespace TorPdos{
             BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
 
-            Controls.Add(btnBrowse);
-            Controls.Add(txtPath);
 
-            //if(fileNames.Length != 0){
-            //    Login();
-            //} else {
-            //    FirstStartUp();
-            //}
+
+            if (fileNames.Length != 0) {
+                Login();
+            } else {
+                FirstStartUp();
+            }
 
 
             btnExisting.Click += BtnExistingClick;
@@ -149,22 +157,39 @@ namespace TorPdos{
             Resize += MyformResize;
             lblGoBack.Click += LblGoBackClick;
             btnBrowse.Click += BtnBrowseClick;
+            lblOkay.Click += LblOkayClick;
+        }
+
+        private void LblOkayClick(object sender, System.EventArgs e)
+        {
+            string fileName = "Path.txt";
+
+            using (StreamWriter sw = File.CreateText(fileName))
+            {
+                sw.WriteLine(txtPath.Text);
+            }
+
+            Controls.Clear();
+            Controls.Add(lblPassword);
+            Controls.Add(txtPassword);
+            Controls.Add(btnCreate);
+            Controls.Add(lblGoBack);
         }
 
         private void BtnBrowseClick(object sender, System.EventArgs e)
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
-                if(fbd.ShowDialog() == DialogResult.OK)
-                txtPath.Text = fbd.SelectedPath;
+                if (fbd.ShowDialog() == DialogResult.OK)
+                    txtPath.Text = fbd.SelectedPath;
             }
         }
 
-        private void LblGoBackClick(object sender, System.EventArgs e){
+        private void LblGoBackClick(object sender, System.EventArgs e) {
             FirstStartUp();
         }
 
-        public void Login(){
+        public void Login() {
             Controls.Clear();
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
@@ -175,18 +200,19 @@ namespace TorPdos{
             Controls.Add(lblGoBack);
         }
 
-        public void FirstStartUp(){
+        public void FirstStartUp() {
             Controls.Clear();
-            Controls.Add(btnExisting);
-            Controls.Add(btnNew);
+            Controls.Add(btnBrowse);
+            Controls.Add(txtPath);
+            Controls.Add(lblOkay);
         }
-        private void BtnCreateClick(object sender, System.EventArgs e){
+        private void BtnCreateClick(object sender, System.EventArgs e) {
             string uuid = IDHandler.CreateUser(txtPath.Text + @"\.hidden", txtPassword.Text);
             Login();
             txtUsername.Text = uuid;
         }
 
-        private void BtnNewClick(object sender, System.EventArgs e){
+        private void BtnNewClick(object sender, System.EventArgs e) {
             Controls.Clear();
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
@@ -194,33 +220,38 @@ namespace TorPdos{
             Controls.Add(lblGoBack);
         }
 
-        private void BtnExistingClick(object sender, System.EventArgs e){
+        private void BtnExistingClick(object sender, System.EventArgs e) {
             Login();
         }
 
-        void BtnClickLogin(object sender, System.EventArgs e){
+        void BtnClickLogin(object sender, System.EventArgs e) {
             string uuid = txtUsername.Text, pass = txtPassword.Text;
-            if (IDHandler.IsValidUser(txtPath.Text + @"\.hidden", uuid, pass)){
+            if (IDHandler.IsValidUser(txtPath.Text + @"\.hidden", uuid, pass)) {
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
-            } else{
+            } else {
                 Controls.Add(lblNope);
             }
         }
 
-        void MyformResize(object sender, System.EventArgs e){
-            if (this.WindowState == FormWindowState.Minimized){
+        void MyformResize(object sender, System.EventArgs e) {
+            if (this.WindowState == FormWindowState.Minimized) {
                 Hide();
                 noiTorPdos.Visible = true;
-            } else if(this.WindowState == FormWindowState.Normal){
+            } else if (this.WindowState == FormWindowState.Normal) {
                 noiTorPdos.Visible = false;
             }
         }
 
-        void noiTorPdosDoubleClick(object sender, System.EventArgs e){
+        void noiTorPdosDoubleClick(object sender, System.EventArgs e) {
             this.Show();
             noiTorPdos.Visible = false;
             WindowState = FormWindowState.Normal;
+        }
+
+        public string PathName()
+        {
+            return txtPath.Text;
         }
     }
 }
