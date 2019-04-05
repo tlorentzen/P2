@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using ID_lib;
+using System.Configuration;
 
 namespace TorPdos{
 
@@ -160,12 +161,7 @@ namespace TorPdos{
         }
 
         private void LblOkayClick(object sender, System.EventArgs e){
-            string fileName = "Path.txt";
-
-            using (StreamWriter sw = File.CreateText(fileName)){
-                sw.WriteLine(txtPath.Text);
-            }
-
+            ConfigurationManager.AppSettings.Set("Path", txtPath.Text);
             Controls.Clear();
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
