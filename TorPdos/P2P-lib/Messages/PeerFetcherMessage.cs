@@ -21,7 +21,7 @@ namespace P2P_lib.Messages{
         public void SendPeers(List<Peer> input){
             this.type = TypeCode.RESPONSE;
             this.statuscode = StatusCode.OK;
-            string from_Ip = this.@from;
+            string from_Ip = this.from;
             this.to = from_Ip;
             Peers = input;
         }

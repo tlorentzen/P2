@@ -37,6 +37,8 @@ namespace P2P_lib.Messages
             this.to = to.GetIP();
             this.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
             this.from = NetworkHelper.getLocalIPAddress();
+            this.type = TypeCode.REQUEST;
+            this.statuscode = StatusCode.OK;
         }
 
         public bool Send(int receiverPort = 25565){
@@ -52,7 +54,7 @@ namespace P2P_lib.Messages
 
                 return true;
             }catch(SocketException e){
-                Console.WriteLine("SocketException");
+                //Console.WriteLine("SocketException");
                 return false;
             }
         }
@@ -80,10 +82,13 @@ namespace P2P_lib.Messages
 
         public void CreateReply() {
             this.type = TypeCode.RESPONSE;
-            string from_ip = this.from;
+            string _fromIP = this.from;
             this.from = this.to;
-            this.to = from_ip;
-        }
+            this.to = _fromIP;
+            string _fromUUID = this.ToUUID;
+            this.ToUUID = this.FromUUID;
+            this.FromUUID = _fromUUID;
+    }
 
         public void forwardMessage(string toIP){
             this.to = toIP;

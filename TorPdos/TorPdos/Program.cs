@@ -14,10 +14,13 @@ using ID_lib;
 
 namespace TorPdos{
     class Program{
+
+        static Index idx;
+        static Network p2p;
+
         [STAThread]
         static void Main(string[] args){
             MyForm TorPdos = new MyForm();
-            
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
@@ -29,7 +32,7 @@ namespace TorPdos{
             if (!Directory.Exists(path)){
                 Directory.CreateDirectory(path);
             }
-            Index idx = new Index(path);
+            idx = new Index(path);
             idx.load();
             idx.FileAdded += Idx_FileAdded;
             idx.FileChanged += Idx_FileChanged;
@@ -40,7 +43,7 @@ namespace TorPdos{
             }
 
             // Prepare P2PNetwork
-            Network p2p = new Network(25565, idx, path);
+            p2p = new Network(25565, idx, path);
             p2p.Start();
             
 
@@ -59,15 +62,13 @@ namespace TorPdos{
                         p2p.AddPeer("MyName" + param[1].Trim(), param[1].Trim());
                     } else if (console.Equals("gui")){
                         Application.Run(TorPdos);
-                    } else if (console.StartsWith("upload")/* && param.Length == 3*/){
-                        //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
-                        /*if (int.TryParse(param[2], out int n)){*/
-                        idx.reIndex();
-                        string filesToDelete = new NetworkProtocols(idx, p2p).UploadFileToNetwork(path + "SendMe.txt" /*param[1]*/, 1 /*int.Parse(param[2])*/);
-                        //Filerne i den skjulte mappe skal køres igennem og alle, der starter med filesToDelete, skal slettes
-                        /*} else{
+                    } else if (console.StartsWith("upload") && param.Length == 3){
+                        if (int.TryParse(param[2], out int n)){
+                            idx.reIndex();
+                            new NetworkProtocols(idx, p2p).UploadFileToNetwork(param[1], int.Parse(param[2]));
+                        } else{
                             Console.WriteLine("Third parameter must be an integer");
-                        }*/
+                        }
                     } else if (console.Equals("reindex")){
                         idx.reIndex();
                     } else if (console.Equals("status")){
@@ -76,6 +77,21 @@ namespace TorPdos{
                         idx.save();
                     } else if (console.Equals("peersave")){
                         p2p.saveFile();
+                    } else if(console.Equals("list")){
+                        List<Peer> peers = p2p.getPeerList();
+
+                        Console.WriteLine();
+                        Console.WriteLine("### Your Peerlist contains ###");
+                        if(peers.Count > 0){
+                            foreach (Peer peer in peers)
+                            {
+                                Console.WriteLine(peer.getUUID() + " - " + peer.GetIP());
+                            }
+                        }else{
+                            Console.WriteLine("The list is empty...");
+                        }
+                        Console.WriteLine();
+                        
                     } else{
                         Console.WriteLine("Unknown command");
                     }
@@ -95,6 +111,7 @@ namespace TorPdos{
 
         private static void Idx_FileAdded(IndexFile file){
             Console.WriteLine("File added: " + file.hash);
+            p2p.UploadFileToNetwork(file.paths[0], 3);
         }
 
         private static void Idx_FileChanged(IndexFile file){

@@ -56,6 +56,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\P2P-lib\P2P-lib.csproj">
+      <Project>{F3998136-4DD4-49F8-B388-E4A67C808BFC}</Project>
+      <Name>P2P-lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TorPdos\TorPdos.csproj">
       <Project>{08e70b8f-fd6e-44cc-a7f6-ebdc4cb06192}</Project>
       <Name>TorPdos</Name>

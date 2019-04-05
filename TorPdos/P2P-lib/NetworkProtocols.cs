@@ -30,7 +30,7 @@ namespace P2P_lib{
         //This is the function called to upload a file to the network
         //It takes a path to the file, the number of copies and a seed
         //The seed is to ensure that the same nodes doesn't end up with the files every time
-        public string UploadFileToNetwork(string filePath, int copies, int seed = 0){
+        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
             //This keeps the number of copies between 0 and 50
             copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
 
@@ -59,7 +59,6 @@ namespace P2P_lib{
             for (int i = 0; i < copies; i++){
                 Task.Factory.StartNew(() => SendUploadRequest(readyFile, hash, seed + i));
             }
-            return compressedFilePath;
         }
         private void SendUploadRequest(string filePath, string hash, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
@@ -72,26 +71,12 @@ namespace P2P_lib{
                         i--;
                         return;
                     }
-
                     UploadMessage upload = new UploadMessage(peerlist[seed]);
                     upload.filesize = new FileInfo(filePath).Length;
                     upload.filename = new FileInfo(filePath).Name;
                     upload.filehash = hash;
-
-                    Console.WriteLine("Filehash: {0}", upload.filehash);
-
                     upload.path = filePath;
-                    upload.type = Messages.TypeCode.REQUEST;
-                    //TODO This is wrong, please correct.
-                    upload.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
-                    upload.statuscode = StatusCode.OK;
-                    Console.WriteLine("Filesize: {0}", upload.filesize);
-                    Console.WriteLine("Filename: {0}", upload.filename);
-                    Console.WriteLine("From: {0}", upload.@from);
-                    Console.WriteLine("Filepath: {0}", upload.path);
                     upload.Send();
-                    Console.WriteLine("Upload request sent");
-                    i++;
                 }
             }
         }
