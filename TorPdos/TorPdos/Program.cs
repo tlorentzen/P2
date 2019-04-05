@@ -28,12 +28,6 @@ namespace TorPdos{
 
             var path = ConfigurationManager.AppSettings["path"];
 
-            if (!IDHandler.UserExists(path))
-            {
-                Console.WriteLine("NEW USER - Enter password: ");
-                IDHandler.CreateUser(path, Console.ReadLine());
-            }
-
             // Load Index
             if (!Directory.Exists(path)){
                 Directory.CreateDirectory(path);
