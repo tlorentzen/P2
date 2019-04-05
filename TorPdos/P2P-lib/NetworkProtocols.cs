@@ -60,23 +60,29 @@ namespace P2P_lib{
                 Task.Factory.StartNew(() => SendUploadRequest(readyFile, hash, seed + i));
             }
         }
+
         private void SendUploadRequest(string filePath, string hash, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();
+            //Console.WriteLine("Will send to "+peerlist.Count+" peers");
+
             if(peerlist.Count > 0) {
-                seed = seed % peerlist.Count;
+                //seed = seed % peerlist.Count;
 
                 for (int i = 0; i < peerlist.Count; i++){
 
-                    if (!peerlist[seed].isOnline()) {
-                        i--;
-                        return;
+                    if (peerlist[i].isOnline()) {
+                        Console.WriteLine("Sending to: "+peerlist[i].GetIP());
+                        UploadMessage upload = new UploadMessage(peerlist[i]);
+                        upload.filesize = new FileInfo(filePath).Length;
+                        upload.filename = new FileInfo(filePath).Name;
+                        upload.filehash = hash;
+                        upload.path = filePath;
+                        upload.Send();
                     }
-                    UploadMessage upload = new UploadMessage(peerlist[seed]);
-                    upload.filesize = new FileInfo(filePath).Length;
-                    upload.filename = new FileInfo(filePath).Name;
-                    upload.filehash = hash;
-                    upload.path = filePath;
-                    upload.Send();
+
+                    //Console.WriteLine(peerlist[i].);
+
+                    
                 }
             }
         }
