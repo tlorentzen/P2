@@ -26,7 +26,7 @@ namespace TorPdos{
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
 
-            var path = ConfigurationManager.AppSettings["Path"];
+            var path = ConfigurationManager.AppSettings["path"];
 
             // Load Index
             if (!Directory.Exists(path)){
