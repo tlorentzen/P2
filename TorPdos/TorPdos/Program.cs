@@ -13,12 +13,14 @@ using ID_lib;
 
 namespace TorPdos{
     class Program{
+
+        static Index idx;
+        static Network p2p;
+
         [STAThread]
         static void Main(string[] args){
             MyForm TorPdos = new MyForm();
-            
-            
-            
+
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
@@ -30,7 +32,7 @@ namespace TorPdos{
             if (!Directory.Exists(path)){
                 Directory.CreateDirectory(path);
             }
-            Index idx = new Index(path);
+            idx = new Index(path);
             idx.load();
             idx.FileAdded += Idx_FileAdded;
             idx.FileChanged += Idx_FileChanged;
@@ -41,7 +43,7 @@ namespace TorPdos{
             }
 
             // Prepare P2PNetwork
-            Network p2p = new Network(25565, idx, path);
+            p2p = new Network(25565, idx, path);
             p2p.Start();
 
             while (running){
