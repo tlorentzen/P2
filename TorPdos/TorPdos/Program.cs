@@ -19,8 +19,10 @@ namespace TorPdos{
 
         [STAThread]
         static void Main(string[] args){
+            
             MyForm TorPdos = new MyForm();
             Boolean running = true;
+            /*
             if (ConfigurationManager.AppSettings["path"] == null){
                 ConfigurationManager.AppSettings.Add("path", "C:\\TorPdos\\");
             }
@@ -28,16 +30,20 @@ namespace TorPdos{
             if (ConfigurationManager.AppSettings["uuid"] == null){
                 ConfigurationManager.AppSettings.Add("uuid", "Empty");
             }
-
+            */
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-            string path = ConfigurationManager.AppSettings["path"];
+            /*
+           string path = ConfigurationManager.AppSettings["path"];
 
-            // Load Index
-            if (!Directory.Exists(path)){
-                Directory.CreateDirectory(path);
-            }
+           // Load Index
+           if (!Directory.Exists(path)){
+               Directory.CreateDirectory(path);
+           }
+           */
+
+            String path = @"C:\\TorPdos\\";
 
             idx = new Index(path);
             idx.load();
