@@ -9,9 +9,8 @@ namespace TorPdos{
 
     public class MyForm : Form {
         private static readonly string backgroundColour = "#320117", lblColour = "#CC7178",
-                                       btnColour = "#FFF8F7", txtColour = "#FFD9DA";
-        static string dirPath = @"C:\TorPdos";
-        string[] fileNames = Directory.GetFiles(dirPath, "Path.txt", SearchOption.TopDirectoryOnly);
+                                       btnColour = "#FFF8F7", txtColour = "#FFD9DA", hfName = @"\.hidden";
+        string path = ConfigurationManager.AppSettings["path"];
         Label lblUsername = new Label{
             Location = new Point(20, 20),
             Height = 40, Width = 150,
@@ -141,8 +140,8 @@ namespace TorPdos{
             Icon = new Icon("TorPdos.ico");
 
 
-
-            if (fileNames.Length != 0){
+            if (Directory.Exists(path))
+            {
                 Login();
             } else{
                 FirstStartUp();
@@ -161,7 +160,7 @@ namespace TorPdos{
         }
 
         private void LblOkayClick(object sender, System.EventArgs e){
-            ConfigurationManager.AppSettings.Set("path", txtPath.Text);
+            ConfigurationManager.AppSettings.Add("path", PathName());
             Controls.Clear();
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
@@ -198,8 +197,7 @@ namespace TorPdos{
             Controls.Add(lblOkay);
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
-            string path = ConfigurationManager.AppSettings["path"];
-            string uuid = IDHandler.CreateUser(path + @"\.hidden", txtPassword.Text);
+            string uuid = IDHandler.CreateUser(path + hfName, txtPassword.Text);
             Login();
             txtUsername.Text = uuid;
         }
@@ -218,8 +216,7 @@ namespace TorPdos{
 
         void BtnClickLogin(object sender, System.EventArgs e){
             string uuid = txtUsername.Text, pass = txtPassword.Text;
-            string path = ConfigurationManager.AppSettings["path"];
-            if (IDHandler.IsValidUser(path + @"\.hidden", uuid, pass)){
+            if (IDHandler.IsValidUser(path + hfName, uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
             } else{
