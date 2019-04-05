@@ -68,7 +68,10 @@ namespace P2P_lib{
 
                 for (int i = 0; i < peerlist.Count; i++){
 
-                    if (!peerlist[seed].isOnline()) return;
+                    if (!peerlist[seed].isOnline()) {
+                        i--;
+                        return;
+                    }
 
                     UploadMessage upload = new UploadMessage(peerlist[seed]);
                     upload.filesize = new FileInfo(filePath).Length;
