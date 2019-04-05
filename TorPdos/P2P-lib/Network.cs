@@ -63,7 +63,7 @@ namespace P2P_lib{
         }
 
         private void Receive_MessageReceived(BaseMessage message){
-            Console.WriteLine(message.GetMessageType());
+            Console.WriteLine(message.GetMessageType() + " with type " + message.type);
 
             Type msgType = message.GetMessageType();
 
@@ -93,7 +93,7 @@ namespace P2P_lib{
                 foreach (var incommingPeer in incomming){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
                     peers.Add(incommingPeer);
-                    Console.WriteLine("Peer added " + incommingPeer.getUUID());
+                    Console.WriteLine("Peer added: " + incommingPeer.getUUID());
                 }
 
                 foreach (var outGoingPeer in peers){
@@ -101,18 +101,18 @@ namespace P2P_lib{
                     if (outGoingPeer.getUUID() == message.FromUUID) break;
                     outgoing.Add(outGoingPeer);
                 }
-
                 message.CreateReply();
                 message.Peers = outgoing;
                 message.Send();
             } else{
                 // Rechieved response
 
-
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
+                    //TODO ændre UUID
                     if (("MyName" + NetworkHelper.getLocalIPAddress()).Equals(incommingPeer.getUUID())) break;
                     peers.Add(incommingPeer);
+                    Console.WriteLine("Peer added: " + incommingPeer.getUUID());
                 }
             }
 
@@ -141,7 +141,6 @@ namespace P2P_lib{
             if (_path == null) return;
             using (var fileStream = _hiddenPath.WriteToFile(_peerFilePath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
-
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
         }
@@ -168,14 +167,12 @@ namespace P2P_lib{
                     break;
                 }
             }
-
             // Add unknown peers to own list
             return inPeers;
         }
 
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(Messages.TypeCode.REQUEST)){
-                Console.WriteLine("This is an upload request");
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
                     Console.WriteLine("Request accepted");
@@ -183,36 +180,17 @@ namespace P2P_lib{
                     Console.WriteLine("Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
-                
                 upload.CreateReply();
                 NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
-                
-                Console.WriteLine("Port for receiving the file: " + upload.port);
                 _fileReceiver = new FileReceiver(upload, true, upload.port);
                 _fileReceiver.start();
-                
-                Console.WriteLine("File receiver started");
                 upload.Send();
-                
-                Console.WriteLine("Upload response send to: " + upload.to);
-                
             } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
-                
-                Console.WriteLine("This is an upload response");
                 if (upload.statuscode == StatusCode.ACCEPTED) {
-                    
-                    Console.WriteLine("It's accepted");
-                    Console.WriteLine(upload.filehash.Equals("c28ef56e6bbcdd8ed452cbb860e620d1"));
                     IndexFile indexFile = _index.GetEntry(upload.filehash);
                     string filePath = indexFile.getPath();
-                    
-                    Console.WriteLine("Filepath to upload: {0}", filePath);
-                    Console.WriteLine("Path from indexfile is: " + indexFile.getPath());
-                    
                     FileSender fileSender = new FileSender(upload.from, upload.port);
-                    
-                    Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to port: " + upload.port);
                     fileSender.Send(filePath);
                     Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);
                     //_hiddenPath.Remove(filePath);
@@ -238,22 +216,14 @@ namespace P2P_lib{
             } else{
                 // Recheved response, should send peerlist
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(getAPeer(ping.FromUUID));
-
-                peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
-
-                //Add myself to the list. TODO Insert userID in place of "MyName"
-                peerFetch.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
                 //Removed the rechiever from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.Peers){
-                    if (String.Compare(peer.GetIP().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
+                    if (string.Compare(peer.GetIP().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
                         peerFetch.Peers.Remove(peer);
                         break;
                     }
                 }
-
-                peerFetch.statuscode = StatusCode.OK;
-                peerFetch.type = Messages.TypeCode.REQUEST;
                 peerFetch.Send();
             }
         }
@@ -264,7 +234,6 @@ namespace P2P_lib{
                     return peer;
                 }
             }
-
             return null;
         }
 
@@ -273,12 +242,10 @@ namespace P2P_lib{
                 if (File.Exists(_path + @"\.hidden\" + download.filehash)){
                     download.CreateReply();
                     download.statuscode = StatusCode.ACCEPTED;
-                    
                     download.Send();
                 } else{
                     download.CreateReply();
                     download.statuscode = StatusCode.ERROR;
-                    download.from = NetworkHelper.getLocalIPAddress();
                     download.Send();
 
                     foreach (var peer in peers){

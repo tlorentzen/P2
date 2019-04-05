@@ -37,6 +37,8 @@ namespace P2P_lib.Messages
             this.to = to.GetIP();
             this.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
             this.from = NetworkHelper.getLocalIPAddress();
+            this.type = TypeCode.REQUEST;
+            this.statuscode = StatusCode.OK;
         }
 
         public bool Send(int receiverPort = 25565){
