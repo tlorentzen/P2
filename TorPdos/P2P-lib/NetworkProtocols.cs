@@ -30,7 +30,7 @@ namespace P2P_lib{
         //This is the function called to upload a file to the network
         //It takes a path to the file, the number of copies and a seed
         //The seed is to ensure that the same nodes doesn't end up with the files every time
-        public string UploadFileToNetwork(string filePath, int copies, int seed = 0){
+        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
             //This keeps the number of copies between 0 and 50
             copies = (copies < 0 ? 0 : (copies < 50 ? copies : 50));
 

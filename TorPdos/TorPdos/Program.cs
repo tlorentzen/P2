@@ -63,7 +63,7 @@ namespace TorPdos{
                         //upload C:\Users\Niels\Desktop\INEVAanalyse.pdf 3
                         /*if (int.TryParse(param[2], out int n)){*/
                         idx.reIndex();
-                        string filesToDelete = new NetworkProtocols(idx, p2p).UploadFileToNetwork(path + "SendMe.txt" /*param[1]*/, 1 /*int.Parse(param[2])*/);
+                        new NetworkProtocols(idx, p2p).UploadFileToNetwork(path + "SendMe.txt" /*param[1]*/, 1 /*int.Parse(param[2])*/);
                         //Filerne i den skjulte mappe skal køres igennem og alle, der starter med filesToDelete, skal slettes
                         /*} else{
                             Console.WriteLine("Third parameter must be an integer");
