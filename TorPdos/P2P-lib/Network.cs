@@ -224,6 +224,7 @@ namespace P2P_lib{
             // Update peer
             foreach (Peer peer in peers){
                 if (peer.getUUID().Equals(ping.FromUUID)){
+                    peer.SetIP(ping.from);
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
                 }
