@@ -22,7 +22,9 @@ namespace P2P_lib{
             if (File.Exists(path)){
                 using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
                     using (NetworkStream stream = client.GetStream()){
-                        using (var file = File.OpenRead(path)){
+
+                        using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
                             int bytesRead;
                             byte[] buffer = new byte[chunkSize];
                             Console.WriteLine(buffer);
