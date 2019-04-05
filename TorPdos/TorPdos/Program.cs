@@ -22,10 +22,6 @@ namespace TorPdos{
             
             MyForm TorPdos = new MyForm();
             Boolean running = true;
-<<<<<<< HEAD
-            
-=======
->>>>>>> ce2160abc643bee2ecd7b563fd1481cc8a5bf708
             if (ConfigurationManager.AppSettings["path"] == null){
                 ConfigurationManager.AppSettings.Add("path", "C:\\TorPdos\\");
             }
@@ -44,11 +40,6 @@ namespace TorPdos{
            if (!Directory.Exists(path)){
                Directory.CreateDirectory(path);
            }
-<<<<<<< HEAD
-           
-=======
-
->>>>>>> ce2160abc643bee2ecd7b563fd1481cc8a5bf708
 
             idx = new Index(path);
             idx.load();
