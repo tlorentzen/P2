@@ -50,7 +50,7 @@ namespace P2P_lib{
 
             if (this._nextPing < time){
                 Console.WriteLine("Pinging: " + this.GetIP());
-                PingMessage ping = new PingMessage("", this.getUUID());
+                PingMessage ping = new PingMessage(this);
                 ping.from = NetworkHelper.getLocalIPAddress();
                 ping.type = Messages.TypeCode.REQUEST;
                 ping.statuscode = StatusCode.OK;

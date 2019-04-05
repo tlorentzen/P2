@@ -70,7 +70,7 @@ namespace P2P_lib{
 
                     if (!peerlist[seed].isOnline()) return;
 
-                    UploadMessage upload = new UploadMessage("FROM GUID", peerlist[seed].getUUID());
+                    UploadMessage upload = new UploadMessage(peerlist[seed]);
                     upload.filesize = new FileInfo(filePath).Length;
                     upload.filename = new FileInfo(filePath).Name;
                     upload.filehash = hash;

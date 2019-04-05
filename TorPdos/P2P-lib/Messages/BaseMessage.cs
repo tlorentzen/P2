@@ -31,10 +31,11 @@ namespace P2P_lib.Messages
 
         public abstract string GetHash();
 
-        public BaseMessage(string fromUUID, string toUUID)
+        public BaseMessage(Peer to)
         {
-            this.ToUUID = toUUID;
-            this.FromUUID = fromUUID;
+            this.ToUUID = to.getUUID();
+            this.to = to.GetIP();
+            this.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
             this.from = NetworkHelper.getLocalIPAddress();
         }
 

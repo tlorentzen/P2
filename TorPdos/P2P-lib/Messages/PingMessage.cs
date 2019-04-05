@@ -11,7 +11,7 @@ namespace P2P_lib.Messages
     {
         private long _pinged;
 
-        public PingMessage(string fromUUID, string toUUID) : base(fromUUID, toUUID)
+        public PingMessage(Peer to) : base(to)
         {
             _pinged = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }

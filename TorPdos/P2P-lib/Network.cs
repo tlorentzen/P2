@@ -236,7 +236,7 @@ namespace P2P_lib{
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist
-                PeerFetcherMessage peerFetch = new PeerFetcherMessage("My ID!" ,ping.FromUUID);
+                PeerFetcherMessage peerFetch = new PeerFetcherMessage(getAPeer(ping.FromUUID));
 
                 peerFetch.from = NetworkHelper.getLocalIPAddress();
                 peerFetch.Peers = this.getPeerList();
@@ -255,6 +255,16 @@ namespace P2P_lib{
                 peerFetch.type = Messages.TypeCode.REQUEST;
                 peerFetch.Send();
             }
+        }
+
+        public Peer getAPeer(string UUID){
+            foreach (var peer in peers){
+                if (peer.UUID.Equals(UUID)){
+                    return peer;
+                }
+            }
+
+            return null;
         }
 
         private void receivedDownloadMessage(DownloadMessage download){

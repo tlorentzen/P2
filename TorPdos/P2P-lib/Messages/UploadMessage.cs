@@ -15,7 +15,7 @@ namespace P2P_lib.Messages
         public string path;
         public int port;
 
-        public UploadMessage(string fromUUID, string toUUID) : base(fromUUID, toUUID)
+        public UploadMessage(Peer to) : base(to)
         {
 
         } 

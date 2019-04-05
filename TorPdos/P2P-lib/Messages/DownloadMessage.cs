@@ -15,7 +15,7 @@ namespace P2P_lib.Messages
         public long filesize;
         public int port;
 
-        public DownloadMessage(string fromUUID, string toUUID) : base(fromUUID, toUUID){
+        public DownloadMessage(Peer to) : base(to){
             forwardCount = 8;
         }
 

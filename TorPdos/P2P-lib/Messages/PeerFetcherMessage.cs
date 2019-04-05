@@ -6,7 +6,7 @@ namespace P2P_lib.Messages{
 
     [Serializable]
     public class PeerFetcherMessage : BaseMessage {
-        public PeerFetcherMessage(string fromUUID, string toUUID) : base(fromUUID, toUUID){ }
+        public PeerFetcherMessage(Peer to) : base(to){ }
 
         public override string GetHash(){
             return null;
