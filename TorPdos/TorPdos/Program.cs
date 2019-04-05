@@ -14,7 +14,6 @@ using ID_lib;
 
 namespace TorPdos{
     class Program{
-
         static Index idx;
         static Network p2p;
 
@@ -22,16 +21,24 @@ namespace TorPdos{
         static void Main(string[] args){
             MyForm TorPdos = new MyForm();
             Boolean running = true;
+            if (ConfigurationManager.AppSettings["path"] == null){
+                ConfigurationManager.AppSettings.Add("path", "C:\\TorPdos\\");
+            }
+
+            if (ConfigurationManager.AppSettings["uuid"] == null){
+                ConfigurationManager.AppSettings.Add("uuid", "null");
+            }
+
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-
-            var path = ConfigurationManager.AppSettings["path"];
+            string path = ConfigurationManager.AppSettings["path"];
 
             // Load Index
             if (!Directory.Exists(path)){
                 Directory.CreateDirectory(path);
             }
+
             idx = new Index(path);
             idx.load();
             idx.FileAdded += Idx_FileAdded;
@@ -45,7 +52,7 @@ namespace TorPdos{
             // Prepare P2PNetwork
             p2p = new Network(25565, idx, path);
             p2p.Start();
-            
+
 
             while (running){
                 string console = Console.ReadLine();
@@ -77,21 +84,20 @@ namespace TorPdos{
                         idx.save();
                     } else if (console.Equals("peersave")){
                         p2p.saveFile();
-                    } else if(console.Equals("list")){
+                    } else if (console.Equals("list")){
                         List<Peer> peers = p2p.getPeerList();
 
                         Console.WriteLine();
                         Console.WriteLine("### Your Peerlist contains ###");
-                        if(peers.Count > 0){
-                            foreach (Peer peer in peers)
-                            {
+                        if (peers.Count > 0){
+                            foreach (Peer peer in peers){
                                 Console.WriteLine(peer.getUUID() + " - " + peer.GetIP());
                             }
-                        }else{
+                        } else{
                             Console.WriteLine("The list is empty...");
                         }
+
                         Console.WriteLine();
-                        
                     } else{
                         Console.WriteLine("Unknown command");
                     }
