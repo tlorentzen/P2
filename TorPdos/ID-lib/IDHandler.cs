@@ -12,7 +12,7 @@ namespace ID_lib
 {
     public class IDHandler
     {
-        private static readonly string userdatafolder = "userdata", userdatafile = "userdata";
+        private static readonly string userdatafile = "userdata";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
 
         //Create user file using generated UUID and input password
@@ -104,10 +104,16 @@ namespace ID_lib
         //Return UUID if present, else return null
         public static string GetUUID(string path)
         {
-            string uuid = File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(1);
-            if (uuid != null)
+            if (UserExists(path))
             {
-                return uuid;
+                try
+                {
+                    return File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(1);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
             else
             {
@@ -115,7 +121,7 @@ namespace ID_lib
             }
         }
 
-        public static bool UserFileExists(string path)
+        public static bool UserExists(string path)
         {
             if (File.Exists(path + "\\" + userdatafile))
             {
@@ -127,36 +133,18 @@ namespace ID_lib
             }
         }
 
-        /*
-        //Returns IEnumberable of all UUIDs in userdatafolder, or empty if error
-        public static IEnumerable<string> GetUserList(string path)
+        //Removes userdata file, return false if failed
+        public static bool RemoveUser(string path)
         {
             try
             {
-                string[] uuidList = new DirectoryInfo(path).GetFiles().Select(o => o.Name).ToArray();
-                return uuidList;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(" * Failed to get user list!\n\n" + err.Message);
-                string[] error = new string[0];
-                return error;
-            }
-        }
-
-        //Removes user file from userdatafolder
-        //True if success, false if failed
-        public static bool RemoveUser(string uuid)
-        {
-            try
-            {
-                File.Delete(userdatafolder + "\\" + uuid);
+                File.Delete(path + "\\" + userdatafile);
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
-        }*/
+        }
     }
 }
