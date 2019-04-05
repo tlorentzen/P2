@@ -84,7 +84,7 @@ namespace TorPdos{
                         if(peers.Count > 0){
                             foreach (Peer peer in peers)
                             {
-                                Console.WriteLine(peer.getUUID() + " - " + peer.GetIP());
+                                Console.WriteLine(peer.getUUID() + " - " + peer.GetIP()+ " - "+(peer.isOnline() ? "Online" : "Offline"));
                             }
                         }else{
                             Console.WriteLine("The list is empty...");
