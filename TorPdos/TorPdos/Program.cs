@@ -10,7 +10,7 @@ using System.Drawing;
 using System.IO;
 using Index_lib;
 using P2P_lib;
-using ID_lib;
+
 
 namespace TorPdos{
     class Program{
@@ -26,7 +26,7 @@ namespace TorPdos{
             }
 
             if (ConfigurationManager.AppSettings["uuid"] == null){
-                ConfigurationManager.AppSettings.Add("uuid", "null");
+                ConfigurationManager.AppSettings.Add("uuid", "Empty");
             }
 
             string ownIP = NetworkHelper.getLocalIPAddress();
