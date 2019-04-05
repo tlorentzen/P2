@@ -59,7 +59,6 @@ namespace P2P_lib{
             for (int i = 0; i < copies; i++){
                 Task.Factory.StartNew(() => SendUploadRequest(readyFile, hash, seed + i));
             }
-            return compressedFilePath;
         }
         private void SendUploadRequest(string filePath, string hash, int seed = 0){
             List<Peer> peerlist = _network.getPeerList();

@@ -307,5 +307,8 @@ namespace P2P_lib{
 
             Console.WriteLine("PingHandler stopped...");
         }
+        public void UploadFileToNetwork(string filePath, int copies, int seed = 0) {
+            new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
+        }
     }
 }
