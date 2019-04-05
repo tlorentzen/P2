@@ -107,8 +107,6 @@ namespace P2P_lib{
                 message.Send();
             } else{
                 // Rechieved response
-
-
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
                     if (("MyName" + NetworkHelper.getLocalIPAddress()).Equals(incommingPeer.getUUID())) break;

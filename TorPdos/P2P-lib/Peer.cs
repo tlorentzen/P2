@@ -37,6 +37,15 @@ namespace P2P_lib{
         }
 
         public void setOnline(bool online){
+
+            if(online != this._online){
+                if(online){
+                    Console.WriteLine(this._ip+" - is now online!");
+                }else{
+                    Console.WriteLine(this._ip+" - is now offline!");
+                }
+            }
+
             this._online = online;
             this._pings_without_response = 0;
         }
@@ -49,7 +58,6 @@ namespace P2P_lib{
             long time = (millis > 0) ? millis : DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             if (this._nextPing < time){
-                Console.WriteLine("Pinging: " + this.GetIP());
                 PingMessage ping = new PingMessage(this);
                 ping.from = NetworkHelper.getLocalIPAddress();
                 ping.type = Messages.TypeCode.REQUEST;
@@ -62,8 +70,7 @@ namespace P2P_lib{
                 this._pings_without_response++;
 
                 if (this._pings_without_response >= 2){
-                    this._online = false;
-                    Console.WriteLine(this.GetIP() + " is now offline...");
+                    this.setOnline(false);
                 }
             }
         }

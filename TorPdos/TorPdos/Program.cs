@@ -78,6 +78,21 @@ namespace TorPdos{
                         idx.save();
                     } else if (console.Equals("peersave")){
                         p2p.saveFile();
+                    } else if(console.Equals("list")){
+                        List<Peer> peers = p2p.getPeerList();
+
+                        Console.WriteLine();
+                        Console.WriteLine("### Your Peerlist contains ###");
+                        if(peers.Count > 0){
+                            foreach (Peer peer in peers)
+                            {
+                                Console.WriteLine(peer.getUUID() + " - " + peer.GetIP());
+                            }
+                        }else{
+                            Console.WriteLine("The list is empty...");
+                        }
+                        Console.WriteLine();
+                        
                     } else{
                         Console.WriteLine("Unknown command");
                     }
