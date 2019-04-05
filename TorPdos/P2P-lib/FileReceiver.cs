@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace P2P_lib{
         private byte[] _buffer;
         private string _filename;
         private bool _hidden;
-        private string _outputPath = @"C:\\TorPdos\";
+        private string _outputPath = ConfigurationManager.AppSettings.Get("path");
         private string UUID;
 
         public FileReceiver(UploadMessage input, bool hidden, int bufferSize = 1024){

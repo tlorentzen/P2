@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -20,13 +21,12 @@ namespace TorPdos{
         [STAThread]
         static void Main(string[] args){
             MyForm TorPdos = new MyForm();
-
             Boolean running = true;
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
 
-            string path = @"C:\TorPdos\";
+            var path = ConfigurationManager.AppSettings["path"];
 
             if (!IDHandler.UserExists(path))
             {
@@ -51,6 +51,7 @@ namespace TorPdos{
             // Prepare P2PNetwork
             p2p = new Network(25565, idx, path);
             p2p.Start();
+            
 
             while (running){
                 string console = Console.ReadLine();
