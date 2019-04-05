@@ -9,7 +9,7 @@ namespace TorPdos{
     public class MyForm : Form {
         private static readonly string backgroundColour = "#320117", lblColour = "#CC7178",
                                        btnColour = "#FFF8F7", txtColour = "#FFD9DA";
-        static string dirPath = @"\C:";
+        static string dirPath = @"C:\TorPdos";
         string[] fileNames = Directory.GetFiles(dirPath, "Path.txt", SearchOption.TopDirectoryOnly);
         Label lblUsername = new Label{
             Location = new Point(20, 20),
