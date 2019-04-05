@@ -215,7 +215,7 @@ namespace P2P_lib{
                     Console.WriteLine("Upload is send from: " + upload.from + " and file vil be sent to port: " + upload.port);
                     fileSender.Send(filePath);
                     Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);
-                    _hiddenPath.Remove(filePath);
+                    //_hiddenPath.Remove(filePath);
                 }
             }
         }
