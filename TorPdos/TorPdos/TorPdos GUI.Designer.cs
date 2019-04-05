@@ -198,7 +198,8 @@ namespace TorPdos{
             Controls.Add(lblOkay);
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
-            string uuid = IDHandler.CreateUser(PathName() + @"\.hidden", txtPassword.Text);
+            string path = ConfigurationManager.AppSettings["Path"];
+            string uuid = IDHandler.CreateUser(path + @"\.hidden", txtPassword.Text);
             Login();
             txtUsername.Text = uuid;
         }
@@ -217,7 +218,8 @@ namespace TorPdos{
 
         void BtnClickLogin(object sender, System.EventArgs e){
             string uuid = txtUsername.Text, pass = txtPassword.Text;
-            if (IDHandler.IsValidUser(PathName() + @"\.hidden", uuid, pass)){
+            string path = ConfigurationManager.AppSettings["Path"];
+            if (IDHandler.IsValidUser(path + @"\.hidden", uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
             } else{
