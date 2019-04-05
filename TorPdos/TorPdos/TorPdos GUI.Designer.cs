@@ -163,6 +163,11 @@ namespace TorPdos{
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             config.AppSettings.Settings["path"].Value = PathName();
             config.Save(ConfigurationSaveMode.Modified);
+            if(!Directory.Exists(PathName() + @"\.hidden"))
+            {
+                DirectoryInfo di = Directory.CreateDirectory(PathName() + @"\.hidden");
+                di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+            }
             Controls.Clear();
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
