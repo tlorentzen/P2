@@ -80,10 +80,13 @@ namespace P2P_lib.Messages
 
         public void CreateReply() {
             this.type = TypeCode.RESPONSE;
-            string from_ip = this.from;
+            string _fromIP = this.from;
             this.from = this.to;
-            this.to = from_ip;
-        }
+            this.to = _fromIP;
+            string _fromUUID = this.ToUUID;
+            this.ToUUID = this.FromUUID;
+            this.FromUUID = _fromUUID;
+    }
 
         public void forwardMessage(string toIP){
             this.to = toIP;
