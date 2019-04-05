@@ -63,8 +63,6 @@ namespace P2P_lib{
         }
 
         private void Receive_MessageReceived(BaseMessage message){
-            Console.WriteLine(message.GetMessageType() + " with type " + message.type);
-
             Type msgType = message.GetMessageType();
 
             if (msgType == typeof(PingMessage)){
@@ -80,7 +78,6 @@ namespace P2P_lib{
 
         private void RechievedPeerFetch(PeerFetcherMessage message){
             if (message.type.Equals(Messages.TypeCode.REQUEST)){
-                Console.WriteLine("Receiving peers");
                 List<Peer> incomming = new List<Peer>();
                 List<Peer> outgoing = new List<Peer>();
                 incomming = message.Peers;

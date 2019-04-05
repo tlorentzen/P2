@@ -54,7 +54,7 @@ namespace P2P_lib.Messages
 
                 return true;
             }catch(SocketException e){
-                Console.WriteLine("SocketException");
+                //Console.WriteLine("SocketException");
                 return false;
             }
         }
