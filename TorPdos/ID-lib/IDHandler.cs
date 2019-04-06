@@ -69,6 +69,8 @@ namespace ID_lib
             foreach(string mac in macAddresses){
                 guid += mac;
             }
+            config.AppSettings.Settings["uuid"].Value = guid;
+            config.Save(ConfigurationSaveMode.Modified);
             return DiskHelper.CreateMD5(guid);
         }
 

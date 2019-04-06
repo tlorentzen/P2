@@ -24,7 +24,7 @@ namespace TorPdos{
             MyForm TorPdos = new MyForm();
             Boolean running = true;
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            if (config.AppSettings.Settings["path"].Value == "Null"|| config.AppSettings.Settings["uuid"].Value == "Null"){
+            if (config.AppSettings.Settings["path"].Value == ""|| config.AppSettings.Settings["uuid"].Value== ""){
                 Application.Run(TorPdos);
                 config.Save(ConfigurationSaveMode.Modified);
             }
