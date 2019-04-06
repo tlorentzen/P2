@@ -16,30 +16,33 @@ namespace TorPdos{
     class Program{
         static Index idx;
         static Network p2p;
+        public static string publicUuid;
+        public static string FilePath;
 
         [STAThread]
         static void Main(string[] args){
-            
             MyForm TorPdos = new MyForm();
             Boolean running = true;
-            if (ConfigurationManager.AppSettings["Path"] == "Null"){
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            if (config.AppSettings.Settings["path"].Value == "Null"|| config.AppSettings.Settings["uuid"].Value == "Null"){
                 Application.Run(TorPdos);
+                config.Save(ConfigurationSaveMode.Modified);
+            }
+            else{
+                FilePath = config.AppSettings.Settings["path"].Value;
+                publicUuid = config.AppSettings.Settings["uuid"].Value;
             }
 
-            if (ConfigurationManager.AppSettings["uuid"] == null){
-                ConfigurationManager.AppSettings.Add("uuid", "Empty");
-            }
-            
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-            
-           string path = ConfigurationManager.AppSettings["path"];
 
-           // Load Index
-           if (!Directory.Exists(path)){
-               Directory.CreateDirectory(path);
-           }
+            string path = ConfigurationManager.AppSettings["path"];
+
+            // Load Index
+            if (!Directory.Exists(path)){
+                Directory.CreateDirectory(path);
+            }
 
             idx = new Index(path);
             idx.load();
@@ -66,42 +69,53 @@ namespace TorPdos{
                     p2p.saveFile();
                     p2p.Stop();
                     running = false;
-                } else{
+                }
+                else{
                     if (console.StartsWith("add") && param.Length == 2){
                         p2p.AddPeer("MyName" + param[1].Trim(), param[1].Trim());
-                    } else if (console.Equals("gui")){
+                    }
+                    else if (console.Equals("gui")){
                         Application.Run(TorPdos);
-                    } else if (console.StartsWith("upload") && param.Length == 3){
+                    }
+                    else if (console.StartsWith("upload") && param.Length == 3){
                         if (int.TryParse(param[2], out int n)){
                             idx.reIndex();
                             new NetworkProtocols(idx, p2p).UploadFileToNetwork(param[1], int.Parse(param[2]));
-                        } else{
+                        }
+                        else{
                             Console.WriteLine("Third parameter must be an integer");
                         }
-                    } else if (console.Equals("reindex")){
+                    }
+                    else if (console.Equals("reindex")){
                         idx.reIndex();
-                    } else if (console.Equals("status")){
+                    }
+                    else if (console.Equals("status")){
                         idx.status();
-                    } else if (console.Equals("idxsave")){
+                    }
+                    else if (console.Equals("idxsave")){
                         idx.save();
-                    } else if (console.Equals("peersave")){
+                    }
+                    else if (console.Equals("peersave")){
                         p2p.saveFile();
-                    } else if (console.Equals("list")){
+                    }
+                    else if (console.Equals("list")){
                         List<Peer> peers = p2p.getPeerList();
 
                         Console.WriteLine();
                         Console.WriteLine("### Your Peerlist contains ###");
-                        if(peers.Count > 0){
-                            foreach (Peer peer in peers)
-                            {
-                                Console.WriteLine(peer.getUUID() + " - " + peer.GetIP()+ " - "+(peer.isOnline() ? "Online" : "Offline"));
+                        if (peers.Count > 0){
+                            foreach (Peer peer in peers){
+                                Console.WriteLine(peer.getUUID() + " - " + peer.GetIP() + " - " +
+                                                  (peer.isOnline() ? "Online" : "Offline"));
                             }
-                        } else{
+                        }
+                        else{
                             Console.WriteLine("The list is empty...");
                         }
 
                         Console.WriteLine();
-                    } else{
+                    }
+                    else{
                         Console.WriteLine("Unknown command");
                     }
                 }
@@ -113,7 +127,8 @@ namespace TorPdos{
         private static void Idx_FileDeleted(IndexFile file){
             if (file == null){
                 Console.WriteLine("File deleted: null...");
-            } else{
+            }
+            else{
                 Console.WriteLine("File deleted: " + file.hash);
             }
         }

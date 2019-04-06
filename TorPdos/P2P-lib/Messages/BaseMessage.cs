@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace P2P_lib.Messages
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
+        
+        private Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -35,7 +38,7 @@ namespace P2P_lib.Messages
         {
             this.ToUUID = to.getUUID();
             this.to = to.GetIP();
-            this.FromUUID = "MyName" + NetworkHelper.getLocalIPAddress();
+            this.FromUUID = config.AppSettings.Settings["uuid"].Value;
             this.from = NetworkHelper.getLocalIPAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;

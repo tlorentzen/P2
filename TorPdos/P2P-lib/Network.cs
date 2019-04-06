@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Security.Permissions;
@@ -25,6 +26,7 @@ namespace P2P_lib{
         private HiddenFolder _hiddenPath;
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
         private string _peerFilePath;
+        private Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
@@ -106,11 +108,12 @@ namespace P2P_lib{
 
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
-                    //TODO ændre UUID
-                    if (("MyName" + NetworkHelper.getLocalIPAddress()).Equals(incommingPeer.getUUID())) break;
+                    
+                    if ((config.AppSettings.Settings["uuid"].Value.Equals(incommingPeer.getUUID()))) break;
                     peers.Add(incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.getUUID());
                 }
+                
             }
 
             // List peers in console. TODO this is for debugging purposes and should be removed

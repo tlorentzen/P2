@@ -6,6 +6,7 @@ using System.Security.Permissions;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Threading;
 
 namespace Index_lib{
@@ -23,6 +24,8 @@ namespace Index_lib{
         public event FileEventHandler FileAdded;
         public event FileEventHandler FileDeleted;
         public event FileEventHandler FileChanged;
+
+
 
         List<IndexFile> index = new List<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();

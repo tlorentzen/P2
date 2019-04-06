@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace ID_lib
     {
         private static readonly string userdatafile = "userdata";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
+        private static Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
         //Create user file using generated UUID and input password
         public static string CreateUser(string path, string password)
@@ -28,6 +30,8 @@ namespace ID_lib
                 {
                     userFile.WriteLine(keymold);
                     userFile.WriteLine(uuid);
+                    config.AppSettings.Settings["uuid"].Value = uuid;
+                    config.Save(ConfigurationSaveMode.Modified);
                 }
                 return uuid;
             }
