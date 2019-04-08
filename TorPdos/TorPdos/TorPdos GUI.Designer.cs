@@ -3,14 +3,18 @@ using System.IO;
 using System.Windows.Forms;
 using ID_lib;
 using System.Configuration;
+using Microsoft.Win32;
 
 namespace TorPdos{
 
+    public class MyForm : Form{
+        private static readonly string backgroundColour = "#320117",
+            lblColour = "#CC7178",
+            btnColour = "#FFF8F7",
+            txtColour = "#FFD9DA";
+        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1",true);
 
-    public class MyForm : Form {
-        private static readonly string backgroundColour = "#320117", lblColour = "#CC7178",
-                                       btnColour = "#FFF8F7", txtColour = "#FFD9DA", hfName = @"\.hidden";
-        string path = ConfigurationManager.AppSettings["path"];
+        private string path;
         Label lblUsername = new Label{
             Location = new Point(20, 20),
             Height = 40, Width = 150,
@@ -140,11 +144,12 @@ namespace TorPdos{
             Icon = new Icon("TorPdos.ico");
 
 
-            if (ConfigurationManager.AppSettings["Path"] == "Null")
+            if (MyReg.GetValue("Path") == null)
             {
                 FirstStartUp(); 
             } else{
-                Login();
+                path = MyReg.GetValue("Path").ToString()+"\\.hidden";
+                Login(); 
             }
 
 
@@ -160,9 +165,9 @@ namespace TorPdos{
         }
 
         private void LblOkayClick(object sender, System.EventArgs e){
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings["path"].Value = PathName();
-            config.Save(ConfigurationSaveMode.Modified);
+            MyReg.SetValue("Path", PathName());
+            path = PathName();
+            
             if(!Directory.Exists(PathName() + @"\.hidden"))
             {
                 DirectoryInfo di = Directory.CreateDirectory(PathName() + @"\.hidden");
@@ -188,6 +193,7 @@ namespace TorPdos{
 
         public void Login(){
             Controls.Clear();
+            txtUsername.Text = IDHandler.GetUUID(path);
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
             txtPassword.Text = "";
@@ -204,9 +210,10 @@ namespace TorPdos{
             Controls.Add(lblOkay);
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
-            string uuid = IDHandler.CreateUser(path + hfName, txtPassword.Text);
+            string uuid = IDHandler.CreateUser(path, txtPassword.Text);
             Login();
-            txtUsername.Text = uuid;
+            if (MyReg.GetValue("UUID") == null) return;
+            txtUsername.Text = MyReg.GetValue("UUID").ToString();
         }
 
         private void BtnNewClick(object sender, System.EventArgs e){
@@ -223,7 +230,7 @@ namespace TorPdos{
 
         void BtnClickLogin(object sender, System.EventArgs e){
             string uuid = txtUsername.Text, pass = txtPassword.Text;
-            if (IDHandler.IsValidUser(path + hfName, uuid, pass)){
+            if (IDHandler.IsValidUser(path, uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
             } else{
