@@ -165,8 +165,8 @@ namespace TorPdos{
         }
 
         private void LblOkayClick(object sender, System.EventArgs e){
-            MyReg.SetValue("Path", PathName());
-            path = PathName();
+            MyReg.SetValue("Path", PathName()+"\\");
+            path = PathName()+@"\.hidden";
             
             if(!Directory.Exists(PathName() + @"\.hidden"))
             {

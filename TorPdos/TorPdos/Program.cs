@@ -36,7 +36,7 @@ namespace TorPdos{
                 Application.Run(TorPdos);
             }
 
-            string path = (MyReg.GetValue("Path").ToString())+"\\";
+            string path = (MyReg.GetValue("Path").ToString());
 
             // Load Index
             if (!Directory.Exists(path)){
