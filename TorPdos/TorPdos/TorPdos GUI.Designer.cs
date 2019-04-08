@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿﻿using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ID_lib;
@@ -96,6 +96,20 @@ namespace TorPdos{
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
+        Button btnExisting = new Button(){
+            Location = new Point(70, 50),
+            Width = 250, Height = 70,
+            Text = "Existing User",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
+        Button btnNew = new Button(){
+            Location = new Point(70, 150),
+            Width = 250, Height = 70,
+            Text = "New User",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
         Button btnCreate = new Button(){
             Location = new Point(70, 150),
             Width = 250, Height = 70,
@@ -139,9 +153,16 @@ namespace TorPdos{
                 Login(); 
             }
 
-            
+
+            btnExisting.Click += BtnExistingClick;
+            btnNew.Click += BtnNewClick;
+            btnLogin.Click += BtnClickLogin;
+            btnCreate.Click += BtnCreateClick;
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
             Resize += MyformResize;
+            lblGoBack.Click += LblGoBackClick;
+            btnBrowse.Click += BtnBrowseClick;
+            lblOkay.Click += LblOkayClick;
         }
 
         private void LblOkayClick(object sender, System.EventArgs e){
@@ -158,7 +179,6 @@ namespace TorPdos{
             Controls.Add(txtPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
-            this.AcceptButton = btnCreate;
         }
 
         private void BtnBrowseClick(object sender, System.EventArgs e){
@@ -205,7 +225,6 @@ namespace TorPdos{
             Controls.Add(txtPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
-            btnCreate.Click += BtnCreateClick;
         }
 
         private void BtnExistingClick(object sender, System.EventArgs e){
