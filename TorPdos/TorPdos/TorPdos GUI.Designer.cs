@@ -31,7 +31,7 @@ namespace TorPdos{
         };
         Label lblYouDidIt = new Label(){
             Location = new Point(100, 100),
-            Height = 40, Width = 200,
+            Height = 40, Width = 250,
             Text = "You did it o/",
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Font = new Font("Consolas", 20, FontStyle.Regular)
