@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using ID_lib;
 using System.Configuration;
+using System.Runtime.CompilerServices;
 using Microsoft.Win32;
 
 namespace TorPdos{
@@ -178,6 +179,7 @@ namespace TorPdos{
             Controls.Add(txtPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
+            this.AcceptButton = btnCreate;
         }
 
         private void BtnBrowseClick(object sender, System.EventArgs e){
@@ -201,6 +203,7 @@ namespace TorPdos{
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
             Controls.Add(lblGoBack);
+            this.AcceptButton = btnLogin;
         }
 
         public void FirstStartUp(){
@@ -208,6 +211,7 @@ namespace TorPdos{
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
+            this.AcceptButton = (IButtonControl) lblOkay;
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
             string uuid = IDHandler.CreateUser(path, txtPassword.Text);
