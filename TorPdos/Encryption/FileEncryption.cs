@@ -61,7 +61,7 @@ namespace Encryption{
                 using (CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write)){
 
                     //The input stream, this is the input file, based on the inputs given in the file creation.
-                    using (FileStream fsIn = new FileStream(this._path + this._extension, FileMode.Open)){
+                    using (FileStream fsIn = new FileStream(this._path + this._extension,  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
 
                         //Buffer on 1 mb
                         byte[] buffer = new byte[BUFFERSIZE];
@@ -92,7 +92,7 @@ namespace Encryption{
 
 
             //Reading through the file
-            using (FileStream fsCrypt = new FileStream(this._path + ".aes", FileMode.Open)){
+            using (FileStream fsCrypt = new FileStream(this._path + ".aes",  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
 
                 //Reads the random salt of the file.
                 fsCrypt.Read(salt, 0, salt.Length);
