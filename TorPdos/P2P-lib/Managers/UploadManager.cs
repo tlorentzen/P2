@@ -70,13 +70,13 @@ namespace P2P_lib
                     // Split
                     // TODO: split file
                    
-                    int port = _ports.GetAvailablePort();
+                    
                     List<Peer> receivingPeers = this.getPeers(Math.Min(copies, this.CountOnlinePeers()));
-
-                    Receiver receiver = new Receiver(port);
 
                     foreach (Peer peer in receivingPeers)
                     {
+                        int port = _ports.GetAvailablePort();
+                        Receiver receiver = new Receiver(port);
                         receiver.start();
                         receiver.MessageReceived += Receiver_MessageReceived;
                         
@@ -92,11 +92,14 @@ namespace P2P_lib
                             // TODO: timeout???
                         }
 
-                        if(sender != null){
+                        receiver.stop();
+                        _ports.Release(port);
+
+                        if (sender != null){
                             sender.Send(encryptedFilePath);
                         }
 
-                        receiver.stop();
+                        
                     }
                 }
 
