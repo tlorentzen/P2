@@ -59,14 +59,6 @@ namespace TorPdos{
             Text = "Go Back",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblOkay = new Label(){
-            Location = new Point(300, 230),
-            Height = 40,
-            Width = 150,
-            Font = new Font("Consolas", 12, FontStyle.Regular),
-            Text = "Okay",
-            ForeColor = ColorTranslator.FromHtml(lblColour)
-        };
         TextBox txtUsername = new TextBox(){
             Location = new Point(170, 20),
             Height = 50, Width = 150,
@@ -87,7 +79,8 @@ namespace TorPdos{
             Height = 50, Width = 250,
             Font = new Font("Consolas", 15, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
-            BackColor = ColorTranslator.FromHtml(txtColour)
+            BackColor = ColorTranslator.FromHtml(txtColour),
+            Text = ""
         };
         Button btnLogin = new Button(){
             Location = new Point(70, 150),
@@ -110,6 +103,15 @@ namespace TorPdos{
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
             //Image =
+        };
+        Label lblOkay = new Label()
+        {
+            Location = new Point(330, 230),
+            Height = 40,
+            Width = 80,
+            Font = new Font("Consolas", 12, FontStyle.Regular),
+            Text = "Okay",
+            ForeColor = ColorTranslator.FromHtml(lblColour),
         };
         NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
@@ -160,6 +162,7 @@ namespace TorPdos{
             Controls.Add(txtPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
+            lblGoBack.Click += LblGoBackClick;
             btnCreate.Click += BtnCreateClick;
             AcceptButton = btnCreate;
         }
@@ -180,7 +183,7 @@ namespace TorPdos{
             txtUsername.Text = IDHandler.GetUUID(path);
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
-            txtPassword.Text = "";
+            txtPassword.Text = null;
             Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
@@ -191,13 +194,12 @@ namespace TorPdos{
         }
 
         public void FirstStartUp(){
-            lblOkay.Click += LblOkayClick;
             btnBrowse.Click += BtnBrowseClick;
             Controls.Clear();
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
-            AcceptButton = (IButtonControl) lblOkay;
+            lblOkay.Click += LblOkayClick;
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
             string uuid = IDHandler.CreateUser(path, txtPassword.Text);

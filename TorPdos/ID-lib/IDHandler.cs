@@ -110,6 +110,26 @@ namespace ID_lib{
             }
         }
 
+        //Return keymold if present, else return null
+        public static string GetKeymold(string path)
+        {
+            if (UserExists(path))
+            {
+                try
+                {
+                    return File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(0);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static bool UserExists(string path){
             if (File.Exists(path + "\\" + userdatafile)){
                 return true;

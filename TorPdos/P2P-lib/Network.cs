@@ -67,17 +67,16 @@ namespace P2P_lib{
             for (int i = 0; i < _numOfThreads; i++)
             {
                 UploadManager uploadmanager = new UploadManager(upload, ports, peers);
-                //DownloadManager downloadmanager = new DownloadManager(download, ports, peers);
+                DownloadManager downloadmanager = new DownloadManager(download, ports, peers);
 
                 Thread uploadThread = new Thread(new ThreadStart(uploadmanager.Run));
-                //Thread downloadThread = new Thread(new ThreadStart(downloadmanager.Run));
+                Thread downloadThread = new Thread(new ThreadStart(downloadmanager.Run));
 
                 uploadThread.Start();
-                Console.WriteLine("Thread started...");
-                //downloadThread.Start();
+                downloadThread.Start();
 
                 threads.Add(uploadThread);
-                //threads.Add(downloadThread);
+                threads.Add(downloadThread);
             }
         }
 
@@ -307,8 +306,8 @@ namespace P2P_lib{
             new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
         }
 
-        public void UploadFile(string hash, string path){
-            this.upload.Enqueue(new QueuedFile(hash, path));
+        public void UploadFile(string hash, string path, int copies){
+            this.upload.Enqueue(new QueuedFile(hash, path, copies));
         }
 
         public void DownloadFile(string hash){
