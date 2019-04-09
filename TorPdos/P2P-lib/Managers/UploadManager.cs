@@ -68,10 +68,12 @@ namespace P2P_lib
                     _hiddenFolder.RemoveFile(compressedFilePath + ".lzma");
                     string encryptedFilePath = compressedFilePath + ".aes";
 
+                    string filename = file.GetHash() + ".aes";
+
                     // Split
                     // TODO: split file
-                   
-                    
+
+
                     List<Peer> receivingPeers = this.getPeers(Math.Min(copies, this.CountOnlinePeers()));
 
                     foreach (Peer peer in receivingPeers)
@@ -83,7 +85,7 @@ namespace P2P_lib
                    
                         UploadMessage upload = new UploadMessage(peer);
                         upload.filesize = file.GetFilesize();
-                        upload.filename = file.GetFilename();
+                        upload.filename = filename;
                         upload.filehash = file.GetHash();
                         upload.path = filePath;
                         upload.port = port;
