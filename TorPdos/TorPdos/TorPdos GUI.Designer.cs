@@ -142,9 +142,7 @@ namespace TorPdos{
             }
 
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
-            Resize += MyformResize;
-            
-            
+            Resize += MyformResize; 
             
         }
 
@@ -157,14 +155,8 @@ namespace TorPdos{
                 DirectoryInfo di = Directory.CreateDirectory(PathName() + @"\.hidden");
                 di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
             }
-            Controls.Clear();
-            Controls.Add(lblPassword);
-            Controls.Add(txtPassword);
-            Controls.Add(btnCreate);
-            Controls.Add(lblGoBack);
-            lblGoBack.Click += LblGoBackClick;
-            btnCreate.Click += BtnCreateClick;
-            AcceptButton = btnCreate;
+
+            Create();
         }
 
         private void BtnBrowseClick(object sender, System.EventArgs e){
@@ -200,6 +192,18 @@ namespace TorPdos{
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
             lblOkay.Click += LblOkayClick;
+        }
+
+        public void Create()
+        {
+            Controls.Clear();
+            Controls.Add(lblPassword);
+            Controls.Add(txtPassword);
+            Controls.Add(btnCreate);
+            Controls.Add(lblGoBack);
+            lblGoBack.Click += LblGoBackClick;
+            btnCreate.Click += BtnCreateClick;
+            AcceptButton = btnCreate;
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
             string uuid = IDHandler.CreateUser(path, txtPassword.Text);
