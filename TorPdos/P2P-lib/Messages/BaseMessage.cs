@@ -90,7 +90,7 @@ namespace P2P_lib.Messages
             string _fromUUID = this.ToUUID;
             this.ToUUID = this.FromUUID;
             this.FromUUID = _fromUUID;
-    }
+        }
 
         public void forwardMessage(string toIP){
             this.to = toIP;

@@ -78,7 +78,7 @@ namespace P2P_lib
                     {
                         int port = _ports.GetAvailablePort();
                         _receiver = new Receiver(port);
-                        _receiver.MessageReceived += _receiver_MessageReceived;
+                        _receiver.MessageReceived += this._receiver_MessageReceived;
                         _receiver.start();
                    
                         UploadMessage upload = new UploadMessage(peer);
@@ -94,7 +94,7 @@ namespace P2P_lib
                         }
 
                         _receiver.stop();
-                        _ports.Release(port);
+                        //_ports.Release(port);
 
                         if (sender != null){
                             sender.Send(encryptedFilePath);
