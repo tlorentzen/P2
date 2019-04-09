@@ -26,7 +26,6 @@ namespace P2P_lib.Messages
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
-        private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -38,7 +37,7 @@ namespace P2P_lib.Messages
         {
             this.ToUUID = to.getUUID();
             this.to = to.GetIP();
-            this.FromUUID = registry.GetValue("UUID").ToString();
+            this.FromUUID = DiskHelper.GetRegistryValue("UUID");
             this.from = NetworkHelper.getLocalIPAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;

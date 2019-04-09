@@ -2,6 +2,7 @@
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using Microsoft.Win32;
 
 namespace P2P_lib{
     public class DiskHelper{
@@ -30,6 +31,11 @@ namespace P2P_lib{
 
                 return sb.ToString();
             }
+        }
+
+        public static string GetRegistryValue(string key){
+            RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
+            return registry.GetValue(key).ToString();
         }
     }
 }
