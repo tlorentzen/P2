@@ -81,7 +81,9 @@ namespace Encryption{
                             throw;
                         }
                     }
+                    cs.Close();
                 }
+                fsCrypt.Close();
             }
         }
 
