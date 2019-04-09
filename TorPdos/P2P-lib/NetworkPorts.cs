@@ -12,7 +12,7 @@ namespace P2P_lib{
     public class NetworkPorts{
         private List<int> ports = new List<int>();
 
-        public int GetAvailablePort(int begin_range = 49152, int end_range = 65535){
+        public int GetAvailablePort(int begin_range = 50000, int end_range = 65535){
             for (int i = begin_range; i <= end_range; i++){
                 if (this.isPortAvailable(i) && !ports.Contains(i)){
                     ports.Add(i);
