@@ -31,6 +31,7 @@ namespace TorPdos{
             string ownIP = NetworkHelper.getLocalIPAddress();
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
+            Console.WriteLine("UUID: "+DiskHelper.GetRegistryValue("UUID"));
 
             if (MyReg.GetValue("Path") == null){
                 Application.Run(TorPdos);
@@ -70,8 +71,8 @@ namespace TorPdos{
                     p2p.Stop();
                     running = false;
                 } else{
-                    if (console.StartsWith("add") && param.Length == 2){
-                        p2p.AddPeer("MyName" + param[1].Trim(), param[1].Trim());
+                    if (console.StartsWith("add") && param.Length == 3){
+                        p2p.AddPeer(param[1].Trim(), param[2].Trim());
                     } else if (console.Equals("gui")){
                         Application.Run(TorPdos);
                     } else if (console.StartsWith("upload") && param.Length == 3){
