@@ -32,8 +32,8 @@ namespace P2P_lib{
         }
 
         public void start(){
-            server = new TcpListener(this.ip, port);
-            server.AllowNatTraversal(true);
+            server = new TcpListener(this.ip, this.port);
+            //server.AllowNatTraversal(true);
             server.Start();
 
             listening = true;
