@@ -105,6 +105,8 @@ namespace P2P_lib
                         pendingReceiver = true;
                         _ports.Release(port);
                     }
+
+                    _hiddenFolder.RemoveFile(encryptedFilePath);
                 }
 
                 this.waitHandle.Reset();
