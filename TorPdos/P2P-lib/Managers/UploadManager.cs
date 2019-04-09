@@ -50,9 +50,5 @@ namespace P2P_lib
                 this.waitHandle.Reset();
             }
         }
-
-        
-
-        
     }
 }
