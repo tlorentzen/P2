@@ -102,6 +102,7 @@ namespace P2P_lib
                             sender.Send(encryptedFilePath);
                         }
 
+                        pendingReceiver = true;
                         _ports.Release(port);
                     }
                 }

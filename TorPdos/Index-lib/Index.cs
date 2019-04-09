@@ -254,9 +254,8 @@ namespace Index_lib{
                 }
             } else{
                 index.Add(eventFile);
+                FileAdded(eventFile);
             }
-
-            FileAdded(eventFile);
         }
 
 
