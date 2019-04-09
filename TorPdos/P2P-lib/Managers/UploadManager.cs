@@ -16,14 +16,14 @@ namespace P2P_lib
     public class UploadManager
     {
         private ManualResetEvent waitHandle;
-        private Boolean is_running = true;
+        private bool is_running = true;
         private NetworkPorts _ports;
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
         private HiddenFolder _hiddenFolder;
         private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
         private string _path;
-        private Boolean pendingReceiver = true;
+        private bool pendingReceiver = true;
         private FileSender sender;
         private Receiver _receiver;
 
