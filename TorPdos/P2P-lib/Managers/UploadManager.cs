@@ -101,6 +101,8 @@ namespace P2P_lib
                         if (sender != null){
                             sender.Send(encryptedFilePath);
                         }
+
+                        _ports.Release(port);
                     }
                 }
 
