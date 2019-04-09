@@ -9,10 +9,10 @@ using Microsoft.Win32;
 namespace TorPdos{
 
     public class MyForm : Form{
-        private static readonly string backgroundColour = "#320117",
-            lblColour = "#CC7178",
-            btnColour = "#FFF8F7",
-            txtColour = "#FFD9DA";
+        private static readonly string backgroundColour = "#000807",
+            lblColour = "#B3B7EE",
+            btnColour = "#A2A3BB",
+            txtColour = "#9395D3";
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1",true);
 
         private string path;
@@ -104,8 +104,7 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(btnColour),
             //Image =
         };
-        Label lblOkay = new Label()
-        {
+        Label lblOkay = new Label(){
             Location = new Point(330, 230),
             Height = 40,
             Width = 80,
