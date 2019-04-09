@@ -32,16 +32,21 @@ namespace Index_lib
         public void Add(string path)
         {
             string nameExt = path.Split('\\').Last();
-            Directory.Move(path, _path + nameExt);
+            Directory.Move(path, _path + "/" + nameExt);
+            
         }
 
         //Deletes file or directory form the relative path from hidden directory
         public void Remove(string path)
         {
-            Directory.Delete(_path + path);
+
+            Directory.Delete(_path + "/" + path);
+
         }
         public void RemoveFile(string path) {
+
             File.Delete(path);
+            
         }
 
         public FileStream WriteToFile(string path)
