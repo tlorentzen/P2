@@ -79,7 +79,8 @@ namespace TorPdos{
             Height = 50, Width = 250,
             Font = new Font("Consolas", 15, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
-            BackColor = ColorTranslator.FromHtml(txtColour)
+            BackColor = ColorTranslator.FromHtml(txtColour),
+            Text = ""
         };
         Button btnLogin = new Button(){
             Location = new Point(70, 150),
@@ -103,15 +104,14 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(btnColour),
             //Image =
         };
-        Button btnOkay = new Button()
+        Label lblOkay = new Label()
         {
-            Location = new Point(290, 210),
+            Location = new Point(330, 230),
             Height = 40,
             Width = 80,
             Font = new Font("Consolas", 12, FontStyle.Regular),
             Text = "Okay",
-            ForeColor = ColorTranslator.FromHtml(btnColour),
-            Enabled = false
+            ForeColor = ColorTranslator.FromHtml(lblColour),
         };
         NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
@@ -148,7 +148,7 @@ namespace TorPdos{
             
         }
 
-        private void BtnOkayClick(object sender, System.EventArgs e){
+        private void LblOkayClick(object sender, System.EventArgs e){
             MyReg.SetValue("Path", PathName()+"\\");
             path = PathName()+@"\.hidden";
             
@@ -183,7 +183,7 @@ namespace TorPdos{
             txtUsername.Text = IDHandler.GetUUID(path);
             Controls.Add(txtUsername);
             Controls.Add(txtPassword);
-            txtPassword.Text = "";
+            txtPassword.Text = null;
             Controls.Add(btnLogin);
             Controls.Add(lblUsername);
             Controls.Add(lblPassword);
@@ -194,17 +194,12 @@ namespace TorPdos{
         }
 
         public void FirstStartUp(){
-            btnOkay.Click += BtnOkayClick;
             btnBrowse.Click += BtnBrowseClick;
             Controls.Clear();
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
-            Controls.Add(btnOkay);
-            AcceptButton = btnOkay;
-            if(txtPassword.Text == PathName())
-            {
-                btnOkay.Enabled = true;
-            }
+            Controls.Add(lblOkay);
+            lblOkay.Click += LblOkayClick;
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
             string uuid = IDHandler.CreateUser(path, txtPassword.Text);
