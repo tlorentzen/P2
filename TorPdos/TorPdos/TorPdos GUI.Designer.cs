@@ -197,7 +197,6 @@ namespace TorPdos{
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
-            AcceptButton = (IButtonControl) lblOkay;
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
             string uuid = IDHandler.CreateUser(path, txtPassword.Text);

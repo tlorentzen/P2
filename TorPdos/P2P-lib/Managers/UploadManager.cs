@@ -23,7 +23,6 @@ namespace P2P_lib
             this._peers = peers;
 
             this.waitHandle = new ManualResetEvent(false);
-
             this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
         }
 
@@ -42,9 +41,17 @@ namespace P2P_lib
 
                 while(this._queue.TryDequeue(out file)){
                     Console.WriteLine(file.GetHash());
-                } 
+
+
+
+
+                }
+
+                this.waitHandle.Reset();
             }
         }
+
+        
 
         
     }
