@@ -9,7 +9,7 @@ using Microsoft.Win32;
 namespace TorPdos{
 
     public class MyForm : Form{
-        private static readonly string backgroundColour = "#000807",
+        private static readonly string backgroundColour = "#FBF9FF",
             lblColour = "#B3B7EE",
             btnColour = "#A2A3BB",
             txtColour = "#9395D3";
