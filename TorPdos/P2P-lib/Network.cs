@@ -195,6 +195,7 @@ namespace P2P_lib{
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(Messages.TypeCode.REQUEST)){
                 int replyPort = upload.port;
+                string uuid = upload.FromUUID;
 
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
@@ -207,7 +208,7 @@ namespace P2P_lib{
                 upload.CreateReply();
                 upload.port = ports.GetAvailablePort();
 
-                _fileReceiver = new FileReceiver(this._path+"\\.hidden\\"+upload.FromUUID, upload.filename, upload.port, true);
+                _fileReceiver = new FileReceiver(this._path+"\\.hidden\\"+uuid, upload.filename, upload.port, true);
                 _fileReceiver.start();
 
                 upload.Send(replyPort);
