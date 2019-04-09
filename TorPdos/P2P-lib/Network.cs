@@ -26,7 +26,7 @@ namespace P2P_lib{
         private FileReceiver _fileReceiver;
         private string _path;
         private HiddenFolder _hiddenPath;
-        BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
+        private BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
         private string _peerFilePath;
         private Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         private P2PConcurrentQueue<QueuedFile> upload = new P2PConcurrentQueue<QueuedFile>();
@@ -194,6 +194,8 @@ namespace P2P_lib{
 
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(Messages.TypeCode.REQUEST)){
+                int replyPort = upload.port;
+
                 if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
                     Console.WriteLine("Request accepted");
@@ -201,21 +203,14 @@ namespace P2P_lib{
                     Console.WriteLine("Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
+                
                 upload.CreateReply();
-                NetworkPorts ports = new NetworkPorts();
                 upload.port = ports.GetAvailablePort();
-                _fileReceiver = new FileReceiver(upload, true, upload.port);
+
+                _fileReceiver = new FileReceiver(this._path+"\\.hidden\\"+upload.FromUUID, upload.filename, upload.port, true);
                 _fileReceiver.start();
-                upload.Send();
-            } else if (upload.type.Equals(Messages.TypeCode.RESPONSE)) {
-                if (upload.statuscode == StatusCode.ACCEPTED) {
-                    IndexFile indexFile = _index.GetEntry(upload.filehash);
-                    string filePath = indexFile.getPath();
-                    FileSender fileSender = new FileSender(upload.from, upload.port);
-                    fileSender.Send(filePath);
-                    Console.WriteLine(filePath + " has been sent to port: " + upload.port + " on IP: " + upload.from);
-                    //_hiddenPath.Remove(filePath);
-                }
+
+                upload.Send(replyPort);
             }
         }
 

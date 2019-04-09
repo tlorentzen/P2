@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace P2P_lib
 {
@@ -11,13 +12,23 @@ namespace P2P_lib
         private string _hash;
         private string _path;
         private int _copies = 5;
+        private long _filesize = 0;
+        private string _filename;
+        private Boolean _ghost;
+        private int _port;
+        private Peer peer;
 
-        public QueuedFile(string hash) : this(hash, null, 5){}
+        public QueuedFile(string hash) : this(hash, null, 0){
+            this._ghost = false;
+        }
 
         public QueuedFile(string hash, string path, int copies){
             this._hash = hash;
             this._path = path;
-            this._copies = copies;
+            this._copies = (copies <= 0 ? _copies : copies);
+            this._filesize = new System.IO.FileInfo(this._path).Length;
+            this._filename = new FileInfo(this._path).Name;
+            this._ghost = true;
         }
 
         public string GetHash(){
@@ -26,6 +37,30 @@ namespace P2P_lib
 
         public string GetPath(){
             return this._path;
+        }
+
+        public int GetCopies(){
+            return this._copies;
+        }
+
+        public long GetFilesize(){
+            return this._filesize;
+        }
+
+        public void setFilesize(long filesize){
+            this._filesize = filesize;
+        }
+
+        public string GetFilename(){
+            return this._filename;
+        }
+
+        public void SetFilename(string filename){
+            this._filename = filename;
+        }
+
+        public Boolean IsGhostFile(){
+            return this._ghost;
         }
     }
 }

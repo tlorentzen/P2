@@ -41,6 +41,8 @@ namespace P2P_lib
 
                 while (this._queue.TryDequeue(out file))
                 {
+                    //FileReceiver receiver = new FileReceiver();
+
                     Console.WriteLine(file.GetHash());
                 }
 

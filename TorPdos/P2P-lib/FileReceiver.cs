@@ -12,6 +12,7 @@ using System.IO;
 namespace P2P_lib{
     public class FileReceiver{
         private IPAddress _ip;
+        private string _path;
         private int _port;
         private TcpListener _server = null;
         private bool _listening = false;
@@ -19,21 +20,19 @@ namespace P2P_lib{
         private byte[] _buffer;
         private string _filename;
         private bool _hidden;
-        private string _outputPath = ConfigurationManager.AppSettings.Get("path");
         private string UUID;
 
-        public FileReceiver(UploadMessage input, bool hidden, int bufferSize = 1024){
-            this._filename = input.filehash;
+        public FileReceiver(string path, string filename, int port, bool hidden, int bufferSize = 1024){
+
             this._ip = IPAddress.Any;
-            this._port = input.port;
             this._buffer = new byte[bufferSize];
             this._hidden = hidden;
-            this.UUID = input.FromUUID;
-            if (hidden) {
-                this._outputPath += ".hidden\\"+UUID+"\\";
-                if (!Directory.Exists(_outputPath)){
-                    Directory.CreateDirectory(_outputPath);
-                }
+            this._filename = filename;
+            this._port = port;
+            this._path = path;
+
+            if (!Directory.Exists(this._path)){
+                Directory.CreateDirectory(this._path);
             }
         }
 
@@ -58,42 +57,16 @@ namespace P2P_lib{
                 TcpClient client = _server.AcceptTcpClient();
 
                 using (NetworkStream stream = client.GetStream()){
-                    /*if (!Directory.Exists("output")) {
-                        Directory.CreateDirectory("output");
-                    }*/
 
                     Console.WriteLine("Receiving file");
-                    using (var fileStream = File.Open(this._outputPath + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
+                    using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
                         Console.WriteLine("Creating file: " + this._filename);
                         int i;
-                        /*long initialFileSize = stream.Length;
-                        long remainingFileSize = stream.Length;
-                        double lastPersentage = 0;*/
-
-                        /*Console.WriteLine(initialFileSize.ToString());*/
-
+                      
                         while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
                             //fileStream.Write(buffer, 0, (i < buffer.Length) ? i : buffer.Length);
                             fileStream.Write(_buffer, 0, _buffer.Length);
                         }
-                        /*
-                        while (stream.DataAvailable) {
-
-                            Console.WriteLine("Getting data");
-
-                            //This is the received data.
-                            long size = stream.Read(buffer, 0, buffer.Length);
-
-                            fileStream.Write(buffer, 0, buffer.Length);
-                            /*remainingFileSize -= size;
-                            double percentage = Math.Floor(100 - (double)remainingFileSize / (double)initialFileSize * 100);
-                            if (Math.Abs(lastPersentage - percentage) > 4 || percentage == 0) {
-                                Console.WriteLine("({2:0}%) There is {0} bytes left to receive out of {1} bytes", remainingFileSize, initialFileSize, percentage);
-                                lastPersentage = percentage;
-                            }*/
-                        /*
-                    }
-                */
 
                         Console.WriteLine("File done downloading");
                     }
