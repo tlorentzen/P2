@@ -13,9 +13,11 @@ using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
 using Index_lib;
+using P2P_lib.Managers;
 
 namespace P2P_lib{
     public class Network{
+        private int _numOfThreads = 5;
         private int _port;
         private bool _running = false;
         private Index _index;
@@ -27,6 +29,10 @@ namespace P2P_lib{
         BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
         private string _peerFilePath;
         private Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        private P2PConcurrentQueue<QueuedFile> upload = new P2PConcurrentQueue<QueuedFile>();
+        private P2PConcurrentQueue<QueuedFile> download = new P2PConcurrentQueue<QueuedFile>();
+        private List<Thread> threads = new List<Thread>();
+        private NetworkPorts ports = new NetworkPorts();
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
@@ -57,6 +63,22 @@ namespace P2P_lib{
 
             _pingThread = new Thread(this.PingHandler);
             _pingThread.Start();
+
+            for (int i = 0; i < _numOfThreads; i++)
+            {
+                UploadManager uploadmanager = new UploadManager(upload, ports, peers);
+                //DownloadManager downloadmanager = new DownloadManager(download, ports, peers);
+
+                Thread uploadThread = new Thread(new ThreadStart(uploadmanager.Run));
+                //Thread downloadThread = new Thread(new ThreadStart(downloadmanager.Run));
+
+                uploadThread.Start();
+                Console.WriteLine("Thread started...");
+                //downloadThread.Start();
+
+                threads.Add(uploadThread);
+                //threads.Add(downloadThread);
+            }
         }
 
         public void AddPeer(string uuid, string ip){
@@ -146,8 +168,8 @@ namespace P2P_lib{
         }
 
         public bool load(){
-            if (_peerFilePath != null && File.Exists(this._peerFilePath)){
-                string json = File.ReadAllText(this._peerFilePath);
+            if (_peerFilePath != null && System.IO.File.Exists(this._peerFilePath)){
+                string json = System.IO.File.ReadAllText(this._peerFilePath);
                 List<Peer> input = JsonConvert.DeserializeObject<List<Peer>>(json);
                 foreach (var peer in input){
                     peers.Add(peer);
@@ -256,6 +278,12 @@ namespace P2P_lib{
         }
 
         public void Stop(){
+
+            foreach (Thread thread in threads)
+            {
+                // TODO: Stop threads 
+            }
+
             this._running = false;
             _receive.stop();
         }
@@ -277,6 +305,14 @@ namespace P2P_lib{
         }
         public void UploadFileToNetwork(string filePath, int copies, int seed = 0) {
             new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
+        }
+
+        public void UploadFile(string hash, string path){
+            this.upload.Enqueue(new QueuedFile(hash, path));
+        }
+
+        public void DownloadFile(string hash){
+            this.download.Enqueue(new QueuedFile(hash));
         }
     }
 }
