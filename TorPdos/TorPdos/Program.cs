@@ -23,19 +23,21 @@ namespace TorPdos{
 
         [STAThread]
         static void Main(string[] args){
+            //Start of what needs to run at the Absolute start of the program.
             Boolean running = true;
             RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
-
             MyForm TorPdos = new MyForm();
-
-            string ownIP = NetworkHelper.getLocalIPAddress();
-            Console.WriteLine("Local: " + ownIP);
-            Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
-            Console.WriteLine("UUID: "+DiskHelper.GetRegistryValue("UUID"));
-
             if (MyReg.GetValue("Path") == null){
                 Application.Run(TorPdos);
             }
+            //End of what needs to run at the Absolute start of the program.
+
+            string ownIP = NetworkHelper.getLocalIPAddress();
+
+
+            Console.WriteLine("Local: " + ownIP);
+            Console.WriteLine("Free space on C: " + DiskHelper.GetTotalFreeSpace("C:\\"));
+            Console.WriteLine("UUID: "+DiskHelper.GetRegistryValue("UUID"));
 
             string path = (MyReg.GetValue("Path").ToString());
 
