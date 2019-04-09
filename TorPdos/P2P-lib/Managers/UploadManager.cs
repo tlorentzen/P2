@@ -79,7 +79,7 @@ namespace P2P_lib
                         int port = _ports.GetAvailablePort();
                         _receiver = new Receiver(port);
                         _receiver.start();
-                        _receiver.MessageReceived += Receiver_MessageReceived;
+                        _receiver.MessageReceived += _receiver_MessageReceived;
                         
                         UploadMessage upload = new UploadMessage(peer);
                         upload.filesize = file.GetFilesize();
@@ -106,7 +106,7 @@ namespace P2P_lib
             }
         }
 
-        private void Receiver_MessageReceived(BaseMessage msg)
+        private void _receiver_MessageReceived(BaseMessage msg)
         {
             if (msg.GetMessageType() == typeof(UploadMessage))
             {
