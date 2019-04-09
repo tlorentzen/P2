@@ -78,9 +78,9 @@ namespace P2P_lib
                     {
                         int port = _ports.GetAvailablePort();
                         _receiver = new Receiver(port);
-                        _receiver.start();
                         _receiver.MessageReceived += _receiver_MessageReceived;
-                        
+                        _receiver.start();
+                   
                         UploadMessage upload = new UploadMessage(peer);
                         upload.filesize = file.GetFilesize();
                         upload.filename = file.GetFilename();
