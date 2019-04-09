@@ -33,16 +33,24 @@ namespace Compression{
                 }
                 if (!File.Exists(outPath)){
                     //Buffersize 128 MB
-                    const int BUFFER_SIZE = 1024 * 1024 * 128;
+                    const long BUFFER_SIZE = 1024 * 1024 * 128;
 
-                    using (Stream inStream = File.OpenRead(inPath)){
-                        using (Stream outStream = File.Create(outPath)){
+                    FileInfo file = new FileInfo(inPath);
+                    long fileSize = file.Length;
+                    int pakg = 1;
+                    if(fileSize > BUFFER_SIZE) {
+                        pakg = (int)(fileSize / BUFFER_SIZE);
+                    }
+
+                    using (FileStream inStream = new FileStream(inPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+                        using (FileStream outStream = new FileStream(outPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)) {
                             // Save file extension
                             string ext = Path.GetExtension(inPath);
                             ext = ext.Length + ext;
                             outStream.Write(Encoding.ASCII.GetBytes(ext), 0, ext.Length);
 
                             long remaining = inStream.Length - inStream.Position;
+                            int Compressed = 1;
                             //Compress file 
                             while (remaining > 0){
                                 //Read buffer from file
@@ -55,8 +63,12 @@ namespace Compression{
                                     Console.WriteLine("Woopsie :)");
                                 } else{
                                     //Compress buffer and write to outfile
+                                    Console.WriteLine($"Compressing {Compressed} out of {pakg}");
                                     byte[] compressed = CompressBytes(buffer);
                                     outStream.Write(compressed, 0, compressed.Length);
+                                    Compressed++;
+
+
                                 }
                                 remaining = inStream.Length - inStream.Position;
                             }
