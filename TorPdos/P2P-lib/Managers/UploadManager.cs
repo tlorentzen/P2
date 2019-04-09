@@ -21,7 +21,7 @@ namespace P2P_lib
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
         private HiddenFolder _hiddenFolder;
-        RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
+        private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
         private string _path;
         private Boolean pendingReceiver = true;
         private FileSender sender;
@@ -35,7 +35,7 @@ namespace P2P_lib
             this.waitHandle = new ManualResetEvent(false);
             this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
 
-            this._path = MyReg.GetValue("Path").ToString();
+            this._path = registry.GetValue("Path").ToString();
             _hiddenFolder = new HiddenFolder(this._path + @"\.hidden\");
         }
 

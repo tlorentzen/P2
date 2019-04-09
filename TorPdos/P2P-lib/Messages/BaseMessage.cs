@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.Win32;
 
 namespace P2P_lib.Messages
 {
@@ -25,8 +26,7 @@ namespace P2P_lib.Messages
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
-        
-        private Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -38,7 +38,7 @@ namespace P2P_lib.Messages
         {
             this.ToUUID = to.getUUID();
             this.to = to.GetIP();
-            this.FromUUID = config.AppSettings.Settings["uuid"].Value;
+            this.FromUUID = registry.GetValue("UUID").ToString();
             this.from = NetworkHelper.getLocalIPAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;

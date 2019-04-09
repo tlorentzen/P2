@@ -109,8 +109,6 @@ namespace TorPdos{
                     }
                 }
             }
-
-            Console.ReadKey();
         }
 
         private static void Idx_FileDeleted(IndexFile file){
