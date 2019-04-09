@@ -32,8 +32,8 @@ namespace Compression{
                     outPath = outPath + ".lzma";
                 }
                 if (!File.Exists(outPath)){
-                    //Buffersize 12 MB
-                    const int BUFFER_SIZE = 1024 * 1024 * 12;
+                    //Buffersize 128 MB
+                    const int BUFFER_SIZE = 1024 * 1024 * 128;
 
                     using (Stream inStream = File.OpenRead(inPath)){
                         using (Stream outStream = File.Create(outPath)){
@@ -90,8 +90,8 @@ namespace Compression{
                     }
 
                     if (!File.Exists(outPath)){
-                        //Readbuffer 12MB
-                        const int BUFFER_SIZE = 1024 * 1024 * 12;
+                        //Readbuffer 128MB
+                        const int BUFFER_SIZE = 1024 * 1024 * 128;
 
                         using (Stream outStream = File.Create(outPath)){
                             long remaining = inStream.Length - inStream.Position;

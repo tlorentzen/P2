@@ -54,6 +54,7 @@
     <Compile Include="EncryptionTest.cs" />
     <Compile Include="IDHandelerTest.cs" />
     <Compile Include="HiddenFolderTest.cs" />
+    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
