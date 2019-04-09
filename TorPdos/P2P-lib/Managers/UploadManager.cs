@@ -25,6 +25,7 @@ namespace P2P_lib
         private string _path;
         private Boolean pendingReceiver = true;
         private FileSender sender;
+        private Receiver _receiver;
 
         public UploadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports, BlockingCollection<Peer> peers)
         {
@@ -76,9 +77,9 @@ namespace P2P_lib
                     foreach (Peer peer in receivingPeers)
                     {
                         int port = _ports.GetAvailablePort();
-                        Receiver receiver = new Receiver(port);
-                        receiver.start();
-                        receiver.MessageReceived += Receiver_MessageReceived;
+                        _receiver = new Receiver(port);
+                        _receiver.start();
+                        _receiver.MessageReceived += Receiver_MessageReceived;
                         
                         UploadMessage upload = new UploadMessage(peer);
                         upload.filesize = file.GetFilesize();
@@ -92,14 +93,12 @@ namespace P2P_lib
                             // TODO: timeout???
                         }
 
-                        receiver.stop();
+                        _receiver.stop();
                         _ports.Release(port);
 
                         if (sender != null){
                             sender.Send(encryptedFilePath);
                         }
-
-                        
                     }
                 }
 

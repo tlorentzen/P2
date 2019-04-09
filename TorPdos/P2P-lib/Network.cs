@@ -212,6 +212,7 @@ namespace P2P_lib{
                 _fileReceiver.start();
 
                 upload.Send(replyPort);
+                ports.Release(upload.port);
             }
         }
 
