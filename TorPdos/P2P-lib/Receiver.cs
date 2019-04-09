@@ -25,7 +25,7 @@ namespace P2P_lib{
         private Thread listener;
         private byte[] buffer;
 
-        public Receiver(int port, int bufferSize = 512){
+        public Receiver(int port, int bufferSize = 4000){
             this.ip = IPAddress.Any;
             this.port = port;
             this.buffer = new byte[bufferSize];
