@@ -49,13 +49,30 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="CompressorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EncryptionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Compression\Compression.csproj">
+      <Project>{a09d164e-1dfa-48ac-ba87-dc3d2b20c4c6}</Project>
+      <Name>Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Encryption\Encryption.csproj">
+      <Project>{e15f2f49-a146-4f29-a5be-23df6d1fe0c8}</Project>
+      <Name>Encryption</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ID-lib\ID-lib.csproj">
+      <Project>{86cc7574-31c7-463c-90d8-a5a0db5c0630}</Project>
+      <Name>ID-lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Index-lib\Index-lib.csproj">
+      <Project>{ddf158f6-a177-4088-9455-20e909e9d313}</Project>
+      <Name>Index-lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\P2P-lib\P2P-lib.csproj">
       <Project>{F3998136-4DD4-49F8-B388-E4A67C808BFC}</Project>
       <Name>P2P-lib</Name>
