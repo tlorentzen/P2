@@ -8,42 +8,37 @@ using System.Threading.Tasks;
 using Index_lib;
 using P2P_lib;
 using System.Security.Cryptography;
+using Microsoft.Win32;
 
-namespace ID_lib
-{
-    public class IDHandler
-    {
+namespace ID_lib{
+    public class IDHandler{
         private static readonly string userdatafile = "userdata";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
-        private static Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1", true);
 
         //Create user file using generated UUID and input password
-        public static string CreateUser(string path, string password)
-        {
-            try
-            {
+        public static string CreateUser(string path, string password){
+            try{
                 string uuid = GenerateUUID();
 
                 string keymold = GenerateKeymold(string.Concat(uuid, password));
 
-                using (StreamWriter userFile = File.CreateText(path + "\\" + userdatafile))
-                {
+                using (StreamWriter userFile = File.CreateText(path + "\\" + userdatafile)){
                     userFile.WriteLine(keymold);
                     userFile.WriteLine(uuid);
-                    config.AppSettings.Settings["uuid"].Value = uuid;
-                    config.Save(ConfigurationSaveMode.Modified);
                 }
+
+                MyReg.SetValue("UUID", uuid);
+                Console.WriteLine(uuid);
                 return uuid;
             }
-            catch (Exception)
-            {
+            catch (Exception){
                 return null;
             }
         }
 
         //Generate keymold (hash) from key
-        private static string GenerateKeymold(string key)
-        {
+        private static string GenerateKeymold(string key){
             //Randomise salt
             byte[] salt;
             new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
@@ -61,94 +56,75 @@ namespace ID_lib
         }
 
         //Generate UUID based on mac addresses and current time
-        private static string GenerateUUID()
-        {
+        private static string GenerateUUID(){
             String guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             List<string> macAddresses = NetworkHelper.getMacAddresses();
 
-            foreach(string mac in macAddresses){
+            foreach (string mac in macAddresses){
                 guid += mac;
             }
-            config.AppSettings.Settings["uuid"].Value = guid;
-            config.Save(ConfigurationSaveMode.Modified);
+
             return DiskHelper.CreateMD5(guid);
         }
 
         //Check if UUID and password match existing local user
         //Compare keymolds (hashes)
         //Returns true if user details are valid, false if not
-        public static bool IsValidUser(string path, string uuid, string password)
-        {
-            try
-            {
-                using (StreamReader userFile = new StreamReader(path + "\\" + userdatafile))
-                {
+        public static bool IsValidUser(string path, string uuid, string password){
+            try{
+                using (StreamReader userFile = new StreamReader(path + "\\" + userdatafile)){
                     //Hash userdata, load 
                     byte[] hashBytes = Convert.FromBase64String(userFile.ReadLine());
                     byte[] salt = new byte[saltlength];
                     Array.Copy(hashBytes, 0, salt, 0, saltlength);
-                    Rfc2898DeriveBytes keymold = new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
+                    Rfc2898DeriveBytes keymold =
+                        new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
                     byte[] hash = keymold.GetBytes(hashlength);
 
                     //Compare hashes
-                    for (int i = 0; i < hashlength; i++)
-                    {
-                        if (hashBytes[i+saltlength] != hash[i])
-                        {
+                    for (int i = 0; i < hashlength; i++){
+                        if (hashBytes[i + saltlength] != hash[i]){
                             return false;
                         }
                     }
+
                     return true;
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception){
                 return false;
             }
         }
 
         //Return UUID if present, else return null
-        public static string GetUUID(string path)
-        {
-            if (UserExists(path))
-            {
-                try
-                {
+        public static string GetUUID(string path){
+            if (UserExists(path)){
+                try{
                     return File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(1);
                 }
-                catch (Exception)
-                {
+                catch (Exception){
                     return null;
                 }
-            }
-            else
-            {
+            } else{
                 return null;
             }
         }
 
-        public static bool UserExists(string path)
-        {
-            if (File.Exists(path + "\\" + userdatafile))
-            {
+        public static bool UserExists(string path){
+            if (File.Exists(path + "\\" + userdatafile)){
                 return true;
-            }
-            else
-            {
+            } else{
                 return false;
             }
         }
 
         //Removes userdata file, return false if failed
-        public static bool RemoveUser(string path)
-        {
-            try
-            {
+        public static bool RemoveUser(string path){
+            try{
                 File.Delete(path + "\\" + userdatafile);
                 return true;
             }
-            catch (Exception)
-            {
+            catch (Exception){
                 return false;
             }
         }
