@@ -81,9 +81,7 @@ namespace P2P_lib{
                     string path = MyReg.GetValue("Path").ToString();
 
                     _hiddenFolder = new HiddenFolder(path + @"\.hidden");
-                    _hiddenFolder.AppendToFileLog(path + @"\.hidden\log.txt",
-                        DateTime.Now + "\n" + e.ToString() + "" +
-                        "\n \n -------------------------------------- \n");
+                    _hiddenFolder.AppendToFileLog(path + @"\.hidden\log.txt",e.ToString());
                 }
                 finally{
                     client.Close();

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.IO;
 using System.Text;
 
@@ -46,7 +47,8 @@ namespace Index_lib{
         public void AppendToFileLog(string path, string input){
             FileStream output = new FileStream(path, FileMode.Append);
             byte[] inputBytes = new byte[input.Length];
-            inputBytes = Encoding.UTF8.GetBytes(input);
+            inputBytes = Encoding.UTF8.GetBytes(DateTime.Now + "\n" + input + "" +
+                                                "\n \n -------------------------------------- \n");
             output.Write(inputBytes,0,inputBytes.Length);
             output.Close();
         }
