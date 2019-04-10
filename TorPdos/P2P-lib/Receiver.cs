@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -34,16 +34,6 @@ namespace P2P_lib{
 
         }
 
-        public async void handler(){
-            while (listening)
-            {
-                var client = await server.AcceptTcpClientAsync().ConfigureAwait(false);
-                this.HandlerConnection(client);
-                //var cw = new ClientWorking(client, true);
-                //cw.DoSomethingWithClientAsync().NoWarning();
-            }
-        }
-
         public void start(){
             server = new TcpListener(this.ip, this.port);
             server.AllowNatTraversal(true);
@@ -52,7 +42,9 @@ namespace P2P_lib{
             Thread thread = new Thread(_errorLoggerQueue.run);
 
             listening = true;
-            handler();
+
+            listener = new Thread(this.connectionHandler);
+            listener.Start();
         }
 
         public void stop(){
@@ -60,14 +52,11 @@ namespace P2P_lib{
             this.listening = false;
         }
 
-        private async void connectionHandler(){
-
+        private void connectionHandler(){
+            Thread thread = new Thread(_errorLoggerQueue.run);
             while (this.listening){
-
-                try
-                {
-                    TcpClient client = await server.AcceptTcpClientAsync();
-
+                try{
+                    TcpClient client = server.AcceptTcpClient();
                     NetworkStream stream = client.GetStream();
 
                     int i;
@@ -89,41 +78,6 @@ namespace P2P_lib{
                 catch (Exception e){
                     _errorQueue.Enqueue(e.ToString());
                 }
-            }
-        }
-
-        private async void HandlerConnection(TcpClient client)
-        {
-            try
-            {
-                using (var stream = client.GetStream())
-                {
-                    int i;
-
-                    using (MemoryStream memory = new MemoryStream())
-                    {
-                        while ((i = await stream.ReadAsync(_buffer, 0, _buffer.Length)) > 0)
-                        {
-                            memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
-                        }
-
-                        memory.Seek(0, SeekOrigin.Begin);
-                        byte[] messageBytes = new byte[memory.Length];
-                        memory.Read(messageBytes, 0, messageBytes.Length);
-                        memory.Close();
-
-                        BaseMessage message = (BaseMessage)BaseMessage.FromByteArray(messageBytes);
-                        MessageReceived(message);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                string path = MyReg.GetValue("Path").ToString();
-
-                _hiddenFolder = new HiddenFolder(path + @"\.hidden");
-                _hiddenFolder.AppendToFileLog(path + @"\.hidden\log.txt", e.ToString());
-
             }
         }
     }
