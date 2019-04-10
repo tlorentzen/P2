@@ -389,9 +389,14 @@ namespace Index_lib{
         public bool IsFileReady(string path){
             bool exist = false;
             try{
-                using (FileStream inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)){
+                FileStream inputStream;
+
+                using (inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)){
                     exist = true;
+                    
                 }
+
+                inputStream.Close();
             }
             catch (Exception){
                 exist = false;
