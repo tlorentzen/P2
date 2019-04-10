@@ -29,8 +29,14 @@ namespace P2P_lib{
                             while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0){
                                 stream.Write(buffer, 0, buffer.Length);
                             }
+
+                            file.Close();
                         }
+
+                        stream.Close();
                     }
+
+                    client.Close();
                 }
             } else{
                 throw new NotImplementedException();

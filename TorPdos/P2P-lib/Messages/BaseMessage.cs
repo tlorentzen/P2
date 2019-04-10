@@ -51,7 +51,9 @@ namespace P2P_lib.Messages
                     byte[] data = this.ToByteArray();
                     using (NetworkStream stream = client.GetStream()){
                         stream.Write(data, 0, data.Length);
+                        stream.Close();
                     }
+                    client.Close();
                 }
 
                 return true;
@@ -78,6 +80,7 @@ namespace P2P_lib.Messages
             BinaryFormatter bf = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream(data)){
                 object obj = bf.Deserialize(ms);
+                ms.Close();
                 return (BaseMessage)obj;
             }
         }

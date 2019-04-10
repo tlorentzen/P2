@@ -38,7 +38,7 @@ namespace Encryption{
 
                 //Set up AES for encryption
                 RijndaelManaged AES = new RijndaelManaged();
-
+                
                 //Keysize is the 
                 AES.KeySize = 256;
                 AES.BlockSize = 128;
@@ -73,12 +73,12 @@ namespace Encryption{
                             while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0){
                                 cs.Write(buffer, 0, read);
                             }
-
-                            fsIn.Close();
                         }
                         catch (Exception e){
                             Console.WriteLine(e);
                             throw;
+                        }finally{
+                            fsIn.Close();
                         }
                     }
                     cs.Close();
@@ -129,13 +129,18 @@ namespace Encryption{
                             while ((read = cs.Read(buffer, 0, buffer.Length)) > 0){
                                 fsOut.Write(buffer, 0, read);
                             }
-                        }
-                        catch (Exception e){
+                        }catch (Exception e){
                             Console.WriteLine(e);
                             throw;
+                        }finally{
+                            fsOut.Close();
                         }
                     }
+
+                    cs.Close();
                 }
+
+                fsCrypt.Close();
             }
         }
 

@@ -57,10 +57,14 @@ namespace P2P_lib{
         }
 
         private void connectionHandler(){
+
+            TcpClient client = null;
+            NetworkStream stream = null;
+
             while (this.listening){
                 try{
-                    TcpClient client = server.AcceptTcpClient();
-                    NetworkStream stream = client.GetStream();
+                    client = server.AcceptTcpClient();
+                    stream = client.GetStream();
 
                     int i;
 
@@ -76,8 +80,13 @@ namespace P2P_lib{
                 }
                 catch (Exception e){
                     string path = MyReg.GetValue("Path").ToString();
+
                     _hiddenFolder = new HiddenFolder(path + @"\.hidden\log.txt");
                     _hiddenFolder.AppendToFileLog(path + @"\.hidden\log.txt", DateTime.Now + e.ToString() + "\\n");
+
+                }finally{
+                    client.Close();
+                    stream.Close();
                 }
             }
         }

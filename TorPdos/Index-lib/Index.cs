@@ -25,8 +25,6 @@ namespace Index_lib{
         public event FileEventHandler FileDeleted;
         public event FileEventHandler FileChanged;
 
-
-
         List<IndexFile> index = new List<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();
 
@@ -52,7 +50,6 @@ namespace Index_lib{
             watcher.Created += OnCreate;
             watcher.Deleted += OnDeleted;
             watcher.Renamed += OnRenamed;
-            
             
             // Begin watching.
             watcher.EnableRaisingEvents = true;
@@ -388,18 +385,21 @@ namespace Index_lib{
 
         public bool IsFileReady(string path){
             bool exist = false;
-            try{
-                FileStream inputStream;
+            FileStream inputStream = null;
 
+            try
+            {
                 using (inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)){
                     exist = true;
-                    
+                    inputStream.Close();
                 }
-
-                inputStream.Close();
             }
             catch (Exception){
                 exist = false;
+            }finally{
+                if(inputStream != null){
+                    inputStream.Close();
+                }
             }
 
             return exist;

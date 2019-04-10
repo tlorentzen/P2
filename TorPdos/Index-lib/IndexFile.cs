@@ -68,6 +68,7 @@ namespace Index_lib
                 using (FileStream fs = new FileStream(this.paths[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
                     var hash = md5.ComputeHash(fs);
                     this.hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                    fs.Close();
                 }
             }
         }
