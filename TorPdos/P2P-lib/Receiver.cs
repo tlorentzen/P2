@@ -9,12 +9,16 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Index_lib;
 using Microsoft.Win32;
 using P2P_lib.Messages;
 
 namespace P2P_lib{
     public class Receiver{
         RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
+
+        private HiddenFolder _hiddenFolder;
+
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void DidReceive(BaseMessage msg);
@@ -78,62 +82,8 @@ namespace P2P_lib{
                         MessageReceived(message);
                     }
 
-                    
-
-                   /*
-
-                    while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0)
-                    {
-                        mem.Write(_buffer, );
-
-                        fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
-                        //fileStream.Write(_buffer, 0, _buffer.Length);
-                    }
-
-                
-                    //while(!stream.CanRead){
-                    // Loop to receive all the data sent by the client.
-                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
-                        {
-                            
-
-                            if (!this.listening)
-                            {
-                                break;
-                            }
-                        }
-                    //}
-
-                    */
-
-                    
-                }
-                catch (Exception e){
-                    
-                    /*
-                    string path = MyReg.GetValue("Path").ToString();
-                    byte [] input = new byte[e.ToString().Length];
-                    string error = DateTime.Now + input.ToString() + "\\n";
-                    if (!File.Exists(path+"/.hidden/log.txt")){
-                        File.Create(path + "/.hidden/log.txt");
-                    }
-                    input = Encoding.ASCII.GetBytes(error);
-                    using (FileStream log = new FileStream(path+"/.hidden/log.txt",FileMode.Append)) {
-                        log.Write(input,0,e.ToString().Length);
-                        log.Close();
-                    }
-                    */
-                }finally{
-                    /*
-                    if(client != null){
-                        client.Close();
-                    }
-                    */
-                    /*
-                    if(stream != null){
-                        stream.Close();
-                    }
-                    */
+                }catch (Exception e){
+                   
                 }
             }
         }

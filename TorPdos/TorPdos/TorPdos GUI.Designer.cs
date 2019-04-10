@@ -23,9 +23,27 @@ namespace TorPdos{
             Text = "UserID",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblPassword = new Label(){
+        Label lblPassword = new Label
+        {
+            Location = new Point(20, 20),
+            Height = 40,
+            Width = 150,
+            Font = new Font("Consolas", 20, FontStyle.Regular),
+            Text = "Password",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
+        };
+        Label lblConfirmPassword = new Label(){
             Location = new Point(20, 70),
             Height = 40, Width = 150,
+            Font = new Font("Consolas", 20, FontStyle.Regular),
+            Text = "Confirm:",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
+        };
+        Label lblLoginPassword = new Label()
+        {
+            Location = new Point(20, 70),
+            Height = 40,
+            Width = 150,
             Font = new Font("Consolas", 20, FontStyle.Regular),
             Text = "Password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
@@ -41,6 +59,15 @@ namespace TorPdos{
             Location = new Point(50, 110),
             Height = 40, Width = 350,
             Text = "Wrong username or password",
+            ForeColor = ColorTranslator.FromHtml(btnColour),
+            Font = new Font("Consolas", 15, FontStyle.Regular)
+        };
+        Label lblNope2 = new Label()
+        {
+            Location = new Point(50, 110),
+            Height = 40,
+            Width = 350,
+            Text = "Passwords do not match",
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
@@ -66,7 +93,16 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtPassword = new TextBox(){
+        TextBox txtPassword = new TextBox()
+        {
+            Location = new Point(170, 20),
+            Height = 50, Width = 150,
+            Font = new Font("Consolas", 15, FontStyle.Regular),
+            PasswordChar = '*',
+            ForeColor = ColorTranslator.FromHtml(backgroundColour),
+            BackColor = ColorTranslator.FromHtml(txtColour)
+        };
+        TextBox txtConfirmPassword = new TextBox(){
             Location = new Point(170, 70),
             Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
@@ -173,11 +209,11 @@ namespace TorPdos{
             Controls.Clear();
             txtUsername.Text = IDHandler.GetUUID(path);
             Controls.Add(txtUsername);
-            Controls.Add(txtPassword);
-            txtPassword.Text = null;
+            txtConfirmPassword.Text = null;
+            Controls.Add(txtConfirmPassword);
             Controls.Add(btnLogin);
             Controls.Add(lblUsername);
-            Controls.Add(lblPassword);
+            Controls.Add(lblLoginPassword);
             Controls.Add(lblGoBack);
             btnLogin.Click += BtnClickLogin;
             lblGoBack.Click += LblGoBackClick;
@@ -195,9 +231,11 @@ namespace TorPdos{
 
         public void Create()
         {
-            Controls.Clear();
+            Controls.Clear(); 
             Controls.Add(lblPassword);
             Controls.Add(txtPassword);
+            Controls.Add(lblConfirmPassword);
+            Controls.Add(txtConfirmPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
             lblGoBack.Click += LblGoBackClick;
@@ -205,14 +243,22 @@ namespace TorPdos{
             AcceptButton = btnCreate;
         }
         private void BtnCreateClick(object sender, System.EventArgs e){
-            string uuid = IDHandler.CreateUser(path, txtPassword.Text);
-            Login();
-            if (MyReg.GetValue("UUID") == null) return;
-            txtUsername.Text = MyReg.GetValue("UUID").ToString();
+            string uuid = IDHandler.CreateUser(path, txtConfirmPassword.Text);
+
+            if(txtPassword.Text == txtConfirmPassword.Text )
+            {
+                Login();
+                if (MyReg.GetValue("UUID") == null) return;
+                txtUsername.Text = MyReg.GetValue("UUID").ToString();
+            } else
+            {
+                Controls.Add(lblNope2);
+            }
+            
         }
 
         void BtnClickLogin(object sender, System.EventArgs e){
-            string uuid = txtUsername.Text, pass = txtPassword.Text;
+            string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
             if (IDHandler.IsValidUser(path, uuid, pass)){
                 Controls.Clear();
                 Controls.Add(lblYouDidIt);
