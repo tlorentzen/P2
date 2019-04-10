@@ -34,7 +34,7 @@ namespace P2P_lib{
         }
 
         public static string GetRegistryValue(string key){
-            RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1");
+            RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             return registry.GetValue(key).ToString();
         }
     }
