@@ -50,8 +50,7 @@ namespace Compression{
 
                     using (FileStream inStream =
                         new FileStream(inPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
-                        using (FileStream outStream = new FileStream(outPath, FileMode.Create, FileAccess.Write,
-                            FileShare.ReadWrite)){
+                        using (FileStream outStream = new FileStream(outPath, FileMode.Create, FileAccess.Write)){
                             // Save file extension
                             string ext = Path.GetExtension(inPath);
                             ext = ext.Length + ext;
