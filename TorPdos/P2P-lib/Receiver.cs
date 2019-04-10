@@ -83,6 +83,10 @@ namespace P2P_lib{
                     }
 
                 }catch (Exception e){
+                    string path = MyReg.GetValue("Path").ToString();
+
+                    _hiddenFolder = new HiddenFolder(path + @"\.hidden");
+                    _hiddenFolder.AppendToFileLog(path + @"\.hidden\log.txt",e.ToString());
                    
                 }
             }
