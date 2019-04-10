@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Microsoft.Win32;
 using P2P_lib.Messages;
 
 namespace P2P_lib{
     public class Receiver{
+        RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void DidReceive(BaseMessage msg);
@@ -65,7 +70,19 @@ namespace P2P_lib{
                     BaseMessage message = (BaseMessage) BaseMessage.FromByteArray(buffer);
                     MessageReceived(message);
                 }
-                catch (Exception e){ }
+                catch (Exception e){
+                    string path = MyReg.GetValue("Path").ToString();
+                    byte [] input = new byte[e.ToString().Length];
+                    string error = DateTime.Now + input.ToString() + "\\n";
+                    if (!File.Exists(path+".hidden/log.txt")){
+                        File.Create(path + "hidden/log.txt");
+                    }
+                    input = Encoding.ASCII.GetBytes(error);
+                    using (FileStream log = new FileStream(path+"hidden/log.txt",FileMode.Append)) {
+                        log.Write(input,0,e.ToString().Length);
+                        log.Close();
+                    }
+                }
             }
         }
     }

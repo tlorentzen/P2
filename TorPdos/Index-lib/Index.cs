@@ -52,7 +52,8 @@ namespace Index_lib{
             watcher.Created += OnCreate;
             watcher.Deleted += OnDeleted;
             watcher.Renamed += OnRenamed;
-
+            
+            
             // Begin watching.
             watcher.EnableRaisingEvents = true;
         }

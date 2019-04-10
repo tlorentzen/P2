@@ -13,7 +13,7 @@ namespace TorPdos{
             lblColour = "#B3B7EE",
             btnColour = "#A2A3BB",
             txtColour = "#9395D3";
-        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1",true);
+        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
 
         private string path;
         Label lblUsername = new Label{

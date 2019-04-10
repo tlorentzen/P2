@@ -14,7 +14,7 @@ namespace ID_lib{
     public class IDHandler{
         private static readonly string userdatafile = "userdata";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
-        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\TorPdos\\TorPdos\\1.2.1.1", true);
+        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
 
         //Create user file using generated UUID and input password
         public static string CreateUser(string path, string password){
