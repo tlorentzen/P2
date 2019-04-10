@@ -53,32 +53,28 @@ namespace P2P_lib{
 
         private void connectionHandler(){
 
-            /*
-            while (this._listening){
-            */
-                TcpClient client = _server.AcceptTcpClient();
+            TcpClient client = _server.AcceptTcpClient();
 
-                using (NetworkStream stream = client.GetStream()){
+            using (NetworkStream stream = client.GetStream()){
 
-                    Console.WriteLine("Receiving file");
-                    using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
-                        Console.WriteLine("Creating file: " + this._filename);
-                        int i;
+                Console.WriteLine("Receiving file");
+                using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
+                    Console.WriteLine("Creating file: " + this._filename);
+                    int i;
                       
-                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                            fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
-                            //fileStream.Write(_buffer, 0, _buffer.Length);
-                        }
-
-                        Console.WriteLine("File done downloading");
+                    while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
+                        fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
+                        //fileStream.Write(_buffer, 0, _buffer.Length);
                     }
+
+                    Console.WriteLine("File done downloading");
+                    fileStream.Close();
                 }
 
-                client.Close();
-                /*
-                this.stop();
+                stream.Close();
             }
-            */
+
+            client.Close();
         }
 
         public int getPort(){

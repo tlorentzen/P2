@@ -26,6 +26,7 @@ namespace ID_lib{
                 using (StreamWriter userFile = File.CreateText(path + "\\" + userdatafile)){
                     userFile.WriteLine(keymold);
                     userFile.WriteLine(uuid);
+                    userFile.Close();
                 }
 
                 MyReg.SetValue("UUID", uuid);
@@ -77,8 +78,7 @@ namespace ID_lib{
                     byte[] hashBytes = Convert.FromBase64String(userFile.ReadLine());
                     byte[] salt = new byte[saltlength];
                     Array.Copy(hashBytes, 0, salt, 0, saltlength);
-                    Rfc2898DeriveBytes keymold =
-                        new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
+                    Rfc2898DeriveBytes keymold = new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
                     byte[] hash = keymold.GetBytes(hashlength);
 
                     //Compare hashes
@@ -87,7 +87,7 @@ namespace ID_lib{
                             return false;
                         }
                     }
-
+                    userFile.Close();
                     return true;
                 }
             }

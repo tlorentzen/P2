@@ -53,10 +53,14 @@ namespace P2P_lib{
         }
 
         private void connectionHandler(){
+
+            TcpClient client = null;
+            NetworkStream stream = null;
+
             while (this.listening){
                 try{
-                    TcpClient client = server.AcceptTcpClient();
-                    NetworkStream stream = client.GetStream();
+                    client = server.AcceptTcpClient();
+                    stream = client.GetStream();
 
                     int i;
 
@@ -71,6 +75,8 @@ namespace P2P_lib{
                     MessageReceived(message);
                 }
                 catch (Exception e){
+                    
+                    /*
                     string path = MyReg.GetValue("Path").ToString();
                     byte [] input = new byte[e.ToString().Length];
                     string error = DateTime.Now + input.ToString() + "\\n";
@@ -82,6 +88,10 @@ namespace P2P_lib{
                         log.Write(input,0,e.ToString().Length);
                         log.Close();
                     }
+                    */
+                }finally{
+                    client.Close();
+                    stream.Close();
                 }
             }
         }
