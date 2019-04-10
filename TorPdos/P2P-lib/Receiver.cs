@@ -1,27 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Index_lib;
-using Microsoft.Win32;
+using ErrorLogger;
 using P2P_lib.Messages;
+
 
 namespace P2P_lib{
     public class Receiver{
-        RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-
-        private HiddenFolder _hiddenFolder;
-
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void DidReceive(BaseMessage msg);
+
+        private ErrorQueueHandler<string> _errorQueue = new ErrorQueueHandler<string>();
+        private ErrorLoggerQueue _errorLoggerQueue;
 
         //This event can cause any method which conforms
         //to MyEventHandler to be called.
@@ -34,15 +27,19 @@ namespace P2P_lib{
         private Thread listener;
         private byte[] _buffer = new byte[1024];
 
+
         public Receiver(int port){
             this.ip = IPAddress.Any;
             this.port = port;
+
         }
 
         public void start(){
             server = new TcpListener(this.ip, this.port);
             server.AllowNatTraversal(true);
             server.Start();
+            _errorLoggerQueue = new ErrorLoggerQueue(_errorQueue, "Receiver");
+            Thread thread = new Thread(_errorLoggerQueue.run);
 
             listening = true;
 
@@ -56,20 +53,16 @@ namespace P2P_lib{
         }
 
         private void connectionHandler(){
-
+            Thread thread = new Thread(_errorLoggerQueue.run);
             while (this.listening){
-
-                try
-                {
+                try{
                     TcpClient client = server.AcceptTcpClient();
                     NetworkStream stream = client.GetStream();
 
                     int i;
 
-                    using (MemoryStream memory = new MemoryStream())
-                    {
-                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0)
-                        {
+                    using (MemoryStream memory = new MemoryStream()){
+                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
                             memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
                         }
 
@@ -78,16 +71,12 @@ namespace P2P_lib{
                         memory.Read(messageBytes, 0, messageBytes.Length);
                         memory.Close();
 
-                        BaseMessage message = (BaseMessage)BaseMessage.FromByteArray(messageBytes);
+                        BaseMessage message = (BaseMessage) BaseMessage.FromByteArray(messageBytes);
                         MessageReceived(message);
                     }
-
-                }catch (Exception e){
-                    string path = MyReg.GetValue("Path").ToString();
-
-                    _hiddenFolder = new HiddenFolder(path + @"\.hidden");
-                    _hiddenFolder.AppendToFileLog(path + @"\.hidden\log.txt",e.ToString());
-                   
+                }
+                catch (Exception e){
+                    _errorQueue.Enqueue(e.ToString());
                 }
             }
         }
