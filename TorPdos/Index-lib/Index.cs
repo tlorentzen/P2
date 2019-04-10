@@ -389,7 +389,7 @@ namespace Index_lib{
 
             try
             {
-                using (inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)){
+                using (inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read)){
                     exist = true;
                     inputStream.Close();
                 }

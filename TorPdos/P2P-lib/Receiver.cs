@@ -28,17 +28,16 @@ namespace P2P_lib{
         private TcpListener server = null;
         private Boolean listening = false;
         private Thread listener;
-        private byte[] buffer;
+        private byte[] _buffer = new byte[1024];
 
-        public Receiver(int port, int bufferSize = 4000){
+        public Receiver(int port){
             this.ip = IPAddress.Any;
             this.port = port;
-            this.buffer = new byte[bufferSize];
         }
 
         public void start(){
             server = new TcpListener(this.ip, this.port);
-            //server.AllowNatTraversal(true);
+            server.AllowNatTraversal(true);
             server.Start();
 
             listening = true;
@@ -54,25 +53,60 @@ namespace P2P_lib{
 
         private void connectionHandler(){
 
-            TcpClient client = null;
-            NetworkStream stream = null;
-
             while (this.listening){
-                try{
-                    client = server.AcceptTcpClient();
-                    stream = client.GetStream();
+
+                try
+                {
+                    TcpClient client = server.AcceptTcpClient();
+                    NetworkStream stream = client.GetStream();
 
                     int i;
 
-                    // Loop to receive all the data sent by the client.
-                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0){
-                        if (!this.listening){
-                            break;
+                    using (MemoryStream memory = new MemoryStream())
+                    {
+                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0)
+                        {
+                            memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
                         }
+
+                        memory.Seek(0, SeekOrigin.Begin);
+                        byte[] messageBytes = new byte[memory.Length];
+                        memory.Read(messageBytes, 0, messageBytes.Length);
+                        memory.Close();
+
+                        BaseMessage message = (BaseMessage)BaseMessage.FromByteArray(messageBytes);
+                        MessageReceived(message);
                     }
 
-                    BaseMessage message = (BaseMessage) BaseMessage.FromByteArray(buffer);
-                    MessageReceived(message);
+                    
+
+                   /*
+
+                    while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0)
+                    {
+                        mem.Write(_buffer, );
+
+                        fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
+                        //fileStream.Write(_buffer, 0, _buffer.Length);
+                    }
+
+                
+                    //while(!stream.CanRead){
+                    // Loop to receive all the data sent by the client.
+                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            
+
+                            if (!this.listening)
+                            {
+                                break;
+                            }
+                        }
+                    //}
+
+                    */
+
+                    
                 }
                 catch (Exception e){
                     
@@ -90,8 +124,16 @@ namespace P2P_lib{
                     }
                     */
                 }finally{
-                    client.Close();
-                    stream.Close();
+                    /*
+                    if(client != null){
+                        client.Close();
+                    }
+                    */
+                    /*
+                    if(stream != null){
+                        stream.Close();
+                    }
+                    */
                 }
             }
         }

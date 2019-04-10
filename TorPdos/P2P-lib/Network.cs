@@ -57,7 +57,7 @@ namespace P2P_lib{
         public void Start(){
             this._running = true;
 
-            _receive = new Receiver(this._port, 2048);
+            _receive = new Receiver(this._port);
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.start();
 
