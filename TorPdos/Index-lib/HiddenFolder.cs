@@ -46,7 +46,7 @@ namespace Index_lib{
         public void AppendToFileLog(string path, string input){
             FileStream output = new FileStream(path, FileMode.Append);
             byte[] inputBytes = new byte[input.Length];
-            inputBytes = Encoding.ASCII.GetBytes(input);
+            inputBytes = Encoding.UTF8.GetBytes(input);
             output.Write(inputBytes,0,inputBytes.Length);
             output.Close();
         }
