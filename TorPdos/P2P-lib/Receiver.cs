@@ -80,11 +80,11 @@ namespace P2P_lib{
                     string path = MyReg.GetValue("Path").ToString();
                     byte [] input = new byte[e.ToString().Length];
                     string error = DateTime.Now + input.ToString() + "\\n";
-                    if (!File.Exists(path+".hidden/log.txt")){
-                        File.Create(path + "hidden/log.txt");
+                    if (!File.Exists(path+"/.hidden/log.txt")){
+                        File.Create(path + "/.hidden/log.txt");
                     }
                     input = Encoding.ASCII.GetBytes(error);
-                    using (FileStream log = new FileStream(path+"hidden/log.txt",FileMode.Append)) {
+                    using (FileStream log = new FileStream(path+"/.hidden/log.txt",FileMode.Append)) {
                         log.Write(input,0,e.ToString().Length);
                         log.Close();
                     }
