@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Threading;
 using Index_lib;
@@ -30,10 +31,13 @@ namespace ErrorLogger{
                 string output;
                 while (this._queue.TryDequeue(out output)){
                     string path = _registry.GetValue("Path").ToString();
+                    Console.WriteLine(output);
                     
                     _hiddenFolder = new HiddenFolder(path + @"\.hidden");
                     _hiddenFolder.AppendToFileLog(path + @"\.hidden\log" + _source + ".txt", output);
                 }
+
+                this._waitHandle.Reset();
             }
         }
     }

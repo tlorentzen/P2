@@ -40,6 +40,7 @@ namespace P2P_lib{
             server.Start();
             _errorLoggerQueue = new ErrorLoggerQueue(_errorQueue, "Receiver");
             Thread thread = new Thread(_errorLoggerQueue.run);
+            thread.Start();
 
             listening = true;
 
@@ -53,7 +54,7 @@ namespace P2P_lib{
         }
 
         private void connectionHandler(){
-            Thread thread = new Thread(_errorLoggerQueue.run);
+            
             while (this.listening){
                 try{
                     TcpClient client = server.AcceptTcpClient();
@@ -76,7 +77,10 @@ namespace P2P_lib{
                     }
                 }
                 catch (Exception e){
+                    Console.WriteLine("Error");
+                    Console.WriteLine(e.ToString());
                     _errorQueue.Enqueue(e.ToString());
+                    
                 }
             }
         }
