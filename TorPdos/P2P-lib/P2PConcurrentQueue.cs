@@ -12,7 +12,7 @@ namespace P2P_lib
         public delegate void FileQueued();
         public event FileQueued FileAddedToQueue;
 
-        public void Enqueue(T item){
+        public new void Enqueue(T item){
             base.Enqueue(item);
             this.FileAddedToQueue();
         }

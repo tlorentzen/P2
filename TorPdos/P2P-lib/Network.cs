@@ -13,6 +13,7 @@ using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
 using Index_lib;
+using Microsoft.Win32;
 using P2P_lib.Managers;
 
 namespace P2P_lib{
@@ -28,7 +29,7 @@ namespace P2P_lib{
         private HiddenFolder _hiddenPath;
         private BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
         private string _peerFilePath;
-        private Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
         private P2PConcurrentQueue<QueuedFile> upload = new P2PConcurrentQueue<QueuedFile>();
         private P2PConcurrentQueue<QueuedFile> download = new P2PConcurrentQueue<QueuedFile>();
         private List<Thread> threads = new List<Thread>();
@@ -130,7 +131,7 @@ namespace P2P_lib{
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
                     
-                    if ((config.AppSettings.Settings["uuid"].Value.Equals(incommingPeer.getUUID()))) break;
+                    if ((registry.GetValue("UUID").ToString().Equals(incommingPeer.getUUID()))) break;
                     peers.Add(incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.getUUID());
                 }

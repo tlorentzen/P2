@@ -84,6 +84,10 @@
       <Project>{e15f2f49-a146-4f29-a5be-23df6d1fe0c8}</Project>
       <Name>Encryption</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ErrorLogger\ErrorLogger.csproj">
+      <Project>{80ee5ad6-1db2-48c6-8ac7-ba1761a61c2f}</Project>
+      <Name>ErrorLogger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Index-lib\Index-lib.csproj">
       <Project>{ddf158f6-a177-4088-9455-20e909e9d313}</Project>
       <Name>Index-lib</Name>
