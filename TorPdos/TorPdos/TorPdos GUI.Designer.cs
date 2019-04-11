@@ -86,6 +86,24 @@ namespace TorPdos{
             Text = "Go Back",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
+        Label lblOkay = new Label()
+        {
+            Location = new Point(300, 230),
+            Height = 40,
+            Width = 80,
+            Font = new Font("Consolas", 12, FontStyle.Regular),
+            Text = "Okay",
+            ForeColor = ColorTranslator.FromHtml(lblColour),
+        };
+        Label lblLogOut = new Label
+        {
+            Location = new Point(300, 230),
+            Height = 40,
+            Width = 150,
+            Font = new Font("Consolas", 12, FontStyle.Regular),
+            Text = "Log out",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
+        };
         TextBox txtUsername = new TextBox(){
             Location = new Point(170, 20),
             Height = 50, Width = 150,
@@ -140,14 +158,15 @@ namespace TorPdos{
             ForeColor = ColorTranslator.FromHtml(btnColour),
             //Image =
         };
-        Label lblOkay = new Label(){
-            Location = new Point(330, 230),
-            Height = 40,
-            Width = 80,
-            Font = new Font("Consolas", 12, FontStyle.Regular),
-            Text = "Okay",
-            ForeColor = ColorTranslator.FromHtml(lblColour),
+        Button btnDownload = new Button()
+        {
+            Location = new Point(70, 90),
+            Width = 250, Height = 70,
+            Text = "Donwnload",
+            Font = new Font("Consolas", 25, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour),
         };
+        
         NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
@@ -180,7 +199,33 @@ namespace TorPdos{
             Resize += MyformResize; 
             
         }
+        private void BtnCreateClick(object sender, System.EventArgs e)
+        {
+            if (txtPassword.Text == txtConfirmPassword.Text)
+            {
+                string uuid = IDHandler.CreateUser(path, txtPassword.Text);
+                Login();
+                if (MyReg.GetValue("UUID") == null) return;
+                txtUsername.Text = MyReg.GetValue("UUID").ToString();
+            }
+            else
+            {
+                Controls.Add(lblNope2);
+            }
+        }
 
+        void BtnClickLogin(object sender, System.EventArgs e)
+        {
+            string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
+            if (IDHandler.IsValidUser(path, uuid, pass))
+            {
+                LoggedIn();
+            }
+            else
+            {
+                Controls.Add(lblNope);
+            }
+        }
         private void LblOkayClick(object sender, System.EventArgs e){
             MyReg.SetValue("Path", PathName()+"\\");
             path = PathName()+@"\.hidden";
@@ -242,26 +287,18 @@ namespace TorPdos{
             btnCreate.Click += BtnCreateClick;
             AcceptButton = btnCreate;
         }
-        private void BtnCreateClick(object sender, System.EventArgs e){
-            if(txtPassword.Text == txtConfirmPassword.Text )
-            {
-                string uuid = IDHandler.CreateUser(path, txtPassword.Text);
-                Login();
-                if (MyReg.GetValue("UUID") == null) return;
-                txtUsername.Text = MyReg.GetValue("UUID").ToString();
-            } else{
-                Controls.Add(lblNope2);
-            }
+        
+        public void LoggedIn()
+        {
+            Controls.Clear();
+            Controls.Add(btnDownload);
+            Controls.Add(lblLogOut);
+            lblLogOut.Click += LblLogOutClick;
         }
 
-        void BtnClickLogin(object sender, System.EventArgs e){
-            string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IDHandler.IsValidUser(path, uuid, pass)){
-                Controls.Clear();
-                Controls.Add(lblYouDidIt);
-            } else{
-                Controls.Add(lblNope);
-            }
+        private void LblLogOutClick(object sender, System.EventArgs e)
+        {
+            Login();
         }
 
         void MyformResize(object sender, System.EventArgs e){
