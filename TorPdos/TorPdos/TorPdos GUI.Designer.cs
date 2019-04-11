@@ -292,7 +292,8 @@ namespace TorPdos{
         {
             Controls.Clear();
             Controls.Add(btnDownload);
-            Controls.Add(lblLogOut);  
+            Controls.Add(lblLogOut);
+            lblLogOut.Click += LblLogOutClick;
         }
 
         private void LblLogOutClick(object sender, System.EventArgs e)
