@@ -94,7 +94,7 @@ namespace TorPdos{
             Font = new Font("Consolas", 12, FontStyle.Regular),
             Text = "Okay",
             ForeColor = ColorTranslator.FromHtml(lblColour),
-        };
+        };
         Label lblLogOut = new Label
         {
             Location = new Point(300, 230),
@@ -160,7 +160,7 @@ namespace TorPdos{
         };
         Button btnDownload = new Button()
         {
-            Location = new Point(70, 90),
+            Location = new Point(70, 99),
             Width = 250, Height = 70,
             Text = "Donwnload",
             Font = new Font("Consolas", 25, FontStyle.Regular),
@@ -292,21 +292,7 @@ namespace TorPdos{
         {
             Controls.Clear();
             Controls.Add(btnDownload);
-            Controls.Add(lblLogOut);
-            lblLogOut.Click += LblLogOutClick;
-        private void BtnCreateClick(object sender, System.EventArgs e){
-            string uuid = IDHandler.CreateUser(path, txtConfirmPassword.Text);
-
-            if(txtPassword.Text == txtConfirmPassword.Text )
-            {
-                Login();
-                if (MyReg.GetValue("UUID") == null) return;
-                txtUsername.Text = MyReg.GetValue("UUID").ToString();
-            } else
-            {
-                Controls.Add(lblNope2);
-            }
-            
+            Controls.Add(lblLogOut);  
         }
 
         private void LblLogOutClick(object sender, System.EventArgs e)
