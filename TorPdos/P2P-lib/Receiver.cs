@@ -77,8 +77,6 @@ namespace P2P_lib{
                     }
                 }
                 catch (Exception e){
-                    Console.WriteLine("Error");
-                    Console.WriteLine(e.ToString());
                     _errorQueue.Enqueue(e.ToString());
                     
                 }
