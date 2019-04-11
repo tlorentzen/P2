@@ -73,13 +73,13 @@ namespace P2P_lib{
                         memory.Read(messageBytes, 0, messageBytes.Length);
                         memory.Close();
 
-                        BaseMessage message = (BaseMessage) BaseMessage.FromByteArray(messageBytes);
+                        BaseMessage message = BaseMessage.FromByteArray(messageBytes);
                         MessageReceived(message);
                     }
                 }
                 catch (Exception e){
                     _errorQueue.Enqueue(e.ToString());
-                    
+                    Console.WriteLine(e.Message);
                 }
             }
         }
