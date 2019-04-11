@@ -57,9 +57,19 @@ namespace P2P_lib
 
                     Console.WriteLine("Current queued files: "+_queue.Count);
 
+                   
+
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
                     string compressedFilePath = this._path + ".hidden\\" + file.GetHash();
+
+                    List<Peer> receivingPeers = this.getPeers(Math.Min(copies, this.CountOnlinePeers()));
+
+                    if (receivingPeers.Count == 0)
+                    {
+                        this._queue.Enqueue(file);
+                        continue;
+                    }
 
                     // Compress file
                     ByteCompressor.CompressFile(filePath, compressedFilePath);
@@ -74,9 +84,6 @@ namespace P2P_lib
 
                     // Split
                     // TODO: split file
-
-
-                    List<Peer> receivingPeers = this.getPeers(Math.Min(copies, this.CountOnlinePeers()));
 
                     foreach (Peer peer in receivingPeers)
                     {
