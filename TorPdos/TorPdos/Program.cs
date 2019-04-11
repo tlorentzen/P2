@@ -125,7 +125,7 @@ namespace TorPdos{
         private static void Idx_FileAdded(IndexFile file){
             Console.WriteLine("Added: " + file.hash);
 
-            //p2p.UploadFile(file.hash, file.getPath(), 5);
+            p2p.UploadFile(file.hash, file.getPath(), 5);
             //p2p.UploadFileToNetwork(file.paths[0], 3);
         }
 
