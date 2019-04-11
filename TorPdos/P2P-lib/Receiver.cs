@@ -49,8 +49,8 @@ namespace P2P_lib{
         }
 
         public void stop(){
-            server.Stop();
             this.listening = false;
+            server.Stop();
         }
 
         private void connectionHandler(){
@@ -58,6 +58,7 @@ namespace P2P_lib{
             while (this.listening){
                 try{
                     TcpClient client = server.AcceptTcpClient();
+                    client.ReceiveTimeout = 500;
                     NetworkStream stream = client.GetStream();
 
                     int i;

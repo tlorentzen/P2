@@ -45,6 +45,7 @@ namespace Index_lib{
         }
 
         public void AppendToFileLog(string path, string input){
+            /*
             FileStream output = new FileStream(path, FileMode.Append);
 
             byte[] inputBytes = new byte[input.Length];
@@ -53,6 +54,7 @@ namespace Index_lib{
             output.Write(inputBytes,0,inputBytes.Length);
             
             output.Close();
+            */
         }
 
         public FileStream ReadFromFile(string path){

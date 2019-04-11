@@ -55,6 +55,8 @@ namespace P2P_lib
 
                 while(this._queue.TryDequeue(out file)){
 
+                    Console.WriteLine("Current queued files: "+_queue.Count);
+
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
                     string compressedFilePath = this._path + ".hidden\\" + file.GetHash();

@@ -56,11 +56,12 @@ namespace TorPdos{
                 idx.buildIndex();
             }
 
+            idx.Start();
+
             Console.WriteLine(IDHandler.GetUUID(path));
             // Prepare P2PNetwork
             p2p = new Network(25565, idx, path);
             p2p.Start();
-
 
             while (running){
                 string console = Console.ReadLine();
@@ -71,6 +72,7 @@ namespace TorPdos{
                     idx.save();
                     p2p.saveFile();
                     p2p.Stop();
+                    idx.Stop();
                     running = false;
                 } else{
                     if (console.StartsWith("add") && param.Length == 3){
@@ -114,23 +116,21 @@ namespace TorPdos{
             }
         }
 
-        private static void Idx_FileDeleted(IndexFile file){
-            if (file == null){
-                Console.WriteLine("File deleted: null...");
-            } else{
-                Console.WriteLine("File deleted: " + file.hash);
-            }
+        private static void Idx_FileDeleted(string hash)
+        {
+            //throw new NotImplementedException();
+            Console.WriteLine("Deleted: "+hash);
         }
 
         private static void Idx_FileAdded(IndexFile file){
-            Console.WriteLine("File added: " + file.hash);
+            Console.WriteLine("Added: " + file.hash);
 
-            p2p.UploadFile(file.hash, file.getPath(), 5);
+            //p2p.UploadFile(file.hash, file.getPath(), 5);
             //p2p.UploadFileToNetwork(file.paths[0], 3);
         }
 
         private static void Idx_FileChanged(IndexFile file){
-            Console.WriteLine("File changed: " + file.hash);
+            //Console.WriteLine("File changed: " + file.hash);
         }
 
         /*
