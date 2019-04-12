@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 using Index_lib;
 using Microsoft.Win32;
 using Compression;
 using Encryption;
+using NLog;
 using P2P_lib.Messages;
 
 namespace P2P_lib
@@ -26,6 +28,7 @@ namespace P2P_lib
         private bool pendingReceiver = true;
         private FileSender sender;
         private Receiver _receiver;
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("UploadLogger");
 
         public UploadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports, BlockingCollection<Peer> peers)
         {
@@ -89,10 +92,19 @@ namespace P2P_lib
                     foreach (Peer peer in receivingPeers)
                     {
                         int port = _ports.GetAvailablePort();
-                        _receiver = new Receiver(port);
-                        _receiver.MessageReceived += this._receiver_MessageReceived;
-                        _receiver.start();
-                   
+                        try{
+                            _receiver = new Receiver(port);
+                            _receiver.MessageReceived += this._receiver_MessageReceived;
+                            _receiver.start();
+                        }
+                        catch (SocketException e){
+                            logger.Log(LogLevel.Fatal, e);
+                            throw;
+                        }
+                        catch (Exception e){
+                            logger.Warn(e);
+                        }
+
                         UploadMessage upload = new UploadMessage(peer);
                         upload.filesize = file.GetFilesize();
                         upload.filename = filename;

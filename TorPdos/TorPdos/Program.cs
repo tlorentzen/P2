@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ID_lib;
 using Index_lib;
 using Microsoft.Win32;
+using NLog;
 using P2P_lib;
 
 namespace TorPdos{
@@ -13,6 +14,7 @@ namespace TorPdos{
         static Network p2p;
         public static string publicUuid;
         public static string FilePath;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         [STAThread]
         static void Main(string[] args){
@@ -20,11 +22,12 @@ namespace TorPdos{
             Boolean running = true;
             RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm TorPdos = new MyForm();
+
             if (MyReg.GetValue("Path") == null){
                 Application.Run(TorPdos);
             }
             //End of what needs to run at the Absolute start of the program.
-            
+
 
             string ownIP = NetworkHelper.getLocalIPAddress();
 
@@ -34,7 +37,6 @@ namespace TorPdos{
             Console.WriteLine("UUID: " + DiskHelper.getRegistryValue("UUID"));
 
             string path = (MyReg.GetValue("Path").ToString());
-            
 
             // Load Index
             if (!Directory.Exists(path)){
@@ -57,6 +59,7 @@ namespace TorPdos{
             // Prepare P2PNetwork
             p2p = new Network(25565, idx, path);
             p2p.Start();
+
 
             while (running){
                 string console = Console.ReadLine();
@@ -113,10 +116,9 @@ namespace TorPdos{
             }
         }
 
-        private static void Idx_FileDeleted(string hash)
-        {
+        private static void Idx_FileDeleted(string hash){
             //throw new NotImplementedException();
-            Console.WriteLine(@"Deleted: "+hash);
+            Console.WriteLine(@"Deleted: " + hash);
         }
 
         private static void Idx_FileAdded(IndexFile file){

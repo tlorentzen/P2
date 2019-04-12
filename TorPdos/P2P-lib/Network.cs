@@ -36,6 +36,8 @@ namespace P2P_lib{
         private List<Thread> threads = new List<Thread>();
         private NetworkPorts ports = new NetworkPorts();
 
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("NetworkLogging");
+
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
             this._port = port;

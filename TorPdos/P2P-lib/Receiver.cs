@@ -1,19 +1,20 @@
-﻿﻿using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using P2P_lib.Messages;
- using LogLevel = NLog.LogLevel;
+using LogLevel = NLog.LogLevel;
 
 
- namespace P2P_lib{
+namespace P2P_lib{
     public class Receiver{
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void DidReceive(BaseMessage msg);
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("ReceiverLogging");
+        private static NLog.Logger slogger = NLog.LogManager.GetLogger("SocketException");
 
 
         //This event can cause any method which conforms
@@ -37,7 +38,7 @@ using P2P_lib.Messages;
             server = new TcpListener(this.ip, this.port);
             server.AllowNatTraversal(true);
             server.Start();
-            
+
 
             listening = true;
 
@@ -51,7 +52,6 @@ using P2P_lib.Messages;
         }
 
         private void connectionHandler(){
-            
             while (this.listening){
                 try{
                     TcpClient client = server.AcceptTcpClient();
@@ -74,9 +74,11 @@ using P2P_lib.Messages;
                         MessageReceived(message);
                     }
                 }
+                catch (SocketException e){
+                    slogger.Log(LogLevel.Info,e);
+                }
                 catch (Exception e){
-                    logger.Error(e);
-                    logger.Log(LogLevel.Error,e);
+                    logger.Log(LogLevel.Error, e);
                 }
             }
         }

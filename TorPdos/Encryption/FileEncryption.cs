@@ -6,6 +6,7 @@ using System.Text;
 namespace Encryption{
 
     public class FileEncryption{
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("EncryptionLogging");
         //Sets Buffersize for encryption and decryption.
         private const int BUFFERSIZE = 100048576;
 
@@ -68,8 +69,7 @@ namespace Encryption{
                             }
                         }
                         catch (Exception e){
-                            Console.WriteLine(e);
-                            throw;
+                            logger.Fatal(e);
                         }finally{
                             fsIn.Close();
                         }
@@ -123,8 +123,7 @@ namespace Encryption{
                                 fsOut.Write(buffer, 0, read);
                             }
                         }catch (Exception e){
-                            Console.WriteLine(e);
-                            throw;
+                            logger.Fatal(e);
                         }finally{
                             fsOut.Close();
                         }
