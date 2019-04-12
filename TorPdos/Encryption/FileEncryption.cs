@@ -4,9 +4,9 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace Encryption{
-
     public class FileEncryption{
         private static NLog.Logger logger = NLog.LogManager.GetLogger("EncryptionLogging");
+
         //Sets Buffersize for encryption and decryption.
         private const int BUFFERSIZE = 100048576;
 
@@ -26,13 +26,12 @@ namespace Encryption{
 
             //The encrypted output file.
             using (FileStream fsCrypt = new FileStream(Path + ".aes", FileMode.Create)){
-
                 //Converts password into bytes
                 byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
                 //Set up AES for encryption
                 RijndaelManaged aes = new RijndaelManaged();
-                
+
                 //Keysize is the 
                 aes.KeySize = 256;
                 aes.BlockSize = 128;
@@ -53,29 +52,39 @@ namespace Encryption{
 
                 //Runs through the file using CryptoStream
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write)){
+                    try{
+                        //The input stream, this is the input file, based on the inputs given in the file creation.
+                        using (FileStream fsIn = new FileStream(Path + Extension, FileMode.Open, FileAccess.Read,
+                            FileShare.ReadWrite)){
+                            //Buffer on 1 mb
+                            byte[] buffer = new byte[BUFFERSIZE];
 
-                    //The input stream, this is the input file, based on the inputs given in the file creation.
-                    using (FileStream fsIn = new FileStream(Path + Extension,  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
 
-                        //Buffer on 1 mb
-                        byte[] buffer = new byte[BUFFERSIZE];
-
-
-                        //Tries and catches regarding opening and reading file
-                        try{
-                            int read;
-                            while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0){
-                                cs.Write(buffer, 0, read);
+                            //Tries and catches regarding opening and reading file
+                            try{
+                                int read;
+                                while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0){
+                                    cs.Write(buffer, 0, read);
+                                }
+                            }
+                            catch (Exception e){
+                                logger.Fatal(e);
+                            }
+                            finally{
+                                fsIn.Close();
                             }
                         }
-                        catch (Exception e){
-                            logger.Fatal(e);
-                        }finally{
-                            fsIn.Close();
-                        }
                     }
+                    catch (FileNotFoundException e){
+                        logger.Fatal(e);
+                    }
+                    catch (Exception e){
+                        logger.Warn(e);
+                    }
+
                     cs.Close();
                 }
+
                 fsCrypt.Close();
             }
         }
@@ -87,8 +96,8 @@ namespace Encryption{
 
 
             //Reading through the file
-            using (FileStream fsCrypt = new FileStream(Path + ".aes",  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
-
+            using (FileStream fsCrypt =
+                new FileStream(Path + ".aes", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
                 //Reads the random salt of the file.
                 fsCrypt.Read(salt, 0, salt.Length);
 
@@ -113,7 +122,6 @@ namespace Encryption{
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read)){
                     //Creates the output file
                     using (FileStream fsOut = new FileStream("./Output" + Extension, FileMode.Create)){
-
                         byte[] buffer = new byte[BUFFERSIZE];
 
                         //Outputs the read file into the output file.
@@ -122,9 +130,11 @@ namespace Encryption{
                             while ((read = cs.Read(buffer, 0, buffer.Length)) > 0){
                                 fsOut.Write(buffer, 0, read);
                             }
-                        }catch (Exception e){
+                        }
+                        catch (Exception e){
                             logger.Fatal(e);
-                        }finally{
+                        }
+                        finally{
                             fsOut.Close();
                         }
                     }

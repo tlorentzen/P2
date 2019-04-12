@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.IO;
+using NLog.Fluent;
 
 namespace P2P_lib{
     public class FileReceiver{
@@ -81,9 +82,11 @@ namespace P2P_lib{
 
                 client.Close();
             }
+            catch (InvalidOperationException e){
+                logger.Fatal(e);
+            }
             catch (Exception e){
                 logger.Error(e);
-                throw;
             }
         }
 

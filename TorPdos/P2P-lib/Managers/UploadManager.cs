@@ -99,7 +99,6 @@ namespace P2P_lib
                         }
                         catch (SocketException e){
                             logger.Log(LogLevel.Fatal, e);
-                            throw;
                         }
                         catch (Exception e){
                             logger.Warn(e);

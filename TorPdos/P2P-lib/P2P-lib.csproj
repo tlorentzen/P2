@@ -81,7 +81,6 @@
     <Compile Include="Managers\UploadManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NLog.xsd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
