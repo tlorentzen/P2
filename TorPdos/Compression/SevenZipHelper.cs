@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using SevenZip;
+
 //Fecthed from https://github.com/episage/lzma-compressor
 
-namespace SevenZip.Compression.LZMA{
+namespace Compression{
     public static class SevenZipHelper{
         static int dictionary = 1 << 23;
 
@@ -29,17 +31,17 @@ namespace SevenZip.Compression.LZMA{
 
         // these are the default properties, keeping it simple for now:
         static object[] properties ={
-            (Int32)(dictionary),
-            (Int32)(2),
-            (Int32)(3),
-            (Int32)(0),
-            (Int32)(2),
-            (Int32)(128),
+            dictionary,
+            2,
+            3,
+            0,
+            2,
+            128,
             "bt4",
             eos
         };
 
-        public static byte[] Compress(byte[] inputBytes){
+        public static byte[] compress(byte[] inputBytes){
             MemoryStream inStream = new MemoryStream(inputBytes);
             MemoryStream outStream = new MemoryStream();
             SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
@@ -52,7 +54,7 @@ namespace SevenZip.Compression.LZMA{
             return outStream.ToArray();
         }
 
-        public static byte[] Decompress(byte[] inputBytes){
+        public static byte[] decompress(byte[] inputBytes){
             MemoryStream newInStream = new MemoryStream(inputBytes);
 
             SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();

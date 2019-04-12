@@ -18,9 +18,9 @@ namespace TorPdos.TEST
             Random rand = new Random();
             rand.NextBytes(expected);
 
-            byte[] compressed = ByteCompressor.CompressBytes(expected);
+            byte[] compressed = ByteCompressor.compressBytes(expected);
 
-            byte[] result = ByteCompressor.DecompressBytes(compressed);
+            byte[] result = ByteCompressor.decompressBytes(compressed);
 
             CollectionAssert.AreEqual(expected, result);
         }
@@ -32,7 +32,7 @@ namespace TorPdos.TEST
             Random rand = new Random();
             rand.NextBytes(notExpected);
 
-            byte[] actual = ByteCompressor.CompressBytes(notExpected);
+            byte[] actual = ByteCompressor.compressBytes(notExpected);
 
             CollectionAssert.AreNotEqual(notExpected, actual);
 
@@ -45,8 +45,8 @@ namespace TorPdos.TEST
 
             byte[] expected = HashFile(FilePath);
 
-            ByteCompressor.CompressFile(FilePath, "comp.lzma");
-            ByteCompressor.DecompressFile("comp.lzma", "result");
+            ByteCompressor.compressFile(FilePath, "comp.lzma");
+            ByteCompressor.decompressFile("comp.lzma", "result");
 
             byte[] result = HashFile("result.md");
 
@@ -63,7 +63,7 @@ namespace TorPdos.TEST
             string FilePath = "TESTFILE.md";
 
             byte[] notExpected = HashFile(FilePath);
-            ByteCompressor.CompressFile(FilePath, "comp.lzma");
+            ByteCompressor.compressFile(FilePath, "comp.lzma");
             byte[] actual = HashFile("comp.lzma");
             File.Delete("comp.lzma");
 

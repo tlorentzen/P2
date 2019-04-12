@@ -1,12 +1,11 @@
-﻿﻿using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using ID_lib;
-using System.Configuration;
-using System.Runtime.CompilerServices;
-using Microsoft.Win32;
+﻿﻿using System;
+ using System.Drawing;
+ using System.IO;
+ using System.Windows.Forms;
+ using ID_lib;
+ using Microsoft.Win32;
 
-namespace TorPdos{
+ namespace TorPdos{
 
     public class MyForm : Form{
         private static readonly string backgroundColour = "#FBF9FF",
@@ -94,7 +93,8 @@ namespace TorPdos{
             Font = new Font("Consolas", 12, FontStyle.Regular),
             Text = "Okay",
             ForeColor = ColorTranslator.FromHtml(lblColour),
-        };
+        };
+
         Label lblLogOut = new Label
         {
             Location = new Point(300, 230),
@@ -199,11 +199,11 @@ namespace TorPdos{
             Resize += MyformResize; 
             
         }
-        private void BtnCreateClick(object sender, System.EventArgs e)
+        private void BtnCreateClick(object sender, EventArgs e)
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                string uuid = IDHandler.CreateUser(path, txtPassword.Text);
+                string uuid = IdHandler.createUser(path, txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -214,10 +214,10 @@ namespace TorPdos{
             }
         }
 
-        void BtnClickLogin(object sender, System.EventArgs e)
+        void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IDHandler.IsValidUser(path, uuid, pass))
+            if (IdHandler.isValidUser(path, uuid, pass))
             {
                 LoggedIn();
             }
@@ -226,7 +226,7 @@ namespace TorPdos{
                 Controls.Add(lblNope);
             }
         }
-        private void LblOkayClick(object sender, System.EventArgs e){
+        private void LblOkayClick(object sender, EventArgs e){
             MyReg.SetValue("Path", PathName()+"\\");
             path = PathName()+@"\.hidden";
             
@@ -239,20 +239,20 @@ namespace TorPdos{
             Create();
         }
 
-        private void BtnBrowseClick(object sender, System.EventArgs e){
+        private void BtnBrowseClick(object sender, EventArgs e){
             using (FolderBrowserDialog fbd = new FolderBrowserDialog()){
                 if (fbd.ShowDialog() == DialogResult.OK)
                     txtPath.Text = fbd.SelectedPath;
             }
         }
 
-        private void LblGoBackClick(object sender, System.EventArgs e){
+        private void LblGoBackClick(object sender, EventArgs e){
             FirstStartUp();
         }
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = IDHandler.GetUUID(path);
+            txtUsername.Text = IdHandler.getUuid(path);
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
@@ -296,12 +296,12 @@ namespace TorPdos{
             lblLogOut.Click += LblLogOutClick;
         }
 
-        private void LblLogOutClick(object sender, System.EventArgs e)
+        private void LblLogOutClick(object sender, EventArgs e)
         {
             Login();
         }
 
-        void MyformResize(object sender, System.EventArgs e){
+        void MyformResize(object sender, EventArgs e){
             if (this.WindowState == FormWindowState.Minimized){
                 Hide();
                 noiTorPdos.Visible = true;
@@ -310,7 +310,7 @@ namespace TorPdos{
             }
         }
 
-        void noiTorPdosDoubleClick(object sender, System.EventArgs e){
+        void noiTorPdosDoubleClick(object sender, EventArgs e){
             Show();
             noiTorPdos.Visible = false;
             WindowState = FormWindowState.Normal;

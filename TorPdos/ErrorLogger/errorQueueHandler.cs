@@ -6,9 +6,10 @@ namespace ErrorLogger{
 
         public event ErrorQueued ErrorAddedToQueue;
 
-        public new void Enqueue(T item){
+        public void enqueue(T item){
             base.Enqueue(item);
-            this.ErrorAddedToQueue();
+            var onErrorAddedToQueue = ErrorAddedToQueue;
+            if (onErrorAddedToQueue != null) onErrorAddedToQueue();
         }
     }
 }

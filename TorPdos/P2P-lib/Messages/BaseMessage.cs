@@ -37,7 +37,7 @@ namespace P2P_lib.Messages
         {
             this.ToUUID = to.getUUID();
             this.to = to.GetIP();
-            this.FromUUID = DiskHelper.GetRegistryValue("UUID");
+            this.FromUUID = DiskHelper.getRegistryValue("UUID");
             this.from = NetworkHelper.getLocalIPAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;

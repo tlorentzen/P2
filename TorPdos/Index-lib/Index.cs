@@ -1,20 +1,18 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Security.Permissions;
-using Newtonsoft.Json;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Threading;
 using System.Linq;
+using System.Security.Permissions;
+using System.Text;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace Index_lib{
     public class Index{
         private string _path;
-        private string _indexFilePath = null;
-        private bool _debug = false;
+        private readonly string _indexFilePath;
+        private bool _debug;
         private HiddenFolder _hiddenFolder;
 
         //This delegate can be used to point to methods
@@ -27,24 +25,24 @@ namespace Index_lib{
         public event FileDeletedHandler FileDeleted;
         public event FileEventHandler FileChanged;
 
-        List<IndexFile> index = new List<IndexFile>();
+        List<IndexFile> _index = new List<IndexFile>();
         FileSystemWatcher watcher = new FileSystemWatcher();
         private ConcurrentQueue<FileSystemEventArgs> _fileHandlingQueue = new ConcurrentQueue<FileSystemEventArgs>();
         Thread _fileHandlerThread;
-        private ManualResetEvent waitHandle;
-        private Boolean is_running = false;
+        private ManualResetEvent _waitHandle;
+        public Boolean isRunning;
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(String path){
             _indexFilePath = path + @"\.hidden\index.json";
 
             if (Directory.Exists(path)){
-                this._path = path;
+                _path = path;
             } else{
                 throw new DirectoryNotFoundException();
             }
 
-            watcher.Path = this._path;
+            watcher.Path = _path;
             watcher.IncludeSubdirectories = true;
             //watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
 
@@ -52,39 +50,39 @@ namespace Index_lib{
             _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
 
             // Add event handlers.
-            watcher.Changed += OnChanged;
-            watcher.Created += OnChanged;
-            watcher.Deleted += OnChanged;
-            watcher.Renamed += OnRenamed;
+            watcher.Changed += onChanged;
+            watcher.Created += onChanged;
+            watcher.Deleted += onChanged;
+            watcher.Renamed += onRenamed;
         }
 
         public void Start(){
-            is_running = true;
-            this.waitHandle = new ManualResetEvent(false);
+            isRunning = true;
+            _waitHandle = new ManualResetEvent(false);
 
-            _fileHandlerThread = new Thread(this.HandleFileEvent);
+            _fileHandlerThread = new Thread(handleFileEvent);
             _fileHandlerThread.Start();
 
             watcher.EnableRaisingEvents = true;
         }
 
-        public void Stop(){
-            is_running = false;
-            this.waitHandle.Close();
+        public void stop(){
+            isRunning = false;
+            _waitHandle.Close();
             watcher.EnableRaisingEvents = false;
         }
 
-        public string GetPath(){
+        public string getPath(){
             return _path;
         }
 
         public void reIndex(){
-            this.index.Clear();
-            this.buildIndex();
+            _index.Clear();
+            buildIndex();
         }
 
-        public IndexFile GetEntry(string hash){
-            foreach (IndexFile ifile in index){
+        public IndexFile getEntry(string hash){
+            foreach (IndexFile ifile in _index){
                 if (ifile.hash.Equals(hash)){
                     return ifile;
                 }
@@ -95,16 +93,16 @@ namespace Index_lib{
 
         public void buildIndex(){
             string[] files =
-                Directory.GetFiles(this._path, "*",
+                Directory.GetFiles(_path, "*",
                     SearchOption.AllDirectories); //TODO rewrite windows functionality D://
 
             foreach (string filePath in files){
                 if (!IgnoreHidden(filePath)){
-                    if (!this._indexFilePath.Equals(filePath)){
+                    if (!_indexFilePath.Equals(filePath)){
                         bool foundInIndex = false;
                         IndexFile file = new IndexFile(filePath);
 
-                        foreach (IndexFile ifile in index){
+                        foreach (IndexFile ifile in _index){
                             if (ifile.Equals(file)){
                                 ifile.addPath(file.getPath());
                                 foundInIndex = true;
@@ -113,10 +111,10 @@ namespace Index_lib{
                         }
 
                         if (!foundInIndex){
-                            index.Add(file);
+                            _index.Add(file);
                         }
 
-                        if (this._debug){
+                        if (_debug){
                             Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.getHash() +
                                               " - " + filePath);
                         }
@@ -124,32 +122,32 @@ namespace Index_lib{
                 }
             }
 
-            this.save();
+            save();
         }
         
         public void debug(bool value){
-            this._debug = value;
+            _debug = value;
         }
 
         public void listFiles(){
-            foreach (IndexFile file in index){
+            foreach (IndexFile file in _index){
                 Console.WriteLine(file.getPath() + " Paths: " + file.paths.Count);
             }
         }
 
         public int getIndexSize(){
-            return this.index.Count;
+            return _index.Count;
         }
 
-        private void HandleFileEvent(){
+        private void handleFileEvent(){
 
-            while (is_running)
+            while (isRunning)
             {
-                this.waitHandle.WaitOne();
+                _waitHandle.WaitOne();
 
                 FileSystemEventArgs e;
 
-                while (this._fileHandlingQueue.TryDequeue(out e))
+                while (_fileHandlingQueue.TryDequeue(out e))
                 {
                     if (IgnoreHidden(e.FullPath))
                         continue;
@@ -170,7 +168,7 @@ namespace Index_lib{
                         bool foundInIndex = false;
                         IndexFile eventFile = new IndexFile(e.FullPath);
 
-                        foreach (IndexFile file in index)
+                        foreach (IndexFile file in _index)
                         {
                             if (file.Equals(eventFile))
                             {
@@ -181,7 +179,7 @@ namespace Index_lib{
 
                         if (foundInIndex)
                         {
-                            foreach (IndexFile file in index)
+                            foreach (IndexFile file in _index)
                             {
                                 if (file.Equals(eventFile))
                                 {
@@ -192,7 +190,7 @@ namespace Index_lib{
                         }
                         else
                         {
-                            index.Add(eventFile);
+                            _index.Add(eventFile);
                             FileAdded(eventFile);
                         }
 
@@ -205,7 +203,7 @@ namespace Index_lib{
                         IndexFile foundMatch = eventFile;
 
                         // Handle change
-                        foreach (IndexFile file in index)
+                        foreach (IndexFile file in _index)
                         {
                             if (file.Equals(eventFile))
                             {
@@ -218,7 +216,7 @@ namespace Index_lib{
                         // handle create event
                         if (!foundInIndex)
                         {
-                            foreach (IndexFile file in index)
+                            foreach (IndexFile file in _index)
                             {
                                 if (file.paths.Contains(e.FullPath))
                                 {
@@ -228,17 +226,17 @@ namespace Index_lib{
                                     }
                                     else
                                     {
-                                        index.Remove(file);
+                                        _index.Remove(file);
                                         break;
                                     }
                                 }
                             }
 
-                            index.Add(eventFile);
+                            _index.Add(eventFile);
                         }
                         else
                         {
-                            foreach (IndexFile file in index)
+                            foreach (IndexFile file in _index)
                             {
                                 if (file.paths.Count > 1)
                                 {
@@ -257,7 +255,7 @@ namespace Index_lib{
                                     {
                                         if (path == eventFile.paths[0] && !eventFile.Equals(file))
                                         {
-                                            index.Remove(file);
+                                            _index.Remove(file);
                                             fileRemoved = true;
                                         }
                                     }
@@ -280,26 +278,26 @@ namespace Index_lib{
                     }
                     else if(e.ChangeType.Equals(WatcherChangeTypes.Deleted)){
 
-                        foreach (IndexFile file in index)
+                        foreach (IndexFile file in _index)
                         {
-                            List<String> pathsToDelete = file.paths.Where(p => p.Equals(e.FullPath) || p.StartsWith(e.FullPath)).ToList<String>();
+                            List<String> pathsToDelete = file.paths.Where(p => p.Equals(e.FullPath) || p.StartsWith(e.FullPath)).ToList();
 
                             foreach(String path in pathsToDelete){
                                 file.paths.Remove(path);
                             }
                         }
 
-                        List<IndexFile> filesToDelete = index.Where(p => p.paths.Count == 0).ToList();
+                        List<IndexFile> filesToDelete = _index.Where(p => p.paths.Count == 0).ToList();
 
                         foreach(IndexFile file in filesToDelete)
                         {
                             FileDeleted(file.hash);
-                            index.Remove(file);
+                            _index.Remove(file);
                         }
                     }
                 }
 
-                this.waitHandle.Reset();
+                _waitHandle.Reset();
             }
         }
 
@@ -381,17 +379,17 @@ namespace Index_lib{
 
 
         // Define the event handlers.
-        private void OnChanged(object source, FileSystemEventArgs e){
+        private void onChanged(object source, FileSystemEventArgs e){
 
 
-            this._fileHandlingQueue.Enqueue(e);
+            _fileHandlingQueue.Enqueue(e);
 
             if(e.ChangeType.Equals(WatcherChangeTypes.Deleted)){
                 Console.WriteLine("Deleting: "+e.FullPath);
             }
 
             
-            this.waitHandle.Set();
+            _waitHandle.Set();
 
 
             /*
@@ -491,24 +489,24 @@ namespace Index_lib{
         }
         */
 
-        private void OnRenamed(object source, RenamedEventArgs e){
+        private void onRenamed(object source, RenamedEventArgs e){
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
 
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)){
-                foreach (IndexFile file in index){
+                foreach (IndexFile file in _index){
                     for (int i = 0; i < file.paths.Count; i++){
-                        if (file.paths[i].StartsWith(this._path + @"\" + e.OldName)){
+                        if (file.paths[i].StartsWith(_path + @"\" + e.OldName)){
                             file.paths[i] = file.paths[i]
-                                .Replace(this._path + @"\" + e.OldName, this._path + @"\" + e.Name);
+                                .Replace(_path + @"\" + e.OldName, _path + @"\" + e.Name);
                         }
                     }
                 }
             } else{
                 IndexFile renamedFile = new IndexFile(e.FullPath);
 
-                foreach (IndexFile file in index){
+                foreach (IndexFile file in _index){
                     if (file.Equals(renamedFile)){
                         for (int i = 0; i < file.paths.Count; i++){
                             if (file.paths[i].Equals(e.OldFullPath)){
@@ -586,9 +584,9 @@ namespace Index_lib{
         }
 
         public bool load(){
-            if (_indexFilePath != null && File.Exists(this._indexFilePath)){
-                string json = File.ReadAllText(this._indexFilePath);
-                this.index = JsonConvert.DeserializeObject<List<IndexFile>>(json);
+            if (_indexFilePath != null && File.Exists(_indexFilePath)){
+                string json = File.ReadAllText(_indexFilePath);
+                _index = JsonConvert.DeserializeObject<List<IndexFile>>(json);
                 return true;
             }
 
@@ -597,9 +595,9 @@ namespace Index_lib{
 
         public void save(){
             if (_indexFilePath != null){
-                string json = JsonConvert.SerializeObject(index);
+                string json = JsonConvert.SerializeObject(_index);
 
-                using (var fileStream = _hiddenFolder.WriteToFile(this._indexFilePath)){
+                using (var fileStream = _hiddenFolder.writeToFile(_indexFilePath)){
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(json);
                     fileStream.Write(jsonIndex, 0, jsonIndex.Length);
                 }
@@ -607,23 +605,23 @@ namespace Index_lib{
         }
 
         public void status(){
-            Console.WriteLine("");
-            Console.WriteLine("#### Index status ####");
-            Console.WriteLine("Unique files: " + this.index.Count);
+            Console.WriteLine(@"");
+            Console.WriteLine(@"#### Index status ####");
+            Console.WriteLine("Unique files: " + _index.Count);
 
             int pathCount = 0;
 
-            foreach (IndexFile file in index){
+            foreach (IndexFile file in _index){
                 pathCount += file.paths.Count;
             }
 
             Console.WriteLine("Paths: " + pathCount);
-            Console.WriteLine("");
+            Console.WriteLine(@"");
         }
 
         public void printInfo(){
             int pathNum;
-            foreach (IndexFile file in index){
+            foreach (IndexFile file in _index){
                 pathNum = 0;
                 Console.WriteLine("Hash: {0}", file.hash);
                 foreach (string path in file.paths){

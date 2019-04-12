@@ -24,7 +24,7 @@ namespace P2P_lib{
         public NetworkProtocols(Index index, Network network){
             _index = index;
             _network = network;
-            _hiddenFolder = new HiddenFolder(_index.GetPath() + @"\.hidden\");
+            _hiddenFolder = new HiddenFolder(_index.getPath() + @"\.hidden\");
         }
 
         //This is the function called to upload a file to the network
@@ -41,19 +41,19 @@ namespace P2P_lib{
             int time = utc.Millisecond + utc.Second * 10 + utc.Minute * 100 + utc.Hour * 1000 + utc.Month * 10000;
 
             //Then a path is made for the temporary files
-            string compressedFilePath = _index.GetPath() + ".hidden\\" + time.ToString();
+            string compressedFilePath = _index.getPath() + ".hidden\\" + time.ToString();
 
             Console.WriteLine("File to compress: {0} to path: {1}", filePath, compressedFilePath);
 
             //The file is then compressed
-            ByteCompressor.CompressFile(filePath, compressedFilePath);
+            ByteCompressor.compressFile(filePath, compressedFilePath);
 
             //And then encrypted
             FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
             encryption.doEncrypt("password");
-            _hiddenFolder.RemoveFile(compressedFilePath + ".lzma");
+            _hiddenFolder.removeFile(compressedFilePath + ".lzma");
             string readyFile = compressedFilePath + ".aes";
-            Console.WriteLine("File is ready for upload");
+            Console.WriteLine(@"File is ready for upload");
 
             //A copy of the compressed and encrypted file is then send to the set number of peers
             for (int i = 0; i < copies; i++){

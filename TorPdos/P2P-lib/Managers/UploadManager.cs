@@ -72,12 +72,12 @@ namespace P2P_lib
                     }
 
                     // Compress file
-                    ByteCompressor.CompressFile(filePath, compressedFilePath);
+                    ByteCompressor.compressFile(filePath, compressedFilePath);
 
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
                     encryption.doEncrypt("password");
-                    _hiddenFolder.RemoveFile(compressedFilePath + ".lzma");
+                    _hiddenFolder.removeFile(compressedFilePath + ".lzma");
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
@@ -116,7 +116,7 @@ namespace P2P_lib
                         _ports.Release(port);
                     }
 
-                    _hiddenFolder.RemoveFile(encryptedFilePath);
+                    _hiddenFolder.removeFile(encryptedFilePath);
                 }
 
                 this.waitHandle.Reset();

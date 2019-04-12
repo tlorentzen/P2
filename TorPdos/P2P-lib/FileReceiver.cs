@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using P2P_lib.Messages;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
@@ -14,8 +9,8 @@ namespace P2P_lib{
         private IPAddress _ip;
         private string _path;
         private int _port;
-        private TcpListener _server = null;
-        private bool _listening = false;
+        private TcpListener _server;
+        public bool listening = false;
         private Thread _listener;
         private byte[] _buffer;
         private string _filename;
@@ -41,13 +36,13 @@ namespace P2P_lib{
             _server.AllowNatTraversal(true);
             _server.Start();
 
-            _listening = true;
+            listening = true;
             _listener = new Thread(this.connectionHandler);
             _listener.Start();
         }
 
         public void stop(){
-            this._listening = false;
+            this.listening = false;
             _server.Stop();
         }
 
@@ -57,7 +52,7 @@ namespace P2P_lib{
 
             using (NetworkStream stream = client.GetStream()){
 
-                Console.WriteLine("Receiving file");
+                Console.WriteLine(@"Receiving file");
                 using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
                     Console.WriteLine("Creating file: " + this._filename);
                     int i;
@@ -67,7 +62,7 @@ namespace P2P_lib{
                         //fileStream.Write(_buffer, 0, _buffer.Length);
                     }
 
-                    Console.WriteLine("File done downloading");
+                    Console.WriteLine(@"File done downloading");
                     fileStream.Close();
                 }
 

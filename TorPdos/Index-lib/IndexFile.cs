@@ -18,31 +18,31 @@ namespace Index_lib
 
         public IndexFile(string path) {
             if (path != null) {
-                this.addPath(path);
+                addPath(path);
             }
         }
 
         public void addPath(string path, bool ghost=false) {
             if (!ghost && File.Exists(path)) {
-                this.paths.Add(path);
-                this.makeFileHash();
+                paths.Add(path);
+                makeFileHash();
             }
 
-            if(this.paths.Count == 1){
-                this.size = new FileInfo(path).Length;
+            if(paths.Count == 1){
+                size = new FileInfo(path).Length;
             }
 
             this.ghost = ghost;
         }
 
         // Deep copy.
-        public IndexFile Copy(){
+        public IndexFile copy(){
             IndexFile file = new IndexFile();
-            file.hash = this.hash;
-            file.size = this.size;
-            file.ghost = this.ghost;
+            file.hash = hash;
+            file.size = size;
+            file.ghost = ghost;
 
-            foreach (String path in this.paths){
+            foreach (String path in paths){
                 file.paths.Add(path);
             }
 
@@ -50,22 +50,22 @@ namespace Index_lib
         }
 
         public bool isGhostFile() {
-            return this.ghost;
+            return ghost;
         }
 
         public string getHash() {
-            return this.hash;
+            return hash;
         }
 
         public string getPath(int pathNumber = 0) {
             int _pathNumber = (pathNumber > paths.Count ? paths.Count -1 : pathNumber);
-            return this.paths[_pathNumber];
+            return paths[_pathNumber];
         }
 
         private void makeFileHash() {
             using (var md5 = MD5.Create())
             {
-                using (FileStream fs = new FileStream(this.paths[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
+                using (FileStream fs = new FileStream(paths[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
                     var hash = md5.ComputeHash(fs);
                     this.hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
                     fs.Close();
@@ -74,11 +74,11 @@ namespace Index_lib
         }
 
         public void rehash() {
-            this.makeFileHash();
+            makeFileHash();
         }
 
         public override bool Equals(object obj){
-            return (obj is IndexFile) && ((IndexFile)obj).hash == this.hash;
+            return (obj is IndexFile) && ((IndexFile)obj).hash == hash;
         }
 
     }

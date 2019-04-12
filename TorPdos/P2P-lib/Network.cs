@@ -163,7 +163,7 @@ namespace P2P_lib{
         public void saveFile(){
             var json = JsonConvert.SerializeObject(peers);
             if (_path == null) return;
-            using (var fileStream = _hiddenPath.WriteToFile(_peerFilePath)){
+            using (var fileStream = _hiddenPath.writeToFile(_peerFilePath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
@@ -200,11 +200,11 @@ namespace P2P_lib{
                 int replyPort = upload.port;
                 string uuid = upload.FromUUID;
 
-                if (DiskHelper.GetTotalFreeSpace("C:\\") > upload.filesize){
+                if (DiskHelper.getTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
-                    Console.WriteLine("Request accepted");
+                    Console.WriteLine(@"Request accepted");
                 } else{
-                    Console.WriteLine("Not enough space");
+                    Console.WriteLine(@"Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
                 
@@ -299,7 +299,7 @@ namespace P2P_lib{
                 }
             }
 
-            Console.WriteLine("PingHandler stopped...");
+            Console.WriteLine(@"PingHandler stopped...");
         }
         public void UploadFileToNetwork(string filePath, int copies, int seed = 0) {
             new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);

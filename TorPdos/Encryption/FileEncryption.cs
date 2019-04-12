@@ -1,28 +1,21 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Encryption{
 
     public class FileEncryption{
-        private string _path;
-        private string _extension;
         //Sets Buffersize for encryption and decryption.
         private const int BUFFERSIZE = 100048576;
 
-        private string Path{
-            get{ return _path; }
-            set{ _path = value; }
-        }
+        private string Path{ get; set; }
 
-        private string Extension{
-            get{ return _extension; }
-            set{ _extension = value; }
-        }
+        private string Extension{ get; set; }
 
         public FileEncryption(string path, string extension){
-            _path = path;
-            _extension = extension;
+            Path = path;
+            Extension = extension;
         }
 
         public void doEncrypt(string password){
@@ -31,37 +24,37 @@ namespace Encryption{
 
 
             //The encrypted output file.
-            using (FileStream fsCrypt = new FileStream(this._path + ".aes", FileMode.Create)){
+            using (FileStream fsCrypt = new FileStream(Path + ".aes", FileMode.Create)){
 
                 //Converts password into bytes
-                byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
                 //Set up AES for encryption
-                RijndaelManaged AES = new RijndaelManaged();
+                RijndaelManaged aes = new RijndaelManaged();
                 
                 //Keysize is the 
-                AES.KeySize = 256;
-                AES.BlockSize = 128;
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
 
                 //Padding modes helps mask the length of the plain text.
-                AES.Padding = PaddingMode.PKCS7;
+                aes.Padding = PaddingMode.PKCS7;
 
                 //Password, used for encryption key of the file.
                 var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
-                AES.Key = key.GetBytes(AES.KeySize / 8);
-                AES.IV = key.GetBytes(AES.BlockSize / 8);
+                aes.Key = key.GetBytes(aes.KeySize / 8);
+                aes.IV = key.GetBytes(aes.BlockSize / 8);
 
                 //Ciphermode helps mask potential patterns within the encrypted text.
-                AES.Mode = CipherMode.CFB;
+                aes.Mode = CipherMode.CFB;
 
                 //Adds the random salt to the start of the output file.
                 fsCrypt.Write(salt, 0, salt.Length);
 
                 //Runs through the file using CryptoStream
-                using (CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateEncryptor(), CryptoStreamMode.Write)){
+                using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write)){
 
                     //The input stream, this is the input file, based on the inputs given in the file creation.
-                    using (FileStream fsIn = new FileStream(this._path + this._extension,  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
+                    using (FileStream fsIn = new FileStream(Path + Extension,  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
 
                         //Buffer on 1 mb
                         byte[] buffer = new byte[BUFFERSIZE];
@@ -89,37 +82,37 @@ namespace Encryption{
 
         public void doDecrypt(string password){
             //Setup to read the salt from the start of the file
-            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
 
 
             //Reading through the file
-            using (FileStream fsCrypt = new FileStream(this._path + ".aes",  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
+            using (FileStream fsCrypt = new FileStream(Path + ".aes",  FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
 
                 //Reads the random salt of the file.
                 fsCrypt.Read(salt, 0, salt.Length);
 
 
                 //Opening a new instance of Rijandeal AES
-                RijndaelManaged AES = new RijndaelManaged();
-                AES.KeySize = 256;
-                AES.BlockSize = 128;
+                RijndaelManaged aes = new RijndaelManaged();
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
 
                 //Takes the password, and verifies it towards the salt, read from the start of the file.
                 var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
-                AES.Key = key.GetBytes(AES.KeySize / 8);
-                AES.IV = key.GetBytes(AES.BlockSize / 8);
+                aes.Key = key.GetBytes(aes.KeySize / 8);
+                aes.IV = key.GetBytes(aes.BlockSize / 8);
 
                 //The padding is used to make it harder to see the length of the encrypted text.
-                AES.Padding = PaddingMode.PKCS7;
+                aes.Padding = PaddingMode.PKCS7;
 
                 //Cipher mode is a way to mask potential patterns within the encrypted text, to make it harder to decrypt.
-                AES.Mode = CipherMode.CFB;
+                aes.Mode = CipherMode.CFB;
 
                 //Runs through the encrypted files, and decrypts it using AES.
-                using (CryptoStream cs = new CryptoStream(fsCrypt, AES.CreateDecryptor(), CryptoStreamMode.Read)){
+                using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read)){
                     //Creates the output file
-                    using (FileStream fsOut = new FileStream("./Output" + this._extension, FileMode.Create)){
+                    using (FileStream fsOut = new FileStream("./Output" + Extension, FileMode.Create)){
 
                         byte[] buffer = new byte[BUFFERSIZE];
 

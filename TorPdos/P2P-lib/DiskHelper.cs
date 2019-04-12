@@ -1,12 +1,11 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Win32;
 
 namespace P2P_lib{
     public class DiskHelper{
-        public static long GetTotalFreeSpace(string driveName){
+        public static long getTotalFreeSpace(string driveName){
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
                 if (drive.IsReady && drive.Name == driveName){
                     return drive.TotalFreeSpace;
@@ -16,7 +15,7 @@ namespace P2P_lib{
             return -1;
         }
 
-        public static string CreateMD5(string input){
+        public static string createMd5(string input){
             // Use input string to calculate MD5 hash
             using (MD5 md5 = MD5.Create()){
                 byte[] inputBytes = Encoding.ASCII.GetBytes(input);
@@ -33,7 +32,7 @@ namespace P2P_lib{
             }
         }
 
-        public static string GetRegistryValue(string key){
+        public static string getRegistryValue(string key){
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             return registry.GetValue(key).ToString();
         }
