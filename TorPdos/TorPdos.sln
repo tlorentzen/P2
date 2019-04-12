@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorPdos.TEST", "TorPdos.TES
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorPdosGuiTest", "TorPdosGuiTest\TorPdosGuiTest.csproj", "{AE80F194-2464-4999-BEF0-0649B430CE4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorLogger", "ErrorLogger\ErrorLogger.csproj", "{80EE5AD6-1DB2-48C6-8AC7-BA1761A61C2F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,10 +63,6 @@ Global
 		{AE80F194-2464-4999-BEF0-0649B430CE4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE80F194-2464-4999-BEF0-0649B430CE4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE80F194-2464-4999-BEF0-0649B430CE4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80EE5AD6-1DB2-48C6-8AC7-BA1761A61C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80EE5AD6-1DB2-48C6-8AC7-BA1761A61C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80EE5AD6-1DB2-48C6-8AC7-BA1761A61C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80EE5AD6-1DB2-48C6-8AC7-BA1761A61C2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

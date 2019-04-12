@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using NLog;
 
 namespace Index_lib{
     public class HiddenFolder{
         private readonly string _path;
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("HiddenFolderLogger");
 
         public HiddenFolder(string path){
             DirectoryInfo directory;
@@ -44,19 +46,18 @@ namespace Index_lib{
             return new FileStream(path, FileMode.Create, FileAccess.Write);
         }
 
-        public void appendToFileLog(string path, string input){
-            FileStream output = new FileStream(path, FileMode.Append);
-
-            byte[] inputBytes;
-            inputBytes = Encoding.UTF8.GetBytes(DateTime.Now + "\n" + input + "\n" +
-                                                "\n \n -------------------------------------- \n");
-            output.Write(inputBytes,0,inputBytes.Length);
-            
-            output.Close();
-        }
-
         public FileStream readFromFile(string path){
-            return new FileStream(path, FileMode.Open, FileAccess.Read);
+            try{
+                return new FileStream(path, FileMode.Open, FileAccess.Read);
+            }
+            catch (FileNotFoundException e){
+                logger.Fatal(e);
+            }
+            catch (Exception e){
+                logger.Error(e);
+            }
+
+            return null;
         }
     }
 }
