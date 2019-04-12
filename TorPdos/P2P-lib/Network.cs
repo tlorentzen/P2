@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Security.Permissions;
 using System.Threading;
+using ErrorLogger;
 using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
@@ -69,6 +70,7 @@ namespace P2P_lib{
             {
                 UploadManager uploadmanager = new UploadManager(upload, ports, peers);
                 DownloadManager downloadmanager = new DownloadManager(download, ports, peers);
+                
 
                 Thread uploadThread = new Thread(new ThreadStart(uploadmanager.Run));
                 Thread downloadThread = new Thread(new ThreadStart(downloadmanager.Run));

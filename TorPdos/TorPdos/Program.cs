@@ -30,7 +30,9 @@ namespace TorPdos{
             if (MyReg.GetValue("Path") == null){
                 Application.Run(TorPdos);
             }
+            var logger = NLog.LogManager.GetCurrentClassLogger();
             //End of what needs to run at the Absolute start of the program.
+            
 
             string ownIP = NetworkHelper.getLocalIPAddress();
 

@@ -3,18 +3,18 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ErrorLogger;
 using P2P_lib.Messages;
+ using LogLevel = NLog.LogLevel;
 
 
-namespace P2P_lib{
+ namespace P2P_lib{
     public class Receiver{
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void DidReceive(BaseMessage msg);
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private ErrorQueueHandler<string> _errorQueue = new ErrorQueueHandler<string>();
-        private ErrorLoggerQueue _errorLoggerQueue;
+
 
         //This event can cause any method which conforms
         //to MyEventHandler to be called.
@@ -31,16 +31,13 @@ namespace P2P_lib{
         public Receiver(int port){
             this.ip = IPAddress.Any;
             this.port = port;
-
         }
 
         public void start(){
             server = new TcpListener(this.ip, this.port);
             server.AllowNatTraversal(true);
             server.Start();
-            _errorLoggerQueue = new ErrorLoggerQueue(_errorQueue, "Receiver");
-            Thread thread = new Thread(_errorLoggerQueue.run);
-            thread.Start();
+            
 
             listening = true;
 
@@ -78,8 +75,9 @@ namespace P2P_lib{
                     }
                 }
                 catch (Exception e){
-                    _errorQueue.Enqueue(e.ToString());
-                    
+                    logger.Error(e);
+                    logger.Log(LogLevel.Error,e);
+
                 }
             }
         }

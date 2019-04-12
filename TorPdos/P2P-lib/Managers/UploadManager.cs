@@ -71,6 +71,7 @@ namespace P2P_lib
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
+                    
 
                     // Split
                     // TODO: split file
