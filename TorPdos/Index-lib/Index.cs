@@ -381,6 +381,9 @@ namespace Index_lib{
         // Define the event handlers.
         private void onChanged(object source, FileSystemEventArgs e){
 
+            //IgnoreHidden
+            if (IgnoreHidden(e.FullPath))
+                return;
 
             _fileHandlingQueue.Enqueue(e);
 
