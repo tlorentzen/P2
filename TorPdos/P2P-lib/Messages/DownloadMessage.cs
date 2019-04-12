@@ -11,8 +11,8 @@ namespace P2P_lib.Messages
     {
         public string filehash;
         public string filename;
-        public string path;
         public long filesize;
+        public string path;
         public int port;
 
         public DownloadMessage(Peer to) : base(to){

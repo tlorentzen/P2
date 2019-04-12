@@ -70,14 +70,13 @@ using P2P_lib.Messages;
                         memory.Read(messageBytes, 0, messageBytes.Length);
                         memory.Close();
 
-                        BaseMessage message = (BaseMessage) BaseMessage.FromByteArray(messageBytes);
+                        BaseMessage message = BaseMessage.FromByteArray(messageBytes);
                         MessageReceived(message);
                     }
                 }
                 catch (Exception e){
                     logger.Error(e);
                     logger.Log(LogLevel.Error,e);
-
                 }
             }
         }

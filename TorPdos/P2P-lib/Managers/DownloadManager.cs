@@ -10,8 +10,8 @@ namespace P2P_lib
 {
     public class DownloadManager
     {
-        private ManualResetEvent waitHandle;
-        private Boolean is_running = true;
+        private ManualResetEvent _waitHandle;
+        private bool is_running = true;
         private NetworkPorts _ports;
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
@@ -22,20 +22,20 @@ namespace P2P_lib
             this._ports = ports;
             this._peers = peers;
 
-            this.waitHandle = new ManualResetEvent(false);
+            this._waitHandle = new ManualResetEvent(false);
             this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
         }
 
         private void _queue_FileAddedToQueue()
         {
-            this.waitHandle.Set();
+            this._waitHandle.Set();
         }
 
         public void Run()
         {
             while (is_running)
             {
-                this.waitHandle.WaitOne();
+                this._waitHandle.WaitOne();
 
                 QueuedFile file;
 
@@ -46,7 +46,7 @@ namespace P2P_lib
                     Console.WriteLine(file.GetHash());
                 }
 
-                this.waitHandle.Reset();
+                this._waitHandle.Reset();
             }
         }
 
