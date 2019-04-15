@@ -16,6 +16,7 @@ using P2P_lib.Messages;
 using Index_lib;
 using Microsoft.Win32;
 using P2P_lib.Managers;
+using System.Timers;
 
 namespace P2P_lib{
     public class Network{
@@ -23,7 +24,6 @@ namespace P2P_lib{
         private int _port;
         private bool _running = false;
         private Index _index;
-        private Thread _pingThread;
         private Receiver _receive;
         private FileReceiver _fileReceiver;
         private string _path;
@@ -35,6 +35,7 @@ namespace P2P_lib{
         private P2PConcurrentQueue<QueuedFile> download = new P2PConcurrentQueue<QueuedFile>();
         private List<Thread> threads = new List<Thread>();
         private NetworkPorts ports = new NetworkPorts();
+        private System.Timers.Timer pingTimer;
 
         private static NLog.Logger logger = NLog.LogManager.GetLogger("NetworkLogging");
 
@@ -65,9 +66,6 @@ namespace P2P_lib{
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.start();
 
-            _pingThread = new Thread(this.PingHandler);
-            _pingThread.Start();
-
             for (int i = 0; i < _numOfThreads; i++)
             {
                 UploadManager uploadmanager = new UploadManager(upload, ports, peers);
@@ -82,6 +80,27 @@ namespace P2P_lib{
 
                 threads.Add(uploadThread);
                 threads.Add(downloadThread);
+            }
+
+            pingTimer = new System.Timers.Timer();
+            pingTimer.Interval = 10000;
+
+            // Hook up the Elapsed event for the timer. 
+            pingTimer.Elapsed += PingTimer_Elapsed;
+
+            // Have the timer fire repeated events (true is the default)
+            pingTimer.AutoReset = true;
+
+            // Start the timer
+            pingTimer.Enabled = true;
+        }
+
+        private void PingTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            foreach (Peer peer in peers){
+                peer.Ping(millis);
             }
         }
 
@@ -279,6 +298,8 @@ namespace P2P_lib{
 
         public void Stop(){
 
+            pingTimer.Enabled = false;
+
             foreach (Thread thread in threads)
             {
                 // TODO: Stop threads 
@@ -288,21 +309,6 @@ namespace P2P_lib{
             _receive.stop();
         }
 
-        private void PingHandler(){
-            while (this._running){
-                long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-                foreach (Peer peer in peers){
-                    peer.Ping(millis);
-
-                    if (!this._running){
-                        break;
-                    }
-                }
-            }
-
-            Console.WriteLine(@"PingHandler stopped...");
-        }
         public void UploadFileToNetwork(string filePath, int copies, int seed = 0) {
             new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
         }
