@@ -196,8 +196,8 @@
             }
 
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
-            Resize += MyformResize; 
-            
+            FormClosing += MyFormClosing;
+            Resize += MyformResize;
         }
         private void BtnCreateClick(object sender, EventArgs e)
         {
@@ -307,6 +307,14 @@
                 noiTorPdos.Visible = true;
             } else if (this.WindowState == FormWindowState.Normal){
                 noiTorPdos.Visible = false;
+            }
+        }
+
+        void MyFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                WindowState = FormWindowState.Minimized;
             }
         }
 
