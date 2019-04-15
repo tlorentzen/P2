@@ -171,7 +171,7 @@
         NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
-            Visible = false,
+            Visible = true,
         };
 
         public MyForm(){
@@ -197,7 +197,6 @@
             }
 
             noiTorPdos.Click += noiTorPdosClick;
-            Resize += MyformResize;
             FormClosing += MyFormClosing;
         }
         private void BtnCreateClick(object sender, EventArgs e)
@@ -304,25 +303,16 @@
             loggedIn = false;
         }   
 
-        void MyformResize(object sender, EventArgs e){
-            if (this.WindowState == FormWindowState.Minimized){
-                Hide();
-                noiTorPdos.Visible = true;
-            } else if (this.WindowState == FormWindowState.Normal){
-                noiTorPdos.Visible = false;
-            }
-        }
-
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
             if(e.CloseReason == CloseReason.UserClosing && loggedIn == true)
             {
                 e.Cancel = true;
                 Hide();
-                noiTorPdos.Visible = true;
             }
             else
             {
+                noiTorPdos.Visible = false;
                 Environment.Exit(0);
             }
 
@@ -330,7 +320,6 @@
 
         void noiTorPdosClick(object sender, EventArgs e){
             Show();
-            noiTorPdos.Visible = false;
             WindowState = FormWindowState.Normal;
         }
 
