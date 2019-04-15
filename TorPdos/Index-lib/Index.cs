@@ -587,8 +587,8 @@ namespace Index_lib{
         }
 
         public bool load(){
-            if (_indexFilePath != null && File.Exists(_indexFilePath)){
-                string json = File.ReadAllText(_indexFilePath);
+            if (_indexFilePath != null && File.Exists(@"/" + _indexFilePath)){
+                string json = File.ReadAllText(@"/" + _indexFilePath);
                 _index = JsonConvert.DeserializeObject<List<IndexFile>>(json);
                 return true;
             }
