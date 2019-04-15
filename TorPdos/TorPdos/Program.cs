@@ -93,6 +93,8 @@ namespace TorPdos{
                             idx.save();
                         } else if (console.Equals("peersave")){
                             p2p.saveFile();
+                        } else if (console.Equals("ping")){
+                            p2p.ping();
                         } else if (console.Equals("list")){
                             List<Peer> peers = p2p.getPeerList();
 

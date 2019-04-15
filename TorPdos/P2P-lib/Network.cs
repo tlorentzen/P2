@@ -97,9 +97,14 @@ namespace P2P_lib{
 
         private void PingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            this.ping();
+        }
+
+        public void ping(){
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            foreach (Peer peer in peers){
+            foreach (Peer peer in peers)
+            {
                 peer.Ping(millis);
             }
         }
