@@ -284,6 +284,7 @@ namespace P2P_lib{
         }
 
         private void receivedDownloadMessage(DownloadMessage download){
+            Console.WriteLine("Woop");
             if (download.type.Equals(Messages.TypeCode.REQUEST)){
                 if (File.Exists(_path + @"\.hidden\" + download.filehash)){
                     download.CreateReply();
