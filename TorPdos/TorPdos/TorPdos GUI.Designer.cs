@@ -196,8 +196,8 @@
             }
 
             noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
-            FormClosing += MyFormClosing;
             Resize += MyformResize;
+            FormClosing += MyFormClosing;
         }
         private void BtnCreateClick(object sender, EventArgs e)
         {
@@ -288,18 +288,19 @@
             AcceptButton = btnCreate;
         }
         
-        public void LoggedIn()
+        public bool LoggedIn()
         {
             Controls.Clear();
             Controls.Add(btnDownload);
             Controls.Add(lblLogOut);
             lblLogOut.Click += LblLogOutClick;
+            return true;
         }
 
         private void LblLogOutClick(object sender, EventArgs e)
         {
             Login();
-        }
+        }   
 
         void MyformResize(object sender, EventArgs e){
             if (this.WindowState == FormWindowState.Minimized){
@@ -312,10 +313,7 @@
 
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                WindowState = FormWindowState.Minimized;
-            }
+                Environment.Exit(0);
         }
 
         void noiTorPdosDoubleClick(object sender, EventArgs e){
