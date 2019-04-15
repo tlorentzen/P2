@@ -47,6 +47,7 @@ namespace P2P_lib.Messages
             try{
                 using (TcpClient client = new TcpClient(this.to, receiverPort)){
                     client.SendTimeout = 2000;
+                    client.ReceiveTimeout = 2000;
 
                     byte[] data = this.ToByteArray();
                     using (NetworkStream stream = client.GetStream()){
