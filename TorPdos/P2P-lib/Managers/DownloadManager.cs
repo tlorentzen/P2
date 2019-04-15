@@ -35,8 +35,8 @@ namespace P2P_lib{
         public void Run(){
             while (is_running){
                 this._waitHandle.WaitOne();
-
-                while (this._queue.TryDequeue(out var file)){
+                QueuedFile file;
+                while (this._queue.TryDequeue(out file)){
                     List<Peer> onlinePeers = this.getPeers();
                     foreach (var peer in _peers){
                         if (peer.isOnline()){
@@ -47,6 +47,7 @@ namespace P2P_lib{
                     filehash = file.GetHash();
 
                     int port = _ports.GetAvailablePort();
+                    
                     Receiver receiver = new Receiver(port);
                     receiver.start();
                     receiver.MessageReceived += _receiver_MessageReceived;
