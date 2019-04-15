@@ -5,19 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Concurrent;
+using P2P_lib.Messages;
 
-namespace P2P_lib
-{
-    public class DownloadManager
-    {
+namespace P2P_lib{
+    public class DownloadManager{
         private ManualResetEvent _waitHandle;
         private bool is_running = true;
         private NetworkPorts _ports;
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
-
-        public DownloadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports, BlockingCollection<Peer> peers)
-        {
+        private FileReceiver _receiver;
+        private string filehash;
+        private string _path;
+        
+        public DownloadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
+            BlockingCollection<Peer> peers){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -26,29 +28,71 @@ namespace P2P_lib
             this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
         }
 
-        private void _queue_FileAddedToQueue()
-        {
+        private void _queue_FileAddedToQueue(){
             this._waitHandle.Set();
         }
 
-        public void Run()
-        {
-            while (is_running)
-            {
+        public void Run(){
+            while (is_running){
                 this._waitHandle.WaitOne();
 
-                QueuedFile file;
+                while (this._queue.TryDequeue(out var file)){
+                    List<Peer> onlinePeers = this.getPeers();
+                    foreach (var peer in _peers){
+                        if (peer.isOnline()){
+                            onlinePeers.Add(peer);
+                        }
+                    }
 
-                while (this._queue.TryDequeue(out file))
-                {
+                    filehash = file.GetHash();
+
+                    int port = _ports.GetAvailablePort();
+                    Receiver receiver = new Receiver(port);
+                    receiver.start();
+                    receiver.MessageReceived += _receiver_MessageReceived;
+
+
+                    foreach (var onlinePeer in onlinePeers){
+                        UploadMessage uploadMessage = new UploadMessage(onlinePeer);
+                        uploadMessage.port = port;
+                        uploadMessage.filehash = file.GetHash();
+                        uploadMessage.filesize = file.GetFilesize();
+                        uploadMessage.Send(port);
+                    }
+
                     //FileReceiver receiver = new FileReceiver();
-
+                    _ports.Release(port);
                     Console.WriteLine(file.GetHash());
                 }
 
                 this._waitHandle.Reset();
             }
         }
+        private void _receiver_MessageReceived(BaseMessage msg)
+        {
+            if (msg.GetMessageType() == typeof(DownloadMessage))
+            {
+                DownloadMessage download = (DownloadMessage)msg;
 
+                if (download.type.Equals(Messages.TypeCode.RESPONSE))
+                {
+                    if (download.statuscode == StatusCode.ACCEPTED){
+                        _receiver = new FileReceiver(_path, filehash, download.port, false);
+                    }
+                }
+            }
+        }
+
+        private List<Peer> getPeers(){
+            List<Peer> availablePeers = new List<Peer>();
+
+            foreach (Peer peer in this._peers){
+                if (peer.isOnline()){
+                    availablePeers.Add(peer);
+                }
+            }
+
+            return availablePeers;
+        }
     }
 }
