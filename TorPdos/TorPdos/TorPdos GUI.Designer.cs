@@ -13,6 +13,7 @@
             btnColour = "#A2A3BB",
             txtColour = "#9395D3";
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
+        public bool loggedIn = false;
 
         private string path;
         Label lblUsername = new Label{
@@ -195,7 +196,7 @@
                 Login(); 
             }
 
-            noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
+            noiTorPdos.Click += noiTorPdosClick;
             Resize += MyformResize;
             FormClosing += MyFormClosing;
         }
@@ -220,6 +221,7 @@
             if (IdHandler.isValidUser(path, uuid, pass))
             {
                 LoggedIn();
+                loggedIn = true;
             }
             else
             {
@@ -288,18 +290,18 @@
             AcceptButton = btnCreate;
         }
         
-        public bool LoggedIn()
+        public void LoggedIn()
         {
             Controls.Clear();
             Controls.Add(btnDownload);
             Controls.Add(lblLogOut);
             lblLogOut.Click += LblLogOutClick;
-            return true;
         }
 
         private void LblLogOutClick(object sender, EventArgs e)
         {
             Login();
+            loggedIn = false;
         }   
 
         void MyformResize(object sender, EventArgs e){
@@ -313,10 +315,20 @@
 
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
+            if(e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+            {
+                e.Cancel = true;
+                Hide();
+                noiTorPdos.Visible = true;
+            }
+            else
+            {
                 Environment.Exit(0);
+            }
+
         }
 
-        void noiTorPdosDoubleClick(object sender, EventArgs e){
+        void noiTorPdosClick(object sender, EventArgs e){
             Show();
             noiTorPdos.Visible = false;
             WindowState = FormWindowState.Normal;
