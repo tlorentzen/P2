@@ -284,12 +284,13 @@ namespace P2P_lib{
         }
 
         private void receivedDownloadMessage(DownloadMessage download){
-            Console.WriteLine("Woop");
             if (download.type.Equals(Messages.TypeCode.REQUEST)){
-                if (File.Exists(_path + @"\.hidden\" + download.filehash)){
-                    download.CreateReply();
-                    download.statuscode = StatusCode.ACCEPTED;
-                    download.Send();
+                if (Directory.Exists(_path + @"\.hidden\" + download.FromUUID)){
+                    if (File.Exists(_path + @"\.hidden\" + download.filehash)){
+                        download.CreateReply();
+                        download.statuscode = StatusCode.ACCEPTED;
+                        download.Send();
+                    }
                 } else{
                     download.CreateReply();
                     download.statuscode = StatusCode.ERROR;
