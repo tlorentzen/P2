@@ -5,10 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace P2P_lib
-{
-    public class QueuedFile
-    {
+namespace P2P_lib{
+    public class QueuedFile{
         private string _hash;
         private string _path;
         private int _copies = 5;
@@ -24,10 +22,13 @@ namespace P2P_lib
 
         public QueuedFile(string hash, string path, int copies){
             this._hash = hash;
-            this._path = path;
             this._copies = (copies <= 0 ? _copies : copies);
-            this._filesize = new System.IO.FileInfo(this._path).Length;
-            this._filename = new FileInfo(this._path).Name;
+            if (path != null){
+                this._path = path;
+                this._filesize = new System.IO.FileInfo(this._path).Length;
+                this._filename = new FileInfo(this._path).Name;
+            }
+
             this._ghost = true;
         }
 

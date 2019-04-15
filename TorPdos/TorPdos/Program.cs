@@ -60,7 +60,7 @@ namespace TorPdos{
             p2p = new Network(25565, idx, path);
             p2p.Start();
 
-
+            //p2p.DownloadFile("298310928301923lk12i3l1k2j3l12kj");
             while (running){
                 string console = Console.ReadLine();
                 if (console != null){
@@ -95,7 +95,10 @@ namespace TorPdos{
                             p2p.saveFile();
                         } else if (console.Equals("ping")){
                             p2p.ping();
-                        } else if (console.Equals("list")){
+                        } else if(console.Equals("queue")){
+                            p2p.DownloadFile("Kloiasdlkiewrop2349809123saldkal");
+                        }else if (console.Equals("list")){
+
                             List<Peer> peers = p2p.getPeerList();
 
                             Console.WriteLine();

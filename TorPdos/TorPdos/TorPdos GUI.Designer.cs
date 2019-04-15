@@ -13,6 +13,7 @@
             btnColour = "#A2A3BB",
             txtColour = "#9395D3";
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
+        public bool loggedIn = false;
 
         private string path;
         Label lblUsername = new Label{
@@ -170,7 +171,7 @@
         NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
-            Visible = false,
+            Visible = true,
         };
 
         public MyForm(){
@@ -195,8 +196,7 @@
                 Login(); 
             }
 
-            noiTorPdos.DoubleClick += noiTorPdosDoubleClick;
-            Resize += MyformResize;
+            noiTorPdos.Click += noiTorPdosClick;
             FormClosing += MyFormClosing;
         }
         private void BtnCreateClick(object sender, EventArgs e)
@@ -220,6 +220,7 @@
             if (IdHandler.isValidUser(path, uuid, pass))
             {
                 LoggedIn();
+                loggedIn = true;
             }
             else
             {
@@ -288,37 +289,37 @@
             AcceptButton = btnCreate;
         }
         
-        public bool LoggedIn()
+        public void LoggedIn()
         {
             Controls.Clear();
             Controls.Add(btnDownload);
             Controls.Add(lblLogOut);
             lblLogOut.Click += LblLogOutClick;
-            return true;
         }
 
         private void LblLogOutClick(object sender, EventArgs e)
         {
             Login();
+            loggedIn = false;
         }   
-
-        void MyformResize(object sender, EventArgs e){
-            if (this.WindowState == FormWindowState.Minimized){
-                Hide();
-                noiTorPdos.Visible = true;
-            } else if (this.WindowState == FormWindowState.Normal){
-                noiTorPdos.Visible = false;
-            }
-        }
 
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
+            if(e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+            else
+            {
+                noiTorPdos.Visible = false;
                 Environment.Exit(0);
+            }
+
         }
 
-        void noiTorPdosDoubleClick(object sender, EventArgs e){
+        void noiTorPdosClick(object sender, EventArgs e){
             Show();
-            noiTorPdos.Visible = false;
             WindowState = FormWindowState.Normal;
         }
 
