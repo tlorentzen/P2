@@ -44,6 +44,7 @@ namespace P2P_lib{
                         }
                     }
 
+                    /*
                     filehash = file.GetHash();
 
                     int port = _ports.GetAvailablePort();
@@ -62,12 +63,14 @@ namespace P2P_lib{
 
                     //FileReceiver receiver = new FileReceiver();
                     _ports.Release(port);
-                    Console.WriteLine(file.GetHash());
+                    */
+                    Console.WriteLine("File: "+file.GetHash()+" was process in download manager");
                 }
 
                 this._waitHandle.Reset();
             }
         }
+
         private void _receiver_MessageReceived(BaseMessage msg)
         {
             if (msg.GetMessageType() == typeof(DownloadMessage))
