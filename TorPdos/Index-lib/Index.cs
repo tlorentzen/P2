@@ -394,8 +394,8 @@ namespace Index_lib
             // Wait until the file is ready 
             while (!IsFileReady(e.FullPath)){ }
 
-            Boolean foundInIndex = false;
-            Boolean fileRemoved = false;
+            bool foundInIndex = false;
+            bool fileRemoved = false;
             IndexFile eventFile = new IndexFile(e.FullPath);
             IndexFile foundMatch = eventFile;
 
@@ -546,7 +546,7 @@ namespace Index_lib
             return exist;
         }
 
-        private Boolean WaitForFile(string fullPath)
+        private bool WaitForFile(string fullPath)
         {
             int numTries = 0;
             while (true)

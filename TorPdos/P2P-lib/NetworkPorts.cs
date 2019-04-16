@@ -29,8 +29,8 @@ namespace P2P_lib{
             }
         }
 
-        public Boolean isPortAvailable(int port){
-            Boolean isAvailable = true;
+        public bool isPortAvailable(int port){
+            bool isAvailable = true;
             //https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
             // Evaluate current system tcp connections. This is the same information provided
             // by the netstat command line application, just in .Net strongly-typed object

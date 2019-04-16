@@ -26,7 +26,7 @@ namespace P2P_lib.Messages
             return this.message;
         }
 
-        public override String GetHash()
+        public override string GetHash()
         {
             return null;
         }

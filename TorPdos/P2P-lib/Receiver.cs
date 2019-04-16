@@ -24,7 +24,7 @@ namespace P2P_lib{
         private IPAddress ip;
         private int port;
         private TcpListener server = null;
-        private Boolean listening = false;
+        private bool listening = false;
         private Thread listener;
         private byte[] _buffer = new byte[1024];
 

@@ -19,7 +19,7 @@ namespace P2P_lib.Messages
             forwardCount = 8;
         }
 
-        public override String GetHash()
+        public override string GetHash()
         {
             return null;
         }

@@ -11,7 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace P2P_lib{
     public class NetworkHelper{
-        public static String getLocalIPAddress(){
+        public static string getLocalIPAddress(){
             // https://stackoverflow.com/questions/6803073/get-local-ip-address
             string localIP;
 
@@ -25,12 +25,12 @@ namespace P2P_lib{
             return localIP;
         }
 
-        public static String getPublicIpAddress(){
+        public static string getPublicIpAddress(){
             // https://stackoverflow.com/questions/3253701/get-public-external-ip-address/45242105
             return new WebClient().DownloadString("http://icanhazip.com");
         }
 
-        public static List<String> getMacAddresses(){
+        public static List<string> getMacAddresses(){
             List<string> macAddresses = new List<string>();
 
             foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces()){
