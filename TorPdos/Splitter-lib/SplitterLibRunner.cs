@@ -11,7 +11,7 @@ namespace Splitter_lib{
         //private List<List<string>> _files = new List<List<string>>();
         Random rnd = new Random();
 
-        public Dictionary<string,List<string>> splitFile(String inputFilePath,string inputFileHash, string OutputFolderpath, int chunkSize){
+        public Dictionary<string,List<string>> splitFile(string inputFilePath,string inputFileHash, string OutputFolderpath, int chunkSize){
             if (!Directory.Exists(OutputFolderpath)){
                 Directory.CreateDirectory(OutputFolderpath);
             }
@@ -43,7 +43,7 @@ namespace Splitter_lib{
             return _files;
         }
 
-        public Dictionary<string,List<string>> splitFile(String inputFilePath,string inputFileHash, string OutputFolderpath, int chunkSize,
+        public Dictionary<string,List<string>> splitFile(string inputFilePath,string inputFileHash, string OutputFolderpath, int chunkSize,
             NetworkStream outputStream){
             if (!Directory.Exists(OutputFolderpath)){
                 Directory.CreateDirectory(OutputFolderpath);
@@ -97,7 +97,7 @@ namespace Splitter_lib{
                     }
 
                     using (Stream output = File.OpenWrite(outputFilePath)){
-                        foreach (String chunkPath in fileList){
+                        foreach (string chunkPath in fileList){
                             byte[] contentBuffer = File.ReadAllBytes(inputDir + chunkPath);
                             output.Write(contentBuffer, 0, contentBuffer.Length);
                         }

@@ -10,7 +10,6 @@ namespace P2P_lib.Messages
     public class DownloadMessage : BaseMessage
     {
         public string filehash;
-        public string filename;
         public long filesize;
         public string path;
         public int port;
@@ -19,7 +18,7 @@ namespace P2P_lib.Messages
             forwardCount = 8;
         }
 
-        public override String GetHash()
+        public override string GetHash()
         {
             return null;
         }

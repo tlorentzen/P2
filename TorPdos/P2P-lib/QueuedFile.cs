@@ -12,7 +12,7 @@ namespace P2P_lib{
         private int _copies = 5;
         private long _filesize = 0;
         private string _filename;
-        private Boolean _ghost;
+        private bool _ghost;
         private int _port;
         private Peer peer;
 
@@ -61,7 +61,7 @@ namespace P2P_lib{
             this._filename = filename;
         }
 
-        public Boolean IsGhostFile(){
+        public bool IsGhostFile(){
             return this._ghost;
         }
     }

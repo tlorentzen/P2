@@ -54,7 +54,7 @@ namespace ID_lib{
 
         //Generate UUID based on mac addresses and current time
         private static string generateUuid(){
-            String guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+            string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             List<string> macAddresses = NetworkHelper.getMacAddresses();
 
             foreach (string mac in macAddresses){

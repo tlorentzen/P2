@@ -42,7 +42,7 @@ namespace Index_lib
             file.size = size;
             file.ghost = ghost;
 
-            foreach (String path in paths){
+            foreach (string path in paths){
                 file.paths.Add(path);
             }
 

@@ -119,7 +119,7 @@ namespace P2P_lib{
         }
 
         public int CompareTo(object obj){
-            return String.Compare(_UUID, ((Peer) obj)._UUID, StringComparison.Ordinal);
+            return string.Compare(_UUID, ((Peer) obj)._UUID, StringComparison.Ordinal);
         }
 
         public bool Equals(Peer peer){
