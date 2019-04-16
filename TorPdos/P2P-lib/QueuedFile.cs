@@ -23,6 +23,7 @@ namespace P2P_lib{
         public QueuedFile(string hash, string path, int copies){
             this._hash = hash;
             this._copies = (copies <= 0 ? _copies : copies);
+
             if (path != null){
                 this._path = path;
                 this._filesize = new System.IO.FileInfo(this._path).Length;

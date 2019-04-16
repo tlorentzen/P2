@@ -58,9 +58,7 @@ namespace P2P_lib
 
                 while(this._queue.TryDequeue(out file)){
 
-                    Console.WriteLine("Current queued files: "+_queue.Count);
-
-                   
+                    //Console.WriteLine("Current queued files: "+_queue.Count);
 
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
@@ -70,7 +68,7 @@ namespace P2P_lib
 
                     if (receivingPeers.Count == 0)
                     {
-                        this._queue.Enqueue(file);
+                        this.waitHandle.Reset();
                         continue;
                     }
 
