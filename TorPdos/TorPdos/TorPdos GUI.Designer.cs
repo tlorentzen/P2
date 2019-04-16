@@ -4,6 +4,7 @@
  using System.Windows.Forms;
  using ID_lib;
  using Microsoft.Win32;
+using Index_lib;
 
  namespace TorPdos{
 
@@ -117,7 +118,7 @@
             Location = new Point(170, 20),
             Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
-            PasswordChar = '*',
+            //PasswordChar = '*',
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
@@ -167,11 +168,18 @@
             Font = new Font("Consolas", 25, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
-        
         NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
             Visible = true,
+        };
+        CheckBox chkCreateFolder = new CheckBox()
+        {
+            Text = "Make a new folder?",
+            Location = new Point(120, 150),
+            Font = new Font("Consolas", 12, FontStyle.Regular),
+            Height = 100, Width = 200,
+            ForeColor = ColorTranslator.FromHtml(lblColour)
         };
 
         public MyForm(){
@@ -228,13 +236,17 @@
             }
         }
         private void LblOkayClick(object sender, EventArgs e){
-            MyReg.SetValue("Path", PathName()+"\\");
-            path = PathName()+@"\.hidden";
-            
-            if(!Directory.Exists(PathName() + @"\.hidden"))
+
+            string hiddenPath = PathName() + @"\.hidden", newPath = PathName() + @"\TorPdos";
+            if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
             {
-                DirectoryInfo di = Directory.CreateDirectory(PathName() + @"\.hidden");
-                di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+                MyReg.SetValue("Path", PathName() + "\\");
+                HiddenFolder dih = new HiddenFolder(hiddenPath);
+            } else if (chkCreateFolder.Checked == true){
+                DirectoryInfo di = Directory.CreateDirectory(newPath);
+                MyReg.SetValue("Path", newPath + "\\");
+                HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden");
+                txtPassword.Text = newPath + @"\.hidden";
             }
 
             Create();
@@ -273,6 +285,7 @@
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
             lblOkay.Click += LblOkayClick;
+            Controls.Add(chkCreateFolder);
         }
 
         public void Create()
