@@ -200,7 +200,6 @@ using Index_lib;
             {
                 FirstStartUp(); 
             } else{
-                path = MyReg.GetValue("Path").ToString()+"\\.hidden";
                 Login(); 
             }
 
@@ -211,7 +210,7 @@ using Index_lib;
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                string uuid = IdHandler.createUser(path, txtPassword.Text);
+                string uuid = IdHandler.createUser(MyReg.GetValue("Path").ToString() + "\\.hidden", txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -225,7 +224,7 @@ using Index_lib;
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(path, uuid, pass))
+            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + "\\.hidden", uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -265,7 +264,7 @@ using Index_lib;
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = IdHandler.getUuid(path);
+            txtUsername.Text = IdHandler.getUuid(MyReg.GetValue("Path").ToString() + "\\.hidden");
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
