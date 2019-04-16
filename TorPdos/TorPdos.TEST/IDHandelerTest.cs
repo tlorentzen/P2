@@ -64,6 +64,18 @@ namespace TorPdos.TEST
             Assert.AreEqual(expected, result);
         }
 
+        [TestMethod]
+        public void RemovedUserNotExists()
+        {
+            IdHandler.createUser(path, Password, null);
+            bool result = File.Exists(path + @"\userdata");
+            IdHandler.removeUser(path);
+            bool final = result == File.Exists(path + @"\userdata");
+
+            Assert.IsFalse(final);
+
+        }
+
         
     }
 }
