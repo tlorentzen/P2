@@ -36,11 +36,13 @@ namespace P2P_lib{
 
         public void Run(){
             while (is_running){
-                
-                int port = _ports.GetAvailablePort();
+
                 this._waitHandle.WaitOne();
+
                 QueuedFile file;
+
                 while (this._queue.TryDequeue(out file)){
+
                     List<Peer> onlinePeers = this.getPeers();
                     foreach (var peer in _peers){
                         if (peer.isOnline()){
@@ -50,22 +52,24 @@ namespace P2P_lib{
 
                     filehash = file.GetHash();
 
+                    int port = _ports.GetAvailablePort();
 
                     Receiver receiver = new Receiver(port);
                     receiver.MessageReceived += _receiver_MessageReceived;
                     receiver.start();
-
 
                     foreach (var onlinePeer in onlinePeers){
                         DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
                         downloadMessage.port = port;
                         downloadMessage.filehash = file.GetHash();
                         downloadMessage.filesize = file.GetFilesize();
+                        downloadMessage.port = port;
                         downloadMessage.Send();
                     }
 
                     //FileReceiver receiver = new FileReceiver();
                     _ports.Release(port);
+                    
                     Console.WriteLine("File: " + file.GetHash() + " was process in download manager");
                 }
 

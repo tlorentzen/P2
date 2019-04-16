@@ -6,36 +6,63 @@ using P2P_lib;
 using System.Security.Cryptography;
 using Microsoft.Win32;
 
-namespace ID_lib{
-    public static class IdHandler{
+namespace ID_lib
+{
+    public static class IdHandler
+    {
         private static readonly string userdatafile = "userdata";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
 
-        //Create user file using generated UUID and input password
-        public static string createUser(string path, string password){
-            try{
-                string uuid = generateUuid();
+        //Create user file using generated UUID and input password (and UUID, if input)
+        public static string createUser(string path, string password, string uuid = null)
+        {
+            try
+            {
+                if (uuid == null)
+                {
+                    uuid = generateUuid();
+                }
+                else
+                {
+                    if (uuid.Length > 32)
+                    {
+                        uuid = uuid.Substring(0, 32);
+                    }
+                }
 
-                string keymold = generateKeymold(string.Concat(uuid, password));
-
-                using (StreamWriter userFile = File.CreateText(path + "\\" + userdatafile)){
+                string keymold = generateKeymold(uuid, password);
+                using (StreamWriter userFile = File.CreateText(path + @"\" + userdatafile))
+                {
                     userFile.WriteLine(keymold);
                     userFile.WriteLine(uuid);
                     userFile.Close();
                 }
 
                 MyReg.SetValue("UUID", uuid);
-                Console.WriteLine(uuid);
+                Console.WriteLine("NEW USER: " + uuid);
                 return uuid;
             }
-            catch (Exception){
+            catch (Exception)
+            {
                 return null;
             }
         }
 
         //Generate keymold (hash) from key
-        private static string generateKeymold(string key){
+        public static string generateKeymold(string key1, string key2 = null)
+        {
+            string key = null;
+
+            if (key2 != null)
+            {
+                key = string.Concat(key1, key2);
+            }
+            else
+            {
+                key = key1;
+            }
+
             //Randomise salt
             byte[] salt;
             new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
@@ -53,11 +80,13 @@ namespace ID_lib{
         }
 
         //Generate UUID based on mac addresses and current time
-        private static string generateUuid(){
+        private static string generateUuid()
+        {
             string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             List<string> macAddresses = NetworkHelper.getMacAddresses();
 
-            foreach (string mac in macAddresses){
+            foreach (string mac in macAddresses)
+            {
                 guid += mac;
             }
 
@@ -67,9 +96,12 @@ namespace ID_lib{
         //Check if UUID and password match existing local user
         //Compare keymolds (hashes)
         //Returns true if user details are valid, false if not
-        public static bool isValidUser(string path, string uuid, string password){
-            try{
-                using (StreamReader userFile = new StreamReader(path + "\\" + userdatafile)){
+        public static bool isValidUser(string path, string uuid, string password)
+        {
+            try
+            {
+                using (StreamReader userFile = new StreamReader(path + @"\" + userdatafile))
+                {
                     //Hash userdata, load 
                     //?? Checker for null value
                     byte[] hashBytes = Convert.FromBase64String(userFile.ReadLine() ?? throw new NullReferenceException());
@@ -79,8 +111,10 @@ namespace ID_lib{
                     byte[] hash = keymold.GetBytes(hashlength);
 
                     //Compare hashes
-                    for (int i = 0; i < hashlength; i++){
-                        if (hashBytes[i + saltlength] != hash[i]){
+                    for (int i = 0; i < hashlength; i++)
+                    {
+                        if (hashBytes[i + saltlength] != hash[i])
+                        {
                             return false;
                         }
                     }
@@ -88,33 +122,20 @@ namespace ID_lib{
                     return true;
                 }
             }
-            catch (Exception){
+            catch (Exception)
+            {
                 return false;
             }
         }
 
         //Return UUID if present, else return null
-        public static string getUuid(string path){
-            if (userExists(path)){
-                try{
-                    return File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(1);
-                }
-                catch (Exception){
-                    return null;
-                }
-            } else{
-                return null;
-            }
-        }
-
-        //Return keymold if present, else return null
-        public static string getKeymold(string path)
+        public static string getUuid(string path)
         {
             if (userExists(path))
             {
                 try
                 {
-                    return File.ReadAllLines(path + "\\" + userdatafile).ElementAtOrDefault(0);
+                    return File.ReadAllLines(path + @"\" + userdatafile).ElementAtOrDefault(1);
                 }
                 catch (Exception)
                 {
@@ -127,21 +148,48 @@ namespace ID_lib{
             }
         }
 
-        private static bool userExists(string path){
-            if (File.Exists(path + "\\" + userdatafile)){
+        //Return keymold if present, else return null
+        public static string getKeymold(string path)
+        {
+            if (userExists(path))
+            {
+                try
+                {
+                    return File.ReadAllLines(path + @"\" + userdatafile).ElementAtOrDefault(0);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private static bool userExists(string path)
+        {
+            if (File.Exists(path + @"\" + userdatafile))
+            {
                 return true;
-            } else{
+            }
+            else
+            {
                 return false;
             }
         }
 
         //Removes userdata file, return false if failed
-        public static bool removeUser(string path){
-            try{
-                File.Delete(path + "\\" + userdatafile);
+        public static bool removeUser(string path)
+        {
+            try
+            {
+                File.Delete(path + @"\" + userdatafile);
                 return true;
             }
-            catch (Exception){
+            catch (Exception)
+            {
                 return false;
             }
         }
