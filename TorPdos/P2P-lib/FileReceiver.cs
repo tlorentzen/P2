@@ -64,8 +64,7 @@ namespace P2P_lib{
 
                 using (NetworkStream stream = client.GetStream()){
                     Console.WriteLine(@"Receiving file");
-                    using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate,
-                        FileAccess.Write)){
+                    using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
                         Console.WriteLine("Creating file: " + this._filename);
                         int i;
 
