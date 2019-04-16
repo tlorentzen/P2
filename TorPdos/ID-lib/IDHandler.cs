@@ -32,7 +32,6 @@ namespace ID_lib
                 }
 
                 string keymold = generateKeymold(uuid, password);
-                Console.WriteLine(path + @"\" + userdatafile);
                 using (StreamWriter userFile = File.CreateText(path + @"\" + userdatafile))
                 {
                     userFile.WriteLine(keymold);
