@@ -22,7 +22,7 @@ namespace P2P_lib {
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
-            this._path = DiskHelper.getRegistryValue("Path").ToString() + @".hidden\";
+            this._path = DiskHelper.getRegistryValue("Path").ToString();
             this._waitHandle = new ManualResetEvent(false);
             this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
             this._port = _ports.GetAvailablePort();
@@ -81,7 +81,7 @@ namespace P2P_lib {
                         download.type = Messages.TypeCode.REQUEST;
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
-                        var fileReceiver = new FileReceiver(_path + @"\.hidden\", download.filehash, download.port, true);
+                        var fileReceiver = new FileReceiver(_path, download.filehash + ".aes", download.port, false);
                         fileReceiver.start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();

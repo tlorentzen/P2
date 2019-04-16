@@ -286,7 +286,8 @@ namespace P2P_lib{
         private void receivedDownloadMessage(DownloadMessage download){
             if (download.type.Equals(TypeCode.REQUEST)){
                 if (download.statuscode == StatusCode.OK) {
-                    if (File.Exists((_path + download.FromUUID + download.filehash + @".aes"))) {
+                    Console.WriteLine(_path + @"\.hidden\" + download.FromUUID + @"\" + download.filehash + @".aes");
+                    if (File.Exists(_path + @"\.hidden\" + download.FromUUID + @"\" + download.filehash + @".aes")) {
                         download.CreateReply();
                         download.statuscode = StatusCode.ACCEPTED;
                         download.Send(download.port);
