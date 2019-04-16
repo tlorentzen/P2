@@ -23,7 +23,7 @@ namespace P2P_lib
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
         private HiddenFolder _hiddenFolder;
-        private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
+        private RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"TorPdos\1.1.1.1");
         private string _path;
         private bool pendingReceiver = true;
         private FileSender sender;
@@ -58,19 +58,17 @@ namespace P2P_lib
 
                 while(this._queue.TryDequeue(out file)){
 
-                    Console.WriteLine("Current queued files: "+_queue.Count);
-
-                   
+                    //Console.WriteLine("Current queued files: "+_queue.Count);
 
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
-                    string compressedFilePath = this._path + ".hidden\\" + file.GetHash();
+                    string compressedFilePath = this._path + @".hidden\" + file.GetHash();
 
                     List<Peer> receivingPeers = this.getPeers(Math.Min(copies, this.CountOnlinePeers()));
 
                     if (receivingPeers.Count == 0)
                     {
-                        this._queue.Enqueue(file);
+                        this.waitHandle.Reset();
                         continue;
                     }
 

@@ -9,7 +9,6 @@ using System.IO;
 using System.Net;
 using System.Security.Permissions;
 using System.Threading;
-using ErrorLogger;
 using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;

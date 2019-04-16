@@ -19,7 +19,7 @@ namespace TorPdos{
         [STAThread]
         static void Main(string[] args){
             //Start of what needs to run at the Absolute start of the program.
-            Boolean running = true;
+            bool running = true;
             RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm TorPdos = new MyForm();
 
@@ -60,7 +60,6 @@ namespace TorPdos{
             p2p = new Network(25565, idx, path);
             p2p.Start();
             //p2p.ping();
-
             //p2p.DownloadFile("298310928301923lk12i3l1k2j3l12kj");
             while (running){
                 string console = Console.ReadLine();
