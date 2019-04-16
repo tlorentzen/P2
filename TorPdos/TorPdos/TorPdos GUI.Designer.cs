@@ -89,7 +89,7 @@ using Index_lib;
         };
         Label lblOkay = new Label()
         {
-            Location = new Point(300, 230),
+            Location = new Point(320, 230),
             Height = 40,
             Width = 80,
             Font = new Font("Consolas", 12, FontStyle.Regular),
@@ -118,7 +118,7 @@ using Index_lib;
             Location = new Point(170, 20),
             Height = 50, Width = 150,
             Font = new Font("Consolas", 15, FontStyle.Regular),
-            //PasswordChar = '*',
+            PasswordChar = '*',
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
@@ -179,7 +179,8 @@ using Index_lib;
             Location = new Point(120, 150),
             Font = new Font("Consolas", 12, FontStyle.Regular),
             Height = 100, Width = 200,
-            ForeColor = ColorTranslator.FromHtml(lblColour)
+            ForeColor = ColorTranslator.FromHtml(lblColour),
+            Checked = true
         };
 
         public MyForm(){
@@ -200,7 +201,6 @@ using Index_lib;
             {
                 FirstStartUp(); 
             } else{
-                path = MyReg.GetValue("Path").ToString()+"\\.hidden";
                 Login(); 
             }
 
@@ -211,7 +211,7 @@ using Index_lib;
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                string uuid = IdHandler.createUser(path, txtPassword.Text);
+                string uuid = IdHandler.createUser(MyReg.GetValue("Path").ToString() + "\\.hidden", txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -225,7 +225,7 @@ using Index_lib;
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(path, uuid, pass))
+            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + "\\.hidden", uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -238,18 +238,22 @@ using Index_lib;
         private void LblOkayClick(object sender, EventArgs e){
 
             string hiddenPath = PathName() + @"\.hidden", newPath = PathName() + @"\TorPdos";
-            if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
+            if(Directory.Exists(PathName()) == true)
             {
-                MyReg.SetValue("Path", PathName() + "\\");
-                HiddenFolder dih = new HiddenFolder(hiddenPath);
-            } else if (chkCreateFolder.Checked == true){
-                DirectoryInfo di = Directory.CreateDirectory(newPath);
-                MyReg.SetValue("Path", newPath + "\\");
-                HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden");
-                txtPassword.Text = newPath + @"\.hidden";
+                if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
+                {
+                    MyReg.SetValue("Path", PathName() + "\\");
+                    HiddenFolder dih = new HiddenFolder(hiddenPath);
+                }
+                else if (chkCreateFolder.Checked == true)
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(newPath);
+                    MyReg.SetValue("Path", newPath + "\\");
+                    HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden");
+                }
+                Create();
             }
-
-            Create();
+            
         }
 
         private void BtnBrowseClick(object sender, EventArgs e){
@@ -265,7 +269,7 @@ using Index_lib;
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = IdHandler.getUuid(path);
+            txtUsername.Text = IdHandler.getUuid(MyReg.GetValue("Path").ToString() + "\\.hidden");
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
