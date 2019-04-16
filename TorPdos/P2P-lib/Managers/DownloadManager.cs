@@ -17,7 +17,7 @@ namespace P2P_lib{
         private FileReceiver _receiver;
         private string filehash;
         private string _path;
-        
+
         public DownloadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers){
             this._queue = queue;
@@ -34,6 +34,8 @@ namespace P2P_lib{
 
         public void Run(){
             while (is_running){
+                
+                int port = _ports.GetAvailablePort();
                 this._waitHandle.WaitOne();
                 QueuedFile file;
                 while (this._queue.TryDequeue(out file)){
@@ -44,44 +46,39 @@ namespace P2P_lib{
                         }
                     }
 
-                    /*
                     filehash = file.GetHash();
 
-                    int port = _ports.GetAvailablePort();
-                    
+
                     Receiver receiver = new Receiver(port);
                     receiver.start();
+
                     receiver.MessageReceived += _receiver_MessageReceived;
 
 
                     foreach (var onlinePeer in onlinePeers){
-                        UploadMessage uploadMessage = new UploadMessage(onlinePeer);
-                        uploadMessage.port = port;
-                        uploadMessage.filehash = file.GetHash();
-                        uploadMessage.filesize = file.GetFilesize();
-                        uploadMessage.Send(port);
+                        DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
+                        downloadMessage.filehash = file.GetHash();
+                        downloadMessage.filesize = file.GetFilesize();
+                        downloadMessage.Send();
                     }
 
                     //FileReceiver receiver = new FileReceiver();
                     _ports.Release(port);
-                    */
-                    Console.WriteLine("File: "+file.GetHash()+" was process in download manager");
+
+                    Console.WriteLine("File: " + file.GetHash() + " was process in download manager");
                 }
 
                 this._waitHandle.Reset();
             }
         }
 
-        private void _receiver_MessageReceived(BaseMessage msg)
-        {
-            if (msg.GetMessageType() == typeof(DownloadMessage))
-            {
-                DownloadMessage download = (DownloadMessage)msg;
+        private void _receiver_MessageReceived(BaseMessage msg){
+            if (msg.GetMessageType() == typeof(DownloadMessage)){
+                DownloadMessage download = (DownloadMessage) msg;
 
-                if (download.type.Equals(Messages.TypeCode.RESPONSE))
-                {
+                if (download.type.Equals(Messages.TypeCode.RESPONSE)){
                     if (download.statuscode == StatusCode.ACCEPTED){
-                        _receiver = new FileReceiver(_path, filehash, download.port, false);
+                        _receiver = new FileReceiver(_path, _path + filehash + ".aes", download.port, false);
                     }
                 }
             }

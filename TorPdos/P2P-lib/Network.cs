@@ -16,6 +16,7 @@ using Index_lib;
 using Microsoft.Win32;
 using P2P_lib.Managers;
 using System.Timers;
+using TypeCode = P2P_lib.Messages.TypeCode;
 
 namespace P2P_lib{
     public class Network{
@@ -65,11 +66,10 @@ namespace P2P_lib{
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.start();
 
-            for (int i = 0; i < _numOfThreads; i++)
-            {
+            for (int i = 0; i < _numOfThreads; i++){
                 UploadManager uploadmanager = new UploadManager(upload, ports, peers);
                 DownloadManager downloadmanager = new DownloadManager(download, ports, peers);
-                
+
 
                 Thread uploadThread = new Thread(new ThreadStart(uploadmanager.Run));
                 Thread downloadThread = new Thread(new ThreadStart(downloadmanager.Run));
@@ -94,16 +94,14 @@ namespace P2P_lib{
             pingTimer.Enabled = true;
         }
 
-        private void PingTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
+        private void PingTimer_Elapsed(object sender, ElapsedEventArgs e){
             this.ping();
         }
 
         public void ping(){
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            foreach (Peer peer in peers)
-            {
+            foreach (Peer peer in peers){
                 peer.Ping(millis);
             }
         }
@@ -149,6 +147,7 @@ namespace P2P_lib{
                     if (outGoingPeer.getUUID() == message.FromUUID) break;
                     outgoing.Add(outGoingPeer);
                 }
+
                 message.CreateReply();
                 message.Peers = outgoing;
                 message.Send();
@@ -157,12 +156,11 @@ namespace P2P_lib{
 
                 foreach (Peer incommingPeer in message.Peers){
                     if (inPeerList(incommingPeer.getUUID(), peers)) break;
-                    
+
                     if ((registry.GetValue("UUID").ToString().Equals(incommingPeer.getUUID()))) break;
                     peers.Add(incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.getUUID());
                 }
-                
             }
 
             // List peers in console. TODO this is for debugging purposes and should be removed
@@ -216,6 +214,7 @@ namespace P2P_lib{
                     break;
                 }
             }
+
             // Add unknown peers to own list
             return inPeers;
         }
@@ -232,11 +231,12 @@ namespace P2P_lib{
                     Console.WriteLine(@"Not enough space");
                     upload.statuscode = StatusCode.INSUFFICIENT_STORAGE;
                 }
-                
+
                 upload.CreateReply();
                 upload.port = ports.GetAvailablePort();
 
-                _fileReceiver = new FileReceiver(this._path + "\\.hidden\\" + uuid + "\\", upload.filename, upload.port, true);
+                _fileReceiver = new FileReceiver(this._path + "\\.hidden\\" + uuid + "\\", upload.filename, upload.port,
+                    true);
                 _fileReceiver.start();
 
                 upload.Send(replyPort);
@@ -269,6 +269,7 @@ namespace P2P_lib{
                         break;
                     }
                 }
+
                 peerFetch.Send();
             }
         }
@@ -279,20 +280,24 @@ namespace P2P_lib{
                     return peer;
                 }
             }
+
             return null;
         }
 
         private void receivedDownloadMessage(DownloadMessage download){
+            Console.WriteLine("Woop");
             if (download.type.Equals(Messages.TypeCode.REQUEST)){
                 if (Directory.Exists(_path + @"\.hidden\" + download.FromUUID)){
                     if (File.Exists(_path + @"\.hidden\" + download.filehash)){
                         download.CreateReply();
+                        download.type = TypeCode.RESPONSE;
                         download.statuscode = StatusCode.ACCEPTED;
                         download.Send();
                     }
                 } else{
                     download.CreateReply();
                     download.statuscode = StatusCode.ERROR;
+                    download.type = TypeCode.RESPONSE;
                     download.Send();
 
                     foreach (var peer in peers){
@@ -303,11 +308,9 @@ namespace P2P_lib{
         }
 
         public void Stop(){
-
             pingTimer.Enabled = false;
 
-            foreach (Thread thread in threads)
-            {
+            foreach (Thread thread in threads){
                 // TODO: Stop threads 
             }
 
@@ -315,7 +318,7 @@ namespace P2P_lib{
             _receive.stop();
         }
 
-        public void UploadFileToNetwork(string filePath, int copies, int seed = 0) {
+        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
             new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
         }
 
