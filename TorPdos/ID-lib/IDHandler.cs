@@ -148,7 +148,8 @@ namespace ID_lib
             }
         }
 
-        //Return keymold if present, else return null
+        //Return keymold if present, else return null 
+        //TODO Skal den godt nok være public?
         public static string getKeymold(string path)
         {
             if (userExists(path))
