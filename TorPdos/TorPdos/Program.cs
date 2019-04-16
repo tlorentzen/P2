@@ -134,7 +134,7 @@ namespace TorPdos{
         }
 
         private static void Idx_FileChanged(IndexFile file){
-            //Console.WriteLine("File changed: " + file.hash);
+            Console.WriteLine("File changed: " + file.hash);
         }
 
         /*

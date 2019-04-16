@@ -12,7 +12,7 @@ using Microsoft.Win32;
 
 namespace P2P_lib.Messages
 {
-    public enum StatusCode { OK, ERROR, ACCEPTED, INSUFFICIENT_STORAGE };
+    public enum StatusCode { OK, ERROR, ACCEPTED, INSUFFICIENT_STORAGE, FILE_NOT_FOUND };
     public enum TypeCode { REQUEST, RESPONSE };
 
     [Serializable]

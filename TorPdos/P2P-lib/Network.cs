@@ -220,7 +220,7 @@ namespace P2P_lib{
         }
 
         private void RechievedUpload(UploadMessage upload){
-            if (upload.type.Equals(Messages.TypeCode.REQUEST)){
+            if (upload.type.Equals(TypeCode.REQUEST)){
                 int replyPort = upload.port;
                 string uuid = upload.FromUUID;
 
@@ -235,8 +235,7 @@ namespace P2P_lib{
                 upload.CreateReply();
                 upload.port = ports.GetAvailablePort();
 
-                _fileReceiver = new FileReceiver(this._path + "\\.hidden\\" + uuid + "\\", upload.filename, upload.port,
-                    true);
+                _fileReceiver = new FileReceiver(this._path + @"\.hidden\" + uuid + @"\", upload.filename, upload.port, true);
                 _fileReceiver.start();
 
                 upload.Send(replyPort);
@@ -286,17 +285,17 @@ namespace P2P_lib{
 
         private void receivedDownloadMessage(DownloadMessage download){
             Console.WriteLine("Woop");
-            if (download.type.Equals(Messages.TypeCode.REQUEST)){
+            if (download.type.Equals(TypeCode.REQUEST)){
                 if (Directory.Exists(_path + @"\.hidden\" + download.FromUUID)){
                     if (File.Exists(_path + @"\.hidden\" + download.filehash)){
                         download.CreateReply();
                         download.type = TypeCode.RESPONSE;
                         download.statuscode = StatusCode.ACCEPTED;
-                        download.Send();
+                        download.Send(download.port);
                     }
                 } else{
                     download.CreateReply();
-                    download.statuscode = StatusCode.ERROR;
+                    download.statuscode = StatusCode.FILE_NOT_FOUND;
                     download.type = TypeCode.RESPONSE;
                     download.Send();
 
