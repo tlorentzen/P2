@@ -284,10 +284,10 @@ namespace P2P_lib{
         }
 
         private void receivedDownloadMessage(DownloadMessage download){
-            Console.WriteLine("Woop");
             if (download.type.Equals(TypeCode.REQUEST)){
                 if (Directory.Exists(_path + @"\.hidden\" + download.FromUUID)){
                     if (File.Exists(_path + @"\.hidden\" + download.filehash)){
+                        Console.WriteLine("File does exist");
                         download.CreateReply();
                         download.type = TypeCode.RESPONSE;
                         download.statuscode = StatusCode.ACCEPTED;
@@ -298,6 +298,7 @@ namespace P2P_lib{
                     download.statuscode = StatusCode.FILE_NOT_FOUND;
                     download.type = TypeCode.RESPONSE;
                     download.Send();
+                    Console.WriteLine("File does not exist");
 
                     foreach (var peer in peers){
                         download.forwardMessage(peer.GetIP());

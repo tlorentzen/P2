@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
+﻿using P2P_lib.Messages;
+using System;
 using System.Collections.Concurrent;
-using P2P_lib.Messages;
-using P2P_lib;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
-namespace P2P_lib{
+namespace P2P_lib {
     public class DownloadManager{
-        private ManualResetEvent _waitHandle;
         private bool is_running = true;
+        private int _port;
+        private string filehash;
+        private string _path;
         private NetworkPorts _ports;
+        private ManualResetEvent _waitHandle;
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
         private FileReceiver _receiver;
-        private string filehash;
-        private string _path;
 
         public DownloadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers){
@@ -35,6 +32,7 @@ namespace P2P_lib{
         }
 
         public void Run(){
+            _port = _ports.GetAvailablePort();
             while (is_running){
 
                 this._waitHandle.WaitOne();
@@ -42,7 +40,7 @@ namespace P2P_lib{
                 QueuedFile file;
 
                 while (this._queue.TryDequeue(out file)){
-
+                    Console.WriteLine("Trying to deque");
                     List<Peer> onlinePeers = this.getPeers();
                     foreach (var peer in _peers){
                         if (peer.isOnline()){
@@ -51,24 +49,21 @@ namespace P2P_lib{
                     }
 
                     filehash = file.GetHash();
+                    _ports.Release(_port);
 
-                    int port = _ports.GetAvailablePort();
-
-                    Receiver receiver = new Receiver(port);
+                    Receiver receiver = new Receiver(_port);
                     receiver.MessageReceived += _receiver_MessageReceived;
                     receiver.start();
 
                     foreach (var onlinePeer in onlinePeers){
                         DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
-                        downloadMessage.port = port;
+                        downloadMessage.port = _port;
                         downloadMessage.filehash = file.GetHash();
                         downloadMessage.filesize = file.GetFilesize();
-                        downloadMessage.port = port;
                         downloadMessage.Send();
                     }
 
                     //FileReceiver receiver = new FileReceiver();
-                    _ports.Release(port);
                     
                     Console.WriteLine("File: " + file.GetHash() + " was process in download manager");
                 }
@@ -90,6 +85,7 @@ namespace P2P_lib{
                         var fileReceiver = new FileReceiver(_path + @"\.hidden\", download.filehash, download.port, true);
                         fileReceiver.start();
                         download.Send();
+                        _ports.Release(_port);
                     } else if (download.statuscode == StatusCode.FILE_NOT_FOUND) {
                         //TODO Responed with FILE_NOT_FOUND
                     }
