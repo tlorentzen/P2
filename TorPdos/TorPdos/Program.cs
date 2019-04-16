@@ -95,8 +95,8 @@ namespace TorPdos{
                             p2p.saveFile();
                         } else if (console.Equals("ping")){
                             p2p.ping();
-                        } else if(console.Equals("queue")){
-                            p2p.DownloadFile("Kloiasdlkiewrop2349809123saldkal");
+                        } else if(console.StartsWith("download") && param.Length == 2) {
+                            p2p.DownloadFile(param[1]);
                         }else if (console.Equals("list")){
 
                             List<Peer> peers = p2p.getPeerList();
