@@ -21,7 +21,8 @@ namespace Encryption{
 
         public void doEncrypt(string password){
             //Uses the GetSalt function to create the salt for the encryption.
-            byte[] salt = getSalt();
+            byte[] salt = new byte[64];
+            salt = getSalt();
 
 
             //The encrypted output file.
