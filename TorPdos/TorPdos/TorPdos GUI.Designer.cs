@@ -17,7 +17,6 @@ using Index_lib;
         public bool loggedIn = false;
         private bool browseHasRun = false;
 
-        private string path;
         Label lblUsername = new Label{
             Location = new Point(20, 20),
             Height = 40, Width = 150,
@@ -203,8 +202,7 @@ using Index_lib;
                 FirstStartUp(); 
             } else if(MyReg.GetValue("UUID") == null){
                 Create();
-            } else
-            {
+            } else{
                 Login();
             }
 
@@ -219,9 +217,7 @@ using Index_lib;
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
-            }
-            else
-            {
+            } else{
                 Controls.Add(lblNope2);
             }
         }
@@ -241,7 +237,7 @@ using Index_lib;
         }
         private void LblOkayClick(object sender, EventArgs e){
 
-            string hiddenPath = PathName() + @"\.hidden", newPath = PathName() + @"\TorPdos";
+            string hiddenPath = PathName() + @"\.hidden\", newPath = PathName() + @"\TorPdos";
             if(Directory.Exists(PathName()) == true)
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
@@ -249,15 +245,26 @@ using Index_lib;
                     MyReg.SetValue("Path", PathName() + "\\");
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
+                else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
+                {
+                    MyReg.SetValue("Path", PathName() + "\\");
+                }
                 else if (chkCreateFolder.Checked == true)
                 {
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     MyReg.SetValue("Path", newPath + "\\");
-                    HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden");
+                    HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden\");
                 }
-                Create();
+
+                if (IdHandler.userExists(newPath + @"\.hidden") == true)
+                {
+                    Login();
+                }
+                else
+                {
+                    Create();
+                }
             }
-            
         }
 
         private void BtnBrowseClick(object sender, EventArgs e){
