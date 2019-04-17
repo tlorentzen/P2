@@ -10,15 +10,17 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
 
-namespace P2P_lib.Messages
-{
-    public enum StatusCode { OK, ERROR, ACCEPTED, INSUFFICIENT_STORAGE, FILE_NOT_FOUND };
-    public enum TypeCode { REQUEST, RESPONSE };
-    
+namespace P2P_lib.Messages{
+    public enum StatusCode{
+        OK, ERROR, ACCEPTED,
+        INSUFFICIENT_STORAGE, FILE_NOT_FOUND
+    };
+
+    public enum TypeCode{ REQUEST, RESPONSE };
+
 
     [Serializable]
-    public abstract class BaseMessage
-    {
+    public abstract class BaseMessage{
         public string ToUUID;
         public string FromUUID;
         public string to;
@@ -27,7 +29,7 @@ namespace P2P_lib.Messages
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("MessageLogging");
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("NetworkLogging");
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -35,8 +37,7 @@ namespace P2P_lib.Messages
 
         public abstract string GetHash();
 
-        public BaseMessage(Peer to)
-        {
+        public BaseMessage(Peer to){
             this.ToUUID = to.getUUID();
             this.to = to.GetIP();
             this.FromUUID = DiskHelper.getRegistryValue("UUID");
@@ -49,30 +50,13 @@ namespace P2P_lib.Messages
             try{
                 using (TcpClient client = new TcpClient(this.to, receiverPort)){
                     {
-                        IAsyncResult ar = client.BeginConnect(this.to, receiverPort, null, null);
-                        System.Threading.WaitHandle wh = ar.AsyncWaitHandle;
-                        try{
-                            if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)){
-                                client.Close();
-                                logger.Info(new TimeoutException());
-                                throw new TimeoutException();
-                                
-                            }
-                            client.EndConnect(ar);
-                        }
-                        finally{
-                            wh.Close();
-                        }
+                        client.SendTimeout = 2000;
+                        client.ReceiveTimeout = 2000;
 
-                        try{
-                            byte[] data = this.ToByteArray();
-                            using (NetworkStream stream = client.GetStream()){
-                                stream.Write(data, 0, data.Length);
-                                stream.Close();
-                            }
-                        }
-                        catch (Exception e){
-                            logger.Fatal(e);
+                        byte[] data = this.ToByteArray();
+                        using (NetworkStream stream = client.GetStream()){
+                            stream.Write(data, 0, data.Length);
+                            stream.Close();
                         }
 
                         client.Close();
@@ -80,8 +64,9 @@ namespace P2P_lib.Messages
                 }
 
                 return true;
-            }catch(SocketException e){
-                logger.Warn(e);
+            }
+            catch (SocketException e){
+                logger.Info(e);
                 return false;
             }
         }
@@ -104,11 +89,11 @@ namespace P2P_lib.Messages
             using (MemoryStream ms = new MemoryStream(data)){
                 object obj = bf.Deserialize(ms);
                 ms.Close();
-                return (BaseMessage)obj;
+                return (BaseMessage) obj;
             }
         }
 
-        public void CreateReply() {
+        public void CreateReply(){
             this.type = TypeCode.RESPONSE;
             string _fromIP = this.from;
             this.from = this.to;
