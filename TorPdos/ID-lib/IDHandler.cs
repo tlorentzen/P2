@@ -32,7 +32,7 @@ namespace ID_lib
                 }
 
                 string keymold = generateKeymold(uuid, password);
-                using (StreamWriter userFile = File.CreateText(path + @"\" + userdatafile))
+                using (StreamWriter userFile = File.CreateText(path + userdatafile))
                 {
                     userFile.WriteLine(keymold);
                     userFile.WriteLine(uuid);
@@ -100,7 +100,7 @@ namespace ID_lib
         {
             try
             {
-                using (StreamReader userFile = new StreamReader(path + @"\" + userdatafile))
+                using (StreamReader userFile = new StreamReader(path + userdatafile))
                 {
                     //Hash userdata, load 
                     //?? Checker for null value
@@ -135,7 +135,7 @@ namespace ID_lib
             {
                 try
                 {
-                    return File.ReadAllLines(path + @"\" + userdatafile).ElementAtOrDefault(1);
+                    return File.ReadAllLines(path + userdatafile).ElementAtOrDefault(1);
                 }
                 catch (Exception)
                 {
@@ -156,7 +156,7 @@ namespace ID_lib
             {
                 try
                 {
-                    return File.ReadAllLines(path + @"\" + userdatafile).ElementAtOrDefault(0);
+                    return File.ReadAllLines(path + userdatafile).ElementAtOrDefault(0);
                 }
                 catch (Exception)
                 {
@@ -171,7 +171,7 @@ namespace ID_lib
 
         public static bool userExists(string path)
         {
-            if (File.Exists(path + @"\" + userdatafile))
+            if (File.Exists(path + userdatafile))
             {
                 return true;
             }
@@ -186,7 +186,7 @@ namespace ID_lib
         {
             try
             {
-                File.Delete(path + @"\" + userdatafile);
+                File.Delete(path + userdatafile);
                 return true;
             }
             catch (Exception)
