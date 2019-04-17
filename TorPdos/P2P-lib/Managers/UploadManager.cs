@@ -78,7 +78,7 @@ namespace P2P_lib
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
                     encryption.doEncrypt("password");
-                    _hiddenFolder.removeFile(compressedFilePath + ".lzma");
+                    //_hiddenFolder.removeFile(compressedFilePath + ".lzma");
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
@@ -125,7 +125,7 @@ namespace P2P_lib
                         _ports.Release(port);
                     }
 
-                    _hiddenFolder.removeFile(encryptedFilePath);
+                    //_hiddenFolder.removeFile(encryptedFilePath);
                 }
 
                 this.waitHandle.Reset();

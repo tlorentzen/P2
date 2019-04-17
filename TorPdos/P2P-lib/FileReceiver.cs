@@ -72,7 +72,7 @@ namespace P2P_lib{
                         int i;
 
                         while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                            fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
+                            fileStream.Write(_buffer, 0, _buffer.Length);
                         }
 
                         Console.WriteLine(@"File done downloading");
