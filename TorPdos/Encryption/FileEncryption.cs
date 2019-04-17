@@ -121,7 +121,7 @@ namespace Encryption{
                 //Runs through the encrypted files, and decrypts it using AES.
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read)){
                     //Creates the output file
-                    using (FileStream fsOut = new FileStream("./Output" + Extension, FileMode.Create)){
+                    using (FileStream fsOut = new FileStream(Path + Extension, FileMode.Create)){
                         byte[] buffer = new byte[BUFFERSIZE];
 
                         //Outputs the read file into the output file.
