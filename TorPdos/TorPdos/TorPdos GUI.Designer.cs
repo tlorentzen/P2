@@ -227,7 +227,7 @@ using Index_lib;
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                string uuid = IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden", txtPassword.Text);
+                IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -239,7 +239,7 @@ using Index_lib;
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + @"\.hidden", uuid, pass))
+            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -251,14 +251,14 @@ using Index_lib;
         }
         private void LblOkayClick(object sender, EventArgs e){
 
-            string hiddenPath = PathName() + @"\.hidden\", newPath = PathName() + @"\TorPdos";
+            string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"\TorPdos\";
             if(Directory.Exists(PathName()) == true)
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
                     if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
                     {
-                        MyReg.SetValue("Path", PathName());
+                        MyReg.SetValue("Path", PathName() + @"\");
                     }
                     else
                     {
@@ -268,9 +268,9 @@ using Index_lib;
                 }
                 else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    if(MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    if(MyReg.GetValue("Path") == null || MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
                     {
-                        MyReg.SetValue("Path", PathName());
+                        MyReg.SetValue("Path", PathName() + @"\");
                     }
                     else
                     {
@@ -283,17 +283,17 @@ using Index_lib;
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
                     {
-                        MyReg.SetValue("Path", PathName());
+                        MyReg.SetValue("Path", PathName() + @"\");
                     }
                     else
                     {
                         MyReg.SetValue("Path", newPath + @"\");
                     }
                     
-                    HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden\");
+                    HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
-                if (IdHandler.userExists(newPath + @"\.hidden") == true)
+                if (IdHandler.userExists(newPath + @".hidden") == true)
                 {
                     Login();
                 }
@@ -318,7 +318,6 @@ using Index_lib;
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = MyReg.GetValue("UUID").ToString();
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
@@ -326,7 +325,13 @@ using Index_lib;
             Controls.Add(lblUsername);
             Controls.Add(lblLoginPassword);
             Controls.Add(lblGoBack);
+            
             AcceptButton = btnLogin;
+
+            if(MyReg.GetValue("UUID") != null)
+            {
+                txtUsername.Text = MyReg.GetValue("UUID").ToString();
+            }
         }
 
         public void FirstStartUp(){
@@ -387,7 +392,7 @@ using Index_lib;
         }
 
         public string PathName(){
-            return txtPath.Text;
+            return txtPath.Text + @"\";
         }
     }
 }
