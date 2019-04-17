@@ -14,6 +14,7 @@ namespace P2P_lib.Messages
 {
     public enum StatusCode { OK, ERROR, ACCEPTED, INSUFFICIENT_STORAGE, FILE_NOT_FOUND };
     public enum TypeCode { REQUEST, RESPONSE };
+    
 
     [Serializable]
     public abstract class BaseMessage
@@ -26,6 +27,7 @@ namespace P2P_lib.Messages
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("MessageLogging");
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -46,20 +48,40 @@ namespace P2P_lib.Messages
         public bool Send(int receiverPort = 25565){
             try{
                 using (TcpClient client = new TcpClient(this.to, receiverPort)){
-                    client.SendTimeout = 2000;
-                    client.ReceiveTimeout = 2000;
+                    {
+                        IAsyncResult ar = client.BeginConnect(this.to, receiverPort, null, null);
+                        System.Threading.WaitHandle wh = ar.AsyncWaitHandle;
+                        try{
+                            if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)){
+                                client.Close();
+                                logger.Info(new TimeoutException());
+                                throw new TimeoutException();
+                                
+                            }
+                            client.EndConnect(ar);
+                        }
+                        finally{
+                            wh.Close();
+                        }
 
-                    byte[] data = this.ToByteArray();
-                    using (NetworkStream stream = client.GetStream()){
-                        stream.Write(data, 0, data.Length);
-                        stream.Close();
+                        try{
+                            byte[] data = this.ToByteArray();
+                            using (NetworkStream stream = client.GetStream()){
+                                stream.Write(data, 0, data.Length);
+                                stream.Close();
+                            }
+                        }
+                        catch (Exception e){
+                            logger.Fatal(e);
+                        }
+
+                        client.Close();
                     }
-                    client.Close();
                 }
 
                 return true;
             }catch(SocketException e){
-                //Console.WriteLine("SocketException");
+                logger.Warn(e);
                 return false;
             }
         }

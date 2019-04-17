@@ -255,17 +255,40 @@ using Index_lib;
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName() + @"\");
+                    if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName());
+                    }
+                    else
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName() + @"\");
+                    if(MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName());
+                    }
+                    else
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
+                    
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
-                    MyReg.SetValue("Path", newPath + @"\");
+                    if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName());
+                    }
+                    else
+                    {
+                        MyReg.SetValue("Path", newPath + @"\");
+                    }
+                    
                     HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden\");
                 }
 
