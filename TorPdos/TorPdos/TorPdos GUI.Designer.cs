@@ -207,8 +207,20 @@ using Index_lib;
                 Login();
             }
 
+            EventHandlers();
+        }
+
+        void EventHandlers()
+        {
             noiTorPdos.Click += noiTorPdosClick;
             FormClosing += MyFormClosing;
+            btnLogin.Click += BtnClickLogin;
+            lblGoBack.Click += LblGoBackClick;
+            btnBrowse.Click += BtnBrowseClick;
+            lblLogOut.Click += LblLogOutClick;
+            lblGoBack.Click += LblGoBackClick;
+            btnCreate.Click += BtnCreateClick;
+            lblOkay.Click += LblOkayClick;
         }
         private void BtnCreateClick(object sender, EventArgs e)
         {
@@ -277,11 +289,12 @@ using Index_lib;
 
         private void LblGoBackClick(object sender, EventArgs e){
             FirstStartUp();
+            chkCreateFolder.Checked = false;
         }
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = IdHandler.getUuid(MyReg.GetValue("Path").ToString() + @"\.hidden");
+            txtUsername.Text = MyReg.GetValue("UUID").ToString();
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
@@ -289,23 +302,14 @@ using Index_lib;
             Controls.Add(lblUsername);
             Controls.Add(lblLoginPassword);
             Controls.Add(lblGoBack);
-            btnLogin.Click += BtnClickLogin;
-            lblGoBack.Click += LblGoBackClick;
             AcceptButton = btnLogin;
         }
 
         public void FirstStartUp(){
             Controls.Clear();
-            if (!browseHasRun)
-            {
-                btnBrowse.Click += BtnBrowseClick;
-                browseHasRun = true;
-            }
-            
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
-            lblOkay.Click += LblOkayClick;
             Controls.Add(chkCreateFolder);
             if (MyReg.GetValue("Path") != null)
             {
@@ -322,8 +326,6 @@ using Index_lib;
             Controls.Add(txtConfirmPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
-            lblGoBack.Click += LblGoBackClick;
-            btnCreate.Click += BtnCreateClick;
             AcceptButton = btnCreate;
         }
         
@@ -331,8 +333,7 @@ using Index_lib;
         {
             Controls.Clear();
             Controls.Add(btnDownload);
-            Controls.Add(lblLogOut);
-            lblLogOut.Click += LblLogOutClick;
+            Controls.Add(lblLogOut);      
         }
 
         private void LblLogOutClick(object sender, EventArgs e)
