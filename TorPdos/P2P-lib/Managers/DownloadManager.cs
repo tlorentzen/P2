@@ -119,12 +119,13 @@ namespace P2P_lib {
         private void RestoreOriginalFile(string path) {
             if (File.Exists(path)) {
                 Console.WriteLine("File exist");
+                string pathWithoutExtension = (_path + @".hidden\incoming\" + Path.GetFileNameWithoutExtension(path));
+
                 // Decrypt file
-                FileEncryption decryption = new FileEncryption(path, "lzma");
+                FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
                 decryption.doDecrypt("password");
                 Console.WriteLine("File decrypted");
                 File.Delete(path);
-                string pathWithoutExtension = (_path + @".hidden\incoming\" + Path.GetFileNameWithoutExtension(path));
                 Console.WriteLine(pathWithoutExtension);
                 string decryptedFilePath = pathWithoutExtension + ".lzma";
 
