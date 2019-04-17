@@ -66,7 +66,7 @@
     <Compile Include="EncryptionTest.cs" />
     <Compile Include="IDHandelerTest.cs" />
     <Compile Include="HiddenFolderTest.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="FileSplitterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -91,6 +91,10 @@
     <ProjectReference Include="..\P2P-lib\P2P-lib.csproj">
       <Project>{F3998136-4DD4-49F8-B388-E4A67C808BFC}</Project>
       <Name>P2P-lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Splitter-lib\Splitter-lib.csproj">
+      <Project>{fdb14159-6b5d-4e8c-9f5d-ea74a50f5fac}</Project>
+      <Name>Splitter-lib</Name>
     </ProjectReference>
     <ProjectReference Include="..\TorPdos\TorPdos.csproj">
       <Project>{08e70b8f-fd6e-44cc-a7f6-ebdc4cb06192}</Project>

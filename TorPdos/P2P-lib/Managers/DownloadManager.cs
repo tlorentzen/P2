@@ -81,7 +81,7 @@ namespace P2P_lib {
                         download.type = Messages.TypeCode.REQUEST;
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
-                        var fileReceiver = new FileReceiver(_path, download.filehash + ".aes", download.port, false);
+                        var fileReceiver = new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName, download.filehash + ".aes", download.port, false);
                         fileReceiver.start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
