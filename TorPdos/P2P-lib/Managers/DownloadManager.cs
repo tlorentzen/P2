@@ -122,6 +122,7 @@ namespace P2P_lib {
 
                 // Decrypt file
                 FileEncryption decryption = new FileEncryption(Path.GetFileNameWithoutExtension(path), ".lzma");
+                Console.WriteLine("Decrypt created");
                 decryption.doDecrypt("password");
                 Console.WriteLine("File decrypted");
                 File.Delete(path);
