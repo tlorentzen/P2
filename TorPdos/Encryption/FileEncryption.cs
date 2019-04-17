@@ -97,7 +97,7 @@ namespace Encryption{
 
             //Reading through the file
             using (FileStream fsCrypt =
-                new FileStream(Path + ".aes", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
+                new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
                 //Reads the random salt of the file.
                 fsCrypt.Read(salt, 0, salt.Length);
 
