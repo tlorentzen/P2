@@ -46,6 +46,12 @@ namespace P2P_lib.Messages
         public bool Send(int receiverPort = 25565){
             try{
                 using (TcpClient client = new TcpClient(this.to, receiverPort)){
+                    if (!client.ConnectAsync(this.to, receiverPort).Wait(1000))
+                    {
+                        // connection failure
+                    }
+
+                    
                     client.SendTimeout = 2000;
                     client.ReceiveTimeout = 2000;
 

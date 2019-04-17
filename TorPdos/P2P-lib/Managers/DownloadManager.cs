@@ -116,22 +116,23 @@ namespace P2P_lib {
             return availablePeers;
         }
 
-        private void RestoreOriginalFile(string hash) {
-            string pathToFile = (_path + @".hidden\" + @"incoming\" + hash);
-            if (File.Exists(pathToFile + ".aes")) {
+        private void RestoreOriginalFile(string path) {
+            if (File.Exists(path)) {
 
                 // Decrypt file
-                FileEncryption decryption = new FileEncryption(pathToFile, "lzma");
+                FileEncryption decryption = new FileEncryption(path, "lzma");
                 decryption.doDecrypt("password");
-                File.Delete(pathToFile + ".aes");
-                string decryptedFilePath = pathToFile + ".lzma";
+                File.Delete(path);
+                string pathWithoutExtension = (_path + @".hidden\incoming\" + Path.GetFileNameWithoutExtension(path));
+                Console.WriteLine(pathWithoutExtension);
+                string decryptedFilePath = pathWithoutExtension + ".lzma";
 
-                string restoredFile = (_path + @".hidden\" + @"incoming\" + hash);
+                string restoredFile = (path);
 
                 // Decompress file
                 ByteCompressor.decompressFile(decryptedFilePath, restoredFile);
-                foreach(string path in _index.getEntry(hash).paths) {
-                    File.Copy(restoredFile, path);
+                foreach(string filePath in _index.getEntry(Path.GetFileNameWithoutExtension(path)).paths) {
+                    File.Copy(restoredFile, filePath);
                 }
             }
         }
