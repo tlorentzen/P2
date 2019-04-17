@@ -88,7 +88,7 @@ namespace P2P_lib{
 
                 client.Close();
                 if(_fileReceived){
-                    this.fileSuccefullyDownloaded(path);
+                    fileSuccefullyDownloaded.Invoke(path);
                 }
             }
             catch (InvalidOperationException e){

@@ -14,7 +14,7 @@ namespace P2P_lib
 
         public new void Enqueue(T item){
             base.Enqueue(item);
-            this.FileAddedToQueue();
+            FileAddedToQueue.Invoke();
         }
     }
 }
