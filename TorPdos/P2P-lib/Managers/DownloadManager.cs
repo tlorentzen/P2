@@ -129,10 +129,10 @@ namespace P2P_lib {
                 Console.WriteLine(pathWithoutExtension);
 
                 // Decompress file
-                ByteCompressor.decompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
+                string pathToFileForCopying = ByteCompressor.decompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
                 Console.WriteLine("File decompressed");
                 foreach (string filePath in _index.getEntry(Path.GetFileNameWithoutExtension(path)).paths) {
-                    File.Copy(pathWithoutExtension, filePath);
+                    File.Copy(pathToFileForCopying, filePath);
                     Console.WriteLine("File send to: {0}", filePath);
                 }
             }
