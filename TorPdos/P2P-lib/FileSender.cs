@@ -27,7 +27,7 @@ namespace P2P_lib{
                             int bytesRead;
                             byte[] buffer = new byte[chunkSize];
                             while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0){
-                                stream.Write(buffer, 0, buffer.Length);
+                                stream.Write(buffer, 0, bytesRead < buffer.Length ? bytesRead : buffer.Length);
                             }
 
                             file.Close();

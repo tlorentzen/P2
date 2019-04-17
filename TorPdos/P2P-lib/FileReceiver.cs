@@ -19,7 +19,8 @@ namespace P2P_lib{
         private string UUID;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
         public delegate void fileDownlaoded(string path);
-        public event fileDownlaoded fileSuccefullyDownloaded; 
+        public event fileDownlaoded fileSuccefullyDownloaded;
+        private Boolean _fileReceived = false;
 
         public FileReceiver(string path, string filename, int port, bool hidden, int bufferSize = 1024){
             this._ip = IPAddress.Any;
@@ -61,12 +62,14 @@ namespace P2P_lib{
         }
 
         private void connectionHandler(){
+            string path = this._path + this._filename;
+
             try{
                 TcpClient client = _server.AcceptTcpClient();
 
                 using (NetworkStream stream = client.GetStream()){
                     Console.WriteLine(@"Receiving file");
-                    string path = this._path + this._filename;
+
                     using (var fileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write)){
                         Console.WriteLine("Creating file: " + this._filename);
                         int i;
@@ -77,13 +80,16 @@ namespace P2P_lib{
 
                         Console.WriteLine(@"File done downloading");
                         fileStream.Close();
-                        this.fileSuccefullyDownloaded(path);
+                        _fileReceived = true;
                     }
 
                     stream.Close();
                 }
 
                 client.Close();
+                if(_fileReceived){
+                    fileSuccefullyDownloaded.Invoke(path);
+                }
             }
             catch (InvalidOperationException e){
                 logger.Fatal(e);

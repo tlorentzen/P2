@@ -192,7 +192,7 @@ namespace Index_lib
                         else
                         {
                             _index.Add(eventFile.hash, eventFile);
-                            FileAdded(eventFile);
+                            FileAdded.Invoke(eventFile);
                         }
 
                     }
@@ -258,7 +258,7 @@ namespace Index_lib
                             }
                         }
 
-                        FileChanged(eventFile);
+                        FileChanged.Invoke(eventFile);
                     }
                     else if (e.ChangeType.Equals(WatcherChangeTypes.Deleted))
                     {
@@ -277,7 +277,7 @@ namespace Index_lib
 
                         foreach (KeyValuePair<string, IndexFile> pair in filesToDelete)
                         {
-                            FileDeleted(pair.Key);
+                            FileDeleted.Invoke(pair.Key);
                             _index.Remove(pair.Key);
                         }
                     }

@@ -71,7 +71,7 @@ namespace P2P_lib{
                         memory.Close();
 
                         BaseMessage message = BaseMessage.FromByteArray(messageBytes);
-                        MessageReceived(message);
+                        MessageReceived.Invoke(message);
                     }
                 }
                 catch (SocketException e){

@@ -95,6 +95,7 @@ namespace Encryption{
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
 
+            Console.WriteLine(Path);
 
             //Reading through the file
             using (FileStream fsCrypt =
