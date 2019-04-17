@@ -67,6 +67,7 @@
     <Compile Include="IDHandelerTest.cs" />
     <Compile Include="HiddenFolderTest.cs" />
     <Compile Include="FileSplitterTest.cs" />
+    <Compile Include="IndexTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

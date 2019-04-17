@@ -8,7 +8,7 @@ namespace TorPdos.TEST
     [TestClass]
     public class IDHandelerTest
     {
-        static string path = "TEST";
+        static string path = "TEST/";
         static string Password = "Password";
 
         [TestMethod]
