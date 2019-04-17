@@ -35,9 +35,9 @@ namespace TorPdos.TEST
             Crypt.doEncrypt(password);
             Crypt.doDecrypt(password);
 
-            byte[] result = HashFile("./Output.md");
+            byte[] result = HashFile("TESTFILE.md");
             File.Delete("TESTFILE.aes");
-            File.Delete("./Output.md");
+
 
             CollectionAssert.AreEqual(expected, result);
         }
