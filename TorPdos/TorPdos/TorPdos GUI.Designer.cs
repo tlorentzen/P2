@@ -15,6 +15,7 @@ using Index_lib;
             txtColour = "#9395D3";
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
         public bool loggedIn = false;
+        private bool browseHasRun = false;
 
         private string path;
         Label lblUsername = new Label{
@@ -283,7 +284,11 @@ using Index_lib;
         }
 
         public void FirstStartUp(){
-            btnBrowse.Click += BtnBrowseClick;
+            if (!browseHasRun)
+            {
+                btnBrowse.Click += BtnBrowseClick;
+                browseHasRun = true;
+            }
             Controls.Clear();
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
