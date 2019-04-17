@@ -169,7 +169,7 @@ namespace ID_lib
             }
         }
 
-        private static bool userExists(string path)
+        public static bool userExists(string path)
         {
             if (File.Exists(path + @"\" + userdatafile))
             {
