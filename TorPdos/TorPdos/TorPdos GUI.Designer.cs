@@ -17,15 +17,27 @@ using Index_lib;
             txtColour = logoColour,//"#9395D3",
             errorColour = "#B20808";
         private static readonly int
+            //TorPdos
+            fullWidth = 400,
+            fullHeight = 300,
+            //Box
+            boxWidth = 325,
+            boxBtnWidth = 85,
+            //Confirm Buttons
+            confirmBtnW = 100,
+            confirmBtnH = 27,
+            //Positions
             leftAlign = 30,
             posFirst = 20,
             posSecond = posFirst + 50,
             posThird = posSecond + 50,
-            boxWidth = 325,
-            boxBtnWidth = 85,
+            posConfirmW = fullWidth - confirmBtnW - 30,
+            posConfirmH = fullHeight - confirmBtnH - 53,
+            posCancelW = posConfirmW - confirmBtnW - 15,
+            //Text
             textSizeDefault = 12,
             textSizeInput = 14,
-            textSizeBtn = 25;
+            textSizeBtn = textSizeDefault; //25
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
         public bool loggedIn = false;
 
@@ -100,7 +112,7 @@ using Index_lib;
             Font = new Font("Consolas", 8, FontStyle.Regular)
         };
         Label lblGoBack = new Label{
-            Location = new Point(270, 230),
+            Location = new Point(posCancelW, posConfirmH),
             Height = 40,
             Width = 150,
             Font = new Font("Consolas", textSizeDefault, FontStyle.Regular),
@@ -158,16 +170,33 @@ using Index_lib;
             BackColor = ColorTranslator.FromHtml(txtColour),
             Text = ""
         };
+        Button btnConfirmPath = new Button()
+        {
+            Location = new Point(posConfirmW, posConfirmH),
+            Width = confirmBtnW, Height = confirmBtnH,
+            Text = "Confirm",
+            Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
         Button btnLogin = new Button(){
-            Location = new Point(70, 150),
-            Width = 250, Height = 70,
+            Location = new Point(posConfirmW, posConfirmH),
+            Width = confirmBtnW, Height = confirmBtnH,
             Text = "Login",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
+        Button btnChangePath = new Button()
+        {
+            Location = new Point(posCancelW, posConfirmH),
+            Width = confirmBtnW,
+            Height = confirmBtnH,
+            Text = "Back",
+            Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
         Button btnCreate = new Button(){
-            Location = new Point(70, 150),
-            Width = 250, Height = 70,
+            Location = new Point(posConfirmW, posConfirmH),
+            Width = confirmBtnW, Height = confirmBtnH,
             Text = "Create",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
@@ -178,13 +207,21 @@ using Index_lib;
             Text = "Browse",
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
-            //Image =
         };
         Button btnDownload = new Button()
         {
-            Location = new Point(70, 99),
-            Width = 250, Height = 70,
+            Location = new Point(posConfirmW, posConfirmH),
+            Width = confirmBtnW, Height = confirmBtnH,
             Text = "Donwnload",
+            Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour),
+        };
+        Button btnLogout = new Button()
+        {
+            Location = new Point(posCancelW, posConfirmH),
+            Width = confirmBtnW,
+            Height = confirmBtnH,
+            Text = "Logout",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
@@ -208,8 +245,8 @@ using Index_lib;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             StartPosition = FormStartPosition.CenterScreen;
             MaximizeBox = false;
-            Width = 400;
-            Height = 300;
+            Width = fullWidth;
+            Height = fullHeight;
             Name = "TorPdos";
             Text = "TorPdos";
             ResumeLayout(false);
@@ -234,12 +271,17 @@ using Index_lib;
             noiTorPdos.Click += noiTorPdosClick;
             FormClosing += MyFormClosing;
             btnLogin.Click += BtnClickLogin;
-            lblGoBack.Click += LblGoBackClick;
             btnBrowse.Click += BtnBrowseClick;
-            lblLogOut.Click += LblLogOutClick;
-            lblGoBack.Click += LblGoBackClick;
             btnCreate.Click += BtnCreateClick;
-            lblOkay.Click += LblOkayClick;
+            //Replaced:
+            //lblGoBack.Click += LblGoBackClick;
+            //lblLogOut.Click += LblLogOutClick;
+            //lblGoBack.Click += LblGoBackClick;
+            //lblOkay.Click += LblOkayClick;
+            //With these:
+            btnConfirmPath.Click += LblOkayClick;
+            btnChangePath.Click += LblGoBackClick;
+            btnLogout.Click += LblLogOutClick;
         }
         private void BtnCreateClick(object sender, EventArgs e)
         {
@@ -321,13 +363,29 @@ using Index_lib;
 
         public void Login(){  
             Controls.Clear();
+            int tabNumber = 0;
+
+            //TXT: Username
+            txtUsername.TabIndex = tabNumber++;
             Controls.Add(txtUsername);
+
+            //TXT: Confirm password
+            txtConfirmPassword.TabIndex = tabNumber++;
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
+
+            //BTN: Login
+            btnLogin.TabIndex = tabNumber++;
             Controls.Add(btnLogin);
+
+            //BTN: Back
+            btnChangePath.TabIndex = tabNumber++;
+            Controls.Add(btnChangePath);
+
+            //Labels
             Controls.Add(lblUsername);
             Controls.Add(lblLoginPassword);
-            Controls.Add(lblGoBack);
+            //Controls.Add(lblGoBack);
             
             AcceptButton = btnLogin;
 
@@ -339,11 +397,31 @@ using Index_lib;
 
         public void FirstStartUp(){
             Controls.Clear();
-            Controls.Add(lblBrowse);
-            Controls.Add(btnBrowse);
+            int tabNumber = 0;
+
+            //TXT: Browse input
             Controls.Add(txtPath);
-            Controls.Add(lblOkay);
+            txtPath.TabIndex = tabNumber++;
+            
+            //BTN: Browse menu
+            btnBrowse.TabIndex = tabNumber++;
+            Controls.Add(btnBrowse);
+
+            //CHK: Folder option
+            chkCreateFolder.TabIndex = tabNumber++;
             Controls.Add(chkCreateFolder);
+
+            //Controls.Add(lblOkay);
+
+            //BTN: Confirm path
+            btnConfirmPath.TabIndex = tabNumber++;
+            Controls.Add(btnConfirmPath);
+
+            //Labels
+            Controls.Add(lblBrowse);
+
+            AcceptButton = btnConfirmPath;
+
             if (MyReg.GetValue("Path") != null)
             {
                 txtPath.Text = MyReg.GetValue("Path").ToString();
@@ -352,21 +430,43 @@ using Index_lib;
 
         public void Create()
         {
-            Controls.Clear(); 
-            Controls.Add(lblPassword);
+            Controls.Clear();
+            int tabNumber = 0;
+
+            //TXT: Password
+            txtPassword.TabIndex = tabNumber++;
             Controls.Add(txtPassword);
-            Controls.Add(lblConfirmPassword);
+
+            //TXT: Confirm password
+            txtConfirmPassword.TabIndex = tabNumber++;
             Controls.Add(txtConfirmPassword);
+
+            //BTN: Create
+            btnCreate.TabIndex = tabNumber++;
             Controls.Add(btnCreate);
+
+            //Labels
+            Controls.Add(lblPassword);
+            Controls.Add(lblConfirmPassword);
             Controls.Add(lblGoBack);
+
             AcceptButton = btnCreate;
         }
         
         public void LoggedIn()
         {
             Controls.Clear();
+            int tabNumber = 0;
+
+            //BTN: ???
+            btnDownload.TabIndex = tabNumber++;
             Controls.Add(btnDownload);
-            Controls.Add(lblLogOut);      
+
+            //BTN: ??
+            btnLogout.TabIndex = tabNumber++;
+            Controls.Add(btnLogout);
+
+            //Controls.Add(lblLogOut);      
         }
 
         private void LblLogOutClick(object sender, EventArgs e)
