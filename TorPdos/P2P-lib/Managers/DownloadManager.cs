@@ -4,6 +4,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Compression;
+using Encryption;
+using Index_lib;
 
 namespace P2P_lib {
     public class DownloadManager{
@@ -16,14 +19,16 @@ namespace P2P_lib {
         private BlockingCollection<Peer> _peers;
         private P2PConcurrentQueue<QueuedFile> _queue;
         private FileReceiver _receiver;
+        private Index _index;
 
         public DownloadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
-            BlockingCollection<Peer> peers){
+            BlockingCollection<Peer> peers, Index index){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
             this._path = DiskHelper.getRegistryValue("Path").ToString();
             this._waitHandle = new ManualResetEvent(false);
+            this._index = index;
             this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
             this._port = _ports.GetAvailablePort();
         }
@@ -81,8 +86,9 @@ namespace P2P_lib {
                         download.type = Messages.TypeCode.REQUEST;
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
-                        var fileReceiver = new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName, download.filehash + ".aes", download.port, false);
-                        fileReceiver.start();
+                        this._receiver = new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName, download.filehash + ".aes", download.port, false);
+                        this._receiver.fileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
+                        this._receiver.start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
                         _ports.Release(_port);
@@ -91,6 +97,11 @@ namespace P2P_lib {
                     }
                 }
             }
+        }
+
+        private void _receiver_fileSuccefullyDownloaded(string path) {
+            Console.WriteLine("File downloaded");
+            RestoreOriginalFile(path);
         }
 
         private List<Peer> getPeers(){
@@ -103,6 +114,26 @@ namespace P2P_lib {
             }
 
             return availablePeers;
+        }
+
+        private void RestoreOriginalFile(string hash) {
+            string pathToFile = (_path + @".hidden\" + @"incoming\" + hash);
+            if (File.Exists(pathToFile + ".aes")) {
+
+                // Decrypt file
+                FileEncryption decryption = new FileEncryption(pathToFile, "lzma");
+                decryption.doDecrypt("password");
+                File.Delete(pathToFile + ".aes");
+                string decryptedFilePath = pathToFile + ".lzma";
+
+                string restoredFile = (_path + @".hidden\" + @"incoming\" + hash);
+
+                // Decompress file
+                ByteCompressor.decompressFile(decryptedFilePath, restoredFile);
+                foreach(string path in _index.getEntry(hash).paths) {
+                    File.Copy(restoredFile, path);
+                }
+            }
         }
     }
 }

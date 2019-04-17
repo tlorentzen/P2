@@ -23,7 +23,8 @@ namespace TorPdos{
             RegistryKey MyReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm TorPdos = new MyForm();
 
-            if (MyReg.GetValue("Path") == null){
+            if (MyReg.GetValue("Path") == null || MyReg.GetValue("UUID") == null)
+            {
                 Application.Run(TorPdos);
             }
             //End of what needs to run at the Absolute start of the program.

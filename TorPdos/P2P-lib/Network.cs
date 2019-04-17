@@ -68,7 +68,7 @@ namespace P2P_lib{
 
             for (int i = 0; i < _numOfThreads; i++){
                 UploadManager uploadmanager = new UploadManager(upload, ports, peers);
-                DownloadManager downloadmanager = new DownloadManager(download, ports, peers);
+                DownloadManager downloadmanager = new DownloadManager(download, ports, peers, _index);
 
 
                 Thread uploadThread = new Thread(new ThreadStart(uploadmanager.Run));

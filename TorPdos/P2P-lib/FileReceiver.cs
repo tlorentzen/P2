@@ -76,8 +76,8 @@ namespace P2P_lib{
                         }
 
                         Console.WriteLine(@"File done downloading");
-                        this.fileSuccefullyDownloaded(path);
                         fileStream.Close();
+                        this.fileSuccefullyDownloaded(path);
                     }
 
                     stream.Close();
