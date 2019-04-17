@@ -18,6 +18,8 @@ namespace P2P_lib{
         private bool _hidden;
         private string UUID;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
+        public delegate void fileDownlaoded();
+        public event fileDownlaoded fileSuccefullyDownloaded; 
 
         public FileReceiver(string path, string filename, int port, bool hidden, int bufferSize = 1024){
             this._ip = IPAddress.Any;
@@ -73,6 +75,7 @@ namespace P2P_lib{
                         }
 
                         Console.WriteLine(@"File done downloading");
+                        this.fileSuccefullyDownloaded();
                         fileStream.Close();
                     }
 
