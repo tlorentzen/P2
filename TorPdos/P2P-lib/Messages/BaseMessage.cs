@@ -49,18 +49,17 @@ namespace P2P_lib.Messages
                     var result = client.BeginConnect(this.to, receiverPort, null, null);
                     var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
 
-                    if (!success)
+                    if (success)
                     {
-                        throw new Exception("Failed to connect.");
+                        byte[] data = this.ToByteArray();
+                        using (NetworkStream stream = client.GetStream()) {
+                            stream.Write(data, 0, data.Length);
+                            stream.Close();
+                        }
+                        client.EndConnect(result);
+                        client.Close();
+                        //throw new Exception("Failed to connect.");
                     }
-
-                    byte[] data = this.ToByteArray();
-                    using (NetworkStream stream = client.GetStream()){
-                        stream.Write(data, 0, data.Length);
-                        stream.Close();
-                    }
-                    client.EndConnect(result);
-                    client.Close();
                 }
 
                 return true;
