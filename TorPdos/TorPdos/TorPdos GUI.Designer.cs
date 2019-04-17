@@ -16,6 +16,7 @@ using Index_lib;
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
         public bool loggedIn = false;
         private bool browseHasRun = false;
+        
 
         Label lblUsername = new Label{
             Location = new Point(20, 20),
@@ -213,7 +214,7 @@ using Index_lib;
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                string uuid = IdHandler.createUser(MyReg.GetValue("Path").ToString() + "\\.hidden", txtPassword.Text);
+                string uuid = IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden", txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -225,7 +226,7 @@ using Index_lib;
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + "\\.hidden", uuid, pass))
+            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + @"\.hidden", uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -242,17 +243,17 @@ using Index_lib;
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName() + "\\");
+                    MyReg.SetValue("Path", PathName() + @"\");
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName() + "\\");
+                    MyReg.SetValue("Path", PathName() + @"\");
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
-                    MyReg.SetValue("Path", newPath + "\\");
+                    MyReg.SetValue("Path", newPath + @"\");
                     HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden\");
                 }
 
@@ -280,7 +281,7 @@ using Index_lib;
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = IdHandler.getUuid(MyReg.GetValue("Path").ToString() + "\\.hidden");
+            txtUsername.Text = IdHandler.getUuid(MyReg.GetValue("Path").ToString() + @"\.hidden");
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
@@ -294,17 +295,22 @@ using Index_lib;
         }
 
         public void FirstStartUp(){
+            Controls.Clear();
             if (!browseHasRun)
             {
                 btnBrowse.Click += BtnBrowseClick;
                 browseHasRun = true;
             }
-            Controls.Clear();
+            
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
             lblOkay.Click += LblOkayClick;
             Controls.Add(chkCreateFolder);
+            if (MyReg.GetValue("Path") != null)
+            {
+                txtPath.Text = MyReg.GetValue("Path").ToString();
+            }
         }
 
         public void Create()
