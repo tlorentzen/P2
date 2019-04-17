@@ -149,7 +149,7 @@ namespace ID_lib
         }
 
         //Return keymold if present, else return null 
-        //TODO Skal den godt nok være public?
+        //TODO Skal den godt nok være public? Den burde slet ikke være her, to be honest. Der er intet, der kræver access til keymold (udover validation, som selv klarer det)
         public static string getKeymold(string path)
         {
             if (userExists(path))
