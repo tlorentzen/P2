@@ -54,11 +54,10 @@ namespace P2P_lib.Messages{
 
                 var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
 
-                if (success)
-                {
+                if (success){
                     try{
                         byte[] data = this.ToByteArray();
-                                            
+
                         using (NetworkStream stream = connectionTester.GetStream()){
                             stream.Write(data, 0, data.Length);
                             stream.Close();
@@ -67,13 +66,12 @@ namespace P2P_lib.Messages{
                     catch (Exception e){
                         logger.Fatal(e);
                     }
-                    connectionTester.EndConnect(result);
 
+                    connectionTester.EndConnect(result);
+                    connectionTester.Close();
                 } else{
                     logger.Fatal(new TimeoutException());
                 }
-
-
 
                 return true;
             }
