@@ -67,7 +67,7 @@ namespace P2P_lib.Messages{
                         logger.Fatal(e);
                     }
 
-                    connectionTester.EndConnect(result);
+                    //connectionTester.EndConnect(result);
                     connectionTester.Close();
                 } else{
                     logger.Fatal(new TimeoutException());
