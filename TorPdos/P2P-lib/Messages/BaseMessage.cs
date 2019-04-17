@@ -45,7 +45,7 @@ namespace P2P_lib.Messages
 
         public bool Send(int receiverPort = 25565){
             try{
-                using (TcpClient client = new TcpClient(this.to, receiverPort)){
+                using (TcpClient client = new TcpClient()){
                     var result = client.BeginConnect(this.to, receiverPort, null, null);
                     var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
 
