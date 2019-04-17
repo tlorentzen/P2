@@ -56,15 +56,18 @@ namespace P2P_lib.Messages{
 
                 if (success)
                 {
-                    try{ byte[] data = this.ToByteArray();}
+                    try{
+                        byte[] data = this.ToByteArray();
+                                            
+                        using (NetworkStream stream = connectionTester.GetStream()){
+                            stream.Write(data, 0, data.Length);
+                            stream.Close();
+                        }
+                    }
                     catch (Exception e){
                         logger.Fatal(e);
                     }
-                    
-                    using (NetworkStream stream = connectionTester.GetStream()){
-                        stream.Write(data, 0, data.Length);
-                        stream.Close();
-                    }
+
                 } else{
                     logger.Fatal(new TimeoutException());
                 }
