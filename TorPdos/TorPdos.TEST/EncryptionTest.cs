@@ -42,6 +42,21 @@ namespace TorPdos.TEST
             CollectionAssert.AreEqual(expected, result);
         }
 
+        [TestMethod]
+        public void EncryptDecryptDifferentEncryptorSameFile()
+        {
+            byte[] expected = HashFile(FilePath);
+            Crypt.doEncrypt(password);
+            Crypt = new FileEncryption("TESTFILE", ".md");
+            Crypt.doDecrypt(password);
+
+            byte[] result = HashFile("TESTFILE.md");
+            File.Delete("TESTFILE.aes");
+
+
+            CollectionAssert.AreEqual(expected, result);
+        }
+
         static byte[] HashFile(string filename)
         {
             using (var md5 = MD5.Create()) {
