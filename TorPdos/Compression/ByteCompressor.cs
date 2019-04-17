@@ -148,12 +148,11 @@ namespace Compression{
                                 }
 
                                 outStream.Close();
-                                return outPath;
                             }
                         } else{
                             //Appends 2 to tile name if file already exists
-                            decompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
-                            return Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath);
+                            decompressFile(inPath,
+                                Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
                         }
 
                         inStream.Close();
@@ -161,13 +160,12 @@ namespace Compression{
                 }
                 catch(Exception e){
                     logger.Error(e);
-                    return null;
                 }
             }
             else{
                 logger.Fatal(new FileNotFoundException());
-                return null;
             }
+            return outPath;
         }
     }
 }
