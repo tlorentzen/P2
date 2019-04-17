@@ -18,7 +18,7 @@ namespace P2P_lib{
         private bool _hidden;
         private string UUID;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
-        public delegate void fileDownlaoded();
+        public delegate void fileDownlaoded(string path);
         public event fileDownlaoded fileSuccefullyDownloaded; 
 
         public FileReceiver(string path, string filename, int port, bool hidden, int bufferSize = 1024){
@@ -66,7 +66,8 @@ namespace P2P_lib{
 
                 using (NetworkStream stream = client.GetStream()){
                     Console.WriteLine(@"Receiving file");
-                    using (var fileStream = File.Open(this._path + this._filename, FileMode.OpenOrCreate, FileAccess.Write)){
+                    string path = this._path + this._filename;
+                    using (var fileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write)){
                         Console.WriteLine("Creating file: " + this._filename);
                         int i;
 
@@ -75,7 +76,7 @@ namespace P2P_lib{
                         }
 
                         Console.WriteLine(@"File done downloading");
-                        this.fileSuccefullyDownloaded();
+                        this.fileSuccefullyDownloaded(path);
                         fileStream.Close();
                     }
 
