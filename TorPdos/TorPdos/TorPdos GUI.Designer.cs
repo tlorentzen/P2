@@ -9,14 +9,15 @@ using Index_lib;
  namespace TorPdos{
 
     public class MyForm : Form{
-        private static readonly string backgroundColour = "#FBF9FF",
-            lblColour = "#B3B7EE",
-            btnColour = "#A2A3BB",
-            txtColour = "#9395D3";
+        private static readonly string
+            logoColour = "#4D5762",
+            backgroundColour = "#FBF9FF",
+            lblColour = logoColour,//"#B3B7EE",
+            btnColour = logoColour,//"#A2A3BB",
+            txtColour = logoColour,//"#9395D3",
+            errorColour = "#B20808";
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
         public bool loggedIn = false;
-        private bool browseHasRun = false;
-        
 
         Label lblUsername = new Label{
             Location = new Point(20, 20),
@@ -60,8 +61,8 @@ using Index_lib;
         Label lblNope = new Label(){
             Location = new Point(50, 110),
             Height = 40, Width = 350,
-            Text = "Wrong username or password",
-            ForeColor = ColorTranslator.FromHtml(btnColour),
+            Text = "Invalid username or password",
+            ForeColor = ColorTranslator.FromHtml(errorColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
         Label lblNope2 = new Label()
@@ -207,14 +208,26 @@ using Index_lib;
                 Login();
             }
 
+            EventHandlers();
+        }
+
+        void EventHandlers()
+        {
             noiTorPdos.Click += noiTorPdosClick;
             FormClosing += MyFormClosing;
+            btnLogin.Click += BtnClickLogin;
+            lblGoBack.Click += LblGoBackClick;
+            btnBrowse.Click += BtnBrowseClick;
+            lblLogOut.Click += LblLogOutClick;
+            lblGoBack.Click += LblGoBackClick;
+            btnCreate.Click += BtnCreateClick;
+            lblOkay.Click += LblOkayClick;
         }
         private void BtnCreateClick(object sender, EventArgs e)
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                string uuid = IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden", txtPassword.Text);
+                IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -226,7 +239,7 @@ using Index_lib;
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + @"\.hidden", uuid, pass))
+            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -238,26 +251,49 @@ using Index_lib;
         }
         private void LblOkayClick(object sender, EventArgs e){
 
-            string hiddenPath = PathName() + @"\.hidden\", newPath = PathName() + @"\TorPdos";
+            string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"\TorPdos\";
             if(Directory.Exists(PathName()) == true)
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName() + @"\");
+                    if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
+                    else
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName() + @"\");
+                    if(MyReg.GetValue("Path") == null || MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
+                    else
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
+                    
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
-                    MyReg.SetValue("Path", newPath + @"\");
-                    HiddenFolder dih = new HiddenFolder(newPath + @"\.hidden\");
+                    if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName() + @"\");
+                    }
+                    else
+                    {
+                        MyReg.SetValue("Path", newPath + @"\");
+                    }
+                    
+                    HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
-                if (IdHandler.userExists(newPath + @"\.hidden") == true)
+                if (IdHandler.userExists(newPath + @".hidden") == true)
                 {
                     Login();
                 }
@@ -277,11 +313,11 @@ using Index_lib;
 
         private void LblGoBackClick(object sender, EventArgs e){
             FirstStartUp();
+            chkCreateFolder.Checked = false;
         }
 
         public void Login(){  
             Controls.Clear();
-            txtUsername.Text = IdHandler.getUuid(MyReg.GetValue("Path").ToString() + @"\.hidden");
             Controls.Add(txtUsername);
             txtConfirmPassword.Text = null;
             Controls.Add(txtConfirmPassword);
@@ -289,23 +325,20 @@ using Index_lib;
             Controls.Add(lblUsername);
             Controls.Add(lblLoginPassword);
             Controls.Add(lblGoBack);
-            btnLogin.Click += BtnClickLogin;
-            lblGoBack.Click += LblGoBackClick;
+            
             AcceptButton = btnLogin;
+
+            if(MyReg.GetValue("UUID") != null)
+            {
+                txtUsername.Text = MyReg.GetValue("UUID").ToString();
+            }
         }
 
         public void FirstStartUp(){
             Controls.Clear();
-            if (!browseHasRun)
-            {
-                btnBrowse.Click += BtnBrowseClick;
-                browseHasRun = true;
-            }
-            
             Controls.Add(btnBrowse);
             Controls.Add(txtPath);
             Controls.Add(lblOkay);
-            lblOkay.Click += LblOkayClick;
             Controls.Add(chkCreateFolder);
             if (MyReg.GetValue("Path") != null)
             {
@@ -322,8 +355,6 @@ using Index_lib;
             Controls.Add(txtConfirmPassword);
             Controls.Add(btnCreate);
             Controls.Add(lblGoBack);
-            lblGoBack.Click += LblGoBackClick;
-            btnCreate.Click += BtnCreateClick;
             AcceptButton = btnCreate;
         }
         
@@ -331,8 +362,7 @@ using Index_lib;
         {
             Controls.Clear();
             Controls.Add(btnDownload);
-            Controls.Add(lblLogOut);
-            lblLogOut.Click += LblLogOutClick;
+            Controls.Add(lblLogOut);      
         }
 
         private void LblLogOutClick(object sender, EventArgs e)
@@ -362,7 +392,7 @@ using Index_lib;
         }
 
         public string PathName(){
-            return txtPath.Text;
+            return txtPath.Text + @"\";
         }
     }
 }
