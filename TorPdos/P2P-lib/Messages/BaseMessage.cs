@@ -63,6 +63,7 @@ namespace P2P_lib.Messages{
                             stream.Write(data, 0, data.Length);
                             stream.Close();
                         }
+                        connectionTester.EndConnect(result);
                     }
                     catch (Exception e){
                         logger.Fatal(e);
@@ -72,7 +73,7 @@ namespace P2P_lib.Messages{
                     logger.Fatal(new TimeoutException());
                 }
 
-                connectionTester.EndConnect(result);
+
 
                 return true;
             }
