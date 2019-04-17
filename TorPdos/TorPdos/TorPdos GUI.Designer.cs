@@ -9,14 +9,15 @@ using Index_lib;
  namespace TorPdos{
 
     public class MyForm : Form{
-        private static readonly string backgroundColour = "#FBF9FF",
-            lblColour = "#B3B7EE",
-            btnColour = "#A2A3BB",
-            txtColour = "#9395D3";
+        private static readonly string
+            logoColour = "#4D5762",
+            backgroundColour = "#FBF9FF",
+            lblColour = logoColour,//"#B3B7EE",
+            btnColour = logoColour,//"#A2A3BB",
+            txtColour = logoColour,//"#9395D3",
+            errorColour = "#B20808";
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
         public bool loggedIn = false;
-        private bool browseHasRun = false;
-        
 
         Label lblUsername = new Label{
             Location = new Point(20, 20),
@@ -60,8 +61,8 @@ using Index_lib;
         Label lblNope = new Label(){
             Location = new Point(50, 110),
             Height = 40, Width = 350,
-            Text = "Wrong username or password",
-            ForeColor = ColorTranslator.FromHtml(btnColour),
+            Text = "Invalid username or password",
+            ForeColor = ColorTranslator.FromHtml(errorColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
         Label lblNope2 = new Label()
