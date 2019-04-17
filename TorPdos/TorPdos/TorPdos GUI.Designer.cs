@@ -251,32 +251,17 @@ using Index_lib;
         }
         private void LblOkayClick(object sender, EventArgs e){
 
-            string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"\TorPdos\";
+            string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"TorPdos\";
             if(Directory.Exists(PathName()) == true)
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
-                    {
-                        MyReg.SetValue("Path", PathName() + @"\");
-                    }
-                    else
-                    {
-                        MyReg.SetValue("Path", PathName() + @"\");
-                    }
+                    MyReg.SetValue("Path", PathName());
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    if(MyReg.GetValue("Path") == null || MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
-                    {
-                        MyReg.SetValue("Path", PathName() + @"\");
-                    }
-                    else
-                    {
-                        MyReg.SetValue("Path", PathName() + @"\");
-                    }
-                    
+                    MyReg.SetValue("Path", PathName());
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
@@ -293,7 +278,7 @@ using Index_lib;
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
-                if (IdHandler.userExists(newPath + @".hidden") == true)
+                if (IdHandler.userExists(newPath + @".hidden") || IdHandler.userExists(hiddenPath) == true)
                 {
                     Login();
                 }
@@ -392,7 +377,15 @@ using Index_lib;
         }
 
         public string PathName(){
-            return txtPath.Text + @"\";
+            if(txtPath.Text.EndsWith(@"\"))
+            {
+                return txtPath.Text;
+            }
+            else
+            {
+                return txtPath.Text + @"\";
+            }
+            
         }
     }
 }
