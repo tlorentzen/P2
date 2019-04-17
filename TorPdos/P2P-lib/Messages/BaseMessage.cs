@@ -70,7 +70,7 @@ namespace P2P_lib.Messages{
                     //connectionTester.EndConnect(result);
                     connectionTester.Close();
                 } else{
-                    logger.Fatal(new TimeoutException());
+                    logger.Info(new TimeoutException());
                 }
 
                 return true;
