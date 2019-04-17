@@ -46,20 +46,20 @@ namespace P2P_lib.Messages
         public bool Send(int receiverPort = 25565){
             try{
                 using (TcpClient client = new TcpClient(this.to, receiverPort)){
-                    if (!client.ConnectAsync(this.to, receiverPort).Wait(1000))
-                    {
-                        // connection failure
-                    }
+                    var result = client.BeginConnect(this.to, receiverPort, null, null);
+                    var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
 
-                    
-                    client.SendTimeout = 2000;
-                    client.ReceiveTimeout = 2000;
+                    if (!success)
+                    {
+                        throw new Exception("Failed to connect.");
+                    }
 
                     byte[] data = this.ToByteArray();
                     using (NetworkStream stream = client.GetStream()){
                         stream.Write(data, 0, data.Length);
                         stream.Close();
                     }
+                    client.EndConnect(result);
                     client.Close();
                 }
 
