@@ -201,8 +201,11 @@ using Index_lib;
             if (MyReg.GetValue("Path") == null)
             {
                 FirstStartUp(); 
-            } else{
-                Login(); 
+            } else if(MyReg.GetValue("UUID") == null){
+                Create();
+            } else
+            {
+                Login();
             }
 
             noiTorPdos.Click += noiTorPdosClick;
