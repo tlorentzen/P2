@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
+using NLog.Fluent;
 
 namespace P2P_lib.Messages{
     public enum StatusCode{
@@ -48,20 +49,30 @@ namespace P2P_lib.Messages{
 
         public bool Send(int receiverPort = 25565){
             try{
-                using (TcpClient client = new TcpClient(this.to, receiverPort)){
-                    {
-                        client.SendTimeout = 2000;
-                        client.ReceiveTimeout = 2000;
+                var connectionTester = new TcpClient();
+                var result = connectionTester.BeginConnect(this.to, receiverPort, null, null);
 
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
+
+                if (success)
+                {
+                    try{
                         byte[] data = this.ToByteArray();
-                        using (NetworkStream stream = client.GetStream()){
+                                            
+                        using (NetworkStream stream = connectionTester.GetStream()){
                             stream.Write(data, 0, data.Length);
                             stream.Close();
                         }
-
-                        client.Close();
                     }
+                    catch (Exception e){
+                        logger.Fatal(e);
+                    }
+
+                } else{
+                    logger.Fatal(new TimeoutException());
                 }
+
+                connectionTester.EndConnect(result);
 
                 return true;
             }
