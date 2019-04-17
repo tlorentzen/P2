@@ -21,7 +21,8 @@ namespace Encryption{
 
         public void doEncrypt(string password){
             //Uses the GetSalt function to create the salt for the encryption.
-            byte[] salt = getSalt();
+            byte[] salt = new byte[64];
+            salt = getSalt();
 
 
             //The encrypted output file.
@@ -94,6 +95,7 @@ namespace Encryption{
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
 
+            Console.WriteLine(Path);
 
             //Reading through the file
             using (FileStream fsCrypt =

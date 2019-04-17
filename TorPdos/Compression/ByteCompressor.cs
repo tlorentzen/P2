@@ -102,7 +102,7 @@ namespace Compression{
             }
         }
 
-        public static void decompressFile(string inPath, string outPath){
+        public static string decompressFile(string inPath, string outPath){
             //Add .lzma to infile, if extesion not provided
             if (!Path.HasExtension(inPath)){
                 inPath = inPath + ".lzma";
@@ -148,11 +148,12 @@ namespace Compression{
                                 }
 
                                 outStream.Close();
+                                return outPath;
                             }
                         } else{
                             //Appends 2 to tile name if file already exists
-                            decompressFile(inPath,
-                                Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
+                            decompressFile(inPath, Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath));
+                            return Path.GetFileNameWithoutExtension(outPath) + "2" + Path.GetExtension(outPath);
                         }
 
                         inStream.Close();
@@ -160,10 +161,12 @@ namespace Compression{
                 }
                 catch(Exception e){
                     logger.Error(e);
+                    return null;
                 }
             }
             else{
                 logger.Fatal(new FileNotFoundException());
+                return null;
             }
         }
     }
