@@ -55,6 +55,10 @@ namespace TorPdos{
 
             idx.Start();
 
+            Console.WriteLine("Integrity check initialized...");
+            idx.MakeIntegrityCheck();
+            Console.WriteLine("Integrity check finished!");
+
             Console.WriteLine(IdHandler.getUuid(path));
             // Prepare P2PNetwork
             p2p = new Network(25565, idx, path);
@@ -99,7 +103,7 @@ namespace TorPdos{
                             p2p.DownloadFile(param[1]);
                         }else if (console.Equals("integrity"))
                         {
-                            idx.BuildIntegrity();
+                            idx.MakeIntegrityCheck();
                         }
                         else if (console.Equals("list")){
 

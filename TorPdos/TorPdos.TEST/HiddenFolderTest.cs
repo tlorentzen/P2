@@ -32,6 +32,7 @@ namespace TorPdos.TEST
             File.Copy("TESTFILE.md", "TESTCOPY.md");
             Hidden.add("TESTCOPY.md");
             bool expected = File.Exists("TEST/.hidden/TESTCOPY.md");
+            Hidden.remove("TESTCOPY.md");
 
             Assert.IsTrue(expected);
         }
@@ -68,6 +69,32 @@ namespace TorPdos.TEST
 
             CollectionAssert.AreEqual(expected, result);
             
+        }
+
+        [TestMethod]
+        public void MakeFolderInHiddenAddFile()
+        {
+            Directory.CreateDirectory("TEST/.hidden/HiddenTest");
+            File.Copy("TESTFILE.md", "TESTCOPY.md");
+            Hidden.add("TESTCOPY.md","HiddenTest/TESTCOPY.md");
+            bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.md");
+            Hidden.remove("HiddenTest/TESTCOPY.md");
+
+            Assert.IsTrue(expected);
+
+        }
+
+        [TestMethod]
+        public void DeleteEntireFolderInHidden()
+        {
+            Directory.CreateDirectory("TEST/.hidden/HiddenTest");
+            File.Copy("TESTFILE.md", "TESTCOPY.md");
+            Hidden.add("TESTCOPY.md", "HiddenTest/TESTCOPY.md");
+            bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.md");
+            Hidden.remove("HiddenTest");
+            expected &= Directory.Exists("TEST/.hidden/HiddenTest");
+
+            Assert.IsFalse(expected);
         }
     }
 
