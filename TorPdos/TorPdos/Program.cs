@@ -29,9 +29,7 @@ namespace TorPdos{
             }
             //End of what needs to run at the Absolute start of the program.
 
-
             string ownIP = NetworkHelper.getLocalIPAddress();
-
 
             Console.WriteLine("Local: " + ownIP);
             Console.WriteLine("Free space on C: " + DiskHelper.getTotalFreeSpace("C:\\"));
@@ -49,6 +47,7 @@ namespace TorPdos{
             idx.FileAdded += Idx_FileAdded;
             idx.FileChanged += Idx_FileChanged;
             idx.FileDeleted += Idx_FileDeleted;
+            idx.FileMissing += Idx_FileMissing;
 
             if (!idx.load()){
                 idx.buildIndex();
@@ -98,7 +97,11 @@ namespace TorPdos{
                             p2p.ping();
                         } else if(console.StartsWith("download") && param.Length == 2) {
                             p2p.DownloadFile(param[1]);
-                        }else if (console.Equals("list")){
+                        }else if (console.Equals("integrity"))
+                        {
+                            idx.BuildIntegrity();
+                        }
+                        else if (console.Equals("list")){
 
                             List<Peer> peers = p2p.getPeerList();
 
@@ -120,6 +123,12 @@ namespace TorPdos{
                     }
                 }
             }
+        }
+
+        private static void Idx_FileMissing(IndexFile file)
+        {
+            Console.WriteLine(@"File missing init download of " + file.hash);
+            p2p.DownloadFile(file.hash);
         }
 
         private static void Idx_FileDeleted(string hash){
