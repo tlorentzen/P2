@@ -27,15 +27,36 @@ namespace Index_lib{
 
         //Adds file or directory from path to the hidden directory
         public void add(string path){
-            string nameExt = path.Split('\\').Last();
-            Directory.Move(path, _path + "/" + nameExt);
+            //string nameExt = path.Split('\\').Last();
+            Directory.Move(path, _path + "/" + path);
+        }
+
+        public void add(string path, string inpath)
+        {
+            Directory.Move(path, _path + "/" + inpath);
         }
 
         //Deletes file or directory form the relative path from hidden directory
 
         public void remove(string path)
         {
-            Directory.Delete(_path + "/" + path);
+            if (!path.Contains("/.hidden")) {
+                path = _path + "/" + path;
+            }
+            if (File.Exists(path)) {
+                File.Delete( path);
+            } else if (Directory.Exists(path)) {
+                string[] files = Directory.GetFiles(path);
+                foreach(string p in files) {
+                    File.Delete(p);
+                }
+                string[] paths = Directory.GetDirectories(path);
+                foreach(string p in paths) {
+                    remove(p);
+                }
+                Directory.Delete(path);
+            } else
+                throw new ArgumentException("Path invalid", path);
         }
 
         public void removeFile(string path) {
