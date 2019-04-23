@@ -127,6 +127,7 @@ namespace TorPdos{
 
         private static void Idx_FileMissing(IndexFile file)
         {
+            Console.WriteLine(@"File missing init download of " + file.hash);
             p2p.DownloadFile(file.hash);
         }
 
