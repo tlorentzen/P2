@@ -38,16 +38,12 @@ namespace Index_lib
         public bool isRunning;
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public Index(string path)
-        {
+        public Index(string path){
             _indexFilePath = path + @"\.hidden\index.json";
 
-            if (Directory.Exists(path))
-            {
+            if (Directory.Exists(path)){
                 _path = path;
-            }
-            else
-            {
+            } else {
                 throw new DirectoryNotFoundException();
             }
 
