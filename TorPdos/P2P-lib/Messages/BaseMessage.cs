@@ -22,15 +22,15 @@ namespace P2P_lib.Messages{
 
     [Serializable]
     public abstract class BaseMessage{
-        public string ToUUID;
-        public string FromUUID;
+        public string toUUID;
+        public string fromUUID;
         public string to;
         public string from;
-        private string hash;
+        private string _hash;
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("NetworkLogging");
+        private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
         public System.Type GetMessageType(){
             return this.GetType();
@@ -39,9 +39,9 @@ namespace P2P_lib.Messages{
         public abstract string GetHash();
 
         public BaseMessage(Peer to){
-            this.ToUUID = to.getUUID();
+            this.toUUID = to.getUUID();
             this.to = to.GetIP();
-            this.FromUUID = DiskHelper.getRegistryValue("UUID");
+            this.fromUUID = DiskHelper.getRegistryValue("UUID");
             this.from = NetworkHelper.getLocalIPAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;
@@ -64,18 +64,18 @@ namespace P2P_lib.Messages{
                         }
                     }
                     catch (Exception e){
-                        logger.Fatal(e);
+                        _logger.Fatal(e);
                     }
 
                     connectionTester.Close();
                 } else{
-                    logger.Info(new TimeoutException());
+                    _logger.Info(new TimeoutException());
                 }
 
                 return true;
             }
             catch (SocketException e){
-                logger.Info(e);
+                _logger.Info(e);
                 return false;
             }
         }
@@ -107,9 +107,9 @@ namespace P2P_lib.Messages{
             string _fromIP = this.from;
             this.from = this.to;
             this.to = _fromIP;
-            string _fromUUID = this.ToUUID;
-            this.ToUUID = this.FromUUID;
-            this.FromUUID = _fromUUID;
+            string _fromUUID = this.toUUID;
+            this.toUUID = this.fromUUID;
+            this.fromUUID = _fromUUID;
         }
 
         public void forwardMessage(string toIP){
