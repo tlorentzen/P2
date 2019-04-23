@@ -295,7 +295,7 @@ namespace Index_lib
             }
         }
 
-        public void BuildIntegrity()
+        public void MakeIntegrityCheck()
         {
             foreach (KeyValuePair<string, IndexFile> entry in _index)
             {
