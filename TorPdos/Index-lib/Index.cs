@@ -401,6 +401,7 @@ namespace Index_lib
 
 
             /*
+             * 
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
                 return;
