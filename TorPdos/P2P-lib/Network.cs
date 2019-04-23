@@ -131,8 +131,8 @@ namespace P2P_lib{
                 List<Peer> outgoing = new List<Peer>();
                 incomming = message.Peers;
                 // Adding sender to list
-                if (!inPeerList(message.FromUUID, peers)){
-                    peers.Add(new Peer(message.FromUUID, message.from));
+                if (!inPeerList(message.fromUUID, peers)){
+                    peers.Add(new Peer(message.fromUUID, message.from));
                 }
 
                 //Checks whether a incomming peer exists in the peerlist.
@@ -144,7 +144,7 @@ namespace P2P_lib{
 
                 foreach (var outGoingPeer in peers){
                     if (inPeerList(outGoingPeer.getUUID(), incomming)) break;
-                    if (outGoingPeer.getUUID() == message.FromUUID) break;
+                    if (outGoingPeer.getUUID() == message.fromUUID) break;
                     outgoing.Add(outGoingPeer);
                 }
 
@@ -222,7 +222,7 @@ namespace P2P_lib{
         private void RechievedUpload(UploadMessage upload){
             if (upload.type.Equals(TypeCode.REQUEST)){
                 int replyPort = upload.port;
-                string uuid = upload.FromUUID;
+                string uuid = upload.fromUUID;
 
                 if (DiskHelper.getTotalFreeSpace("C:\\") > upload.filesize){
                     upload.statuscode = StatusCode.ACCEPTED;
@@ -245,7 +245,7 @@ namespace P2P_lib{
         private void RechievedPing(PingMessage ping){
             // Update peer
             foreach (Peer peer in peers){
-                if (peer.getUUID().Equals(ping.FromUUID)){
+                if (peer.getUUID().Equals(ping.fromUUID)){
                     peer.SetIP(ping.from);
                     peer.UpdateLastSeen();
                     peer.setOnline(true);
@@ -259,7 +259,7 @@ namespace P2P_lib{
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist
-                PeerFetcherMessage peerFetch = new PeerFetcherMessage(getAPeer(ping.FromUUID));
+                PeerFetcherMessage peerFetch = new PeerFetcherMessage(getAPeer(ping.fromUUID));
                 peerFetch.Peers = this.getPeerList();
                 //Removed the rechiever from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.Peers){
@@ -286,8 +286,8 @@ namespace P2P_lib{
         private void receivedDownloadMessage(DownloadMessage download){
             if (download.type.Equals(TypeCode.REQUEST)){
                 if (download.statuscode == StatusCode.OK) {
-                    Console.WriteLine(_path + @".hidden\" + download.FromUUID + @"\" + download.filehash + @".aes");
-                    if (File.Exists(_path + @".hidden\" + download.FromUUID + @"\" + download.filehash + @".aes")) {
+                    Console.WriteLine(_path + @".hidden\" + download.fromUUID + @"\" + download.filehash + @".aes");
+                    if (File.Exists(_path + @".hidden\" + download.fromUUID + @"\" + download.filehash + @".aes")) {
                         download.CreateReply();
                         download.statuscode = StatusCode.ACCEPTED;
                         download.Send(download.port);
@@ -303,7 +303,7 @@ namespace P2P_lib{
                     }
                 } else if (download.statuscode == StatusCode.ACCEPTED) {
                     var sender = new FileSender(download.from, download.port);
-                    sender.Send(_path + @".hidden\" + download.FromUUID + @"\" + download.filehash + @".aes");
+                    sender.Send(_path + @".hidden\" + download.fromUUID + @"\" + download.filehash + @".aes");
                     Console.WriteLine("File send");
                 }
             }
