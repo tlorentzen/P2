@@ -71,6 +71,7 @@
     <Compile Include="HiddenFolderTest.cs" />
     <Compile Include="FileSplitterTest.cs" />
     <Compile Include="IndexTest.cs" />
+    <Compile Include="NetworkTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
