@@ -263,7 +263,7 @@ using Index_lib;
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", txtPassword.Text, "NSA_Surveillance_Van_#0216");
+                IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
