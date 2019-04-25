@@ -301,16 +301,20 @@ using Index_lib;
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
-                    DirectoryInfo di = Directory.CreateDirectory(newPath);
-                    if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    if(MyReg.GetValue("Path") == null)
                     {
                         MyReg.SetValue("Path", PathName() + @"\");
+                    }
+                    else if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
+                    {
+                        MyReg.SetValue("Path", PathName());
                     }
                     else
                     {
                         MyReg.SetValue("Path", newPath + @"\");
                     }
-                    
+                    DirectoryInfo di = Directory.CreateDirectory(newPath);
+
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
