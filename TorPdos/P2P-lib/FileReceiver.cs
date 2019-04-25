@@ -35,7 +35,7 @@ namespace P2P_lib{
             }
         }
 
-        public void start(){
+        public void Start(){
             try{             
                 _server = new TcpListener(this._ip, this._port);
                 _server.AllowNatTraversal(true);
@@ -48,7 +48,7 @@ namespace P2P_lib{
 
             try{
                 listening = true;
-                _listener = new Thread(this.connectionHandler);
+                _listener = new Thread(this.ConnectionHandler);
                 _listener.Start();
             }
             catch (Exception e){
@@ -56,12 +56,12 @@ namespace P2P_lib{
             }
         }
 
-        public void stop(){
+        public void Stop(){
             this.listening = false;
             _server.Stop();
         }
 
-        private void connectionHandler(){
+        private void ConnectionHandler(){
             string path = this._path + this._filename;
 
             try{
@@ -100,7 +100,7 @@ namespace P2P_lib{
         }
 
 
-        public int getPort(){
+        public int GetPort(){
             return this._port;
         }
     }
