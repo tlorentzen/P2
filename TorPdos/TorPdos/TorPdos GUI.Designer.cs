@@ -121,7 +121,7 @@ using Index_lib;
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
         TextBox txtUsername = new TextBox(){
-            Location = new Point(leftAlign, posFirst + 20),//HERE
+            Location = new Point(leftAlign, posFirst + 20),
             Height = 45, Width = boxWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
@@ -255,12 +255,6 @@ using Index_lib;
             btnLogin.Click += BtnClickLogin;
             btnBrowse.Click += BtnBrowseClick;
             btnCreate.Click += BtnCreateClick;
-            //Replaced:
-            //lblGoBack.Click += LblGoBackClick;
-            //lblLogOut.Click += LblLogOutClick;
-            //lblGoBack.Click += LblGoBackClick;
-            //lblOkay.Click += LblOkayClick;
-            //With these:
             btnConfirmPath.Click += BtnConfirmPath;
             btnChangePath.Click += BtnChangePathClick;
             btnLogout.Click += BtnLogOutClick;
