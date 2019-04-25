@@ -1,14 +1,16 @@
-﻿﻿using System;
- using System.Drawing;
- using System.IO;
- using System.Windows.Forms;
- using ID_lib;
- using Microsoft.Win32;
+﻿using System;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using ID_lib;
+using Microsoft.Win32;
 using Index_lib;
 
- namespace TorPdos{
+namespace TorPdos
+{
 
-    public class MyForm : Form{
+    public class MyForm : Form
+    {
         private static readonly string
             logoColour = "#4D5762",
             backgroundColour = "#FBF9FF",
@@ -38,12 +40,14 @@ using Index_lib;
             textSizeDefault = 12,
             textSizeInput = 14,
             textSizeBtn = textSizeDefault; //25
-        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1",true);
+        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
         public bool loggedIn = false;
 
-        Label lblUsername = new Label{
+        Label lblUsername = new Label
+        {
             Location = new Point(leftAlign, posFirst),
-            Height = 25, Width = 150,
+            Height = 25,
+            Width = 150,
             Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
             Text = "User ID:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
@@ -51,14 +55,17 @@ using Index_lib;
         Label lblPassword = new Label
         {
             Location = new Point(leftAlign, posFirst),
-            Height = 25, Width = 150,
+            Height = 25,
+            Width = 150,
             Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
             Text = "Password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblConfirmPassword = new Label(){
+        Label lblConfirmPassword = new Label()
+        {
             Location = new Point(leftAlign, posSecond),
-            Height = 25, Width = 150,
+            Height = 25,
+            Width = 150,
             Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
             Text = "Confirm password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
@@ -81,16 +88,20 @@ using Index_lib;
             Text = "Choose path:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblYouDidIt = new Label(){
+        Label lblYouDidIt = new Label()
+        {
             Location = new Point(100, 100),
-            Height = 40, Width = 250,
+            Height = 40,
+            Width = 250,
             Text = "You did it o/",
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Font = new Font("Consolas", 20, FontStyle.Regular)
         };
-        Label lblNope = new Label(){
+        Label lblNope = new Label()
+        {
             Location = new Point(leftAlign, posThird),
-            Height = 40, Width = 350,
+            Height = 40,
+            Width = 350,
             Text = " * Invalid username or password.",
             ForeColor = ColorTranslator.FromHtml(errorColour),
             Font = new Font("Consolas", textSizeDefault, FontStyle.Regular)
@@ -104,9 +115,11 @@ using Index_lib;
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
-        Label lblCreate = new Label(){
+        Label lblCreate = new Label()
+        {
             Location = new Point(275, 240),
-            Height = 100, Width = 200,
+            Height = 100,
+            Width = 200,
             Text = "Create new user",
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 8, FontStyle.Regular)
@@ -120,9 +133,11 @@ using Index_lib;
             Text = "Log out",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        TextBox txtUsername = new TextBox(){
+        TextBox txtUsername = new TextBox()
+        {
             Location = new Point(leftAlign, posFirst + 20),
-            Height = 45, Width = boxWidth,
+            Height = 45,
+            Width = boxWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
@@ -130,23 +145,28 @@ using Index_lib;
         TextBox txtPassword = new TextBox()
         {
             Location = new Point(leftAlign, posFirst + 20),
-            Height = 45, Width = boxWidth,
+            Height = 45,
+            Width = boxWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             PasswordChar = '*',
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtConfirmPassword = new TextBox(){
+        TextBox txtConfirmPassword = new TextBox()
+        {
             Location = new Point(leftAlign, posSecond + 20),
-            Height = 45, Width = boxWidth,
+            Height = 45,
+            Width = boxWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             PasswordChar = '*',
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtPath = new TextBox(){
+        TextBox txtPath = new TextBox()
+        {
             Location = new Point(leftAlign, posSecond + 20),
-            Height = 45, Width = boxWidth - boxBtnWidth,
+            Height = 45,
+            Width = boxWidth - boxBtnWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour),
@@ -155,14 +175,17 @@ using Index_lib;
         Button btnConfirmPath = new Button()
         {
             Location = new Point(posConfirmW, posConfirmH),
-            Width = confirmBtnW, Height = confirmBtnH,
+            Width = confirmBtnW,
+            Height = confirmBtnH,
             Text = "Confirm",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnLogin = new Button(){
+        Button btnLogin = new Button()
+        {
             Location = new Point(posConfirmW, posConfirmH),
-            Width = confirmBtnW, Height = confirmBtnH,
+            Width = confirmBtnW,
+            Height = confirmBtnH,
             Text = "Login",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
@@ -176,16 +199,20 @@ using Index_lib;
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnCreate = new Button(){
+        Button btnCreate = new Button()
+        {
             Location = new Point(posConfirmW, posConfirmH),
-            Width = confirmBtnW, Height = confirmBtnH,
+            Width = confirmBtnW,
+            Height = confirmBtnH,
             Text = "Create",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnBrowse = new Button(){
+        Button btnBrowse = new Button()
+        {
             Location = new Point(leftAlign + boxWidth - boxBtnWidth, posSecond + 20),
-            Width = boxBtnWidth, Height = 27,
+            Width = boxBtnWidth,
+            Height = 27,
             Text = "Browse",
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
@@ -193,7 +220,8 @@ using Index_lib;
         Button btnDownload = new Button()
         {
             Location = new Point(posConfirmW, posConfirmH),
-            Width = confirmBtnW, Height = confirmBtnH,
+            Width = confirmBtnW,
+            Height = confirmBtnH,
             Text = "Donwnload",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
@@ -207,7 +235,8 @@ using Index_lib;
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
-        NotifyIcon noiTorPdos = new NotifyIcon(){
+        NotifyIcon noiTorPdos = new NotifyIcon()
+        {
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
             Visible = true,
@@ -217,12 +246,14 @@ using Index_lib;
             Text = "Create new folder?",
             Location = new Point(leftAlign, posThird),
             Font = new Font("Consolas", textSizeDefault, FontStyle.Regular),
-            Height = 25, Width = 200,
+            Height = 25,
+            Width = 200,
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Checked = true
         };
 
-        public MyForm(){
+        public MyForm()
+        {
             SuspendLayout();
             FormBorderStyle = FormBorderStyle.FixedSingle;
             StartPosition = FormStartPosition.CenterScreen;
@@ -238,10 +269,14 @@ using Index_lib;
 
             if (MyReg.GetValue("Path") == null)
             {
-                FirstStartUp(); 
-            } else if(MyReg.GetValue("UUID") == null){
+                FirstStartUp();
+            }
+            else if (MyReg.GetValue("UUID") == null)
+            {
                 Create();
-            } else{
+            }
+            else
+            {
                 Login();
             }
 
@@ -263,11 +298,13 @@ using Index_lib;
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                IdHandler.createUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", txtPassword.Text);
+                IdHandler.createUser(txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
-            } else{
+            }
+            else
+            {
                 Controls.Add(lblNope2);
             }
         }
@@ -275,7 +312,7 @@ using Index_lib;
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(MyReg.GetValue("Path").ToString() + @"\.hidden\", uuid, pass))
+            if (IdHandler.isValidUser(uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -285,40 +322,29 @@ using Index_lib;
                 Controls.Add(lblNope);
             }
         }
-        private void BtnConfirmPath(object sender, EventArgs e){
+        private void BtnConfirmPath(object sender, EventArgs e)
+        {
 
             string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"TorPdos\";
-            if(Directory.Exists(PathName()) == true)
+            if (Directory.Exists(PathName()) == true)
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
                     MyReg.SetValue("Path", PathName());
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
-                else if(Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
+                else if (Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
                     MyReg.SetValue("Path", PathName());
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
-                    if(MyReg.GetValue("Path") == null)
-                    {
-                        MyReg.SetValue("Path", PathName() + @"\");
-                    }
-                    else if (MyReg.GetValue("Path").ToString().EndsWith(@"\") == true)
-                    {
-                        MyReg.SetValue("Path", PathName());
-                    }
-                    else
-                    {
-                        MyReg.SetValue("Path", newPath + @"\");
-                    }
+                    MyReg.SetValue("Path", newPath);
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
-
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
-                if (IdHandler.userExists(newPath + @".hidden") || IdHandler.userExists(hiddenPath) == true)
+                if (IdHandler.userExists())
                 {
                     Login();
                 }
@@ -329,19 +355,23 @@ using Index_lib;
             }
         }
 
-        private void BtnBrowseClick(object sender, EventArgs e){
-            using (FolderBrowserDialog fbd = new FolderBrowserDialog()){
+        private void BtnBrowseClick(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
                 if (fbd.ShowDialog() == DialogResult.OK)
                     txtPath.Text = fbd.SelectedPath;
             }
         }
 
-        private void BtnChangePathClick(object sender, EventArgs e){
+        private void BtnChangePathClick(object sender, EventArgs e)
+        {
             FirstStartUp();
             chkCreateFolder.Checked = false;
         }
 
-        public void Login(){  
+        public void Login()
+        {
             Controls.Clear();
             int tabNumber = 0;
 
@@ -366,23 +396,24 @@ using Index_lib;
             Controls.Add(lblUsername);
             Controls.Add(lblLoginPassword);
             //Controls.Add(lblGoBack);
-            
+
             AcceptButton = btnLogin;
 
-            if(MyReg.GetValue("UUID") != null)
+            if (MyReg.GetValue("UUID") != null)
             {
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
             }
         }
 
-        public void FirstStartUp(){
+        public void FirstStartUp()
+        {
             Controls.Clear();
             int tabNumber = 0;
 
             //TXT: Browse input
             Controls.Add(txtPath);
             txtPath.TabIndex = tabNumber++;
-            
+
             //BTN: Browse menu
             btnBrowse.TabIndex = tabNumber++;
             Controls.Add(btnBrowse);
@@ -432,11 +463,11 @@ using Index_lib;
             //Labels
             Controls.Add(lblPassword);
             Controls.Add(lblConfirmPassword);
-            
+
 
             AcceptButton = btnCreate;
         }
-        
+
         public void LoggedIn()
         {
             Controls.Clear();
@@ -457,11 +488,11 @@ using Index_lib;
         {
             Login();
             loggedIn = false;
-        }   
+        }
 
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
-            if(e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
             {
                 e.Cancel = true;
                 Hide();
@@ -474,13 +505,15 @@ using Index_lib;
 
         }
 
-        void noiTorPdosClick(object sender, EventArgs e){
+        void noiTorPdosClick(object sender, EventArgs e)
+        {
             Show();
             WindowState = FormWindowState.Normal;
         }
 
-        public string PathName(){
-            if(txtPath.Text.EndsWith(@"\"))
+        public string PathName()
+        {
+            if (txtPath.Text.EndsWith(@"\"))
             {
                 return txtPath.Text;
             }
@@ -488,7 +521,7 @@ using Index_lib;
             {
                 return txtPath.Text + @"\";
             }
-            
+
         }
     }
 }
