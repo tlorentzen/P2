@@ -111,24 +111,6 @@ using Index_lib;
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 8, FontStyle.Regular)
         };
-        Label lblGoBack = new Label{
-            Location = new Point(posCancelW, posConfirmH),
-            Height = 40,
-            Width = 150,
-            Font = new Font("Consolas", textSizeDefault, FontStyle.Regular),
-            Text = "Change path",
-            ForeColor = ColorTranslator.FromHtml(lblColour)
-        };
-        Label lblOkay = new Label()
-        {
-            Location = new Point(320, 230),
-            Height = 40,
-            Width = 80,
-            Font = new Font("Consolas", textSizeDefault, FontStyle.Regular),
-            Text = "Okay",
-            ForeColor = ColorTranslator.FromHtml(lblColour),
-        };
-
         Label lblLogOut = new Label
         {
             Location = new Point(300, 230),
@@ -279,9 +261,9 @@ using Index_lib;
             //lblGoBack.Click += LblGoBackClick;
             //lblOkay.Click += LblOkayClick;
             //With these:
-            btnConfirmPath.Click += LblOkayClick;
-            btnChangePath.Click += LblGoBackClick;
-            btnLogout.Click += LblLogOutClick;
+            btnConfirmPath.Click += BtnConfirmPath;
+            btnChangePath.Click += BtnChangePathClick;
+            btnLogout.Click += BtnLogOutClick;
         }
         private void BtnCreateClick(object sender, EventArgs e)
         {
@@ -309,7 +291,7 @@ using Index_lib;
                 Controls.Add(lblNope);
             }
         }
-        private void LblOkayClick(object sender, EventArgs e){
+        private void BtnConfirmPath(object sender, EventArgs e){
 
             string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"TorPdos\";
             if(Directory.Exists(PathName()) == true)
@@ -356,7 +338,7 @@ using Index_lib;
             }
         }
 
-        private void LblGoBackClick(object sender, EventArgs e){
+        private void BtnChangePathClick(object sender, EventArgs e){
             FirstStartUp();
             chkCreateFolder.Checked = false;
         }
@@ -444,11 +426,12 @@ using Index_lib;
             //BTN: Create
             btnCreate.TabIndex = tabNumber++;
             Controls.Add(btnCreate);
+            Controls.Add(btnChangePath);
 
             //Labels
             Controls.Add(lblPassword);
             Controls.Add(lblConfirmPassword);
-            Controls.Add(lblGoBack);
+            
 
             AcceptButton = btnCreate;
         }
@@ -469,7 +452,7 @@ using Index_lib;
             //Controls.Add(lblLogOut);      
         }
 
-        private void LblLogOutClick(object sender, EventArgs e)
+        private void BtnLogOutClick(object sender, EventArgs e)
         {
             Login();
             loggedIn = false;
