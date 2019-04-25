@@ -420,6 +420,9 @@ using Index_lib;
             //BTN: Create
             btnCreate.TabIndex = tabNumber++;
             Controls.Add(btnCreate);
+
+            //BTN: Change path
+            btnChangePath.TabIndex = tabNumber++;
             Controls.Add(btnChangePath);
 
             //Labels
