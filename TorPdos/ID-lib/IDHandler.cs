@@ -10,12 +10,12 @@ namespace ID_lib
 {
     public static class IdHandler
     {
-        private static readonly string userdatafile = "userdata";
+        private static readonly string userdatafile = "userdata", hiddenfolder = @"\.hidden\";
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
 
         //Create user file using generated UUID and input password (and UUID, if input)
-        public static string createUser(string path, string password, string uuid = null)
+        public static string createUser(string password, string uuid = null)
         {
             try
             {
@@ -30,9 +30,10 @@ namespace ID_lib
                         uuid = uuid.Substring(0, 32);
                     }
                 }
+                string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
 
                 string keymold = generateKeymold(uuid, password);
-                using (StreamWriter userFile = File.CreateText(path + userdatafile))
+                using (StreamWriter userFile = File.CreateText(path))
                 {
                     userFile.WriteLine(keymold);
                     userFile.WriteLine(uuid);
@@ -96,11 +97,13 @@ namespace ID_lib
         //Check if UUID and password match existing local user
         //Compare keymolds (hashes)
         //Returns true if user details are valid, false if not
-        public static bool isValidUser(string path, string uuid, string password)
+        public static bool isValidUser(string uuid, string password)
         {
             try
             {
-                using (StreamReader userFile = new StreamReader(path + userdatafile))
+                string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+
+                using (StreamReader userFile = new StreamReader(path))
                 {
                     //Hash userdata, load 
                     //?? Checker for null value
@@ -129,13 +132,14 @@ namespace ID_lib
         }
 
         //Return UUID if present, else return null
-        public static string getUuid(string path)
+        public static string getUuid()
         {
-            if (userExists(path))
+            string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+            if (userExists())
             {
                 try
                 {
-                    return File.ReadAllLines(path + userdatafile).ElementAtOrDefault(1);
+                    return File.ReadAllLines(path).ElementAtOrDefault(1);
                 }
                 catch (Exception)
                 {
@@ -148,30 +152,11 @@ namespace ID_lib
             }
         }
 
-        //Return keymold if present, else return null 
-        //TODO Skal den godt nok være public? Den burde slet ikke være her, to be honest. Der er intet, der kræver access til keymold (udover validation, som selv klarer det)
-        public static string getKeymold(string path)
+        public static bool userExists()
         {
-            if (userExists(path))
-            {
-                try
-                {
-                    return File.ReadAllLines(path + userdatafile).ElementAtOrDefault(0);
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
+            string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
 
-        public static bool userExists(string path)
-        {
-            if (File.Exists(path + userdatafile))
+            if (File.Exists(path))
             {
                 return true;
             }
@@ -182,11 +167,13 @@ namespace ID_lib
         }
 
         //Removes userdata file, return false if failed
-        public static bool removeUser(string path)
+        public static bool removeUser()
         {
             try
             {
-                File.Delete(path + userdatafile);
+                string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+
+                File.Delete(path);
                 return true;
             }
             catch (Exception)
