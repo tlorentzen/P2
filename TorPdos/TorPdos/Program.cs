@@ -59,7 +59,7 @@ namespace TorPdos{
             idx.MakeIntegrityCheck();
             Console.WriteLine("Integrity check finished!");
 
-            Console.WriteLine(IdHandler.getUuid(path));
+            Console.WriteLine(IdHandler.getUuid());
             // Prepare P2PNetwork
             p2p = new Network(25565, idx, path);
             p2p.Start();
