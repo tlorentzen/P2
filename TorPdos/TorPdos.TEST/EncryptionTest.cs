@@ -18,7 +18,7 @@ namespace TorPdos.TEST
         public void EncryptedFileNotSame()
         {
             byte[] notExpected = HashFile(FilePath);
-            Crypt.doEncrypt(password);
+            Crypt.DoEncrypt(password);
 
             byte[] actual = HashFile("TESTFILE.aes");
 
@@ -32,8 +32,8 @@ namespace TorPdos.TEST
         public void EncryptDecryptSameFile()
         {
             byte[] expected = HashFile(FilePath);
-            Crypt.doEncrypt(password);
-            Crypt.doDecrypt(password);
+            Crypt.DoEncrypt(password);
+            Crypt.DoDecrypt(password);
 
             byte[] result = HashFile("TESTFILE.md");
             File.Delete("TESTFILE.aes");
@@ -46,9 +46,9 @@ namespace TorPdos.TEST
         public void EncryptDecryptDifferentEncryptorSameFile()
         {
             byte[] expected = HashFile(FilePath);
-            Crypt.doEncrypt(password);
+            Crypt.DoEncrypt(password);
             Crypt = new FileEncryption("TESTFILE", ".md");
-            Crypt.doDecrypt(password);
+            Crypt.DoDecrypt(password);
 
             byte[] result = HashFile("TESTFILE.md");
             File.Delete("TESTFILE.aes");

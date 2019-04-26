@@ -30,6 +30,7 @@ namespace TorPdos.TEST
             Assert.AreEqual(expected, result);
         }
 
+        /*
         [TestMethod]
         public void MergedFilesAreSame()
         {
@@ -52,6 +53,7 @@ namespace TorPdos.TEST
             Assert.AreEqual(expected.Length, result.Length);
 
         }
+        */
 
         static byte[] HashFile(string filename)
         {
