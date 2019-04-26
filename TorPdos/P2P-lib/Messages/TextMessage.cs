@@ -1,29 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P2P_lib.Messages
 {
     [Serializable]
     public class TextMessage : BaseMessage
     {
-        private string message;
+        private string _message;
 
         public TextMessage(Peer to) : base(to)
         {
 
         }
 
-        public void setMessage(string msg)
+        public void SetMessage(string msg)
         {
-            this.message = msg;
+            this._message = msg;
         }
 
-        public string getMessage()
+        public string GetMessage()
         {
-            return this.message;
+            return this._message;
         }
 
         public override string GetHash()

@@ -23,9 +23,9 @@ namespace P2P_lib{
 
         private IPAddress ip;
         private int port;
-        private TcpListener server = null;
-        private bool listening = false;
-        private Thread listener;
+        private TcpListener _server = null;
+        private bool _listening = false;
+        private Thread _listener;
         private byte[] _buffer = new byte[1024];
 
 
@@ -34,27 +34,27 @@ namespace P2P_lib{
             this.port = port;
         }
 
-        public void start(){
-            server = new TcpListener(this.ip, this.port);
-            server.AllowNatTraversal(true);
-            server.Start();
+        public void Start(){
+            _server = new TcpListener(this.ip, this.port);
+            _server.AllowNatTraversal(true);
+            _server.Start();
 
 
-            listening = true;
+            _listening = true;
 
-            listener = new Thread(this.connectionHandler);
-            listener.Start();
+            _listener = new Thread(this.connectionHandler);
+            _listener.Start();
         }
 
-        public void stop(){
-            this.listening = false;
-            server.Stop();
+        public void Stop(){
+            this._listening = false;
+            _server.Stop();
         }
 
         private void connectionHandler(){
-            while (this.listening){
+            while (this._listening){
                 try{
-                    TcpClient client = server.AcceptTcpClient();
+                    TcpClient client = _server.AcceptTcpClient();
                     client.ReceiveTimeout = 500;
                     NetworkStream stream = client.GetStream();
 
@@ -71,7 +71,7 @@ namespace P2P_lib{
                         memory.Close();
 
                         BaseMessage message = BaseMessage.FromByteArray(messageBytes);
-                        MessageReceived.Invoke(message);
+                        if (MessageReceived != null) MessageReceived.Invoke(message);
                     }
                 }
                 catch (SocketException e){

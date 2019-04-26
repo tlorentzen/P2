@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
-using System.Net.NetworkInformation;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.Win32;
-using NLog.Fluent;
 
 namespace P2P_lib.Messages{
     public enum StatusCode{
@@ -22,27 +14,26 @@ namespace P2P_lib.Messages{
 
     [Serializable]
     public abstract class BaseMessage{
-        public string toUUID;
-        public string fromUUID;
+        public string toUuid;
+        public string fromUuid;
         public string to;
         public string from;
-        private string _hash;
         public StatusCode statuscode;
         public TypeCode type;
         public int forwardCount;
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
-        public System.Type GetMessageType(){
+        public Type GetMessageType(){
             return this.GetType();
         }
 
         public abstract string GetHash();
 
         public BaseMessage(Peer to){
-            this.toUUID = to.getUUID();
+            this.toUuid = to.GetUuid();
             this.to = to.GetIP();
-            this.fromUUID = DiskHelper.getRegistryValue("UUID");
-            this.from = NetworkHelper.getLocalIPAddress();
+            this.fromUuid = DiskHelper.getRegistryValue("UUID");
+            this.from = NetworkHelper.GetLocalIpAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;
         }
@@ -107,13 +98,13 @@ namespace P2P_lib.Messages{
             string _fromIP = this.from;
             this.from = this.to;
             this.to = _fromIP;
-            string _fromUUID = this.toUUID;
-            this.toUUID = this.fromUUID;
-            this.fromUUID = _fromUUID;
+            string _fromUUID = this.toUuid;
+            this.toUuid = this.fromUuid;
+            this.fromUuid = _fromUUID;
         }
 
-        public void forwardMessage(string toIP){
-            this.to = toIP;
+        public void ForwardMessage(string toIp){
+            this.to = toIp;
             this.type = TypeCode.REQUEST;
             forwardCount -= 1;
         }

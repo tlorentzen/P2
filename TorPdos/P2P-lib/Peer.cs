@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net;
 using P2P_lib.Messages;
@@ -12,10 +8,10 @@ namespace P2P_lib{
     public class Peer{
         private IPAddress _ip;
         private int _rating;
-        private string _UUID;
+        private readonly string _UUID;
         private DateTime _lastSeen;
-        private int _pings_without_response = 0;
-        private long _nextPing = 0;
+        private int _pingsWithoutResponse;
+        private long _nextPing;
         private bool _online = false;
 
         public Peer() : this(null, null){ }
@@ -24,30 +20,29 @@ namespace P2P_lib{
             this._UUID = uuid;
 
             if (ip == null || ip.Equals("")){
-                this.SetIP(NetworkHelper.getLocalIPAddress());
+                this.SetIp(NetworkHelper.GetLocalIpAddress());
             } else{
-                this.SetIP(ip);
+                this.SetIp(ip);
             }
 
             Rating = 100;
         }
 
-        public bool isOnline(){
+        public bool IsOnline(){
             return this._online;
         }
 
-        public void setOnline(bool online){
-
-            if(online != this._online){
-                if(online){
-                    Console.WriteLine(this._ip+" - is now online!");
-                }else{
-                    Console.WriteLine(this._ip+" - is now offline!");
+        public void SetOnline(bool online){
+            if (online != this._online){
+                if (online){
+                    Console.WriteLine(this._ip + " - is now online!");
+                } else{
+                    Console.WriteLine(this._ip + " - is now offline!");
                 }
             }
 
             this._online = online;
-            this._pings_without_response = 0;
+            this._pingsWithoutResponse = 0;
         }
 
         public void Ping(){
@@ -59,18 +54,18 @@ namespace P2P_lib{
 
             if (this._nextPing < time){
                 PingMessage ping = new PingMessage(this);
-                ping.from = NetworkHelper.getLocalIPAddress();
+                ping.from = NetworkHelper.GetLocalIpAddress();
                 ping.type = Messages.TypeCode.REQUEST;
                 ping.statuscode = StatusCode.OK;
                 ping.Send();
 
                 // Ping every 60 seconds and if a peer didnt respond add extra time before retrying.
                 this._nextPing = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 10000 +
-                                 (this._pings_without_response * 10000);
-                this._pings_without_response++;
+                                 (this._pingsWithoutResponse * 10000);
+                this._pingsWithoutResponse++;
 
-                if (this._pings_without_response >= 2){
-                    this.setOnline(false);
+                if (this._pingsWithoutResponse >= 2){
+                    this.SetOnline(false);
                 }
             }
         }
@@ -79,12 +74,12 @@ namespace P2P_lib{
         private Peer(string uuid, string stringIp, int rating, DateTime lastSeen){
             if (string.IsNullOrEmpty(uuid)) throw new NullReferenceException();
             _UUID = uuid;
-            this.SetIP(stringIp);
+            this.SetIp(stringIp);
             Rating = rating;
             _lastSeen = lastSeen;
         }
 
-        public void SetIP(string ip){
+        public void SetIp(string ip){
             this._ip = IPAddress.Parse(ip);
         }
 
@@ -93,7 +88,7 @@ namespace P2P_lib{
         }
 
         public DateTime lastSeen => _lastSeen;
-        
+
         public string stringIP => _ip.ToString();
         public string UUID => _UUID;
 
@@ -101,7 +96,7 @@ namespace P2P_lib{
             _lastSeen = DateTime.Now;
         }
 
-        public string getUUID(){
+        public string GetUuid(){
             return this._UUID;
         }
 

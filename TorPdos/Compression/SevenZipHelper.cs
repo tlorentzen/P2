@@ -41,7 +41,7 @@ namespace Compression{
             eos
         };
 
-        public static byte[] compress(byte[] inputBytes){
+        public static byte[] Compress(byte[] inputBytes){
             MemoryStream inStream = new MemoryStream(inputBytes);
             MemoryStream outStream = new MemoryStream();
             SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
@@ -54,7 +54,7 @@ namespace Compression{
             return outStream.ToArray();
         }
 
-        public static byte[] decompress(byte[] inputBytes){
+        public static byte[] Decompress(byte[] inputBytes){
             MemoryStream newInStream = new MemoryStream(inputBytes);
 
             SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();

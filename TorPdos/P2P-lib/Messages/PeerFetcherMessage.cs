@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using static P2P_lib.Network;
 
 namespace P2P_lib.Messages{
 
@@ -12,7 +11,7 @@ namespace P2P_lib.Messages{
             return null;
         }
 
-        public List<Peer> Peers;
+        public List<Peer> peers;
 
         /// <summary>
         /// This is the response function to a request of a list of peers.
@@ -21,9 +20,9 @@ namespace P2P_lib.Messages{
         public void SendPeers(List<Peer> input){
             this.type = TypeCode.RESPONSE;
             this.statuscode = StatusCode.OK;
-            string from_Ip = this.from;
-            this.to = from_Ip;
-            Peers = input;
+            string fromIp = this.from;
+            this.to = fromIp;
+            peers = input;
         }
         
     }

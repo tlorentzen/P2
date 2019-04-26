@@ -298,7 +298,7 @@ namespace TorPdos
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
             {
-                IdHandler.createUser(txtPassword.Text);
+                IdHandler.CreateUser(txtPassword.Text);
                 Login();
                 if (MyReg.GetValue("UUID") == null) return;
                 txtUsername.Text = MyReg.GetValue("UUID").ToString();
@@ -312,7 +312,7 @@ namespace TorPdos
         void BtnClickLogin(object sender, EventArgs e)
         {
             string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.isValidUser(uuid, pass))
+            if (IdHandler.IsValidUser(uuid, pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -344,7 +344,7 @@ namespace TorPdos
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
-                if (IdHandler.userExists())
+                if (IdHandler.UserExists())
                 {
                     Login();
                 }

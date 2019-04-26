@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Encryption{
     public class FileEncryption{
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("EncryptionLogging");
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("EncryptionLogging");
 
         //Sets Buffersize for encryption and decryption.
-        private const int BUFFERSIZE = 100048576;
+        private const int BufferSize = 100048576;
 
         private string Path{ get; set; }
 
@@ -19,10 +19,9 @@ namespace Encryption{
             Extension = extension;
         }
 
-        public void doEncrypt(string password){
+        public void DoEncrypt(string password){
             //Uses the GetSalt function to create the salt for the encryption.
-            byte[] salt = new byte[64];
-            salt = getSalt();
+            var salt = GetSalt();
 
 
             //The encrypted output file.
@@ -31,14 +30,8 @@ namespace Encryption{
                 byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
                 //Set up AES for encryption
-                RijndaelManaged aes = new RijndaelManaged();
+                RijndaelManaged aes = new RijndaelManaged{KeySize = 256, BlockSize = 128, Padding = PaddingMode.PKCS7};
 
-                //Keysize is the 
-                aes.KeySize = 256;
-                aes.BlockSize = 128;
-
-                //Padding modes helps mask the length of the plain text.
-                aes.Padding = PaddingMode.PKCS7;
 
                 //Password, used for encryption key of the file.
                 var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
@@ -58,7 +51,7 @@ namespace Encryption{
                         using (FileStream fsIn = new FileStream(Path + Extension, FileMode.Open, FileAccess.Read,
                             FileShare.ReadWrite)){
                             //Buffer on 1 mb
-                            byte[] buffer = new byte[BUFFERSIZE];
+                            byte[] buffer = new byte[BufferSize];
 
 
                             //Tries and catches regarding opening and reading file
@@ -69,7 +62,7 @@ namespace Encryption{
                                 }
                             }
                             catch (Exception e){
-                                logger.Fatal(e);
+                                Logger.Fatal(e);
                             }
                             finally{
                                 fsIn.Close();
@@ -77,10 +70,10 @@ namespace Encryption{
                         }
                     }
                     catch (FileNotFoundException e){
-                        logger.Fatal(e);
+                        Logger.Fatal(e);
                     }
                     catch (Exception e){
-                        logger.Warn(e);
+                        Logger.Warn(e);
                     }
 
                     cs.Close();
@@ -90,7 +83,7 @@ namespace Encryption{
             }
         }
 
-        public void doDecrypt(string password){
+        public void DoDecrypt(string password){
             //Setup to read the salt from the start of the file
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
@@ -124,7 +117,7 @@ namespace Encryption{
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read)){
                     //Creates the output file
                     using (FileStream fsOut = new FileStream(Path + Extension, FileMode.Create)){
-                        byte[] buffer = new byte[BUFFERSIZE];
+                        byte[] buffer = new byte[BufferSize];
 
                         //Outputs the read file into the output file.
                         try{
@@ -134,7 +127,7 @@ namespace Encryption{
                             }
                         }
                         catch (Exception e){
-                            logger.Fatal(e);
+                            Logger.Fatal(e);
                         }
                         finally{
                             fsOut.Close();
@@ -148,7 +141,7 @@ namespace Encryption{
             }
         }
 
-        private static byte[] getSalt(){
+        private static byte[] GetSalt(){
             byte[] data = new byte[64];
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider()){
                 for (int i = 0; i < 10; i++){

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using System.IO;
 
 namespace P2P_lib{
     public class QueuedFile{
@@ -49,7 +44,7 @@ namespace P2P_lib{
             return this._filesize;
         }
 
-        public void setFilesize(long filesize){
+        public void SetFilesize(long filesize){
             this._filesize = filesize;
         }
 

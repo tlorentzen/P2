@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P2P_lib.Messages
 {
@@ -16,12 +12,12 @@ namespace P2P_lib.Messages
             _pinged = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
 
-        public long getPingTime()
+        public long GetPingTime()
         {
             return this._pinged;
         }
 
-        public long getElapsedTime()
+        public long GetElapsedTime()
         {
             return DateTimeOffset.Now.ToUnixTimeMilliseconds() - _pinged;
         }

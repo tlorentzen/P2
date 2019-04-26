@@ -9,7 +9,7 @@ namespace P2P_lib{
     public class FileSender{
         IPAddress ip;
         private int port;
-        const int chunkSize = 1024;
+        const int ChunkSize = 1024;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileSender");
 
         public FileSender(string ip, int port){
@@ -25,7 +25,7 @@ namespace P2P_lib{
                         using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             int bytesRead;
-                            byte[] buffer = new byte[chunkSize];
+                            byte[] buffer = new byte[ChunkSize];
                             while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0){
                                 stream.Write(buffer, 0, bytesRead < buffer.Length ? bytesRead : buffer.Length);
                             }

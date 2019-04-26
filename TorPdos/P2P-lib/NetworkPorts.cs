@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
 
 namespace P2P_lib{
     public class NetworkPorts{
         private List<int> ports = new List<int>();
 
-        public int GetAvailablePort(int begin_range = 50000, int end_range = 65535){
-            for (int i = begin_range; i <= end_range; i++){
-                if (this.isPortAvailable(i) && !ports.Contains(i)){
+        public int GetAvailablePort(int beginRange = 50000, int endRange = 65535){
+            for (int i = beginRange; i <= endRange; i++){
+                if (this.IsPortAvailable(i) && !ports.Contains(i)){
                     ports.Add(i);
                     return i;
                 }
@@ -29,7 +22,7 @@ namespace P2P_lib{
             }
         }
 
-        public bool isPortAvailable(int port){
+        public bool IsPortAvailable(int port){
             bool isAvailable = true;
             //https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
             // Evaluate current system tcp connections. This is the same information provided

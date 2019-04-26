@@ -15,13 +15,13 @@ namespace ID_lib
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
 
         //Create user file using generated UUID and input password (and UUID, if input)
-        public static string createUser(string password, string uuid = null)
+        public static string CreateUser(string password, string uuid = null)
         {
             try
             {
                 if (uuid == null)
                 {
-                    uuid = generateUuid();
+                    uuid = GenerateUuid();
                 }
                 else
                 {
@@ -30,12 +30,12 @@ namespace ID_lib
                         uuid = uuid.Substring(0, 32);
                     }
                 }
-                string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+                string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
-                string keymold = generateKeymold(uuid, password);
+                string keyMold = GenerateKeyMold(uuid, password);
                 using (StreamWriter userFile = File.CreateText(path))
                 {
-                    userFile.WriteLine(keymold);
+                    userFile.WriteLine(keyMold);
                     userFile.WriteLine(uuid);
                     userFile.Close();
                 }
@@ -51,9 +51,9 @@ namespace ID_lib
         }
 
         //Generate keymold (hash) from key
-        public static string generateKeymold(string key1, string key2 = null)
+        public static string GenerateKeyMold(string key1, string key2 = null)
         {
-            string key = null;
+            string key;
 
             if (key2 != null)
             {
@@ -69,8 +69,8 @@ namespace ID_lib
             new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
 
             //Get hash
-            Rfc2898DeriveBytes keymold = new Rfc2898DeriveBytes(key, salt, iterations);
-            byte[] hash = keymold.GetBytes(hashlength);
+            Rfc2898DeriveBytes keyMold = new Rfc2898DeriveBytes(key, salt, iterations);
+            byte[] hash = keyMold.GetBytes(hashlength);
 
             //Combine salt and hash into key
             byte[] hashBytes = new byte[hashlength + saltlength];
@@ -81,10 +81,10 @@ namespace ID_lib
         }
 
         //Generate UUID based on mac addresses and current time
-        private static string generateUuid()
+        private static string GenerateUuid()
         {
             string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-            List<string> macAddresses = NetworkHelper.getMacAddresses();
+            List<string> macAddresses = NetworkHelper.GetMacAddresses();
 
             foreach (string mac in macAddresses)
             {
@@ -97,11 +97,11 @@ namespace ID_lib
         //Check if UUID and password match existing local user
         //Compare keymolds (hashes)
         //Returns true if user details are valid, false if not
-        public static bool isValidUser(string uuid, string password)
+        public static bool IsValidUser(string uuid, string password)
         {
             try
             {
-                string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+                string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
                 using (StreamReader userFile = new StreamReader(path))
                 {
@@ -132,10 +132,10 @@ namespace ID_lib
         }
 
         //Return UUID if present, else return null
-        public static string getUuid()
+        public static string GetUuid()
         {
-            string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
-            if (userExists())
+            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+            if (UserExists())
             {
                 try
                 {
@@ -152,9 +152,9 @@ namespace ID_lib
             }
         }
 
-        public static bool userExists()
+        public static bool UserExists()
         {
-            string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
             if (File.Exists(path))
             {
@@ -167,11 +167,11 @@ namespace ID_lib
         }
 
         //Removes userdata file, return false if failed
-        public static bool removeUser()
+        public static bool RemoveUser()
         {
             try
             {
-                string path = MyReg.GetValue("Path").ToString() + hiddenfolder + userdatafile;
+                string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
                 File.Delete(path);
                 return true;

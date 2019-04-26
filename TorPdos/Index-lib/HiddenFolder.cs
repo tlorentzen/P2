@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using NLog;
 
 namespace Index_lib{
     public class HiddenFolder{
@@ -26,19 +23,19 @@ namespace Index_lib{
         }
 
         //Adds file or directory from path to the hidden directory
-        public void add(string path){
+        public void Add(string path){
             //string nameExt = path.Split('\\').Last();
             Directory.Move(path, _path + "/" + path);
         }
 
-        public void add(string path, string inpath)
+        public void Add(string path, string inpath)
         {
             Directory.Move(path, _path + "/" + inpath);
         }
 
         //Deletes file or directory form the relative path from hidden directory
 
-        public void remove(string path)
+        public void Remove(string path)
         {
             if (!path.Contains("/.hidden")) {
                 path = _path + "/" + path;
@@ -52,22 +49,22 @@ namespace Index_lib{
                 }
                 string[] paths = Directory.GetDirectories(path);
                 foreach(string p in paths) {
-                    remove(p);
+                    Remove(p);
                 }
                 Directory.Delete(path);
             } else
                 throw new ArgumentException("Path invalid", path);
         }
 
-        public void removeFile(string path) {
+        public static void RemoveFile(string path) {
             File.Delete(path);
         }
 
-        public FileStream writeToFile(string path){
+        public FileStream WriteToFile(string path){
             return new FileStream(path, FileMode.Create, FileAccess.Write);
         }
 
-        public FileStream readFromFile(string path){
+        public FileStream ReadFromFile(string path){
             try{
                 return new FileStream(path, FileMode.Open, FileAccess.Read);
             }

@@ -1,5 +1,4 @@
-﻿using P2P_lib.Messages;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -7,21 +6,22 @@ using System.Threading;
 using Compression;
 using Encryption;
 using Index_lib;
+using P2P_lib.Messages;
 
-namespace P2P_lib {
+namespace P2P_lib.Managers {
     public class DownloadManager{
         private bool is_running = true;
         private int _port;
-        private string filehash;
+        private string _filehash;
         private string _path;
         private NetworkPorts _ports;
         private ManualResetEvent _waitHandle;
         private BlockingCollection<Peer> _peers;
-        private P2PConcurrentQueue<QueuedFile> _queue;
+        private StateSaveConcurrentQueue<QueuedFile> _queue;
         private FileReceiver _receiver;
         private Index _index;
 
-        public DownloadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
+        public DownloadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers, Index index){
             this._queue = queue;
             this._ports = ports;
@@ -29,11 +29,11 @@ namespace P2P_lib {
             this._path = DiskHelper.getRegistryValue("Path").ToString();
             this._waitHandle = new ManualResetEvent(false);
             this._index = index;
-            this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
+            this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._port = _ports.GetAvailablePort();
         }
 
-        private void _queue_FileAddedToQueue(){
+        private void QueueElementAddedToQueue(){
             this._waitHandle.Set();
         }
 
@@ -46,19 +46,19 @@ namespace P2P_lib {
 
                 while (this._queue.TryDequeue(out file)){
                     Console.WriteLine("Trying to deque");
-                    List<Peer> onlinePeers = this.getPeers();
+                    List<Peer> onlinePeers = this.GetPeers();
                     foreach (var peer in _peers){
-                        if (peer.isOnline()){
+                        if (peer.IsOnline()){
                             onlinePeers.Add(peer);
                         }
                     }
 
-                    filehash = file.GetHash();
+                    _filehash = file.GetHash();
                     _ports.Release(_port);
 
                     Receiver receiver = new Receiver(_port);
                     receiver.MessageReceived += _receiver_MessageReceived;
-                    receiver.start();
+                    receiver.Start();
 
                     foreach (var onlinePeer in onlinePeers){
                         DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
@@ -87,7 +87,7 @@ namespace P2P_lib {
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
                         this._receiver = new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName, download.filehash + ".aes", download.port, false);
-                        this._receiver.fileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
+                        this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
                         this._receiver.Start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
@@ -104,11 +104,11 @@ namespace P2P_lib {
             RestoreOriginalFile(path);
         }
 
-        private List<Peer> getPeers(){
+        private List<Peer> GetPeers(){
             List<Peer> availablePeers = new List<Peer>();
 
             foreach (Peer peer in this._peers){
-                if (peer.isOnline()){
+                if (peer.IsOnline()){
                     availablePeers.Add(peer);
                 }
             }
@@ -123,15 +123,15 @@ namespace P2P_lib {
 
                 // Decrypt file
                 FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
-                decryption.doDecrypt("password");
+                decryption.DoDecrypt("password");
                 Console.WriteLine("File decrypted");
                 File.Delete(path);
                 Console.WriteLine(pathWithoutExtension);
 
                 // Decompress file
-                string pathToFileForCopying = ByteCompressor.decompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
+                string pathToFileForCopying = ByteCompressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
                 Console.WriteLine("File decompressed");
-                foreach (string filePath in _index.getEntry(Path.GetFileNameWithoutExtension(path)).paths) {
+                foreach (string filePath in _index.GetEntry(Path.GetFileNameWithoutExtension(path)).paths) {
                     File.Copy(pathToFileForCopying, filePath);
                     Console.WriteLine("File send to: {0}", filePath);
                 }

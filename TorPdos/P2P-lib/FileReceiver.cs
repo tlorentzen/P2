@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.IO;
-using NLog.Fluent;
 
 namespace P2P_lib{
     public class FileReceiver{
@@ -11,21 +10,18 @@ namespace P2P_lib{
         private string _path;
         private int _port;
         private TcpListener _server;
-        public bool listening = false;
         private Thread _listener;
         private byte[] _buffer;
         private string _filename;
-        private bool _hidden;
-        private string UUID;
+        private string _uuid;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
-        public delegate void fileDownlaoded(string path);
-        public event fileDownlaoded fileSuccefullyDownloaded;
-        private Boolean _fileReceived = false;
+        public delegate void FileDownlaoded(string path);
+        public event FileDownlaoded FileSuccefullyDownloaded;
+        private Boolean _fileReceived;
 
         public FileReceiver(string path, string filename, int port, bool hidden, int bufferSize = 1024){
             this._ip = IPAddress.Any;
             this._buffer = new byte[bufferSize];
-            this._hidden = hidden;
             this._filename = filename;
             this._port = port;
             this._path = path;
@@ -47,7 +43,6 @@ namespace P2P_lib{
             }
 
             try{
-                listening = true;
                 _listener = new Thread(this.ConnectionHandler);
                 _listener.Start();
             }
@@ -57,7 +52,6 @@ namespace P2P_lib{
         }
 
         public void Stop(){
-            this.listening = false;
             _server.Stop();
         }
 
@@ -88,7 +82,7 @@ namespace P2P_lib{
 
                 client.Close();
                 if(_fileReceived){
-                    fileSuccefullyDownloaded.Invoke(path);
+                    FileSuccefullyDownloaded.Invoke(path);
                 }
             }
             catch (InvalidOperationException e){

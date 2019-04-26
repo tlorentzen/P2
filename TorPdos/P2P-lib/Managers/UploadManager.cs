@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net.Sockets;
-using Index_lib;
-using Microsoft.Win32;
+using System.Threading;
 using Compression;
 using Encryption;
+using Index_lib;
+using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
 
-namespace P2P_lib
+namespace P2P_lib.Managers
 {
     public class UploadManager
     {
@@ -21,29 +18,29 @@ namespace P2P_lib
         private bool is_running = true;
         private NetworkPorts _ports;
         private BlockingCollection<Peer> _peers;
-        private P2PConcurrentQueue<QueuedFile> _queue;
-        private HiddenFolder _hiddenFolder;
+        private StateSaveConcurrentQueue<QueuedFile> _queue;
         private RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"TorPdos\1.1.1.1");
         private string _path;
-        private bool pendingReceiver = true;
-        private FileSender sender;
+        private bool _pendingReceiver = true;
+        private FileSender _sender;
         private Receiver _receiver;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("UploadLogger");
+        private static Logger logger = LogManager.GetLogger("UploadLogger");
+        private HiddenFolder _hiddenFolder;
 
-        public UploadManager(P2PConcurrentQueue<QueuedFile> queue, NetworkPorts ports, BlockingCollection<Peer> peers)
+        public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports, BlockingCollection<Peer> peers)
         {
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
 
             this.waitHandle = new ManualResetEvent(false);
-            this._queue.FileAddedToQueue += _queue_FileAddedToQueue;
+            this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
 
             this._path = registry.GetValue("Path").ToString();
             _hiddenFolder = new HiddenFolder(this._path + @"\.hidden\");
         }
 
-        private void _queue_FileAddedToQueue()
+        private void QueueElementAddedToQueue()
         {
             this.waitHandle.Set();
         }
@@ -64,7 +61,7 @@ namespace P2P_lib
                     string filePath = file.GetPath();
                     string compressedFilePath = this._path + @".hidden\" + file.GetHash();
 
-                    List<Peer> receivingPeers = this.getPeers(Math.Min(copies, this.CountOnlinePeers()));
+                    List<Peer> receivingPeers = this.GetPeers(Math.Min(copies, this.CountOnlinePeers()));
 
                     if (receivingPeers.Count == 0)
                     {
@@ -73,11 +70,11 @@ namespace P2P_lib
                     }
 
                     // Compress file
-                    ByteCompressor.compressFile(filePath, compressedFilePath);
+                    ByteCompressor.CompressFile(filePath, compressedFilePath);
 
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
-                    encryption.doEncrypt("password");
+                    encryption.DoEncrypt("password");
                     //_hiddenFolder.removeFile(compressedFilePath + ".lzma");
                     string encryptedFilePath = compressedFilePath + ".aes";
 
@@ -93,7 +90,7 @@ namespace P2P_lib
                         try{
                             _receiver = new Receiver(port);
                             _receiver.MessageReceived += this._receiver_MessageReceived;
-                            _receiver.start();
+                            _receiver.Start();
                         }
                         catch (SocketException e){
                             logger.Log(LogLevel.Fatal, e);
@@ -110,18 +107,18 @@ namespace P2P_lib
                         upload.port = port;
                         upload.Send();
                         
-                        while(pendingReceiver){
+                        while(_pendingReceiver){
                             // TODO: timeout???
                         }
 
-                        _receiver.stop();
+                        _receiver.Stop();
                         //_ports.Release(port);
 
-                        if (sender != null){
-                            sender.Send(encryptedFilePath);
+                        if (_sender != null){
+                            _sender.Send(encryptedFilePath);
                         }
 
-                        pendingReceiver = true;
+                        _pendingReceiver = true;
                         _ports.Release(port);
                     }
 
@@ -142,21 +139,21 @@ namespace P2P_lib
                 {
                     if (upload.statuscode == StatusCode.ACCEPTED)
                     {
-                        sender = new FileSender(upload.from, upload.port);
-                        pendingReceiver = false;
+                        _sender = new FileSender(upload.from, upload.port);
+                        _pendingReceiver = false;
                     }
                 }
             }
         }
 
-        private List<Peer> getPeers(int count)
+        private List<Peer> GetPeers(int count)
         {
             List<Peer> availablePeers = new List<Peer>();
             int counter = 1;
 
             foreach (Peer peer in this._peers)
             {
-                if(peer.isOnline()){
+                if(peer.IsOnline()){
                     availablePeers.Add(peer);
 
                     if(counter.Equals(count)){
@@ -176,7 +173,7 @@ namespace P2P_lib
 
             foreach (Peer peer in this._peers)
             {
-                if (peer.isOnline())
+                if (peer.IsOnline())
                 {
                     counter++;
                 }

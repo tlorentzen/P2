@@ -18,14 +18,14 @@ namespace Index_lib
 
         public IndexFile(string path) {
             if (path != null) {
-                addPath(path);
+                AddPath(path);
             }
         }
 
-        public void addPath(string path, bool ghost=false) {
+        public void AddPath(string path, bool ghost=false) {
             if (!ghost && File.Exists(path)) {
                 paths.Add(path);
-                makeFileHash();
+                MakeFileHash();
             }
 
             if(paths.Count == 1){
@@ -36,7 +36,7 @@ namespace Index_lib
         }
 
         // Deep copy.
-        public IndexFile copy(){
+        public IndexFile Copy(){
             IndexFile file = new IndexFile();
             file.hash = hash;
             file.size = size;
@@ -49,20 +49,20 @@ namespace Index_lib
             return file;
         }
 
-        public bool isGhostFile() {
+        public bool IsGhostFile() {
             return ghost;
         }
 
-        public string getHash() {
+        public string GetHash() {
             return hash;
         }
 
-        public string getPath(int pathNumber = 0) {
-            int _pathNumber = (pathNumber > paths.Count ? paths.Count -1 : pathNumber);
-            return paths[_pathNumber];
+        public string GetPath(int pathNumberInput = 0) {
+            int pathNumber = (pathNumberInput > paths.Count ? paths.Count -1 : pathNumberInput);
+            return paths[pathNumber];
         }
 
-        private void makeFileHash() {
+        private void MakeFileHash() {
             using (var md5 = MD5.Create())
             {
                 using (FileStream fs = new FileStream(paths[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
@@ -73,8 +73,8 @@ namespace Index_lib
             }
         }
 
-        public void rehash() {
-            makeFileHash();
+        public void Rehash() {
+            MakeFileHash();
         }
 
         public override bool Equals(object obj){
