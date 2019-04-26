@@ -122,7 +122,9 @@ namespace P2P_lib.Managers
                         _ports.Release(port);
                     }
 
-                    //_hiddenFolder.removeFile(encryptedFilePath);
+                    if (!is_running){
+                        break;
+                    }
                 }
 
                 this.waitHandle.Reset();

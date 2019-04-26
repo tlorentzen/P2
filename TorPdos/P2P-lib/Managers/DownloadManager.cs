@@ -71,6 +71,9 @@ namespace P2P_lib.Managers {
                     //FileReceiver receiver = new FileReceiver();
                     
                     Console.WriteLine("File: " + file.GetHash() + " was process in download manager");
+                    if (!is_running){
+                        break;
+                    }
                 }
 
                 this._waitHandle.Reset();

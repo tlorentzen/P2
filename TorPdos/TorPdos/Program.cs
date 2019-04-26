@@ -150,12 +150,5 @@ namespace TorPdos{
             Console.WriteLine(@"File changed: " + file.hash);
         }
 
-        /*
-
-        private static void Idx_FileDeleted(IndexFile file)
-        {
-            Console.WriteLine("File deleted: " + file.hash);
-        }
-        */
     }
 }

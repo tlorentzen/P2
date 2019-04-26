@@ -129,19 +129,19 @@ namespace P2P_lib{
                 List<Peer> outgoing = new List<Peer>();
                 incomming = message.peers;
                 // Adding sender to list
-                if (!inPeerList(message.fromUuid, peers)){
+                if (!InPeerList(message.fromUuid, peers)){
                     peers.Add(new Peer(message.fromUuid, message.from));
                 }
 
                 //Checks whether a incomming peer exists in the peerlist.
                 foreach (var incommingPeer in incomming){
-                    if (inPeerList(incommingPeer.GetUuid(), peers)) break;
+                    if (InPeerList(incommingPeer.GetUuid(), peers)) break;
                     peers.Add(incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
                 }
 
                 foreach (var outGoingPeer in peers){
-                    if (inPeerList(outGoingPeer.GetUuid(), incomming)) break;
+                    if (InPeerList(outGoingPeer.GetUuid(), incomming)) break;
                     if (outGoingPeer.GetUuid() == message.fromUuid) break;
                     outgoing.Add(outGoingPeer);
                 }
@@ -153,7 +153,7 @@ namespace P2P_lib{
                 // Rechieved response
 
                 foreach (Peer incommingPeer in message.peers){
-                    if (inPeerList(incommingPeer.GetUuid(), peers)) break;
+                    if (InPeerList(incommingPeer.GetUuid(), peers)) break;
 
                     if ((registry.GetValue("UUID").ToString().Equals(incommingPeer.GetUuid()))) break;
                     peers.Add(incommingPeer);
@@ -165,20 +165,11 @@ namespace P2P_lib{
             //Console.WriteLine("My peers:");
         }
 
-        private bool inPeerList(string uuid, List<Peer> input){
-            bool inPeers = false;
-            foreach (Peer peer in input){
-                if (peer.GetUuid().Equals(uuid)){
-                    inPeers = true;
-                    break;
-                }
-            }
 
-            // Add unknown peers to own list
-            return inPeers;
-        }
 
         public void SaveFile(){
+            upload.Save();
+            download.Save();
             var json = JsonConvert.SerializeObject(peers);
             if (_path == null) return;
             using (var fileStream = _hiddenPath.WriteToFile(_peerFilePath)){
@@ -201,7 +192,19 @@ namespace P2P_lib{
             return false;
         }
 
-        private bool inPeerList(string uuid, BlockingCollection<Peer> input){
+        private bool InPeerList(string uuid, BlockingCollection<Peer> input){
+            bool inPeers = false;
+            foreach (Peer peer in input){
+                if (peer.GetUuid().Equals(uuid)){
+                    inPeers = true;
+                    break;
+                }
+            }
+
+            // Add unknown peers to own list
+            return inPeers;
+        }
+        private bool InPeerList(string uuid, List<Peer> input){
             bool inPeers = false;
             foreach (Peer peer in input){
                 if (peer.GetUuid().Equals(uuid)){
