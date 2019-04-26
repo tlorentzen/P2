@@ -10,12 +10,10 @@ namespace TorPdos.TEST
     public class HiddenFolderTest
     {
 
-        HiddenFolder Hidden = new HiddenFolder("TEST/.hidden");
-
         [TestMethod]
         public void FolderIsHidden()
         {
-
+            var Hidden = MakeHiddenFolder();
             bool expected = Directory.Exists("TEST/.hidden");
 
             if (expected) {
@@ -29,10 +27,12 @@ namespace TorPdos.TEST
         [TestMethod]
         public void AddFileAddedFileExists()
         {
-            File.Copy("TESTFILE.md", "TESTCOPY.md");
-            Hidden.Add("TESTCOPY.md");
-            bool expected = File.Exists("TEST/.hidden/TESTCOPY.md");
-            Hidden.Remove("TESTCOPY.md");
+            var Hidden = MakeHiddenFolder();
+            Helpers.MakeAFile("TESTFILE.txt");
+            File.Copy("TESTFILE.txt", "TESTCOPY.txt");
+            Hidden.Add("TESTCOPY.txt");
+            bool expected = File.Exists("TEST/.hidden/TESTCOPY.txt");
+            Hidden.Remove("TESTCOPY.txt");
 
             Assert.IsTrue(expected);
         }
@@ -49,24 +49,29 @@ namespace TorPdos.TEST
         [TestMethod]
         public void WriteToFileCreatedFile()
         {
-            
+            var Hidden = MakeHiddenFolder();
             using (FileStream fs = Hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")) {
                 fs.Write(Encoding.ASCII.GetBytes("Hej"), 0, 3);
             }
-
-            Assert.IsTrue(File.Exists("TEST/.hidden/TESTFILE.txt"));
+            bool result = File.Exists("TEST/.hidden/TESTFILE.txt");
+            Hidden.Remove("TESTFILE.txt");
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
         public void ReadFromFile()
         {
+            var Hidden = MakeHiddenFolder();
             byte[] expected = Encoding.ASCII.GetBytes("Hej");
             byte[] result = new byte[3];
-
+            using (FileStream fs = Hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")) {
+                fs.Write(Encoding.ASCII.GetBytes("Hej"), 0, 3);
+            }
             using (FileStream fs = Hidden.ReadFromFile("TEST/.hidden/TESTFILE.txt")) {
                 
                 fs.Read(result, 0, 3);
             }
+            Hidden.Remove("TESTFILE.txt");
 
             CollectionAssert.AreEqual(expected, result);
             
@@ -75,11 +80,13 @@ namespace TorPdos.TEST
         [TestMethod]
         public void MakeFolderInHiddenAddFile()
         {
+            var Hidden = MakeHiddenFolder();
             Directory.CreateDirectory("TEST/.hidden/HiddenTest");
-            File.Copy("TESTFILE.md", "TESTCOPY.md");
-            Hidden.Add("TESTCOPY.md","HiddenTest/TESTCOPY.md");
-            bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.md");
-            Hidden.Remove("HiddenTest/TESTCOPY.md");
+            Helpers.MakeAFile("TESTFILE.txt");
+            File.Copy("TESTFILE.txt", "TESTCOPY.txt");
+            Hidden.Add("TESTCOPY.txt","HiddenTest/TESTCOPY.txt");
+            bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.txt");
+            Hidden.Remove("HiddenTest/TESTCOPY.txt");
 
             Assert.IsTrue(expected);
 
@@ -88,14 +95,22 @@ namespace TorPdos.TEST
         [TestMethod]
         public void DeleteEntireFolderInHidden()
         {
+            var Hidden = MakeHiddenFolder();
             Directory.CreateDirectory("TEST/.hidden/HiddenTest");
-            File.Copy("TESTFILE.md", "TESTCOPY.md");
-            Hidden.Add("TESTCOPY.md", "HiddenTest/TESTCOPY.md");
-            bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.md");
+            Helpers.MakeAFile("TESTFILE.txt");
+            File.Copy("TESTFILE.txt", "TESTCOPY.txt");
+            Hidden.Add("TESTCOPY.txt", "HiddenTest/TESTCOPY.txt");
+            bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.txt");
             Hidden.Remove("HiddenTest");
             expected &= Directory.Exists("TEST/.hidden/HiddenTest");
 
             Assert.IsFalse(expected);
+        }
+
+        private HiddenFolder MakeHiddenFolder()
+        {
+            Helpers.MakeDirectory("TEST");
+            return new HiddenFolder("TEST/.hidden");
         }
     }
 

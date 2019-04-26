@@ -56,8 +56,9 @@ namespace TorPdos.TEST
         [TestMethod]
         public void rebuildIndexGivesSameIndex()
         {
+            Helpers.MakeAFile("TESTFILE.txt");
             for(int i = 0; i < 10; i++) {
-                File.Copy("TESTFILE.md", "TEST/TESTCOPY" + i + ".md");
+                File.Copy("TESTFILE.txt", "TEST/TESTCOPY" + i + ".txt");
             }
             var index = initIndex();
 
@@ -84,7 +85,8 @@ namespace TorPdos.TEST
             var index = initIndex();
             index.FileAdded += (f) => { result = true; };
             index.Start();
-            WriteFile();
+            
+            Helpers.MakeAFile("TEST/TESTFILE.txt");
             System.Threading.Thread.Sleep(1000);
             index.Save();
             index.Stop();
@@ -102,7 +104,7 @@ namespace TorPdos.TEST
             bool result = false;
             var index = initIndex();
             index.FileDeleted += (f) => { result = true; };
-            WriteFile();
+            Helpers.MakeAFile("TEST/TESTFILE.txt");
 
             index.ReIndex();
             index.Start();
@@ -122,7 +124,7 @@ namespace TorPdos.TEST
             bool result = false;
             var index = initIndex();
             index.FileChanged += (f) => { result = true; };
-            WriteFile();
+            Helpers.MakeAFile("TEST/TESTFILE.txt");
             index.Start();
             var fs = new FileStream("TEST/TESTFILE.txt", FileMode.Append);
             byte[] text = Encoding.ASCII.GetBytes("THIS IS A TEST TOO");
@@ -144,7 +146,7 @@ namespace TorPdos.TEST
             bool result = false;
             var index = initIndex();
             index.FileMissing += (f) => { result = true; };
-            WriteFile();
+            Helpers.MakeAFile("TEST/TESTFILE.txt");
             index.ReIndex();
             File.Delete("TEST/TESTFILE.txt");
             index.MakeIntegrityCheck();
@@ -161,7 +163,7 @@ namespace TorPdos.TEST
         {
             string name = "TEST\\\\NEWNAMETEST.txt";
             var index = initIndex();
-            WriteFile();
+            Helpers.MakeAFile("TEST/TESTFILE.txt");
             index.ReIndex();
             index.Start();
             File.Move("TEST/TESTFILE.txt", "TEST/NEWNAMETEST.txt");
@@ -182,30 +184,12 @@ namespace TorPdos.TEST
 
         private Index initIndex()
         {
+            Helpers.MakeDirectory("TEST");
             Index index = new Index("TEST");
             index.BuildIndex();
 
             return index;
         }
 
-        private void WriteFile()
-        {
-            var fs = new FileStream("TEST/TESTFILE.txt", FileMode.Create);
-            byte[] text = Encoding.ASCII.GetBytes("THIS IS A TEST");
-            fs.Write(text, 0, text.Length);
-            fs.Close();
-        }
-
-        static byte[] HashFile(string filename)
-        {
-            if(!File.Exists(filename))
-            using (var md5 = MD5.Create()) {
-                using (var stream = File.OpenRead(filename)) {
-                    return md5.ComputeHash(stream);
-                }
-            } else {
-                throw new ArgumentException(filename);
-            }
-        }
     }
 }

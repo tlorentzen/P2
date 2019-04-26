@@ -11,7 +11,7 @@ namespace TorPdos.TEST
     public class FileSplitterTest
     {
 
-        [TestMethod]
+        /*[TestMethod]
         public void SplitFileToFolderCorrectNumberOfFiles()
         {
             SplitterLibary Splitter = new SplitterLibary();
@@ -55,13 +55,5 @@ namespace TorPdos.TEST
         }
         */
 
-        static byte[] HashFile(string filename)
-        {
-            using (var md5 = MD5.Create()) {
-                using (var stream = File.OpenRead(filename)) {
-                    return md5.ComputeHash(stream);
-                }
-            }
-        }
     }
 }

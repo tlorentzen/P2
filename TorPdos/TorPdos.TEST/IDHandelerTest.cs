@@ -23,7 +23,7 @@ namespace TorPdos.TEST
             Assert.AreNotEqual(notExpected, actual);
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void UserDataFileCreated()
         {
             IdHandler.CreateUser(Password);
@@ -32,7 +32,7 @@ namespace TorPdos.TEST
             IdHandler.RemoveUser();
 
             Assert.IsTrue(result);
-        }
+        }*/
 
         [TestMethod]
         public void ValidateUser()
@@ -64,7 +64,7 @@ namespace TorPdos.TEST
             Assert.AreEqual(expected, result);
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void RemovedUserNotExists()
         {
             IdHandler.CreateUser(Password);
@@ -73,7 +73,7 @@ namespace TorPdos.TEST
             bool final = result == File.Exists(path + @"\userdata");
 
             Assert.IsFalse(final);
-        }
+        }*/
 
         
     }

@@ -9,18 +9,19 @@ namespace TorPdos.TEST
     [TestClass]
     public class EncryptionTest
     {
-        static string FilePath = "TESTFILE.md";
-        static FileEncryption Crypt = new FileEncryption("TESTFILE", ".md");
+        static string FilePath = "TESTFILE.txt";
+        static FileEncryption Crypt = new FileEncryption("TESTFILE", ".txt");
 
         static string password = "Password";
 
         [TestMethod]
         public void EncryptedFileNotSame()
         {
-            byte[] notExpected = HashFile(FilePath);
+            Helpers.MakeAFile(FilePath);
+            byte[] notExpected = Helpers.HashFile(FilePath);
             Crypt.DoEncrypt(password);
 
-            byte[] actual = HashFile("TESTFILE.aes");
+            byte[] actual = Helpers.HashFile("TESTFILE.aes");
 
             File.Delete("TESTFILE.aes");
 
@@ -31,11 +32,12 @@ namespace TorPdos.TEST
         [TestMethod]
         public void EncryptDecryptSameFile()
         {
-            byte[] expected = HashFile(FilePath);
+            Helpers.MakeAFile(FilePath);
+            byte[] expected = Helpers.HashFile(FilePath);
             Crypt.DoEncrypt(password);
             Crypt.DoDecrypt(password);
 
-            byte[] result = HashFile("TESTFILE.md");
+            byte[] result = Helpers.HashFile(FilePath);
             File.Delete("TESTFILE.aes");
 
 
@@ -45,25 +47,18 @@ namespace TorPdos.TEST
         [TestMethod]
         public void EncryptDecryptDifferentEncryptorSameFile()
         {
-            byte[] expected = HashFile(FilePath);
+            Helpers.MakeAFile(FilePath);
+            byte[] expected = Helpers.HashFile(FilePath);
             Crypt.DoEncrypt(password);
-            Crypt = new FileEncryption("TESTFILE", ".md");
+            Crypt = new FileEncryption("TESTFILE", "txt");
             Crypt.DoDecrypt(password);
 
-            byte[] result = HashFile("TESTFILE.md");
+            byte[] result = Helpers.HashFile(FilePath);
             File.Delete("TESTFILE.aes");
 
 
             CollectionAssert.AreEqual(expected, result);
         }
 
-        static byte[] HashFile(string filename)
-        {
-            using (var md5 = MD5.Create()) {
-                using (var stream = File.OpenRead(filename)) {
-                    return md5.ComputeHash(stream);
-                }
-            }
-        }
     }
 }
