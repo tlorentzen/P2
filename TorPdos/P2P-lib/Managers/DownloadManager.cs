@@ -44,6 +44,12 @@ namespace P2P_lib.Managers{
                 QueuedFile file;
 
                 while (this._queue.TryDequeue(out file)){
+
+                    if(!is_running){
+                        this._queue.Enqueue(file);
+                        break;
+                    }
+
                     Console.WriteLine("Trying to deque");
                     List<Peer> onlinePeers = this.GetPeers();
                     foreach (var peer in _peers){

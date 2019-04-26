@@ -46,10 +46,18 @@ namespace P2P_lib.Managers{
             while (is_running){
                 this.waitHandle.WaitOne();
 
+                if(!is_running)
+                    break;
+
                 QueuedFile file;
 
                 while (this._queue.TryDequeue(out file)){
                     //Console.WriteLine("Current queued files: "+_queue.Count);
+
+                    if(!is_running){
+                        this._queue.Enqueue(file);
+                        break;
+                    }
 
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
