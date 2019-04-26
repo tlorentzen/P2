@@ -1,2 +1,179 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram /> 
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="P2P_lib.DiskHelper">
+    <Position X="11" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQgAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DiskHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.FileReceiver">
+    <Position X="17.25" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="P2P_lib.FileReceiver.FileDownlaoded" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>FileReceiver.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgACACAowCQABAAAAAAAAAAAAAIIACAAAAACA=</HashCode>
+      <FileName>FileReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.FileSender">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAACAEAAAAAAAAAAAAgAAAAgAAAAAAA=</HashCode>
+      <FileName>FileSender.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Network">
+    <Position X="13.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BCAAgAkAACAHAAgACGApAAAAIBBIAgAIJABBBIIVAQA=</HashCode>
+      <FileName>Network.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.NetworkHelper">
+    <Position X="11" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAABAAAAAAAACAIAAAAAAAA=</HashCode>
+      <FileName>NetworkHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.NetworkPorts">
+    <Position X="15" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAgAAAAAAAAAAAAAAAAAAAAABAAgAA=</HashCode>
+      <FileName>NetworkPorts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.NetworkProtocols">
+    <Position X="2" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAGAAAAAAAAAgACAAAAAAAAAgAAAAAAAEAAAQAAAA=</HashCode>
+      <FileName>NetworkProtocols.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Peer">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAsAABAAAAQAkMBASAACARCAAKEAIAAAAAAAAIA=</HashCode>
+      <FileName>Peer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.QueuedFile">
+    <Position X="19" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARAQAAAAAYCAAwAAAgAAAQAQAACAABSAAAAAAAAQAA=</HashCode>
+      <FileName>QueuedFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Receiver">
+    <Position X="19" Y="3" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="P2P_lib.Receiver.DidReceive" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Receiver.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgQCACAAASQAIAAAAAAAAAgAgAIAAgAAAAAAA=</HashCode>
+      <FileName>Receiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.StateSaveConcurrentQueue&lt;T&gt;">
+    <Position X="8.75" Y="7.75" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="P2P_lib.StateSaveConcurrentQueue&lt;T&gt;.ElementQueued" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>stateSaveConcurrentQueue.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AABAgIAAAAACBAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>stateSaveConcurrentQueue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Managers.DownloadManager">
+    <Position X="15.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEAAAAAAAAACAAoBEQAgAAACgAAAAAAAAgAAQAAACAI=</HashCode>
+      <FileName>Managers\DownloadManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Managers.UploadManager">
+    <Position X="17" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEAACAEAAAAGAAgDEAAAAAACgAAAACgBAAAAQAAAAAI=</HashCode>
+      <FileName>Managers\UploadManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.BaseMessage">
+    <Position X="6" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAACAIAAAAAAAQAAOAAAAgAIAABAAACIAAQAAAQAAA=</HashCode>
+      <FileName>Messages\BaseMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.DownloadMessage">
+    <Position X="3.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAACAAAAAEAAAAgCAAAAAAAAAAA=</HashCode>
+      <FileName>Messages\DownloadMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.PeerFetcherMessage">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABCAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Messages\PeerFetcherMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.PingMessage">
+    <Position X="8.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQQAAAAAAEAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Messages\PingMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.TextMessage">
+    <Position X="8.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAIAAAAAAAACEAAAAAAAAAA=</HashCode>
+      <FileName>Messages\TextMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.TransferStatusMessage">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Messages\TransferStatusMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="P2P_lib.Messages.UploadMessage">
+    <Position X="3.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAAAAAAAAACAAAAAEAAAAgCAAAAAAAAAAA=</HashCode>
+      <FileName>Messages\UploadMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="P2P_lib.Messages.StatusCode">
+    <Position X="5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABQAAAAAAAAAAAQAAAAAAIAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Messages\BaseMessage.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="P2P_lib.Messages.TypeCode">
+    <Position X="7" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Messages\BaseMessage.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
