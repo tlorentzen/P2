@@ -11,7 +11,7 @@ using NLog;
 using P2P_lib.Messages;
 
 namespace P2P_lib.Managers{
-    public class UploadManager{
+    public class UploadManager : Manager{
         private ManualResetEvent waitHandle;
         private bool is_running = true;
         private NetworkPorts _ports;
@@ -66,6 +66,7 @@ namespace P2P_lib.Managers{
                     List<Peer> receivingPeers = this.GetPeers(Math.Min(copies, this.CountOnlinePeers()));
 
                     if (receivingPeers.Count == 0){
+                        _queue.Enqueue(file);
                         this.waitHandle.Reset();
                         continue;
                     }
@@ -126,7 +127,6 @@ namespace P2P_lib.Managers{
                 this.waitHandle.Reset();
             }
 
-            _queue.Save();
         }
 
         private void _receiver_MessageReceived(BaseMessage msg){
@@ -171,6 +171,12 @@ namespace P2P_lib.Managers{
             }
 
             return counter;
+        }
+
+        public override bool Shutdown(){
+            is_running = false;
+            waitHandle.Set();
+            return true;
         }
     }
 }

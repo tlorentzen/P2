@@ -4,7 +4,7 @@ namespace P2P_lib{
     public class QueuedFile{
         private string _hash;
         private string _path;
-        private int _copies = 5;
+        public int _copies = 5;
         private long _filesize = 0;
         private string _filename;
         private bool _ghost;

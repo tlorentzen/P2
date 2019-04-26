@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -30,6 +31,7 @@ namespace P2P_lib{
 
         public bool Load(){
             if (File.Exists(_path)){
+                Console.WriteLine("PATH           "+ _path);
                 string input = File.ReadAllText(_path);
                 _concurrentQueue = JsonConvert.DeserializeObject<ConcurrentQueue<T>>(input);
                 return true;
@@ -39,18 +41,16 @@ namespace P2P_lib{
         }
 
         public bool Save(){
-            if (File.Exists(_path)){
                 string output = JsonConvert.SerializeObject(_concurrentQueue);
-
+                Console.WriteLine("Got here?");
+                Console.WriteLine(_concurrentQueue.Count);
                 using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate)){
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
                     fileStream.Write(jsonIndex, 0, jsonIndex.Length);
+                    fileStream.Close();
                 }
 
                 return true;
-            }
-
-            return false;
         }
     }
 }

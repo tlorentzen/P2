@@ -9,7 +9,7 @@ using Index_lib;
 using P2P_lib.Messages;
 
 namespace P2P_lib.Managers{
-    public class DownloadManager{
+    public class DownloadManager : Manager{
         private bool is_running = true;
         private int _port;
         private string _filehash;
@@ -58,6 +58,10 @@ namespace P2P_lib.Managers{
                         }
                     }
 
+                    if (onlinePeers.Count == 0){
+                        _queue.Enqueue(file);
+                    }
+
                     _filehash = file.GetHash();
                     _ports.Release(_port);
 
@@ -80,8 +84,6 @@ namespace P2P_lib.Managers{
 
                 this._waitHandle.Reset();
             }
-
-            _queue.Save();
         }
 
         private void _receiver_MessageReceived(BaseMessage msg){
@@ -146,6 +148,12 @@ namespace P2P_lib.Managers{
                     Console.WriteLine("File send to: {0}", filePath);
                 }
             }
+        }
+
+        public override bool Shutdown(){
+            is_running = false;
+            _waitHandle.Set();
+            return true;
         }
     }
 }

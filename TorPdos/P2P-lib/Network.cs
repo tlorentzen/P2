@@ -28,7 +28,7 @@ namespace P2P_lib{
         private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
         private StateSaveConcurrentQueue<QueuedFile> upload;
         private StateSaveConcurrentQueue<QueuedFile> download;
-        private List<Thread> threads = new List<Thread>();
+        private List<Manager> Managers = new List<Manager>();
         private NetworkPorts ports = new NetworkPorts();
         private System.Timers.Timer pingTimer;
 
@@ -42,8 +42,9 @@ namespace P2P_lib{
             this._peerFilePath = path + @".hidden\peer.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
             
-            upload = new StateSaveConcurrentQueue<QueuedFile>(_path+@"hidden\uploadQueue.json");
-            download = new StateSaveConcurrentQueue<QueuedFile>(_path + @"hidden\downloadQueue.json");
+            upload = new StateSaveConcurrentQueue<QueuedFile>(_path+@".hidden\uploadQueue.json");
+            download = new StateSaveConcurrentQueue<QueuedFile>(_path + @".hidden\downloadQueue.json");
+            
             Load();
         }
 
@@ -75,8 +76,8 @@ namespace P2P_lib{
                 uploadThread.Start();
                 downloadThread.Start();
 
-                threads.Add(uploadThread);
-                threads.Add(downloadThread);
+                Managers.Add(uploadManager);
+                Managers.Add(downloadManager);
             }
 
             pingTimer = new System.Timers.Timer();
@@ -310,6 +311,9 @@ namespace P2P_lib{
             pingTimer.Enabled = false;
             upload.Save();
             download.Save();
+            foreach (var manager in Managers){
+                manager.Shutdown();
+            }
             this._running = false;
             _receive.Stop();
         }
