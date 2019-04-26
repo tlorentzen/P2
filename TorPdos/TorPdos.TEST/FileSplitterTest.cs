@@ -11,7 +11,7 @@ namespace TorPdos.TEST
     public class FileSplitterTest
     {
 
-        [TestMethod]
+        /*[TestMethod]
         public void SplitFileToFolderCorrectNumberOfFiles()
         {
             SplitterLibary Splitter = new SplitterLibary();
@@ -30,6 +30,7 @@ namespace TorPdos.TEST
             Assert.AreEqual(expected, result);
         }
 
+        /*
         [TestMethod]
         public void MergedFilesAreSame()
         {
@@ -52,14 +53,7 @@ namespace TorPdos.TEST
             Assert.AreEqual(expected.Length, result.Length);
 
         }
+        */
 
-        static byte[] HashFile(string filename)
-        {
-            using (var md5 = MD5.Create()) {
-                using (var stream = File.OpenRead(filename)) {
-                    return md5.ComputeHash(stream);
-                }
-            }
-        }
     }
 }

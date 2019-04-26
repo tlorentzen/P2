@@ -18,9 +18,9 @@ namespace TorPdos.TEST
             Random rand = new Random();
             rand.NextBytes(expected);
 
-            byte[] compressed = ByteCompressor.compressBytes(expected);
+            byte[] compressed = ByteCompressor.CompressBytes(expected);
 
-            byte[] result = ByteCompressor.decompressBytes(compressed);
+            byte[] result = ByteCompressor.DecompressBytes(compressed);
 
             CollectionAssert.AreEqual(expected, result);
         }
@@ -32,7 +32,7 @@ namespace TorPdos.TEST
             Random rand = new Random();
             rand.NextBytes(notExpected);
 
-            byte[] actual = ByteCompressor.compressBytes(notExpected);
+            byte[] actual = ByteCompressor.CompressBytes(notExpected);
 
             CollectionAssert.AreNotEqual(notExpected, actual);
 
@@ -41,17 +41,18 @@ namespace TorPdos.TEST
         [TestMethod]
         public void CompressAndDecompressSameFile()
         {
-            string FilePath = "TESTFILE.md";
+            string FilePath = "TESTFILE.txt";
+            Helpers.MakeAFile(FilePath);
 
-            byte[] expected = HashFile(FilePath);
+            byte[] expected = Helpers.HashFile(FilePath);
 
-            ByteCompressor.compressFile(FilePath, "comp.lzma");
-            ByteCompressor.decompressFile("comp.lzma", "result");
+            ByteCompressor.CompressFile(FilePath, "comp.lzma");
+            ByteCompressor.DecompressFile("comp.lzma", "result");
 
-            byte[] result = HashFile("result.md");
+            byte[] result = Helpers.HashFile("result.txt");
 
             File.Delete("comp.lzma");
-            File.Delete("result.md");
+            File.Delete("result.txt");
 
             CollectionAssert.AreEqual(expected, result);
 
@@ -60,23 +61,17 @@ namespace TorPdos.TEST
         [TestMethod]
         public void CompressedFileNotSame()
         {
-            string FilePath = "TESTFILE.md";
+            string FilePath = "TESTFILE.txt";
+            Helpers.MakeAFile(FilePath);
 
-            byte[] notExpected = HashFile(FilePath);
-            ByteCompressor.compressFile(FilePath, "comp.lzma");
-            byte[] actual = HashFile("comp.lzma");
+            byte[] notExpected = Helpers.HashFile(FilePath);
+            ByteCompressor.CompressFile(FilePath, "comp.lzma");
+            byte[] actual = Helpers.HashFile("comp.lzma");
             File.Delete("comp.lzma");
 
             CollectionAssert.AreNotEqual(notExpected, actual);
         }
 
-        static byte[] HashFile(string filename)
-        {
-            using (var md5 = MD5.Create()) {
-                using (var stream = File.OpenRead(filename)) {
-                    return md5.ComputeHash(stream);
-                }
-            }
-        }
+        
     }
 }

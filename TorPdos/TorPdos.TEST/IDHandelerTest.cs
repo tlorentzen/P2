@@ -14,32 +14,32 @@ namespace TorPdos.TEST
         [TestMethod]
         public void GenereateUUIDIsRandom()
         {
-            string notExpected = IdHandler.createUser(path, Password, null);
+            string notExpected = IdHandler.CreateUser(Password);
             System.Threading.Thread.Sleep(5000);
-            string actual = IdHandler.createUser(path, Password, null);
+            string actual = IdHandler.CreateUser(Password);
 
-            IdHandler.removeUser(path);
+            IdHandler.RemoveUser();
 
             Assert.AreNotEqual(notExpected, actual);
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void UserDataFileCreated()
         {
-            IdHandler.createUser(path, Password, null);
+            IdHandler.CreateUser(Password);
 
             bool result = File.Exists(path + @"\userdata");
-            IdHandler.removeUser(path);
+            IdHandler.RemoveUser();
 
             Assert.IsTrue(result);
-        }
+        }*/
 
         [TestMethod]
         public void ValidateUser()
         {
-            string uuid = IdHandler.createUser(path, Password, null);
-            bool result = IdHandler.isValidUser(path, uuid, Password);
-            IdHandler.removeUser(path);
+            string uuid = IdHandler.CreateUser(Password);
+            bool result = IdHandler.IsValidUser(uuid, Password);
+            IdHandler.RemoveUser();
 
             Assert.IsTrue(result);
         }
@@ -47,9 +47,9 @@ namespace TorPdos.TEST
         [TestMethod]
         public void WrongPasswordInvaildUser()
         {
-            string uuid = IdHandler.createUser(path, Password, null);
-            bool result = IdHandler.isValidUser(path, uuid, "wrong");
-            IdHandler.removeUser(path);
+            string uuid = IdHandler.CreateUser(Password);
+            bool result = IdHandler.IsValidUser(uuid, "wrong");
+            IdHandler.RemoveUser();
 
             Assert.IsFalse(result);
         }
@@ -57,24 +57,23 @@ namespace TorPdos.TEST
         [TestMethod]
         public void GetUUidIsCorrect()
         {
-            string expected = IdHandler.createUser(path, Password, null);
-            string result = IdHandler.getUuid(path);
-            IdHandler.removeUser(path);
+            string expected = IdHandler.CreateUser(Password);
+            string result = IdHandler.GetUuid();
+            IdHandler.RemoveUser();
 
             Assert.AreEqual(expected, result);
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void RemovedUserNotExists()
         {
-            IdHandler.createUser(path, Password, null);
+            IdHandler.CreateUser(Password);
             bool result = File.Exists(path + @"\userdata");
-            IdHandler.removeUser(path);
+            IdHandler.RemoveUser();
             bool final = result == File.Exists(path + @"\userdata");
 
             Assert.IsFalse(final);
-
-        }
+        }*/
 
         
     }

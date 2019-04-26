@@ -7,7 +7,7 @@ namespace Compression{
     public class ByteCompressor{
         private static NLog.Logger logger = NLog.LogManager.GetLogger("CompressionLogger");
 
-        private static byte[] CompressBytes(byte[] inData){
+        public static byte[] CompressBytes(byte[] inData){
             Console.WriteLine("Original data is {0} bytes", inData.Length);
             //Compress byte array
             byte[] compressed = SevenZipHelper.Compress(inData);
@@ -16,7 +16,7 @@ namespace Compression{
             return compressed;
         }
 
-        private static byte[] DecompressBytes(byte[] inData){
+        public static byte[] DecompressBytes(byte[] inData){
             Console.WriteLine("Compressed data is {0} bytes", inData.Length);
             //Decompress byte array
             byte[] decompressed = SevenZipHelper.Decompress(inData);
