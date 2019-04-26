@@ -10,10 +10,8 @@ using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
 
-namespace P2P_lib.Managers
-{
-    public class UploadManager
-    {
+namespace P2P_lib.Managers{
+    public class UploadManager{
         private ManualResetEvent waitHandle;
         private bool is_running = true;
         private NetworkPorts _ports;
@@ -27,8 +25,8 @@ namespace P2P_lib.Managers
         private static Logger logger = LogManager.GetLogger("UploadLogger");
         private HiddenFolder _hiddenFolder;
 
-        public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports, BlockingCollection<Peer> peers)
-        {
+        public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
+            BlockingCollection<Peer> peers){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -40,21 +38,17 @@ namespace P2P_lib.Managers
             _hiddenFolder = new HiddenFolder(this._path + @"\.hidden\");
         }
 
-        private void QueueElementAddedToQueue()
-        {
+        private void QueueElementAddedToQueue(){
             this.waitHandle.Set();
         }
 
         public void Run(){
-
-            while(is_running)
-            {
+            while (is_running){
                 this.waitHandle.WaitOne();
-                
+
                 QueuedFile file;
 
-                while(this._queue.TryDequeue(out file)){
-
+                while (this._queue.TryDequeue(out file)){
                     //Console.WriteLine("Current queued files: "+_queue.Count);
 
                     int copies = file.GetCopies();
@@ -63,8 +57,7 @@ namespace P2P_lib.Managers
 
                     List<Peer> receivingPeers = this.GetPeers(Math.Min(copies, this.CountOnlinePeers()));
 
-                    if (receivingPeers.Count == 0)
-                    {
+                    if (receivingPeers.Count == 0){
                         this.waitHandle.Reset();
                         continue;
                     }
@@ -79,13 +72,12 @@ namespace P2P_lib.Managers
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
-                    
+
 
                     // Split
                     // TODO: split file
 
-                    foreach (Peer peer in receivingPeers)
-                    {
+                    foreach (Peer peer in receivingPeers){
                         int port = _ports.GetAvailablePort();
                         try{
                             _receiver = new Receiver(port);
@@ -106,8 +98,8 @@ namespace P2P_lib.Managers
                         upload.path = filePath;
                         upload.port = port;
                         upload.Send();
-                        
-                        while(_pendingReceiver){
+
+                        while (_pendingReceiver){
                             // TODO: timeout???
                         }
 
@@ -121,26 +113,20 @@ namespace P2P_lib.Managers
                         _pendingReceiver = true;
                         _ports.Release(port);
                     }
-
-                    if (!is_running){
-                        break;
-                    }
                 }
 
                 this.waitHandle.Reset();
             }
+
+            _queue.Save();
         }
 
-        private void _receiver_MessageReceived(BaseMessage msg)
-        {
-            if (msg.GetMessageType() == typeof(UploadMessage))
-            {
-                UploadMessage upload = (UploadMessage)msg;
+        private void _receiver_MessageReceived(BaseMessage msg){
+            if (msg.GetMessageType() == typeof(UploadMessage)){
+                UploadMessage upload = (UploadMessage) msg;
 
-                if (upload.type.Equals(Messages.TypeCode.RESPONSE))
-                {
-                    if (upload.statuscode == StatusCode.ACCEPTED)
-                    {
+                if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
+                    if (upload.statuscode == StatusCode.ACCEPTED){
                         _sender = new FileSender(upload.from, upload.port);
                         _pendingReceiver = false;
                     }
@@ -148,17 +134,15 @@ namespace P2P_lib.Managers
             }
         }
 
-        private List<Peer> GetPeers(int count)
-        {
+        private List<Peer> GetPeers(int count){
             List<Peer> availablePeers = new List<Peer>();
             int counter = 1;
 
-            foreach (Peer peer in this._peers)
-            {
-                if(peer.IsOnline()){
+            foreach (Peer peer in this._peers){
+                if (peer.IsOnline()){
                     availablePeers.Add(peer);
 
-                    if(counter.Equals(count)){
+                    if (counter.Equals(count)){
                         break;
                     }
 
@@ -170,13 +154,10 @@ namespace P2P_lib.Managers
         }
 
         private int CountOnlinePeers(){
-
             int counter = 0;
 
-            foreach (Peer peer in this._peers)
-            {
-                if (peer.IsOnline())
-                {
+            foreach (Peer peer in this._peers){
+                if (peer.IsOnline()){
                     counter++;
                 }
             }

@@ -8,7 +8,7 @@ using Encryption;
 using Index_lib;
 using P2P_lib.Messages;
 
-namespace P2P_lib.Managers {
+namespace P2P_lib.Managers{
     public class DownloadManager{
         private bool is_running = true;
         private int _port;
@@ -39,7 +39,6 @@ namespace P2P_lib.Managers {
 
         public void Run(){
             while (is_running){
-
                 this._waitHandle.WaitOne();
 
                 QueuedFile file;
@@ -69,15 +68,14 @@ namespace P2P_lib.Managers {
                     }
 
                     //FileReceiver receiver = new FileReceiver();
-                    
+
                     Console.WriteLine("File: " + file.GetHash() + " was process in download manager");
-                    if (!is_running){
-                        break;
-                    }
                 }
 
                 this._waitHandle.Reset();
             }
+
+            _queue.Save();
         }
 
         private void _receiver_MessageReceived(BaseMessage msg){
@@ -89,20 +87,22 @@ namespace P2P_lib.Managers {
                         download.type = Messages.TypeCode.REQUEST;
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
-                        this._receiver = new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName, download.filehash + ".aes", download.port, false);
+                        this._receiver =
+                            new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName,
+                                download.filehash + ".aes", download.port, false);
                         this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
                         this._receiver.Start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
                         _ports.Release(_port);
-                    } else if (download.statuscode == StatusCode.FILE_NOT_FOUND) {
+                    } else if (download.statuscode == StatusCode.FILE_NOT_FOUND){
                         //TODO Responed with FILE_NOT_FOUND
                     }
                 }
             }
         }
 
-        private void _receiver_fileSuccefullyDownloaded(string path) {
+        private void _receiver_fileSuccefullyDownloaded(string path){
             Console.WriteLine("File downloaded");
             RestoreOriginalFile(path);
         }
@@ -119,8 +119,8 @@ namespace P2P_lib.Managers {
             return availablePeers;
         }
 
-        private void RestoreOriginalFile(string path) {
-            if (File.Exists(path)) {
+        private void RestoreOriginalFile(string path){
+            if (File.Exists(path)){
                 Console.WriteLine("File exist");
                 string pathWithoutExtension = (_path + @".hidden\incoming\" + Path.GetFileNameWithoutExtension(path));
 
@@ -132,9 +132,10 @@ namespace P2P_lib.Managers {
                 Console.WriteLine(pathWithoutExtension);
 
                 // Decompress file
-                string pathToFileForCopying = ByteCompressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
+                string pathToFileForCopying =
+                    ByteCompressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
                 Console.WriteLine("File decompressed");
-                foreach (string filePath in _index.GetEntry(Path.GetFileNameWithoutExtension(path)).paths) {
+                foreach (string filePath in _index.GetEntry(Path.GetFileNameWithoutExtension(path)).paths){
                     File.Copy(pathToFileForCopying, filePath);
                     Console.WriteLine("File send to: {0}", filePath);
                 }

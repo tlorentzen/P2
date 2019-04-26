@@ -65,12 +65,12 @@ namespace P2P_lib{
             _receive.Start();
 
             for (int i = 0; i < _numOfThreads; i++){
-                UploadManager uploadmanager = new UploadManager(upload, ports, peers);
-                DownloadManager downloadmanager = new DownloadManager(download, ports, peers, _index);
+                UploadManager uploadManager = new UploadManager(upload, ports, peers);
+                DownloadManager downloadManager = new DownloadManager(download, ports, peers, _index);
 
 
-                Thread uploadThread = new Thread(uploadmanager.Run);
-                Thread downloadThread = new Thread(downloadmanager.Run);
+                Thread uploadThread = new Thread(uploadManager.Run);
+                Thread downloadThread = new Thread(downloadManager.Run);
 
                 uploadThread.Start();
                 downloadThread.Start();
@@ -168,8 +168,6 @@ namespace P2P_lib{
 
 
         public void SaveFile(){
-            upload.Save();
-            download.Save();
             var json = JsonConvert.SerializeObject(peers);
             if (_path == null) return;
             using (var fileStream = _hiddenPath.WriteToFile(_peerFilePath)){
@@ -310,11 +308,8 @@ namespace P2P_lib{
 
         public void Stop(){
             pingTimer.Enabled = false;
-
-            foreach (Thread thread in threads){
-                // TODO: Stop threads 
-            }
-
+            upload.Save();
+            download.Save();
             this._running = false;
             _receive.Stop();
         }

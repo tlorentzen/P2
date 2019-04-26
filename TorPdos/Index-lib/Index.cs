@@ -78,7 +78,7 @@ namespace Index_lib{
 
         public void Stop(){
             isRunning = false;
-            _waitHandle.Close();
+            _waitHandle.Set();
             //_indexWaitHandler.Close();
             watcher.EnableRaisingEvents = false;
         }
@@ -143,8 +143,11 @@ namespace Index_lib{
 
         private void HandleFileEvent(){
             while (isRunning){
+                
                 _waitHandle.WaitOne();
-
+                if (!isRunning){
+                    break;
+                }
                 FileSystemEventArgs e;
 
                 while (_fileHandlingQueue.TryDequeue(out e)){
