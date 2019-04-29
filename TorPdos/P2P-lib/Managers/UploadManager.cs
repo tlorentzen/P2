@@ -25,8 +25,9 @@ namespace P2P_lib.Managers{
         private static Logger logger = LogManager.GetLogger("UploadLogger");
         private HiddenFolder _hiddenFolder;
         public bool isStopped;
+        private ConcurrentDictionary<string, List<string>> _sendtTo;
 
-        public ConcurrentDictionary<string, List<string>> sendtTo { get { return sendtTo; } set { if (sendtTo == null) sendtTo = value; } }
+        public ConcurrentDictionary<string, List<string>> sendtTo { get { return _sendtTo; } set { if (_sendtTo == null) _sendtTo = value; } }
 
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers){
