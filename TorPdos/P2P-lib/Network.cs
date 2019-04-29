@@ -31,6 +31,9 @@ namespace P2P_lib{
         private List<Manager> Managers = new List<Manager>();
         private NetworkPorts ports = new NetworkPorts();
         private System.Timers.Timer pingTimer;
+        private string _locationDBPath;
+        private ConcurrentDictionary<string, List<string>> locationDB;
+
 
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
@@ -40,12 +43,14 @@ namespace P2P_lib{
             this._path = path;
             this._index = index;
             this._peerFilePath = path + @".hidden\peer.json";
+            this._locationDBPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
             
             upload = new StateSaveConcurrentQueue<QueuedFile>(_path+@".hidden\uploadQueue.json");
             download = new StateSaveConcurrentQueue<QueuedFile>(_path + @".hidden\downloadQueue.json");
             
             Load();
+            
         }
 
         public List<Peer> GetPeerList(){
@@ -65,6 +70,9 @@ namespace P2P_lib{
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.Start();
 
+
+            LoadLocationDB();
+
             for (int i = 0; i < _numOfThreads; i++){
                 UploadManager uploadManager = new UploadManager(upload, ports, peers);
                 DownloadManager downloadManager = new DownloadManager(download, ports, peers, _index);
@@ -73,6 +81,7 @@ namespace P2P_lib{
                 Thread uploadThread = new Thread(uploadManager.Run);
                 Thread downloadThread = new Thread(downloadManager.Run);
 
+                uploadManager.sendtTo = locationDB;
                 uploadThread.Start();
                 downloadThread.Start();
 
@@ -308,6 +317,7 @@ namespace P2P_lib{
         }
 
         public void Stop(){
+
             pingTimer.Enabled = false;
             upload.Save();
             download.Save();
@@ -316,6 +326,27 @@ namespace P2P_lib{
             }
             this._running = false;
             _receive.Stop();
+            SaveLocDB();
+            
+        }
+
+        private void LoadLocationDB()
+        {
+            if (File.Exists(_locationDBPath)) {
+                locationDB = JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(File.ReadAllText(_locationDBPath));
+            } else {
+                locationDB = new ConcurrentDictionary<string, List<string>>();
+            }
+        }
+
+        private void SaveLocDB()
+        {
+            var json = JsonConvert.SerializeObject(locationDB);
+            if (_path == null) return;
+            using (var fileStream = _hiddenPath.WriteToFile(_locationDBPath)) {
+                var jsonIndex = new UTF8Encoding(true).GetBytes(json);
+                fileStream.Write(jsonIndex, 0, jsonIndex.Length);
+            }
         }
 
         public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
