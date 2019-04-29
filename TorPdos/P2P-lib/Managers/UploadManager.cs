@@ -26,6 +26,8 @@ namespace P2P_lib.Managers{
         private HiddenFolder _hiddenFolder;
         public bool isStopped;
 
+        public ConcurrentDictionary<string, List<string>> sendtTo { get { return sendtTo; } set { if (sendtTo == null) sendtTo = value; } }
+
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers){
             this._queue = queue;
@@ -54,6 +56,7 @@ namespace P2P_lib.Managers{
                     break;
 
                 QueuedFile file;
+                var peersSendtTo = new List<string>();
 
                 while (this._queue.TryDequeue(out file)){
                     //Console.WriteLine("Current queued files: "+_queue.Count);
@@ -89,7 +92,7 @@ namespace P2P_lib.Managers{
 
                     // Split
                     // TODO: split file
-
+                    peersSendtTo.Clear();
                     foreach (Peer peer in receivingPeers){
                         int port = _ports.GetAvailablePort();
                         try{
@@ -121,10 +124,20 @@ namespace P2P_lib.Managers{
 
                         if (_sender != null){
                             _sender.Send(encryptedFilePath);
+                            peersSendtTo.Add(peer.UUID);
                         }
 
                         _pendingReceiver = true;
                         _ports.Release(port);
+                    }
+                    if (!sendtTo.ContainsKey(file.GetHash())) {
+                        sendtTo.AddOrUpdate(file.GetHash(), peersSendtTo, (k,v) => 
+                        {
+                            foreach(string s in peersSendtTo) {
+                                v.Add(s);
+                            }
+                            return v;
+                        });
                     }
                 }
 
