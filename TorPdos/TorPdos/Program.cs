@@ -126,6 +126,7 @@ namespace TorPdos{
                     }
                 }
             }
+            Console.ReadKey();
         }
 
         private static void Idx_FileMissing(IndexFile file)

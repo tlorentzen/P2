@@ -20,6 +20,7 @@ namespace P2P_lib.Managers{
         private StateSaveConcurrentQueue<QueuedFile> _queue;
         private FileReceiver _receiver;
         private Index _index;
+        public bool isStopped;
 
         public DownloadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers, Index index){
@@ -38,6 +39,7 @@ namespace P2P_lib.Managers{
         }
 
         public void Run(){
+            isStopped = false;
             while (is_running){
                 this._waitHandle.WaitOne();
 
@@ -84,6 +86,7 @@ namespace P2P_lib.Managers{
 
                 this._waitHandle.Reset();
             }
+            isStopped = true;
         }
 
         private void _receiver_MessageReceived(BaseMessage msg){
@@ -153,6 +156,11 @@ namespace P2P_lib.Managers{
         public override bool Shutdown(){
             is_running = false;
             _waitHandle.Set();
+
+            Console.Write("Download thread stopping... ");
+            while(!this.isStopped){}
+            Console.Write("Stopped!");
+
             return true;
         }
     }

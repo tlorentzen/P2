@@ -24,6 +24,7 @@ namespace P2P_lib.Managers{
         private Receiver _receiver;
         private static Logger logger = LogManager.GetLogger("UploadLogger");
         private HiddenFolder _hiddenFolder;
+        public bool isStopped;
 
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers){
@@ -43,6 +44,7 @@ namespace P2P_lib.Managers{
         }
 
         public void Run(){
+            isStopped = false;
             this.waitHandle.Set();
             Console.WriteLine(_queue.Count);
             while (is_running){
@@ -128,7 +130,7 @@ namespace P2P_lib.Managers{
 
                 this.waitHandle.Reset();
             }
-
+            isStopped = true;
         }
 
         private void _receiver_MessageReceived(BaseMessage msg){
@@ -178,6 +180,11 @@ namespace P2P_lib.Managers{
         public override bool Shutdown(){
             is_running = false;
             waitHandle.Set();
+
+            Console.Write("Upload thread stopping... ");
+            while (!this.isStopped) { }
+            Console.Write("Stopped!\n");
+
             return true;
         }
     }

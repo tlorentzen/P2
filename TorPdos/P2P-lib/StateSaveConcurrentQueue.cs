@@ -3,52 +3,67 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace P2P_lib{
     [Serializable]
-    public class StateSaveConcurrentQueue<T> : ConcurrentQueue<T>{
+    public class StateSaveConcurrentQueue<T> : ConcurrentQueue<T>, IEnumerable<T>, ICollection<T>
+    {
+        public bool IsReadOnly => false;
 
         public delegate void ElementQueued();
-
         public event ElementQueued ElementAddedToQueue;
-
-        private readonly string _path;
-
-        /// <summary>
-        /// Takes full path to the file.
-        /// </summary>
-        /// <param name="path">Full file path</param>
-        public StateSaveConcurrentQueue(string path){
-            _path = path;
-            Load(path);
-        }
 
         public new void Enqueue(T item){
             base.Enqueue(item);
-            if (ElementAddedToQueue != null) ElementAddedToQueue.Invoke();
+            if (ElementAddedToQueue != null)
+                ElementAddedToQueue.Invoke();
         }
 
         public static StateSaveConcurrentQueue<T> Load(string path){
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
+
             if (File.Exists(path)){
                 Console.WriteLine("PATH           "+ path);
                 string input = File.ReadAllText(path);
-                StateSaveConcurrentQueue<T> output= JsonConvert.DeserializeObject<StateSaveConcurrentQueue<T>>(input);
-                return output;
+                return JsonConvert.DeserializeObject<StateSaveConcurrentQueue<T>>(input, settings);
             }
 
-            return new StateSaveConcurrentQueue<T>(path);
+            return new StateSaveConcurrentQueue<T>();
         }
 
-        public bool Save(){
-                string output = JsonConvert.SerializeObject(this);
-                Console.WriteLine("Queue size: " +this.Count);
-                using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate)){
-                    byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
-                    fileStream.Write(jsonIndex, 0, jsonIndex.Length);
-                    fileStream.Close();
-                }
+        public bool Save(string path){
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
+            string output = JsonConvert.SerializeObject(this, settings);
+            Console.WriteLine("Queue size: " +this.Count);
+            using (var fileStream = new FileStream(path, FileMode.OpenOrCreate)){
+                byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
+                fileStream.Write(jsonIndex, 0, jsonIndex.Length);
+                fileStream.Close();
+            }
 
-                return true;
+            return true;
+        }
+
+        public void Add(T item)
+        {
+            base.Enqueue(item);
+        }
+
+        public void Clear()
+        {
+            
+        }
+
+        public bool Contains(T item)
+        {
+            return false;
+        }
+
+        public bool Remove(T item)
+        {
+            return true;
         }
     }
 }
