@@ -4,19 +4,15 @@ using Index_lib;
 using System.IO;
 using System.Text;
 
-namespace TorPdos.TEST
-{
+namespace TorPdos.TEST{
     [TestClass]
-    public class HiddenFolderTest
-    {
-
+    public class HiddenFolderTest{
         [TestMethod]
-        public void FolderIsHidden()
-        {
+        public void FolderIsHidden(){
             var Hidden = MakeHiddenFolder();
             bool expected = Directory.Exists("TEST/.hidden");
 
-            if (expected) {
+            if (expected){
                 DirectoryInfo dir = new DirectoryInfo("TEST/.hidden");
                 expected &= ((dir.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden);
             }
@@ -25,8 +21,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void AddFileAddedFileExists()
-        {
+        public void AddFileAddedFileExists(){
             var Hidden = MakeHiddenFolder();
             Helpers.MakeAFile("TESTFILE.txt");
             File.Copy("TESTFILE.txt", "TESTCOPY.txt");
@@ -47,54 +42,50 @@ namespace TorPdos.TEST
         */
 
         [TestMethod]
-        public void WriteToFileCreatedFile()
-        {
+        public void WriteToFileCreatedFile(){
             var Hidden = MakeHiddenFolder();
-            using (FileStream fs = Hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")) {
+            using (FileStream fs = Hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")){
                 fs.Write(Encoding.ASCII.GetBytes("Hej"), 0, 3);
             }
+
             bool result = File.Exists("TEST/.hidden/TESTFILE.txt");
             Hidden.Remove("TESTFILE.txt");
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public void ReadFromFile()
-        {
+        public void ReadFromFile(){
             var Hidden = MakeHiddenFolder();
             byte[] expected = Encoding.ASCII.GetBytes("Hej");
             byte[] result = new byte[3];
-            using (FileStream fs = Hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")) {
+            using (FileStream fs = Hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")){
                 fs.Write(Encoding.ASCII.GetBytes("Hej"), 0, 3);
             }
-            using (FileStream fs = Hidden.ReadFromFile("TEST/.hidden/TESTFILE.txt")) {
-                
+
+            using (FileStream fs = Hidden.ReadFromFile("TEST/.hidden/TESTFILE.txt")){
                 fs.Read(result, 0, 3);
             }
+
             Hidden.Remove("TESTFILE.txt");
 
             CollectionAssert.AreEqual(expected, result);
-            
         }
 
         [TestMethod]
-        public void MakeFolderInHiddenAddFile()
-        {
+        public void MakeFolderInHiddenAddFile(){
             var Hidden = MakeHiddenFolder();
             Directory.CreateDirectory("TEST/.hidden/HiddenTest");
             Helpers.MakeAFile("TESTFILE.txt");
             File.Copy("TESTFILE.txt", "TESTCOPY.txt");
-            Hidden.Add("TESTCOPY.txt","HiddenTest/TESTCOPY.txt");
+            Hidden.Add("TESTCOPY.txt", "HiddenTest/TESTCOPY.txt");
             bool expected = File.Exists("TEST/.hidden/HiddenTest/TESTCOPY.txt");
             Hidden.Remove("HiddenTest/TESTCOPY.txt");
 
             Assert.IsTrue(expected);
-
         }
 
         [TestMethod]
-        public void DeleteEntireFolderInHidden()
-        {
+        public void DeleteEntireFolderInHidden(){
             var Hidden = MakeHiddenFolder();
             Directory.CreateDirectory("TEST/.hidden/HiddenTest");
             Helpers.MakeAFile("TESTFILE.txt");
@@ -107,11 +98,9 @@ namespace TorPdos.TEST
             Assert.IsFalse(expected);
         }
 
-        private HiddenFolder MakeHiddenFolder()
-        {
+        private HiddenFolder MakeHiddenFolder(){
             Helpers.MakeDirectory("TEST");
             return new HiddenFolder("TEST/.hidden");
         }
     }
-
 }

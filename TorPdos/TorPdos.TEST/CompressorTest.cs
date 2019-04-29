@@ -4,16 +4,11 @@ using Compression;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace TorPdos.TEST
-{
+namespace TorPdos.TEST{
     [TestClass]
-    public class CompressorTest
-    {
-        
-       
+    public class CompressorTest{
         [TestMethod]
-        public void CompressAndDecompressSameArray()
-        {
+        public void CompressAndDecompressSameArray(){
             byte[] expected = new byte[100];
             Random rand = new Random();
             rand.NextBytes(expected);
@@ -26,8 +21,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void CompressedArrayNotSame()
-        {
+        public void CompressedArrayNotSame(){
             byte[] notExpected = new byte[100];
             Random rand = new Random();
             rand.NextBytes(notExpected);
@@ -35,12 +29,10 @@ namespace TorPdos.TEST
             byte[] actual = ByteCompressor.CompressBytes(notExpected);
 
             CollectionAssert.AreNotEqual(notExpected, actual);
-
         }
 
         [TestMethod]
-        public void CompressAndDecompressSameFile()
-        {
+        public void CompressAndDecompressSameFile(){
             string FilePath = "TESTFILE.txt";
             Helpers.MakeAFile(FilePath);
 
@@ -55,12 +47,10 @@ namespace TorPdos.TEST
             File.Delete("result.txt");
 
             CollectionAssert.AreEqual(expected, result);
-
         }
 
         [TestMethod]
-        public void CompressedFileNotSame()
-        {
+        public void CompressedFileNotSame(){
             string FilePath = "TESTFILE.txt";
             Helpers.MakeAFile(FilePath);
 
@@ -71,7 +61,5 @@ namespace TorPdos.TEST
 
             CollectionAssert.AreNotEqual(notExpected, actual);
         }
-
-        
     }
 }

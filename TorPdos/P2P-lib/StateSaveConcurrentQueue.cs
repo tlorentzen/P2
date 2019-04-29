@@ -5,13 +5,14 @@ using System.Text;
 using Newtonsoft.Json;
 
 namespace P2P_lib{
+    [Serializable]
     public class StateSaveConcurrentQueue<T> : ConcurrentQueue<T>{
+
         public delegate void ElementQueued();
 
         public event ElementQueued ElementAddedToQueue;
 
         private readonly string _path;
-        private ConcurrentQueue<T> _concurrentQueue;
 
         /// <summary>
         /// Takes full path to the file.
@@ -19,9 +20,7 @@ namespace P2P_lib{
         /// <param name="path">Full file path</param>
         public StateSaveConcurrentQueue(string path){
             _path = path;
-            if (!Load()){
-                _concurrentQueue = new ConcurrentQueue<T>();
-            }
+            Load(path);
         }
 
         public new void Enqueue(T item){
@@ -29,21 +28,20 @@ namespace P2P_lib{
             if (ElementAddedToQueue != null) ElementAddedToQueue.Invoke();
         }
 
-        public bool Load(){
-            if (File.Exists(_path)){
-                Console.WriteLine("PATH           "+ _path);
-                string input = File.ReadAllText(_path);
-                _concurrentQueue = JsonConvert.DeserializeObject<ConcurrentQueue<T>>(input);
-                return true;
+        public static StateSaveConcurrentQueue<T> Load(string path){
+            if (File.Exists(path)){
+                Console.WriteLine("PATH           "+ path);
+                string input = File.ReadAllText(path);
+                StateSaveConcurrentQueue<T> output= JsonConvert.DeserializeObject<StateSaveConcurrentQueue<T>>(input);
+                return output;
             }
 
-            return false;
+            return new StateSaveConcurrentQueue<T>(path);
         }
 
         public bool Save(){
-                string output = JsonConvert.SerializeObject(_concurrentQueue);
-                Console.WriteLine("Got here?");
-                Console.WriteLine(_concurrentQueue.Count);
+                string output = JsonConvert.SerializeObject(this);
+                Console.WriteLine("Queue size: " +this.Count);
                 using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate)){
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
                     fileStream.Write(jsonIndex, 0, jsonIndex.Length);

@@ -45,10 +45,10 @@ namespace P2P_lib{
             this._peerFilePath = path + @".hidden\peer.json";
             this._locationDBPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
-            
-            upload = new StateSaveConcurrentQueue<QueuedFile>(_path+@".hidden\uploadQueue.json");
-            download = new StateSaveConcurrentQueue<QueuedFile>(_path + @".hidden\downloadQueue.json");
-            
+
+            upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
+            download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json"); 
+
             Load();
             
         }
@@ -176,7 +176,6 @@ namespace P2P_lib{
         }
 
 
-
         public void SaveFile(){
             var json = JsonConvert.SerializeObject(peers);
             if (_path == null) return;
@@ -212,6 +211,7 @@ namespace P2P_lib{
             // Add unknown peers to own list
             return inPeers;
         }
+
         private bool InPeerList(string uuid, List<Peer> input){
             bool inPeers = false;
             foreach (Peer peer in input){
@@ -241,7 +241,8 @@ namespace P2P_lib{
                 uploadMessage.CreateReply();
                 uploadMessage.port = ports.GetAvailablePort();
 
-                _fileReceiver = new FileReceiver(this._path + @"\.hidden\" + uuid + @"\", uploadMessage.filename, uploadMessage.port,
+                _fileReceiver = new FileReceiver(this._path + @"\.hidden\" + uuid + @"\", uploadMessage.filename,
+                    uploadMessage.port,
                     true);
                 _fileReceiver.Start();
 
@@ -293,8 +294,10 @@ namespace P2P_lib{
         private void ReceivedDownloadMessage(DownloadMessage downloadMessage){
             if (downloadMessage.type.Equals(TypeCode.REQUEST)){
                 if (downloadMessage.statuscode == StatusCode.OK){
-                    Console.WriteLine(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash + @".aes");
-                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash + @".aes")){
+                    Console.WriteLine(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash +
+                                      @".aes");
+                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash +
+                                    @".aes")){
                         downloadMessage.CreateReply();
                         downloadMessage.statuscode = StatusCode.ACCEPTED;
                         downloadMessage.Send(downloadMessage.port);
@@ -310,7 +313,8 @@ namespace P2P_lib{
                     }
                 } else if (downloadMessage.statuscode == StatusCode.ACCEPTED){
                     var sender = new FileSender(downloadMessage.from, downloadMessage.port);
-                    sender.Send(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash + @".aes");
+                    sender.Send(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash +
+                                @".aes");
                     Console.WriteLine("File send");
                 }
             }
@@ -324,6 +328,7 @@ namespace P2P_lib{
             foreach (var manager in Managers){
                 manager.Shutdown();
             }
+
             this._running = false;
             _receive.Stop();
             SaveLocDB();

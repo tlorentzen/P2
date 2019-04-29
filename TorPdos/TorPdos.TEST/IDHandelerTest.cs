@@ -3,17 +3,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ID_lib;
 using System.IO;
 
-namespace TorPdos.TEST
-{
+namespace TorPdos.TEST{
     [TestClass]
-    public class IDHandelerTest
-    {
+    public class IDHandelerTest{
         static string path = "TEST/";
         static string Password = "Password";
 
         [TestMethod]
-        public void GenereateUUIDIsRandom()
-        {
+        public void GenereateUUIDIsRandom(){
             string notExpected = IdHandler.CreateUser(Password);
             System.Threading.Thread.Sleep(5000);
             string actual = IdHandler.CreateUser(Password);
@@ -35,8 +32,7 @@ namespace TorPdos.TEST
         }*/
 
         [TestMethod]
-        public void ValidateUser()
-        {
+        public void ValidateUser(){
             string uuid = IdHandler.CreateUser(Password);
             bool result = IdHandler.IsValidUser(uuid, Password);
             IdHandler.RemoveUser();
@@ -45,8 +41,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void WrongPasswordInvaildUser()
-        {
+        public void WrongPasswordInvaildUser(){
             string uuid = IdHandler.CreateUser(Password);
             bool result = IdHandler.IsValidUser(uuid, "wrong");
             IdHandler.RemoveUser();
@@ -55,8 +50,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void GetUUidIsCorrect()
-        {
+        public void GetUUidIsCorrect(){
             string expected = IdHandler.CreateUser(Password);
             string result = IdHandler.GetUuid();
             IdHandler.RemoveUser();
@@ -74,7 +68,5 @@ namespace TorPdos.TEST
 
             Assert.IsFalse(final);
         }*/
-
-        
     }
 }

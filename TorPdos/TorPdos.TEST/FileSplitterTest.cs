@@ -5,12 +5,9 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Collections.Generic;
 
-namespace TorPdos.TEST
-{
+namespace TorPdos.TEST{
     [TestClass]
-    public class FileSplitterTest
-    {
-
+    public class FileSplitterTest{
         /*[TestMethod]
         public void SplitFileToFolderCorrectNumberOfFiles()
         {
@@ -54,6 +51,5 @@ namespace TorPdos.TEST
 
         }
         */
-
     }
 }
