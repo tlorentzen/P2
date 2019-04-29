@@ -77,10 +77,11 @@ namespace Index_lib{
         }
 
         public void Stop(){
+            watcher.EnableRaisingEvents = false;
             isRunning = false;
             _waitHandle.Set();
             //_indexWaitHandler.Close();
-            watcher.EnableRaisingEvents = false;
+           
         }
 
         public string GetPath(){

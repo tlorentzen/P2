@@ -43,6 +43,8 @@ namespace P2P_lib.Managers{
         }
 
         public void Run(){
+            this.waitHandle.Set();
+            Console.WriteLine(_queue.Count);
             while (is_running){
                 this.waitHandle.WaitOne();
 

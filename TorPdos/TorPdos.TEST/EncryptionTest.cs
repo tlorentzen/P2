@@ -4,19 +4,16 @@ using Encryption;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace TorPdos.TEST
-{
+namespace TorPdos.TEST{
     [TestClass]
-    public class EncryptionTest
-    {
+    public class EncryptionTest{
         static string FilePath = "TESTFILE.txt";
         static FileEncryption Crypt = new FileEncryption("TESTFILE", ".txt");
 
         static string password = "Password";
 
         [TestMethod]
-        public void EncryptedFileNotSame()
-        {
+        public void EncryptedFileNotSame(){
             Helpers.MakeAFile(FilePath);
             byte[] notExpected = Helpers.HashFile(FilePath);
             Crypt.DoEncrypt(password);
@@ -26,12 +23,10 @@ namespace TorPdos.TEST
             File.Delete("TESTFILE.aes");
 
             CollectionAssert.AreNotEqual(notExpected, actual);
-
         }
 
         [TestMethod]
-        public void EncryptDecryptSameFile()
-        {
+        public void EncryptDecryptSameFile(){
             Helpers.MakeAFile(FilePath);
             byte[] expected = Helpers.HashFile(FilePath);
             Crypt.DoEncrypt(password);
@@ -45,8 +40,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void EncryptDecryptDifferentEncryptorSameFile()
-        {
+        public void EncryptDecryptDifferentEncryptorSameFile(){
             Helpers.MakeAFile(FilePath);
             byte[] expected = Helpers.HashFile(FilePath);
             Crypt.DoEncrypt(password);
@@ -59,6 +53,5 @@ namespace TorPdos.TEST
 
             CollectionAssert.AreEqual(expected, result);
         }
-
     }
 }

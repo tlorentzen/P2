@@ -5,32 +5,26 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace TorPdos.TEST
-{
+namespace TorPdos.TEST{
     [TestClass]
-    public class IndexTest
-    {
+    public class IndexTest{
         [TestMethod]
-        public void IndexFileCreatedAtRightPath()
-        {
+        public void IndexFileCreatedAtRightPath(){
             var index = initIndex();
             Assert.IsTrue(File.Exists("TEST/.hidden/index.json"));
         }
 
         [TestMethod]
-        public void GetRightPath()
-        {
+        public void GetRightPath(){
             var index = initIndex();
             string expected = "TEST";
             string result = index.GetPath();
 
             Assert.AreEqual(expected, result);
-
         }
 
         [TestMethod]
-        public void IndexStartSetRunningTrue()
-        {
+        public void IndexStartSetRunningTrue(){
             var index = initIndex();
             index.Start();
 
@@ -42,8 +36,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void IndexStopSetRunningFalse()
-        {
+        public void IndexStopSetRunningFalse(){
             var index = initIndex();
             index.Start();
             bool result = index.isRunning;
@@ -54,38 +47,35 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void rebuildIndexGivesSameIndex()
-        {
+        public void rebuildIndexGivesSameIndex(){
             Helpers.MakeAFile("TESTFILE.txt");
-            for(int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++){
                 File.Copy("TESTFILE.txt", "TEST/TESTCOPY" + i + ".txt");
             }
+
             var index = initIndex();
 
             string expected = File.ReadAllText("TEST/.hidden/index.json");
-            
+
             index.ReIndex();
 
             string result = File.ReadAllText("TEST/.hidden/index.json");
-            
+
             string[] files = Directory.GetFiles("TEST");
-            foreach(string s in files) {
+            foreach (string s in files){
                 File.Delete(s);
             }
 
             Assert.AreEqual(expected, result);
-
         }
 
         [TestMethod]
-        public void AddedFileEventRaised()
-        {
-            
+        public void AddedFileEventRaised(){
             bool result = false;
             var index = initIndex();
             index.FileAdded += (f) => { result = true; };
             index.Start();
-            
+
             Helpers.MakeAFile("TEST/TESTFILE.txt");
             System.Threading.Thread.Sleep(1000);
             index.Save();
@@ -94,13 +84,11 @@ namespace TorPdos.TEST
             File.Delete("TEST/.hidden/index.json");
 
             Assert.IsTrue(result);
-
         }
 
-    
+
         [TestMethod]
-        public void DeletedFileEventRaised()
-        {
+        public void DeletedFileEventRaised(){
             bool result = false;
             var index = initIndex();
             index.FileDeleted += (f) => { result = true; };
@@ -115,12 +103,10 @@ namespace TorPdos.TEST
             File.Delete("TEST/.hidden/index.json");
 
             Assert.IsTrue(result);
-
         }
 
         [TestMethod]
-        public void FileChangedEventRaised()
-        {
+        public void FileChangedEventRaised(){
             bool result = false;
             var index = initIndex();
             index.FileChanged += (f) => { result = true; };
@@ -137,12 +123,10 @@ namespace TorPdos.TEST
             File.Delete("TEST/.hidden/index.json");
 
             Assert.IsTrue(result);
-
         }
 
         [TestMethod]
-        public void FileMissingEventRaised()
-        {
+        public void FileMissingEventRaised(){
             bool result = false;
             var index = initIndex();
             index.FileMissing += (f) => { result = true; };
@@ -159,8 +143,7 @@ namespace TorPdos.TEST
         }
 
         [TestMethod]
-        public void RenameEventWorks()
-        {
+        public void RenameEventWorks(){
             string name = "TEST\\\\NEWNAMETEST.txt";
             var index = initIndex();
             Helpers.MakeAFile("TEST/TESTFILE.txt");
@@ -178,18 +161,15 @@ namespace TorPdos.TEST
             File.Delete("TEST/NEWNAMETEST.txt");
             File.Delete("TEST/.hidden/index.json");
 
-            Assert.AreEqual(name,result);
-
+            Assert.AreEqual(name, result);
         }
 
-        private Index initIndex()
-        {
+        private Index initIndex(){
             Helpers.MakeDirectory("TEST");
             Index index = new Index("TEST");
             index.BuildIndex();
 
             return index;
         }
-
     }
 }
