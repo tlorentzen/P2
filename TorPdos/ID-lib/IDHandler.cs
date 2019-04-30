@@ -39,8 +39,6 @@ namespace ID_lib
                     userFile.WriteLine(uuid);
                     userFile.Close();
                 }
-
-                MyReg.SetValue("UUID", uuid);
                 Console.WriteLine("NEW USER: " + uuid);
                 return uuid;
             }
