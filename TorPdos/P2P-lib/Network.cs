@@ -80,7 +80,8 @@ namespace P2P_lib{
                 Thread uploadThread = new Thread(uploadManager.Run);
                 Thread downloadThread = new Thread(downloadManager.Run);
 
-                uploadManager.sendtTo = locationDB;
+                uploadManager.sentTo = downloadManager.sentTo = locationDB;
+
                 uploadThread.Start();
                 downloadThread.Start();
 

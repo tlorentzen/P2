@@ -25,12 +25,12 @@ namespace P2P_lib.Managers{
         private static Logger logger = LogManager.GetLogger("UploadLogger");
         private HiddenFolder _hiddenFolder;
         public bool isStopped;
-        private ConcurrentDictionary<string, List<string>> _sendtTo;
+        private ConcurrentDictionary<string, List<string>> _sentTo;
 
-        public ConcurrentDictionary<string, List<string>> sendtTo{
-            get{ return _sendtTo; }
+        public ConcurrentDictionary<string, List<string>> sentTo{
+            get{ return _sentTo; }
             set{
-                if (_sendtTo == null) _sendtTo = value;
+                if (_sentTo == null) _sentTo = value;
             }
         }
 
@@ -134,7 +134,7 @@ namespace P2P_lib.Managers{
                     }
 
                     
-                    sendtTo.AddOrUpdate(file.GetHash(), peersSentTo, (key, existingValue) => 
+                    sentTo.AddOrUpdate(file.GetHash(), peersSentTo, (key, existingValue) => 
                     {
                         foreach(string peer in peersSentTo) {
                             existingValue.Add(peer);
