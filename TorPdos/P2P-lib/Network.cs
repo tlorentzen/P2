@@ -193,9 +193,9 @@ namespace P2P_lib{
         public bool Load(){
             if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
-                List<Peer> input = JsonConvert.DeserializeObject<List<Peer>>(json);
+                ConcurrentDictionary<string, Peer> input = JsonConvert.DeserializeObject<ConcurrentDictionary<string, Peer>>(json);
                 foreach (var peer in input){
-                    peers.TryAdd(peer.GetUuid(), peer);
+                    peers.TryAdd(peer.Value.GetUuid(), peer.Value);
                 }
 
                 return true;
