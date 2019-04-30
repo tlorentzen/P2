@@ -131,15 +131,15 @@ namespace P2P_lib.Managers{
                         _pendingReceiver = true;
                         _ports.Release(port);
                     }
-                    if (!sendtTo.ContainsKey(file.GetHash())) {
-                        sendtTo.AddOrUpdate(file.GetHash(), peersSendtTo, (k,v) => 
-                        {
-                            foreach(string s in peersSendtTo) {
-                                v.Add(s);
-                            }
-                            return v;
-                        });
-                    }
+                    
+                    sendtTo.AddOrUpdate(file.GetHash(), peersSendtTo, (k,v) => 
+                    {
+                        foreach(string s in peersSendtTo) {
+                            v.Add(s);
+                        }
+                        return v;
+                    });
+                    
                 }
 
                 this.waitHandle.Reset();
