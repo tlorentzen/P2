@@ -60,6 +60,7 @@
     <Compile Include="DiskHelper.cs" />
     <Compile Include="Managers\DownloadManager.cs" />
     <Compile Include="Managers\Manager.cs" />
+    <Compile Include="Messages\FileDeletionMessage.cs" />
     <Compile Include="QueuedFile.cs" />
     <Compile Include="FileReceiver.cs" />
     <Compile Include="FileSender.cs" />
