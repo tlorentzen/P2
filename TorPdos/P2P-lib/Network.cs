@@ -28,11 +28,13 @@ namespace P2P_lib{
         private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
         private StateSaveConcurrentQueue<QueuedFile> upload;
         private StateSaveConcurrentQueue<QueuedFile> download;
+        private StateSaveConcurrentQueue<string> _deletionQueue;
         private List<Manager> _managers = new List<Manager>();
         private NetworkPorts ports = new NetworkPorts();
         private System.Timers.Timer pingTimer;
         private string _locationDBPath;
         private ConcurrentDictionary<string, List<string>> locationDB;
+        private DeletionManager _deletionManager;
 
 
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
@@ -48,10 +50,10 @@ namespace P2P_lib{
 
             Load();
 
+            _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
-            download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json"); 
-
-            
+            download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json");
+            _deletionManager = new DeletionManager(_deletionQueue,ports,peers,locationDB);
         }
 
         public List<Peer> GetPeerList(){
@@ -129,6 +131,8 @@ namespace P2P_lib{
                 ReceivedDownloadMessage((DownloadMessage) message);
             } else if (msgType == typeof(PeerFetcherMessage)){
                 RechievedPeerFetch((PeerFetcherMessage) message);
+            } else if (msgType == typeof(FileDeletionMessage)){
+                ReceivedDeletionRequest((FileDeletionMessage) message);
             }
         }
 
@@ -321,12 +325,37 @@ namespace P2P_lib{
             }
         }
 
-        public void Stop(){
+        private void ReceivedDeletionRequest(FileDeletionMessage message){
+            if (message.type.Equals(TypeCode.REQUEST)){
+                if (message.statuscode == StatusCode.OK){
+                    if (File.Exists(_path + @".hidden\" + message.fromUuid + "\\" + message.filehash)){
+                        File.Delete(_path + @".hidden\" + message.fromUuid + "\\" + message.filehash);
+                        message.statuscode = StatusCode.OK;
+                        message.CreateReply();
+                        message.Send();
+                    } else{
+                        message.statuscode = StatusCode.FILE_NOT_FOUND;
+                        message.CreateReply();
+                        message.Send();
+                    }
+                }
+            } else if (message.type == TypeCode.RESPONSE){
+                if (message.statuscode == StatusCode.ACCEPTED){
+                    List<string> updatedList = locationDB[message.filehash];
+                    updatedList.Remove(message.filehash);
+                    locationDB[message.filehash] = updatedList;
+                } else{
+                    Console.WriteLine("File not found at peer");
+                }
+            }
+        }
 
+        public void Stop(){
             pingTimer.Enabled = false;
             foreach (var manager in _managers){
                 manager.Shutdown();
             }
+
             upload.Save(_path + @".hidden\uploadQueue.json");
             download.Save(_path + @".hidden\downloadQueue.json");
 
@@ -335,20 +364,20 @@ namespace P2P_lib{
             SaveLocationDB();
         }
 
-        private void LoadLocationDB()
-        {
-            if (File.Exists(_locationDBPath)) {
-                locationDB = JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(File.ReadAllText(_locationDBPath));
-            } else {
+        private void LoadLocationDB(){
+            if (File.Exists(_locationDBPath)){
+                locationDB =
+                    JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(
+                        File.ReadAllText(_locationDBPath));
+            } else{
                 locationDB = new ConcurrentDictionary<string, List<string>>();
             }
         }
 
-        private void SaveLocationDB()
-        {
+        private void SaveLocationDB(){
             var json = JsonConvert.SerializeObject(locationDB);
             if (_path == null) return;
-            using (var fileStream = _hiddenPath.WriteToFile(_locationDBPath)) {
+            using (var fileStream = _hiddenPath.WriteToFile(_locationDBPath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
