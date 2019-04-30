@@ -130,6 +130,7 @@ namespace TorPdos{
         private static void Idx_FileDeleted(string hash){
             //throw new NotImplementedException();
             Console.WriteLine(@"Deleted: " + hash);
+            _p2P.DeleteFile(hash);
         }
 
         private static void Idx_FileAdded(IndexFile file){

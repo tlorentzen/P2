@@ -391,5 +391,10 @@ namespace P2P_lib{
         public void DownloadFile(string hash){
             this.download.Enqueue(new QueuedFile(hash));
         }
+
+        public void DeleteFile(string hash)
+        {
+            this._deletionQueue.Enqueue(hash);
+        }
     }
 }
