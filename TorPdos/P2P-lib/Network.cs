@@ -46,16 +46,16 @@ namespace P2P_lib{
             this._locationDBPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
 
+            Load();
+
             upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
             download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json"); 
 
-            Load();
             
         }
 
         public List<Peer> GetPeerList(){
             List<Peer> newPeerList = new List<Peer>();
-
             foreach (Peer peer in peers){
                 newPeerList.Add(peer);
             }
@@ -185,7 +185,7 @@ namespace P2P_lib{
         }
 
         public bool Load(){
-            if (_peerFilePath == null || !File.Exists(this._peerFilePath)){
+            if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
                 List<Peer> input = JsonConvert.DeserializeObject<List<Peer>>(json);
                 foreach (var peer in input){
@@ -324,16 +324,15 @@ namespace P2P_lib{
         public void Stop(){
 
             pingTimer.Enabled = false;
-            upload.Save(_path + @".hidden\uploadQueue.json");
-            download.Save(_path + @".hidden\downloadQueue.json");
             foreach (var manager in _managers){
                 manager.Shutdown();
             }
+            upload.Save(_path + @".hidden\uploadQueue.json");
+            download.Save(_path + @".hidden\downloadQueue.json");
 
             this._running = false;
             _receive.Stop();
-            SaveLocDB();
-            
+            SaveLocationDB();
         }
 
         private void LoadLocationDB()
@@ -345,7 +344,7 @@ namespace P2P_lib{
             }
         }
 
-        private void SaveLocDB()
+        private void SaveLocationDB()
         {
             var json = JsonConvert.SerializeObject(locationDB);
             if (_path == null) return;
@@ -353,10 +352,6 @@ namespace P2P_lib{
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
-        }
-
-        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
-            new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
         }
 
         public void UploadFile(string hash, string path, int copies){

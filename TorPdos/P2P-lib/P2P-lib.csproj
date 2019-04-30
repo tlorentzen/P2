@@ -72,7 +72,6 @@
     <Compile Include="Messages\UploadMessage.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="NetworkHelper.cs" />
-    <Compile Include="NetworkProtocols.cs" />
     <Compile Include="Peer.cs" />
     <Compile Include="NetworkPorts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

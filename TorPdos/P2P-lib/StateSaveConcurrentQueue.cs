@@ -4,15 +4,15 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Collections;
+
 
 namespace P2P_lib{
     [Serializable]
-    public class StateSaveConcurrentQueue<T> : ConcurrentQueue<T>, IEnumerable<T>, ICollection<T>
-    {
+    public class StateSaveConcurrentQueue<T> : ConcurrentQueue<T>, IEnumerable<T>, ICollection<T>{
         public bool IsReadOnly => false;
 
         public delegate void ElementQueued();
+
         public event ElementQueued ElementAddedToQueue;
 
         public new void Enqueue(T item){
@@ -22,10 +22,10 @@ namespace P2P_lib{
         }
 
         public static StateSaveConcurrentQueue<T> Load(string path){
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
+            var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
 
             if (File.Exists(path)){
-                Console.WriteLine("PATH           "+ path);
+                Console.WriteLine("PATH           " + path);
                 string input = File.ReadAllText(path);
                 return JsonConvert.DeserializeObject<StateSaveConcurrentQueue<T>>(input, settings);
             }
@@ -34,10 +34,10 @@ namespace P2P_lib{
         }
 
         public bool Save(string path){
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
+            var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
             string output = JsonConvert.SerializeObject(this, settings);
-            Console.WriteLine("Queue size: " +this.Count);
-            using (var fileStream = new FileStream(path, FileMode.OpenOrCreate)){
+            Console.WriteLine("Queue size: " + this.Count);
+            using (var fileStream = new FileStream(path, FileMode.Create)){
                 byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
                 fileStream.Close();
@@ -46,23 +46,17 @@ namespace P2P_lib{
             return true;
         }
 
-        public void Add(T item)
-        {
+        public void Add(T item){
             base.Enqueue(item);
         }
 
-        public void Clear()
-        {
-            
-        }
+        public void Clear(){ }
 
-        public bool Contains(T item)
-        {
+        public bool Contains(T item){
             return false;
         }
 
-        public bool Remove(T item)
-        {
+        public bool Remove(T item){
             return true;
         }
     }

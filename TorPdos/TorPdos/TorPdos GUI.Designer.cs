@@ -271,7 +271,7 @@ namespace TorPdos
             {
                 FirstStartUp();
             }
-            else if (MyReg.GetValue("UUID") == null)
+            else if (IdHandler.GetUuid() == null)
             {
                 Create();
             }
@@ -300,8 +300,7 @@ namespace TorPdos
             {
                 IdHandler.CreateUser(txtPassword.Text);
                 Login();
-                if (MyReg.GetValue("UUID") == null) return;
-                txtUsername.Text = MyReg.GetValue("UUID").ToString();
+                txtUsername.Text = IdHandler.GetUuid();
             }
             else
             {
@@ -399,9 +398,9 @@ namespace TorPdos
 
             AcceptButton = btnLogin;
 
-            if (MyReg.GetValue("UUID") != null)
+            if (IdHandler.GetUuid() != null)
             {
-                txtUsername.Text = MyReg.GetValue("UUID").ToString();
+                txtUsername.Text = IdHandler.GetUuid();
             }
         }
 

@@ -22,7 +22,7 @@ namespace TorPdos{
             RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
 
-            if (myReg.GetValue("Path") == null || myReg.GetValue("UUID") == null)
+            if (myReg.GetValue("Path") == null || IdHandler.GetUuid() == null)
             {
                 Application.Run(torPdos);
             }
@@ -54,16 +54,15 @@ namespace TorPdos{
 
             _idx.Start();
 
+            // Prepare P2PNetwork
+            _p2P = new Network(25565, _idx, path);
+            _p2P.Start();
+            
             Console.WriteLine(@"Integrity check initialized...");
             _idx.MakeIntegrityCheck();
             Console.WriteLine(@"Integrity check finished!");
 
             Console.WriteLine(IdHandler.GetUuid());
-            // Prepare P2PNetwork
-            _p2P = new Network(25565, _idx, path);
-            _p2P.Start();
-            //p2p.ping();
-            //p2p.DownloadFile("298310928301923lk12i3l1k2j3l12kj");
             while (running){
                 string console = Console.ReadLine();
                 if (console != null){
@@ -72,22 +71,15 @@ namespace TorPdos{
                     if (console.Equals("quit") || console.Equals("q")){
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
+                        _idx.Stop();
                         _p2P.SaveFile();
                         _p2P.Stop();
-                        _idx.Stop();
                         running = false;
                     } else{
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("gui")){
                             Application.Run(torPdos);
-                        } else if (console.StartsWith("upload") && param.Length == 3){
-                            if (int.TryParse(param[2], out _)){
-                                _idx.ReIndex();
-                                new NetworkProtocols(_idx, _p2P).UploadFileToNetwork(param[1], int.Parse(param[2]));
-                            } else{
-                                Console.WriteLine(@"Third parameter must be an integer");
-                            }
                         } else if (console.Equals("reindex")){
                             _idx.ReIndex();
                         } else if (console.Equals("status")){

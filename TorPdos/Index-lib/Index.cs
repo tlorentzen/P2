@@ -34,6 +34,7 @@ namespace Index_lib{
         public Thread fileIndexThread;
 
         private ManualResetEvent _waitHandle;
+        public bool isStopped;
 
         //private ManualResetEvent _indexWaitHandler;
         public bool isRunning;
@@ -41,6 +42,7 @@ namespace Index_lib{
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(string path){
             _indexFilePath = path + @"\.hidden\index.json";
+            
 
             if (Directory.Exists(path)){
                 _path = path;
@@ -80,6 +82,10 @@ namespace Index_lib{
             watcher.EnableRaisingEvents = false;
             isRunning = false;
             _waitHandle.Set();
+
+            while (!isStopped){
+                
+            }
             //_indexWaitHandler.Close();
            
         }
@@ -143,6 +149,7 @@ namespace Index_lib{
         }
 
         private void HandleFileEvent(){
+            isStopped = false;
             while (isRunning){
                 
                 _waitHandle.WaitOne();
@@ -152,6 +159,10 @@ namespace Index_lib{
                 FileSystemEventArgs e;
 
                 while (_fileHandlingQueue.TryDequeue(out e)){
+                    if (!isRunning){
+                        _fileHandlingQueue.Enqueue(e);
+                        break;
+                    }
                     if (IgnoreHidden(e.FullPath))
                         continue;
 
@@ -241,6 +252,8 @@ namespace Index_lib{
 
                 _waitHandle.Reset();
             }
+
+            isStopped = true;
         }
 
         public void MakeIntegrityCheck(){
