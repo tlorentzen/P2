@@ -2,6 +2,7 @@
 using System.Net.NetworkInformation;
 using System.Net;
 using System.Net.Sockets;
+using System;
 
 namespace P2P_lib{
     public class NetworkHelper{
@@ -37,5 +38,19 @@ namespace P2P_lib{
 
             return macAddresses;
         }
+
+        public static string MacAddressCombiner()
+        {
+            string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+            List<string> macAddresses = NetworkHelper.GetMacAddresses();
+
+            foreach (string mac in macAddresses)
+            {
+                guid += mac;
+            }
+
+            return DiskHelper.createMd5(guid);
+        }
+
     }
 }

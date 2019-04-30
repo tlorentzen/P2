@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using P2P_lib;
 using System.Security.Cryptography;
 using Microsoft.Win32;
 
-namespace ID_lib
+namespace P2P_lib
 {
     public static class IdHandler
     {

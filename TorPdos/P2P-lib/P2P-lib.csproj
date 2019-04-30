@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiskHelper.cs" />
+    <Compile Include="IDHandler.cs" />
     <Compile Include="Managers\DeletionManager.cs" />
     <Compile Include="Managers\DownloadManager.cs" />
     <Compile Include="Managers\Manager.cs" />
