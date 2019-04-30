@@ -336,7 +336,7 @@ namespace P2P_lib{
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statuscode == StatusCode.OK){
-                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash;
+                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash + ".aes";
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
@@ -354,6 +354,7 @@ namespace P2P_lib{
                     List<string> updatedList = locationDB[message.filehash];
                     updatedList.Remove(message.filehash);
                     locationDB[message.filehash] = updatedList;
+                    
                 } else{
                     Console.WriteLine("File not found at peer");
                 }
