@@ -15,7 +15,7 @@ namespace P2P_lib.Managers{
         private ManualResetEvent waitHandle;
         private bool is_running = true;
         private NetworkPorts _ports;
-        private BlockingCollection<Peer> _peers;
+        private ConcurrentDictionary<string, Peer> _peers;
         private StateSaveConcurrentQueue<QueuedFile> _queue;
         private RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"TorPdos\1.1.1.1");
         private string _path;
@@ -35,7 +35,7 @@ namespace P2P_lib.Managers{
         }
 
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
-            BlockingCollection<Peer> peers){
+            ConcurrentDictionary<string, Peer> peers){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -167,26 +167,29 @@ namespace P2P_lib.Managers{
             List<Peer> availablePeers = new List<Peer>();
             int counter = 1;
 
-            foreach (Peer peer in this._peers){
-                if (peer.IsOnline()){
-                    availablePeers.Add(peer);
+            foreach(var peer in this._peers){
+                if (peer.Value.IsOnline())
+                {
+                    availablePeers.Add(peer.Value);
 
-                    if (counter.Equals(count)){
+                    if (counter.Equals(count))
+                    {
                         break;
                     }
 
                     counter++;
                 }
             }
-
+            
             return availablePeers;
         }
 
         private int CountOnlinePeers(){
             int counter = 0;
 
-            foreach (Peer peer in this._peers){
-                if (peer.IsOnline()){
+            foreach(var peer in this._peers){
+                if (peer.Value.IsOnline())
+                {
                     counter++;
                 }
             }

@@ -24,7 +24,7 @@ namespace P2P_lib{
         private FileReceiver _fileReceiver;
         private string _path;
         private HiddenFolder _hiddenPath;
-        private BlockingCollection<Peer> peers = new BlockingCollection<Peer>();
+        private ConcurrentDictionary<string, Peer> peers = new ConcurrentDictionary<string, Peer>();
         private string _peerFilePath;
         private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
         private StateSaveConcurrentQueue<QueuedFile> upload;
@@ -36,7 +36,6 @@ namespace P2P_lib{
         private string _locationDBPath;
         private ConcurrentDictionary<string, List<string>> locationDB;
         private DeletionManager _deletionManager;
-
 
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
@@ -59,10 +58,11 @@ namespace P2P_lib{
 
         public List<Peer> GetPeerList(){
             List<Peer> newPeerList = new List<Peer>();
-            foreach (Peer peer in peers){
-                newPeerList.Add(peer);
-            }
 
+            foreach(var peer in peers){
+                newPeerList.Add(peer.Value);
+            }
+            
             return newPeerList;
         }
 
@@ -112,14 +112,14 @@ namespace P2P_lib{
         public void Ping(){
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            foreach (Peer peer in peers){
-                peer.Ping(millis, _path);
+            foreach(var peer in peers){
+                peer.Value.Ping(millis, _path);
             }
         }
 
         public void AddPeer(string uuid, string ip){
             Peer peer = new Peer(uuid, ip);
-            this.peers.Add(peer);
+            this.peers.TryAdd(peer.GetUuid(), peer);
         }
 
         private void Receive_MessageReceived(BaseMessage message){
@@ -145,20 +145,20 @@ namespace P2P_lib{
                 incomming = message.peers;
                 // Adding sender to list
                 if (!InPeerList(message.fromUuid, peers)){
-                    peers.Add(new Peer(message.fromUuid, message.from));
+                    peers.TryAdd(message.fromUuid, new Peer(message.fromUuid, message.from));
                 }
 
                 //Checks whether a incomming peer exists in the peerlist.
                 foreach (var incommingPeer in incomming){
                     if (InPeerList(incommingPeer.GetUuid(), peers)) break;
-                    peers.Add(incommingPeer);
+                    peers.TryAdd(incommingPeer.GetUuid(), incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
                 }
 
                 foreach (var outGoingPeer in peers){
-                    if (InPeerList(outGoingPeer.GetUuid(), incomming)) break;
-                    if (outGoingPeer.GetUuid() == message.fromUuid) break;
-                    outgoing.Add(outGoingPeer);
+                    if (InPeerList(outGoingPeer.Value.GetUuid(), incomming)) break;
+                    if (outGoingPeer.Value.GetUuid() == message.fromUuid) break;
+                    outgoing.Add(outGoingPeer.Value);
                 }
 
                 message.CreateReply();
@@ -171,7 +171,7 @@ namespace P2P_lib{
                     if (InPeerList(incommingPeer.GetUuid(), peers)) break;
 
                     if ((IdHandler.GetUuid().Equals(incommingPeer.GetUuid()))) break;
-                    peers.Add(incommingPeer);
+                    peers.TryAdd(incommingPeer.GetUuid(), incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
                 }
             }
@@ -195,7 +195,7 @@ namespace P2P_lib{
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
                 List<Peer> input = JsonConvert.DeserializeObject<List<Peer>>(json);
                 foreach (var peer in input){
-                    peers.Add(peer);
+                    peers.TryAdd(peer.GetUuid(), peer);
                 }
 
                 return true;
@@ -204,15 +204,17 @@ namespace P2P_lib{
             return false;
         }
 
-        private bool InPeerList(string uuid, BlockingCollection<Peer> input){
+        private bool InPeerList(string uuid, ConcurrentDictionary<string, Peer> input){
             bool inPeers = false;
-            foreach (Peer peer in input){
-                if (peer.GetUuid().Equals(uuid)){
+
+            foreach(var peer in input){
+                if (peer.Value.GetUuid().Equals(uuid))
+                {
                     inPeers = true;
                     break;
                 }
             }
-
+           
             // Add unknown peers to own list
             return inPeers;
         }
@@ -257,12 +259,12 @@ namespace P2P_lib{
 
         private void RechievedPing(PingMessage ping){
             // Update peer
-            foreach (Peer peer in peers){
-                if (peer.GetUuid().Equals(ping.fromUuid)){
-                    peer.SetIp(ping.from);
-                    peer.UpdateLastSeen();
-                    peer.SetOnline(true);
-                    peer.diskSpace = ping.diskSpace;
+            foreach (var peer in peers){
+                if (peer.Value.GetUuid().Equals(ping.fromUuid)){
+                    peer.Value.SetIp(ping.from);
+                    peer.Value.UpdateLastSeen();
+                    peer.Value.SetOnline(true);
+                    peer.Value.diskSpace = ping.diskSpace;
                 }
             }
 
@@ -290,8 +292,8 @@ namespace P2P_lib{
 
         private Peer GetAPeer(string uuid){
             foreach (var peer in peers){
-                if (peer.UUID.Equals(uuid)){
-                    return peer;
+                if (peer.Value.UUID.Equals(uuid)){
+                    return peer.Value;
                 }
             }
 

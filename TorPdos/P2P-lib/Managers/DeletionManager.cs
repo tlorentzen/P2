@@ -12,14 +12,14 @@ namespace P2P_lib.Managers{
         private string _path;
         private NetworkPorts _ports;
         private readonly ManualResetEvent _waitHandle;
-        private readonly BlockingCollection<Peer> _peers;
+        private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<string> _queue;
         private readonly ConcurrentDictionary<string, List<string>> _locationDb;
         private FileReceiver _receiver;
         public bool isStopped;
 
         public DeletionManager(StateSaveConcurrentQueue<string> queue, NetworkPorts ports,
-            BlockingCollection<Peer> peers, ConcurrentDictionary<string, List<string>> locationDB){
+            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDB){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -51,9 +51,12 @@ namespace P2P_lib.Managers{
 
                     List<string> inputlist = _locationDb[item];
                     foreach (var input in inputlist){
-                        foreach (var peer in _peers){
-                            if (peer.IsOnline() && peer.UUID == input){
-                                FileDeletionMessage deletionMessage = new FileDeletionMessage(peer);
+
+                        foreach (var peer in _peers)
+                        {
+                            if (peer.Value.IsOnline() && peer.Value.UUID == input)
+                            {
+                                FileDeletionMessage deletionMessage = new FileDeletionMessage(peer.Value);
                                 deletionMessage.filehash = item;
                                 deletionMessage.port = _port;
                                 deletionMessage.Send();

@@ -16,7 +16,7 @@ namespace P2P_lib.Managers{
         private string _path;
         private NetworkPorts _ports;
         private ManualResetEvent _waitHandle;
-        private BlockingCollection<Peer> _peers;
+        private ConcurrentDictionary<string, Peer> _peers;
         private StateSaveConcurrentQueue<QueuedFile> _queue;
         private FileReceiver _receiver;
         private Index _index;
@@ -34,7 +34,7 @@ namespace P2P_lib.Managers{
         }
 
         public DownloadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
-            BlockingCollection<Peer> peers, Index index){
+            ConcurrentDictionary<string, Peer> peers, Index index){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -146,9 +146,10 @@ namespace P2P_lib.Managers{
         private List<Peer> GetPeers(){
             List<Peer> availablePeers = new List<Peer>();
 
-            foreach (Peer peer in this._peers){
-                if (peer.IsOnline()){
-                    availablePeers.Add(peer);
+            foreach(var peer in this._peers){
+                if (peer.Value.IsOnline())
+                {
+                    availablePeers.Add(peer.Value);
                 }
             }
 
