@@ -81,13 +81,6 @@ namespace TorPdos{
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("gui")){
                             Application.Run(torPdos);
-                        } else if (console.StartsWith("upload") && param.Length == 3){
-                            if (int.TryParse(param[2], out _)){
-                                _idx.ReIndex();
-                                new NetworkProtocols(_idx, _p2P).UploadFileToNetwork(param[1], int.Parse(param[2]));
-                            } else{
-                                Console.WriteLine(@"Third parameter must be an integer");
-                            }
                         } else if (console.Equals("reindex")){
                             _idx.ReIndex();
                         } else if (console.Equals("status")){

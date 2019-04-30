@@ -330,8 +330,7 @@ namespace P2P_lib{
 
             this._running = false;
             _receive.Stop();
-            SaveLocDB();
-            
+            SaveLocationDB();
         }
 
         private void LoadLocationDB()
@@ -343,7 +342,7 @@ namespace P2P_lib{
             }
         }
 
-        private void SaveLocDB()
+        private void SaveLocationDB()
         {
             var json = JsonConvert.SerializeObject(locationDB);
             if (_path == null) return;
@@ -351,10 +350,6 @@ namespace P2P_lib{
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
-        }
-
-        public void UploadFileToNetwork(string filePath, int copies, int seed = 0){
-            new NetworkProtocols(_index, this).UploadFileToNetwork(filePath, 3);
         }
 
         public void UploadFile(string hash, string path, int copies){
