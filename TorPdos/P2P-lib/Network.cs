@@ -109,7 +109,7 @@ namespace P2P_lib{
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             foreach (Peer peer in peers){
-                peer.Ping(millis);
+                peer.Ping(millis, _path);
             }
         }
 
@@ -256,6 +256,7 @@ namespace P2P_lib{
                     peer.SetIp(ping.from);
                     peer.UpdateLastSeen();
                     peer.SetOnline(true);
+                    peer.diskSpace = ping.diskSpace;
                 }
             }
 
@@ -263,6 +264,7 @@ namespace P2P_lib{
             if (ping.type.Equals(TypeCode.REQUEST)){
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
+                ping.diskSpace = DiskHelper.getTotalFreeSpace(_path);
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist
