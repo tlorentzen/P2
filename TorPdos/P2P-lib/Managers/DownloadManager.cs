@@ -70,7 +70,6 @@ namespace P2P_lib.Managers{
                         continue;
                     }
 
-                    Console.WriteLine("Trying to deque");
                     List<Peer> onlinePeers = this.GetPeers();
 
                     if (onlinePeers.Count == 0){
