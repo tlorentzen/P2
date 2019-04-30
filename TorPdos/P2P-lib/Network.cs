@@ -82,7 +82,8 @@ namespace P2P_lib{
                 Thread uploadThread = new Thread(uploadManager.Run);
                 Thread downloadThread = new Thread(downloadManager.Run);
 
-                uploadManager.sendtTo = locationDB;
+                uploadManager.sentTo = downloadManager.sentTo = locationDB;
+
                 uploadThread.Start();
                 downloadThread.Start();
 
@@ -233,7 +234,7 @@ namespace P2P_lib{
                 int replyPort = uploadMessage.port;
                 string uuid = uploadMessage.fromUuid;
 
-                if (DiskHelper.getTotalFreeSpace("C:\\") > uploadMessage.filesize){
+                if (DiskHelper.getTotalAvailableSpace("C:\\") > uploadMessage.filesize){
                     uploadMessage.statuscode = StatusCode.ACCEPTED;
                     Console.WriteLine(@"Request accepted");
                 } else{
@@ -268,7 +269,7 @@ namespace P2P_lib{
             if (ping.type.Equals(TypeCode.REQUEST)){
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
-                ping.diskSpace = DiskHelper.getTotalFreeSpace(_path);
+                ping.diskSpace = DiskHelper.getTotalAvailableSpace(_path);
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist

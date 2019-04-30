@@ -58,8 +58,7 @@ namespace P2P_lib{
                 ping.from = NetworkHelper.GetLocalIpAddress();
                 ping.type = Messages.TypeCode.REQUEST;
                 ping.statuscode = StatusCode.OK;
-                ping.diskSpace = DiskHelper.getTotalFreeSpace(pathToFolder);
-                Console.WriteLine("Free diskspace on {0} is {1}", pathToFolder.Split('\\')[0], ping.diskSpace);
+                ping.diskSpace = DiskHelper.getTotalAvailableSpace(pathToFolder);
                 ping.Send();
 
                 // Ping every 60 seconds and if a peer didnt respond add extra time before retrying.
