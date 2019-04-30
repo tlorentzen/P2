@@ -134,9 +134,9 @@ namespace P2P_lib.Managers{
                     }
 
                     
-                    sendtTo.AddOrUpdate(file.GetHash(), peersSendtTo, (k,v) => 
+                    sendtTo.AddOrUpdate(file.GetHash(), peersSentTo, (k,v) => 
                     {
-                        foreach(string s in peersSendtTo) {
+                        foreach(string s in peersSentTo) {
                             v.Add(s);
                         }
                         return v;
