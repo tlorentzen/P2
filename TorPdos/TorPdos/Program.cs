@@ -22,7 +22,7 @@ namespace TorPdos{
             RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
 
-            if (myReg.GetValue("Path") == null || myReg.GetValue("UUID") == null)
+            if (myReg.GetValue("Path") == null || IdHandler.GetUuid() == null)
             {
                 Application.Run(torPdos);
             }
