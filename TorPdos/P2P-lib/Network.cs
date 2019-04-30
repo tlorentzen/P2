@@ -55,7 +55,6 @@ namespace P2P_lib{
 
         public List<Peer> GetPeerList(){
             List<Peer> newPeerList = new List<Peer>();
-
             foreach (Peer peer in peers){
                 newPeerList.Add(peer);
             }
@@ -322,11 +321,11 @@ namespace P2P_lib{
         public void Stop(){
 
             pingTimer.Enabled = false;
-            upload.Save(_path + @".hidden\uploadQueue.json");
-            download.Save(_path + @".hidden\downloadQueue.json");
             foreach (var manager in _managers){
                 manager.Shutdown();
             }
+            upload.Save(_path + @".hidden\uploadQueue.json");
+            download.Save(_path + @".hidden\downloadQueue.json");
 
             this._running = false;
             _receive.Stop();

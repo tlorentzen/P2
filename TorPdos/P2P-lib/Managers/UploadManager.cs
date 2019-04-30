@@ -27,7 +27,12 @@ namespace P2P_lib.Managers{
         public bool isStopped;
         private ConcurrentDictionary<string, List<string>> _sendtTo;
 
-        public ConcurrentDictionary<string, List<string>> sendtTo { get { return _sendtTo; } set { if (_sendtTo == null) _sendtTo = value; } }
+        public ConcurrentDictionary<string, List<string>> sendtTo{
+            get{ return _sendtTo; }
+            set{
+                if (_sendtTo == null) _sendtTo = value;
+            }
+        }
 
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             BlockingCollection<Peer> peers){
@@ -53,16 +58,14 @@ namespace P2P_lib.Managers{
             while (is_running){
                 this.waitHandle.WaitOne();
 
-                if(!is_running)
+                if (!is_running)
                     break;
 
                 QueuedFile file;
-                var peersSendtTo = new List<string>();
+                var peersSentTo = new List<string>();
 
                 while (this._queue.TryDequeue(out file)){
-                    //Console.WriteLine("Current queued files: "+_queue.Count);
-
-                    if(!is_running){
+                    if (!is_running){
                         this._queue.Enqueue(file);
                         break;
                     }
@@ -93,7 +96,7 @@ namespace P2P_lib.Managers{
 
                     // Split
                     // TODO: split file
-                    peersSendtTo.Clear();
+                    peersSentTo.Clear();
                     foreach (Peer peer in receivingPeers){
                         int port = _ports.GetAvailablePort();
                         try{
@@ -125,18 +128,19 @@ namespace P2P_lib.Managers{
 
                         if (_sender != null){
                             _sender.Send(encryptedFilePath);
-                            peersSendtTo.Add(peer.UUID);
+                            peersSentTo.Add(peer.UUID);
                         }
 
                         _pendingReceiver = true;
                         _ports.Release(port);
                     }
-                    if (!sendtTo.ContainsKey(file.GetHash())) {
-                        sendtTo.AddOrUpdate(file.GetHash(), peersSendtTo, (k,v) => 
-                        {
-                            foreach(string s in peersSendtTo) {
+
+                    if (!sendtTo.ContainsKey(file.GetHash())){
+                        sendtTo.AddOrUpdate(file.GetHash(), peersSentTo, (k, v) => {
+                            foreach (string s in peersSentTo){
                                 v.Add(s);
                             }
+
                             return v;
                         });
                     }
@@ -144,6 +148,7 @@ namespace P2P_lib.Managers{
 
                 this.waitHandle.Reset();
             }
+
             isStopped = true;
         }
 
@@ -196,7 +201,8 @@ namespace P2P_lib.Managers{
             waitHandle.Set();
 
             Console.Write("Upload thread stopping... ");
-            while (!this.isStopped) { }
+            while (!this.isStopped){ }
+
             Console.Write("Stopped!\n");
 
             return true;
