@@ -13,6 +13,7 @@ namespace P2P_lib{
         private int _pingsWithoutResponse;
         private long _nextPing;
         private bool _online = false;
+        public long diskSpace;
 
         public Peer() : this(null, null){ }
 
@@ -45,11 +46,11 @@ namespace P2P_lib{
             this._pingsWithoutResponse = 0;
         }
 
-        public void Ping(){
-            this.Ping(0);
+        public void Ping(string pathToFolder) {
+            this.Ping(0, pathToFolder);
         }
 
-        public void Ping(long millis){
+        public void Ping(long millis, string pathToFolder){
             long time = (millis > 0) ? millis : DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             if (this._nextPing < time){
@@ -57,6 +58,7 @@ namespace P2P_lib{
                 ping.from = NetworkHelper.GetLocalIpAddress();
                 ping.type = Messages.TypeCode.REQUEST;
                 ping.statuscode = StatusCode.OK;
+                ping.diskSpace = DiskHelper.getTotalAvailableSpace(pathToFolder);
                 ping.Send();
 
                 // Ping every 60 seconds and if a peer didnt respond add extra time before retrying.

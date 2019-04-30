@@ -5,10 +5,11 @@ using Microsoft.Win32;
 
 namespace P2P_lib{
     public class DiskHelper{
-        public static long getTotalFreeSpace(string driveName){
+        public static long getTotalAvailableSpace(string driveName){
+            driveName = driveName.Split('\\')[0] + '\\';
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
                 if (drive.IsReady && drive.Name == driveName){
-                    return drive.TotalFreeSpace;
+                    return drive.TotalFreeSpace - (long)(drive.TotalSize * 0.2);
                 }
             }
 

@@ -110,7 +110,7 @@ namespace P2P_lib{
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             foreach (Peer peer in peers){
-                peer.Ping(millis);
+                peer.Ping(millis, _path);
             }
         }
 
@@ -230,7 +230,7 @@ namespace P2P_lib{
                 int replyPort = uploadMessage.port;
                 string uuid = uploadMessage.fromUuid;
 
-                if (DiskHelper.getTotalFreeSpace("C:\\") > uploadMessage.filesize){
+                if (DiskHelper.getTotalAvailableSpace("C:\\") > uploadMessage.filesize){
                     uploadMessage.statuscode = StatusCode.ACCEPTED;
                     Console.WriteLine(@"Request accepted");
                 } else{
@@ -257,6 +257,7 @@ namespace P2P_lib{
                     peer.SetIp(ping.from);
                     peer.UpdateLastSeen();
                     peer.SetOnline(true);
+                    peer.diskSpace = ping.diskSpace;
                 }
             }
 
@@ -264,6 +265,7 @@ namespace P2P_lib{
             if (ping.type.Equals(TypeCode.REQUEST)){
                 ping.CreateReply();
                 ping.statuscode = StatusCode.OK;
+                ping.diskSpace = DiskHelper.getTotalAvailableSpace(_path);
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist

@@ -6,6 +6,7 @@ namespace P2P_lib.Messages
     public class PingMessage : BaseMessage
     {
         private long _pinged;
+        public long diskSpace;
 
         public PingMessage(Peer to) : base(to)
         {

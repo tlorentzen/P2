@@ -31,7 +31,7 @@ namespace TorPdos{
             string ownIp = NetworkHelper.GetLocalIpAddress();
 
             Console.WriteLine(@"Local: " + ownIp);
-            Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalFreeSpace("C:\\"));
+            Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalAvailableSpace("C:\\"));
             Console.WriteLine(@"UUID: " + DiskHelper.getRegistryValue("UUID"));
 
             string path = (myReg.GetValue("Path").ToString());
