@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using P2P_lib.Messages;
+using TypeCode = P2P_lib.Messages.TypeCode;
 
 namespace P2P_lib.Managers{
     public class DeletionManager : Manager{
@@ -50,13 +51,16 @@ namespace P2P_lib.Managers{
                     }
 
                     List<string> inputlist = _locationDb[item];
+                    Console.WriteLine(_locationDb.Count);
                     foreach (var input in inputlist){
-
-                        foreach (var peer in _peers)
-                        {
+                        Console.WriteLine(_peers.Count);
+                        foreach (var peer in _peers){
+                            
                             if (peer.Value.IsOnline() && peer.Value.UUID == input)
                             {
                                 FileDeletionMessage deletionMessage = new FileDeletionMessage(peer.Value);
+                                deletionMessage.type = TypeCode.REQUEST;
+                                deletionMessage.statuscode = StatusCode.OK;
                                 deletionMessage.filehash = item;
                                 deletionMessage.port = _port;
                                 deletionMessage.Send();
