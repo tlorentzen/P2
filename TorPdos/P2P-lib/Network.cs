@@ -53,7 +53,7 @@ namespace P2P_lib{
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
             download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json");
-            _deletionManager = new DeletionManager(_deletionQueue,ports,peers,locationDB);
+            
         }
 
         public List<Peer> GetPeerList(){
@@ -75,6 +75,9 @@ namespace P2P_lib{
 
 
             LoadLocationDB();
+            _deletionManager = new DeletionManager(_deletionQueue,ports,peers,locationDB);
+            Thread deletionManager = new Thread(_deletionManager.Run);
+            deletionManager.Start();
 
             for (int i = 0; i < _numOfThreads; i++){
                 UploadManager uploadManager = new UploadManager(upload, ports, peers);
@@ -330,10 +333,13 @@ namespace P2P_lib{
         }
 
         private void ReceivedDeletionRequest(FileDeletionMessage message){
+            Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statuscode == StatusCode.OK){
-                    if (File.Exists(_path + @".hidden\" + message.fromUuid + "\\" + message.filehash)){
-                        File.Delete(_path + @".hidden\" + message.fromUuid + "\\" + message.filehash);
+                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash;
+                    Console.WriteLine(path);
+                    if (File.Exists(path)){
+                        File.Delete(path);
                         message.statuscode = StatusCode.OK;
                         message.CreateReply();
                         message.Send();
