@@ -134,12 +134,12 @@ namespace P2P_lib.Managers{
                     }
 
                     
-                    sendtTo.AddOrUpdate(file.GetHash(), peersSentTo, (k,v) => 
+                    sendtTo.AddOrUpdate(file.GetHash(), peersSentTo, (key, existingValue) => 
                     {
-                        foreach(string s in peersSentTo) {
-                            v.Add(s);
+                        foreach(string peer in peersSentTo) {
+                            existingValue.Add(peer);
                         }
-                        return v;
+                        return existingValue;
                     });
                     
                 }
