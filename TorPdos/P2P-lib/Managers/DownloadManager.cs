@@ -62,6 +62,8 @@ namespace P2P_lib.Managers{
 
                     if (onlinePeers.Count == 0){
                         _queue.Enqueue(file);
+                        this._waitHandle.Reset();
+                        continue;
                     }
 
                     _filehash = file.GetHash();

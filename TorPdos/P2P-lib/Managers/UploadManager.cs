@@ -54,7 +54,7 @@ namespace P2P_lib.Managers{
         public void Run(){
             isStopped = false;
             this.waitHandle.Set();
-            Console.WriteLine(_queue.Count);
+
             while (is_running){
                 this.waitHandle.WaitOne();
 
@@ -77,8 +77,7 @@ namespace P2P_lib.Managers{
                     List<Peer> receivingPeers = this.GetPeers(Math.Min(copies, this.CountOnlinePeers()));
 
                     if (receivingPeers.Count == 0){
-                        _queue.Enqueue(file);
-                        this.waitHandle.Reset();
+                        this._queue.Enqueue(file);
                         continue;
                     }
 
@@ -92,7 +91,6 @@ namespace P2P_lib.Managers{
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
-
 
                     // Split
                     // TODO: split file
@@ -135,15 +133,15 @@ namespace P2P_lib.Managers{
                         _ports.Release(port);
                     }
 
-                    if (!sendtTo.ContainsKey(file.GetHash())){
-                        sendtTo.AddOrUpdate(file.GetHash(), peersSentTo, (k, v) => {
-                            foreach (string s in peersSentTo){
-                                v.Add(s);
-                            }
-
-                            return v;
-                        });
-                    }
+                    
+                    sendtTo.AddOrUpdate(file.GetHash(), peersSendtTo, (k,v) => 
+                    {
+                        foreach(string s in peersSendtTo) {
+                            v.Add(s);
+                        }
+                        return v;
+                    });
+                    
                 }
 
                 this.waitHandle.Reset();
