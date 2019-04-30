@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using P2P_lib;
 
 namespace P2P_lib.Messages{
     public enum StatusCode{
@@ -32,7 +33,7 @@ namespace P2P_lib.Messages{
         public BaseMessage(Peer to){
             this.toUuid = to.GetUuid();
             this.to = to.GetIP();
-            this.fromUuid = DiskHelper.getRegistryValue("UUID");
+            this.fromUuid = IdHandler.GetUuid();
             this.from = NetworkHelper.GetLocalIpAddress();
             this.type = TypeCode.REQUEST;
             this.statuscode = StatusCode.OK;

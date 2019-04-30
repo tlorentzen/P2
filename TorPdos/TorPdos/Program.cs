@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using ID_lib;
 using Index_lib;
 using Microsoft.Win32;
 using P2P_lib;
@@ -32,7 +31,7 @@ namespace TorPdos{
 
             Console.WriteLine(@"Local: " + ownIp);
             Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalAvailableSpace("C:\\"));
-            Console.WriteLine(@"UUID: " + DiskHelper.getRegistryValue("UUID"));
+            Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
 
             string path = (myReg.GetValue("Path").ToString());
 
@@ -130,6 +129,7 @@ namespace TorPdos{
         private static void Idx_FileDeleted(string hash){
             //throw new NotImplementedException();
             Console.WriteLine(@"Deleted: " + hash);
+            _p2P.DeleteFile(hash);
         }
 
         private static void Idx_FileAdded(IndexFile file){

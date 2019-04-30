@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.Timers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
+using P2P_lib;
 
 namespace P2P_lib{
     public class Network{
@@ -169,7 +170,7 @@ namespace P2P_lib{
                 foreach (Peer incommingPeer in message.peers){
                     if (InPeerList(incommingPeer.GetUuid(), peers)) break;
 
-                    if ((registry.GetValue("UUID").ToString().Equals(incommingPeer.GetUuid()))) break;
+                    if ((IdHandler.GetUuid().Equals(incommingPeer.GetUuid()))) break;
                     peers.Add(incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
                 }
@@ -391,6 +392,11 @@ namespace P2P_lib{
 
         public void DownloadFile(string hash){
             this.download.Enqueue(new QueuedFile(hash));
+        }
+
+        public void DeleteFile(string hash)
+        {
+            this._deletionQueue.Enqueue(hash);
         }
     }
 }
