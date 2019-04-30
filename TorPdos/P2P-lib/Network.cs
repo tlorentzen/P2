@@ -359,6 +359,7 @@ namespace P2P_lib{
 
             upload.Save(_path + @".hidden\uploadQueue.json");
             download.Save(_path + @".hidden\downloadQueue.json");
+            _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
 
             this._running = false;
             _receive.Stop();
