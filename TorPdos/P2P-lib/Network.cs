@@ -46,10 +46,11 @@ namespace P2P_lib{
             this._locationDBPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
 
+            Load();
+
             upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
             download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json"); 
 
-            Load();
             
         }
 
@@ -184,7 +185,7 @@ namespace P2P_lib{
         }
 
         public bool Load(){
-            if (_peerFilePath == null || !File.Exists(this._peerFilePath)){
+            if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
                 List<Peer> input = JsonConvert.DeserializeObject<List<Peer>>(json);
                 foreach (var peer in input){
