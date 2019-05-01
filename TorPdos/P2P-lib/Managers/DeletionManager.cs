@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using P2P_lib.Messages;
+using Splitter_lib;
 using TypeCode = P2P_lib.Messages.TypeCode;
 
 namespace P2P_lib.Managers{
@@ -18,9 +19,11 @@ namespace P2P_lib.Managers{
         private readonly ConcurrentDictionary<string, List<string>> _locationDb;
         private FileReceiver _receiver;
         public bool isStopped;
+        private HashHandler _hashlist;
 
         public DeletionManager(StateSaveConcurrentQueue<string> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDB){
+            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDB,
+            HashHandler hashList){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -29,6 +32,7 @@ namespace P2P_lib.Managers{
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._port = _ports.GetAvailablePort();
             this._locationDb = locationDB;
+            this._hashlist = hashList;
         }
 
         private void QueueElementAddedToQueue(){
@@ -49,18 +53,19 @@ namespace P2P_lib.Managers{
                         _waitHandle.Set();
                         break;
                     }
-
-                    List<string> inputlist = _locationDb[item];
-                    Console.WriteLine(_locationDb.Count);
-                    foreach (var input in inputlist){
-                        Console.WriteLine(_peers.Count);
-                        if (_peers.TryGetValue(input, out Peer value)){
-                            FileDeletionMessage deletionMessage = new FileDeletionMessage(value);
-                            deletionMessage.type = TypeCode.REQUEST;
-                            deletionMessage.statuscode = StatusCode.OK;
-                            deletionMessage.filehash = item;
-                            deletionMessage.port = _port;
-                            deletionMessage.Send();
+                    foreach (var hash in _hashlist.getEntry(item)){
+                        List<string> inputlist = _locationDb[hash];
+                        Console.WriteLine(_locationDb.Count);
+                        foreach (var input in inputlist){
+                            Console.WriteLine(_peers.Count);
+                            if (_peers.TryGetValue(input, out Peer value)){
+                                FileDeletionMessage deletionMessage = new FileDeletionMessage(value);
+                                deletionMessage.type = TypeCode.REQUEST;
+                                deletionMessage.statuscode = StatusCode.OK;
+                                deletionMessage.filehash = hash;
+                                deletionMessage.port = _port;
+                                deletionMessage.Send();
+                            }
                         }
                     }
                 }

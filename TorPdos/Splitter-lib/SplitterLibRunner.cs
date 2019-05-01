@@ -7,13 +7,14 @@ using System.Text;
 
 namespace Splitter_lib{
     public class SplitterLibary{
-        private Dictionary<string,List<string>> _files = new Dictionary<string, List<string>>();
+        private List<string> _files = new List<string>();
         //private List<List<string>> _files = new List<List<string>>();
         Random _rnd = new Random();
 
-        public Dictionary<string,List<string>> SplitFile(string inputFilePath,string inputFileHash, string outputFolderpath, int chunkSize){
-            if (!Directory.Exists(outputFolderpath)){
-                Directory.CreateDirectory(outputFolderpath);
+        public List<string> SplitFile(string inputFilePath, string inputFileHash, string OutputFolderpath,
+            int chunkSize = 1000000){
+            if (!Directory.Exists(OutputFolderpath)){
+                Directory.CreateDirectory(OutputFolderpath);
             }
 
             List<string> currentFiles = new List<string>();
@@ -23,42 +24,14 @@ namespace Splitter_lib{
 
             if (File.Exists(inputFilePath)){
                 using (Stream input = File.OpenRead(inputFilePath)){
+                    int index = 0;
                     while (input.Position < input.Length){
                         var writingBuffer = fileStreamReader(input, chunkSize);
                         Console.WriteLine(writingBuffer.Length);
 
-                        using (Stream output = File.Create(outputFolderpath + CreateMD5(writingBuffer))){
+                        using (Stream output = File.Create(OutputFolderpath + CreateMD5(writingBuffer))){
                             output.Write(writingBuffer, 0, writingBuffer.Length);
                         }
-                    
-                        currentFiles.Add(CreateMD5(writingBuffer));
-                    }
-                }
-            } else{
-                throw new FileNotFoundException();
-            }
-
-            _files.Add(inputFileHash,currentFiles);
-            return _files;
-        }
-
-        public Dictionary<string,List<string>> SplitFile(string inputFilePath,string inputFileHash, string outputFolderpath, int chunkSize,
-            NetworkStream outputStream){
-            if (!Directory.Exists(outputFolderpath)){
-                Directory.CreateDirectory(outputFolderpath);
-            }
-
-            List<string> currentFiles = new List<string>();
-            //Based on https://stackoverflow.com/questions/3967541/how-to-split-large-files-efficiently
-
-
-            if (File.Exists(inputFilePath)){
-                using (Stream input = File.OpenRead(inputFilePath)){
-                    while (input.Position < input.Length){
-                        var writingBuffer = fileStreamReader(input, chunkSize);
-                        Console.WriteLine(writingBuffer.Length);
-                        //TODO PLZ ADD MSG TO ZEND HASH TO RECEIVER
-                        outputStream.Write(writingBuffer, 0, writingBuffer.Length);
 
                         currentFiles.Add(CreateMD5(writingBuffer));
                     }
@@ -66,9 +39,8 @@ namespace Splitter_lib{
             } else{
                 throw new FileNotFoundException();
             }
-            _files.Add(inputFileHash,currentFiles);
-            
-            return _files;
+
+            return currentFiles;
         }
 
         private byte[] fileStreamReader(Stream input, int chunkSize){

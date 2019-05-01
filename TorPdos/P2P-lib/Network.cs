@@ -13,6 +13,7 @@ using System.Timers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
 using P2P_lib;
+using Splitter_lib;
 
 namespace P2P_lib{
     public class Network{
@@ -36,6 +37,7 @@ namespace P2P_lib{
         private string _locationDBPath;
         private ConcurrentDictionary<string, List<string>> locationDB;
         private DeletionManager _deletionManager;
+        private HashHandler hashList;
 
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
@@ -47,22 +49,22 @@ namespace P2P_lib{
             this._peerFilePath = path + @".hidden\peer.json";
             this._locationDBPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
+            hashList = new HashHandler(_path);
 
             Load();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
             download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json");
-            
         }
 
         public List<Peer> GetPeerList(){
             List<Peer> newPeerList = new List<Peer>();
 
-            foreach(var peer in peers){
+            foreach (var peer in peers){
                 newPeerList.Add(peer.Value);
             }
-            
+
             return newPeerList;
         }
 
@@ -75,13 +77,13 @@ namespace P2P_lib{
 
 
             LoadLocationDB();
-            _deletionManager = new DeletionManager(_deletionQueue,ports,peers,locationDB);
+            _deletionManager = new DeletionManager(_deletionQueue, ports, peers, locationDB, hashList);
             Thread deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
 
             for (int i = 0; i < _numOfThreads; i++){
-                UploadManager uploadManager = new UploadManager(upload, ports, peers);
-                DownloadManager downloadManager = new DownloadManager(download, ports, peers, _index);
+                UploadManager uploadManager = new UploadManager(upload, ports, peers, hashList);
+                DownloadManager downloadManager = new DownloadManager(download, ports, peers, _index, hashList);
 
                 Thread uploadThread = new Thread(uploadManager.Run);
                 Thread downloadThread = new Thread(downloadManager.Run);
@@ -115,7 +117,7 @@ namespace P2P_lib{
         public void Ping(){
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            foreach(var peer in peers){
+            foreach (var peer in peers){
                 peer.Value.Ping(millis, _path);
             }
         }
@@ -196,7 +198,8 @@ namespace P2P_lib{
         public bool Load(){
             if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
-                ConcurrentDictionary<string, Peer> input = JsonConvert.DeserializeObject<ConcurrentDictionary<string, Peer>>(json);
+                ConcurrentDictionary<string, Peer> input =
+                    JsonConvert.DeserializeObject<ConcurrentDictionary<string, Peer>>(json);
                 foreach (var peer in input){
                     peers.TryAdd(peer.Value.GetUuid(), peer.Value);
                 }
@@ -210,14 +213,13 @@ namespace P2P_lib{
         private bool InPeerList(string uuid, ConcurrentDictionary<string, Peer> input){
             bool inPeers = false;
 
-            foreach(var peer in input){
-                if (peer.Value.GetUuid().Equals(uuid))
-                {
+            foreach (var peer in input){
+                if (peer.Value.GetUuid().Equals(uuid)){
                     inPeers = true;
                     break;
                 }
             }
-           
+
             // Add unknown peers to own list
             return inPeers;
         }
@@ -336,7 +338,7 @@ namespace P2P_lib{
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statuscode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash+ ".aes";
+                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash;
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
@@ -353,13 +355,12 @@ namespace P2P_lib{
                 if (message.statuscode.Equals(StatusCode.OK)){
                     List<string> updatedList = locationDB[message.filehash];
                     updatedList.Remove(message.fromUuid);
-                    
                     if (updatedList.Count == 0){
                         locationDB.TryRemove(message.filehash, out List<string> output);
                     } else{
                         locationDB[message.filehash] = updatedList;
                     }
-                } else if(message.statuscode.Equals(StatusCode.FILE_NOT_FOUND)){
+                } else if (message.statuscode.Equals(StatusCode.FILE_NOT_FOUND)){
                     Console.WriteLine("File not found at peer");
                 }
             }
@@ -371,6 +372,7 @@ namespace P2P_lib{
                 manager.Shutdown();
             }
 
+            hashList.save();
             upload.Save(_path + @".hidden\uploadQueue.json");
             download.Save(_path + @".hidden\downloadQueue.json");
             _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
@@ -407,8 +409,7 @@ namespace P2P_lib{
             this.download.Enqueue(new QueuedFile(hash));
         }
 
-        public void DeleteFile(string hash)
-        {
+        public void DeleteFile(string hash){
             this._deletionQueue.Enqueue(hash);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using Compression;
@@ -9,6 +10,7 @@ using Index_lib;
 using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
+using Splitter_lib;
 
 namespace P2P_lib.Managers{
     public class UploadManager : Manager{
@@ -26,6 +28,7 @@ namespace P2P_lib.Managers{
         private HiddenFolder _hiddenFolder;
         public bool isStopped;
         private ConcurrentDictionary<string, List<string>> _sentTo;
+        private HashHandler _hashList;
 
         public ConcurrentDictionary<string, List<string>> sentTo{
             get{ return _sentTo; }
@@ -35,7 +38,7 @@ namespace P2P_lib.Managers{
         }
 
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers){
+            ConcurrentDictionary<string, Peer> peers, HashHandler hashList){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -45,6 +48,7 @@ namespace P2P_lib.Managers{
 
             this._path = registry.GetValue("Path").ToString();
             _hiddenFolder = new HiddenFolder(this._path + @"\.hidden\");
+            _hashList = hashList;
         }
 
         private void QueueElementAddedToQueue(){
@@ -52,6 +56,7 @@ namespace P2P_lib.Managers{
         }
 
         public void Run(){
+            var outputFiles = new Dictionary<string, List<string>>();
             isStopped = false;
             this.waitHandle.Set();
 
@@ -68,6 +73,10 @@ namespace P2P_lib.Managers{
                     if (!is_running){
                         this._queue.Enqueue(file);
                         break;
+                    }
+
+                    if (!Directory.Exists(_path + @"\.hidden\splitterOut\")){
+                        Directory.CreateDirectory(_path + @"\.hidden\splitterOut\");
                     }
 
                     int copies = file.GetCopies();
@@ -91,59 +100,76 @@ namespace P2P_lib.Managers{
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
-                    
+
                     // Split
-                    // TODO: split file
-                    peersSentTo.Clear();
-                    foreach (Peer peer in receivingPeers){
-                        int port = _ports.GetAvailablePort();
-                        try{
-                            _receiver = new Receiver(port);
-                            _receiver.MessageReceived += this._receiver_MessageReceived;
-                            _receiver.Start();
-                        }
-                        catch (SocketException e){
-                            logger.Log(LogLevel.Fatal, e);
-                        }
-                        catch (Exception e){
-                            logger.Warn(e);
-                        }
+                    SplitterLibary splitter = new SplitterLibary();
 
-                        UploadMessage upload = new UploadMessage(peer);
-                        upload.filesize = file.GetFilesize();
-                        upload.filename = filename;
-                        upload.filehash = file.GetHash();
-                        upload.path = filePath;
-                        upload.port = port;
-                        upload.Send();
 
-                        while (_pendingReceiver){
-                            // TODO: timeout???
-                        }
-
-                        _receiver.Stop();
-                        //_ports.Release(port);
-
-                        if (_sender != null){
-                            _sender.Send(encryptedFilePath);
-                            peersSentTo.Add(peer.UUID);
-                        }
-
-                        _pendingReceiver = true;
-                        _ports.Release(port);
-                    }
+                    _hashList.Add(file.GetHash(),
+                        splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @"\.hidden\splitter\"));
 
                     
-                    sentTo.AddOrUpdate(file.GetHash(), peersSentTo, (key, existingValue) => 
-                    {
-                        foreach(string peer in peersSentTo) {
-                            if (!existingValue.Contains(peer)){
-                                existingValue.Add(peer);
+                    foreach (var currentFileHashes in _hashList.getEntry(file.GetHash())){
+                        peersSentTo.Clear();
+                        string currentFileHashPath = _path + @"\.hidden\splitter\" + currentFileHashes;
+                        foreach (Peer peer in receivingPeers){
+                            int port = _ports.GetAvailablePort();
+                            try{
+                                _receiver = new Receiver(port);
+                                _receiver.MessageReceived += this._receiver_MessageReceived;
+                                _receiver.Start();
                             }
+                            catch (SocketException e){
+                                logger.Log(LogLevel.Fatal, e);
+                            }
+                            catch (Exception e){
+                                logger.Warn(e);
+                            }
+
+                            FileInfo fileInfo = new FileInfo(currentFileHashPath);
+
+                            UploadMessage upload = new UploadMessage(peer);
+                            upload.filesize = fileInfo.Length;
+                            upload.filename = currentFileHashes;
+                            upload.filehash = currentFileHashes;
+                            upload.path = currentFileHashPath;
+                            upload.port = port;
+                            upload.Send();
+                            Console.WriteLine(currentFileHashes);
+
+                            while (_pendingReceiver){
+                                // TODO: timeout???
+                            }
+
+                            _receiver.Stop();
+                            //_ports.Release(port);
+
+                            if (_sender != null){
+                                _sender.Send(currentFileHashPath);
+                                peersSentTo.Add(peer.UUID);
+                            }
+
+                            _pendingReceiver = true;
+                            _ports.Release(port);
                         }
-                        return existingValue;
-                    });
-                    
+
+
+                        sentTo.AddOrUpdate(currentFileHashes, peersSentTo, (key, existingValue) => {
+                            foreach (string peer in peersSentTo){
+                                if (!existingValue.Contains(peer)){
+                                    existingValue.Add(peer);
+                                }
+                            }
+
+                            return existingValue;
+                        });
+                    }
+                }
+
+                foreach (KeyValuePair<string, List<string>> currentFile in outputFiles){
+                    foreach (var currentFileHashes in currentFile.Value){
+                        File.Delete(_path + @"\.hidden\splitter\" + currentFileHashes);
+                    }
                 }
 
                 this.waitHandle.Reset();
@@ -169,29 +195,26 @@ namespace P2P_lib.Managers{
             List<Peer> availablePeers = new List<Peer>();
             int counter = 1;
 
-            foreach(var peer in this._peers){
-                if (peer.Value.IsOnline())
-                {
+            foreach (var peer in this._peers){
+                if (peer.Value.IsOnline()){
                     availablePeers.Add(peer.Value);
 
-                    if (counter.Equals(count))
-                    {
+                    if (counter.Equals(count)){
                         break;
                     }
 
                     counter++;
                 }
             }
-            
+
             return availablePeers;
         }
 
         private int CountOnlinePeers(){
             int counter = 0;
 
-            foreach(var peer in this._peers){
-                if (peer.Value.IsOnline())
-                {
+            foreach (var peer in this._peers){
+                if (peer.Value.IsOnline()){
                     counter++;
                 }
             }
