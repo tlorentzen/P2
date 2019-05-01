@@ -114,6 +114,7 @@ namespace P2P_lib.Managers{
                         string currentFileHashPath = _path + @"\.hidden\splitter\" + currentFileHashes;
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
+                            
                             try{
                                 _receiver = new Receiver(port);
                                 _receiver.MessageReceived += this._receiver_MessageReceived;

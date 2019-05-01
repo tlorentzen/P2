@@ -319,11 +319,8 @@ namespace P2P_lib{
                         downloadMessage.CreateReply();
                         downloadMessage.statuscode = StatusCode.FILE_NOT_FOUND;
                         downloadMessage.Send(downloadMessage.port);
-                        /*foreach (var peer in peers) {
-                            download.forwardMessage(peer.GetIP());
-                        }*/
                     }
-                } else if (downloadMessage.statuscode == StatusCode.ACCEPTED){
+                } else if (downloadMessage.statuscode.Equals(StatusCode.ACCEPTED)){
                     var sender = new FileSender(downloadMessage.from, downloadMessage.port);
                     sender.Send(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash);
                     Console.WriteLine("File send");

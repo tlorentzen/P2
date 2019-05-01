@@ -14,6 +14,7 @@ namespace P2P_lib.Managers{
         private bool is_running = true;
         private int _port;
         private string _filehash;
+        private string originalFileHash;
         private string _path;
         private NetworkPorts _ports;
         private ManualResetEvent _waitHandle;
@@ -93,19 +94,14 @@ namespace P2P_lib.Managers{
                     }
 
 
-
-
-
                     Receiver receiver = new Receiver(_port);
                     receiver.MessageReceived += _receiver_MessageReceived;
                     receiver.Start();
 
-                    foreach (var currentFileHashes in _downloadQueue){
-
-
+                    foreach (var currentFileHash in _downloadQueue){
                         //See if any online peers have the file
                         List<string> sentToPeers = new List<string>();
-                        _sentTo.TryGetValue(currentFileHashes, out sentToPeers);
+                        _sentTo.TryGetValue(currentFileHash, out sentToPeers);
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
                         if (onlinePeers.Count == 0){
                             Console.WriteLine("No online peers with file");
@@ -113,8 +109,8 @@ namespace P2P_lib.Managers{
                             this._waitHandle.Reset();
                             return;
                         }
-                        
-                        if (!_sentTo.ContainsKey(currentFileHashes)){
+
+                        if (!_sentTo.ContainsKey(currentFileHash)){
                             this._queue.Enqueue(file);
                             Console.WriteLine("File not on network");
                             continue;
@@ -123,7 +119,8 @@ namespace P2P_lib.Managers{
                         foreach (var onlinePeer in onlinePeers){
                             DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
                             downloadMessage.port = _port;
-                            downloadMessage.filehash = currentFileHashes;
+                            downloadMessage.filehash = currentFileHash;
+                            downloadMessage.filesize = currentFileHash.Length;
                             downloadMessage.Send();
                         }
                     }
@@ -149,7 +146,7 @@ namespace P2P_lib.Managers{
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
                         this._receiver =
-                            new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName,
+                            new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\"+ _filehash+@"\").FullName,
                                 download.filehash, download.port, false);
                         this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
                         this._receiver.Start();
@@ -157,7 +154,7 @@ namespace P2P_lib.Managers{
                         download.Send();
                         _ports.Release(_port);
                     } else if (download.statuscode == StatusCode.FILE_NOT_FOUND){
-                        //TODO Responed with FILE_NOT_FOUND
+                        Console.WriteLine("File not found at peer.");
                     }
                 }
             }
@@ -190,31 +187,45 @@ namespace P2P_lib.Managers{
         }
 
         private void RestoreOriginalFile(string path){
-            if (File.Exists(path)){
-                Console.WriteLine("File exist");
-                string pathWithoutExtension = (_path + @".hidden\incoming\" + Path.GetFileNameWithoutExtension(path));
-
-                //Merge files
-                SplitterLibary splitterLibary = new SplitterLibary();
-                splitterLibary.MergeFiles(_path + @".hidden\incoming\" + _filehash + @"\",
-                    pathWithoutExtension + ".aes",
-                    _filelist);
-
-                // Decrypt file
-                FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
-                decryption.DoDecrypt("password");
-                Console.WriteLine("File decrypted");
-                File.Delete(path);
-                Console.WriteLine(pathWithoutExtension);
-
-                // Decompress file
-                string pathToFileForCopying =
-                    ByteCompressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
-                Console.WriteLine("File decompressed");
-                foreach (string filePath in _index.GetEntry(Path.GetFileNameWithoutExtension(path)).paths){
-                    File.Copy(pathToFileForCopying, filePath);
-                    Console.WriteLine("File send to: {0}", filePath);
+            foreach (var currentFile in _filelist){
+                if (!File.Exists(_path + @".hidden\incoming\" + _filehash + @"\" + currentFile)){
+                    return;
                 }
+
+                try{
+                    FileStream tester = new FileStream(_path + @".hidden\incoming\" + _filehash + @"\" + currentFile,
+                        FileMode.Open,
+                        FileAccess.Write);
+                    tester.Close();
+                }
+                catch (Exception e){
+                    return;
+                }
+            }
+
+            Console.WriteLine("File exist");
+            string pathWithoutExtension = (_path + @".hidden\incoming\" + _filehash);
+
+            //Merge files
+            SplitterLibary splitterLibrary = new SplitterLibary();
+            splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _filehash + @"\",
+                pathWithoutExtension + ".aes",
+                _filelist);
+
+            // Decrypt file
+            FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
+            decryption.DoDecrypt("password");
+            Console.WriteLine("File decrypted");
+            File.Delete(path);
+            Console.WriteLine(pathWithoutExtension);
+
+            // Decompress file
+            string pathToFileForCopying =
+                ByteCompressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
+            Console.WriteLine("File decompressed");
+            foreach (string filePath in _index.GetEntry(_filehash).paths){
+                File.Copy(pathToFileForCopying, filePath);
+                Console.WriteLine("File send to: {0}", filePath);
             }
         }
 
