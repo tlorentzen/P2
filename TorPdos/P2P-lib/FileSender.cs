@@ -5,7 +5,6 @@ using System.IO;
 
 
 namespace P2P_lib{
-    
     public class FileSender{
         IPAddress ip;
         private int port;
@@ -19,25 +18,25 @@ namespace P2P_lib{
 
         public void Send(string path){
             if (File.Exists(path)){
-                try{ 
-                using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
-                    using (NetworkStream stream = client.GetStream()){
-                        using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        {
-                            int bytesRead;
-                            byte[] buffer = new byte[ChunkSize];
-                            while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0){
-                                stream.Write(buffer, 0, bytesRead < buffer.Length ? bytesRead : buffer.Length);
+                try{
+                    using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
+                        using (NetworkStream stream = client.GetStream()){
+                            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read,
+                                FileShare.ReadWrite)){
+                                int bytesRead;
+                                byte[] buffer = new byte[ChunkSize];
+                                while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0){
+                                    stream.Write(buffer, 0, bytesRead < buffer.Length ? bytesRead : buffer.Length);
+                                }
+
+                                file.Close();
                             }
 
-                            file.Close();
+                            stream.Close();
                         }
 
-                        stream.Close();
+                        client.Close();
                     }
-
-                    client.Close();
-                }
                 }
                 catch (Exception e){
                     logger.Error(e);

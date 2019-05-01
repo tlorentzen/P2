@@ -356,6 +356,13 @@ namespace P2P_lib{
                         locationDB[message.filehash] = updatedList;
                     }
                 } else if (message.statuscode.Equals(StatusCode.FILE_NOT_FOUND)){
+                    List<string> updatedList = locationDB[message.filehash];
+                    updatedList.Remove(message.fromUuid);
+                    if (updatedList.Count == 0){
+                        locationDB.TryRemove(message.filehash, out List<string> output);
+                    } else{
+                        locationDB[message.filehash] = updatedList;
+                    }
                     Console.WriteLine("File not found at peer");
                 }
             }
