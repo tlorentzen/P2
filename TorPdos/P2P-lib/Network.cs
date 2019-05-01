@@ -310,7 +310,8 @@ namespace P2P_lib{
             if (downloadMessage.type.Equals(TypeCode.REQUEST)){
                 if (downloadMessage.statuscode == StatusCode.OK){
                     Console.WriteLine(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash);
-                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash)){
+                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" +
+                                    downloadMessage.fullFileName + @"\" + downloadMessage.filehash)){
                         downloadMessage.CreateReply();
                         downloadMessage.statuscode = StatusCode.ACCEPTED;
                         downloadMessage.Send(downloadMessage.port);
@@ -333,7 +334,7 @@ namespace P2P_lib{
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statuscode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash;
+                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileName + @"\" + message.filehash;
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
@@ -363,6 +364,7 @@ namespace P2P_lib{
                     } else{
                         locationDB[message.filehash] = updatedList;
                     }
+
                     Console.WriteLine("File not found at peer");
                 }
             }

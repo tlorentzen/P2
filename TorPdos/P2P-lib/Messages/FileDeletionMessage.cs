@@ -4,6 +4,7 @@ namespace P2P_lib.Messages{
     [Serializable]
     public class FileDeletionMessage : BaseMessage{
         public string filehash;
+        public string fullFileName;
         public long filesize;
         public string path;
         public int port;

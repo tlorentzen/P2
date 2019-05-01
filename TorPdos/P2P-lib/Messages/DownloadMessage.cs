@@ -6,6 +6,7 @@ namespace P2P_lib.Messages
     public class DownloadMessage : BaseMessage
     {
         public string filehash;
+        public string fullFileName;
         public long filesize;
         public string path;
         public int port;
