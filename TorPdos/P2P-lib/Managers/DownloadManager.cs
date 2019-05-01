@@ -98,7 +98,16 @@ namespace P2P_lib.Managers{
                     receiver.MessageReceived += _receiver_MessageReceived;
                     receiver.Start();
 
-                    foreach (var currentFileHash in _downloadQueue){
+                    List<string> updatedDownloadQueue = new List<string>();
+                    if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _filehash)){
+                        foreach (var currentFile in _downloadQueue){
+                            if (!File.Exists(_path + @".hidden\" + @"incoming\" + _filehash + @"\" + currentFile)){
+                                updatedDownloadQueue.Add(currentFile);
+                            }
+                        }
+                    }
+
+                    foreach (var currentFileHash in updatedDownloadQueue){
                         //See if any online peers have the file
                         List<string> sentToPeers = new List<string>();
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
@@ -110,6 +119,7 @@ namespace P2P_lib.Managers{
                             return;
                         }
 
+                        Console.WriteLine(currentFileHash);
                         if (!_sentTo.ContainsKey(currentFileHash)){
                             this._queue.Enqueue(file);
                             Console.WriteLine("File not on network");
@@ -146,7 +156,9 @@ namespace P2P_lib.Managers{
                         download.statuscode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
                         this._receiver =
-                            new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\"+ _filehash+@"\").FullName,
+                            new FileReceiver(
+                                Directory.CreateDirectory(_path + @".hidden\" + @"incoming\" + _filehash + @"\")
+                                    .FullName,
                                 download.filehash, download.port, false);
                         this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
                         this._receiver.Start();
@@ -214,7 +226,7 @@ namespace P2P_lib.Managers{
 
             // Decrypt file
             FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
-            decryption.DoDecrypt("password");
+            decryption.DoDecrypt(IdHandler.GetKeyMold());
             Console.WriteLine("File decrypted");
             File.Delete(path);
             Console.WriteLine(pathWithoutExtension);

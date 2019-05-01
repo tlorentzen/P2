@@ -95,7 +95,7 @@ namespace P2P_lib.Managers{
 
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
-                    encryption.DoEncrypt("password");
+                    encryption.DoEncrypt(IdHandler.GetKeyMold());
                     //_hiddenFolder.removeFile(compressedFilePath + ".lzma");
                     string encryptedFilePath = compressedFilePath + ".aes";
 

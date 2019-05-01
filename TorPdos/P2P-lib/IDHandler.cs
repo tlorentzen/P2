@@ -150,6 +150,26 @@ namespace P2P_lib
                 return null;
             }
         }
+        
+        public static string GetKeyMold()
+        {
+            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+            if (UserExists())
+            {
+                try
+                {
+                    return File.ReadAllLines(path).ElementAtOrDefault(0);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         public static bool UserExists()
         {
