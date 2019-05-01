@@ -91,7 +91,7 @@ namespace P2P_lib.Managers{
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     string filename = file.GetHash() + ".aes";
-
+                    
                     // Split
                     // TODO: split file
                     peersSentTo.Clear();
@@ -137,7 +137,9 @@ namespace P2P_lib.Managers{
                     sentTo.AddOrUpdate(file.GetHash(), peersSentTo, (key, existingValue) => 
                     {
                         foreach(string peer in peersSentTo) {
-                            existingValue.Add(peer);
+                            if (!existingValue.Contains(peer)){
+                                existingValue.Add(peer);
+                            }
                         }
                         return existingValue;
                     });

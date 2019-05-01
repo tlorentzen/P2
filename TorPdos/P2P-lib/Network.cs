@@ -335,12 +335,12 @@ namespace P2P_lib{
         private void ReceivedDeletionRequest(FileDeletionMessage message){
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
-                if (message.statuscode == StatusCode.OK){
-                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash;
+                if (message.statuscode.Equals(StatusCode.OK)){
+                    string path = _path + @".hidden\" + message.fromUuid + "\\" + message.filehash+ ".aes";
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
-                        message.statuscode = StatusCode.OK;
+                        message.statuscode = StatusCode.ACCEPTED;
                         message.CreateReply();
                         message.Send();
                     } else{
@@ -349,12 +349,17 @@ namespace P2P_lib{
                         message.Send();
                     }
                 }
-            } else if (message.type == TypeCode.RESPONSE){
-                if (message.statuscode == StatusCode.ACCEPTED){
+            } else if (message.type.Equals((TypeCode.RESPONSE))){
+                if (message.statuscode.Equals(StatusCode.OK)){
                     List<string> updatedList = locationDB[message.filehash];
-                    updatedList.Remove(message.filehash);
-                    locationDB[message.filehash] = updatedList;
-                } else{
+                    updatedList.Remove(message.fromUuid);
+                    
+                    if (updatedList.Count == 0){
+                        locationDB.TryRemove(message.filehash, out List<string> output);
+                    } else{
+                        locationDB[message.filehash] = updatedList;
+                    }
+                } else if(message.statuscode.Equals(StatusCode.FILE_NOT_FOUND)){
                     Console.WriteLine("File not found at peer");
                 }
             }

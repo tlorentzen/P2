@@ -54,17 +54,13 @@ namespace P2P_lib.Managers{
                     Console.WriteLine(_locationDb.Count);
                     foreach (var input in inputlist){
                         Console.WriteLine(_peers.Count);
-                        foreach (var peer in _peers){
-                            
-                            if (peer.Value.IsOnline() && peer.Value.UUID == input)
-                            {
-                                FileDeletionMessage deletionMessage = new FileDeletionMessage(peer.Value);
-                                deletionMessage.type = TypeCode.REQUEST;
-                                deletionMessage.statuscode = StatusCode.OK;
-                                deletionMessage.filehash = item;
-                                deletionMessage.port = _port;
-                                deletionMessage.Send();
-                            }
+                        if (_peers.TryGetValue(input, out Peer value)){
+                            FileDeletionMessage deletionMessage = new FileDeletionMessage(value);
+                            deletionMessage.type = TypeCode.REQUEST;
+                            deletionMessage.statuscode = StatusCode.OK;
+                            deletionMessage.filehash = item;
+                            deletionMessage.port = _port;
+                            deletionMessage.Send();
                         }
                     }
                 }
