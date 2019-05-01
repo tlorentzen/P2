@@ -325,8 +325,7 @@ namespace P2P_lib{
                     }
                 } else if (downloadMessage.statuscode == StatusCode.ACCEPTED){
                     var sender = new FileSender(downloadMessage.from, downloadMessage.port);
-                    sender.Send(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash +
-                                @".aes");
+                    sender.Send(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash);
                     Console.WriteLine("File send");
                 }
             }
