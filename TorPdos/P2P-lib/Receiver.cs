@@ -46,9 +46,10 @@ namespace P2P_lib{
             _listener.Start();
         }
 
-        public void Stop(){
+        public bool Stop(){
             this._listening = false;
             _server.Stop();
+            return true;
         }
 
         private void connectionHandler(){

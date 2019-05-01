@@ -82,8 +82,6 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
-                    _ports.Release(_port);
-
 
                     List<Peer> onlinePeers = this.GetPeers();
 
@@ -94,9 +92,7 @@ namespace P2P_lib.Managers{
                     }
 
 
-                    Receiver receiver = new Receiver(_port);
-                    receiver.MessageReceived += _receiver_MessageReceived;
-                    receiver.Start();
+
 
                     List<string> updatedDownloadQueue = new List<string>();
                     if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _filehash)){
@@ -108,6 +104,12 @@ namespace P2P_lib.Managers{
                     }
 
                     foreach (var currentFileHash in updatedDownloadQueue){
+                        _port = _ports.GetAvailablePort();
+                        
+                        Receiver receiver = new Receiver(_port);
+                        receiver.MessageReceived += _receiver_MessageReceived;
+                        receiver.Start();
+                        
                         //See if any online peers have the file
                         List<string> sentToPeers = new List<string>();
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
@@ -133,6 +135,7 @@ namespace P2P_lib.Managers{
                             downloadMessage.filesize = currentFileHash.Length;
                             downloadMessage.Send();
                         }
+                        _ports.Release(_port);
                     }
 
                     //FileReceiver receiver = new FileReceiver();

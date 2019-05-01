@@ -108,13 +108,14 @@ namespace P2P_lib.Managers{
                     _hashList.Add(file.GetHash(),
                         splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @"\.hidden\splitter\"));
 
-                    
+
                     foreach (var currentFileHashes in _hashList.getEntry(file.GetHash())){
                         peersSentTo.Clear();
                         string currentFileHashPath = _path + @"\.hidden\splitter\" + currentFileHashes;
+
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
-                            
+
                             try{
                                 _receiver = new Receiver(port);
                                 _receiver.MessageReceived += this._receiver_MessageReceived;
@@ -122,6 +123,7 @@ namespace P2P_lib.Managers{
                             }
                             catch (SocketException e){
                                 logger.Log(LogLevel.Fatal, e);
+                                Console.WriteLine(port);
                             }
                             catch (Exception e){
                                 logger.Warn(e);
@@ -142,7 +144,8 @@ namespace P2P_lib.Managers{
                                 // TODO: timeout???
                             }
 
-                            _receiver.Stop();
+                            while (!_receiver.Stop()){ }
+
                             //_ports.Release(port);
 
                             if (_sender != null){
