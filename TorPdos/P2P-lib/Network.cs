@@ -308,10 +308,8 @@ namespace P2P_lib{
         private void ReceivedDownloadMessage(DownloadMessage downloadMessage){
             if (downloadMessage.type.Equals(TypeCode.REQUEST)){
                 if (downloadMessage.statuscode == StatusCode.OK){
-                    Console.WriteLine(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash +
-                                      @".aes");
-                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash +
-                                    @".aes")){
+                    Console.WriteLine(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash);
+                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash)){
                         downloadMessage.CreateReply();
                         downloadMessage.statuscode = StatusCode.ACCEPTED;
                         downloadMessage.Send(downloadMessage.port);

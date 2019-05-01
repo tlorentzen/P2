@@ -80,43 +80,45 @@ namespace P2P_lib.Managers{
                         Console.WriteLine("File not found in hashlist, see log");
                         break;
                     }
+
                     _ports.Release(_port);
-                    
+
+
+                    List<Peer> onlinePeers = this.GetPeers();
+
+                    if (onlinePeers.Count == 0){
+                        _queue.Enqueue(file);
+                        this._waitHandle.Reset();
+                        continue;
+                    }
+
+
+
+
+
+                    Receiver receiver = new Receiver(_port);
+                    receiver.MessageReceived += _receiver_MessageReceived;
+                    receiver.Start();
+
                     foreach (var currentFileHashes in _downloadQueue){
-                        if (!_sentTo.ContainsKey(currentFileHashes)){
-                            this._queue.Enqueue(file);
-                            Console.WriteLine("File not on network");
-                            continue;
-                        }
 
-
-                        List<Peer> onlinePeers = this.GetPeers();
-
-                        if (onlinePeers.Count == 0){
-                            _queue.Enqueue(file);
-                            this._waitHandle.Reset();
-                            continue;
-                        }
 
                         //See if any online peers have the file
                         List<string> sentToPeers = new List<string>();
                         _sentTo.TryGetValue(currentFileHashes, out sentToPeers);
-
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
                         if (onlinePeers.Count == 0){
                             Console.WriteLine("No online peers with file");
                             _queue.Enqueue(file);
                             this._waitHandle.Reset();
+                            return;
+                        }
+                        
+                        if (!_sentTo.ContainsKey(currentFileHashes)){
+                            this._queue.Enqueue(file);
+                            Console.WriteLine("File not on network");
                             continue;
                         }
-
-
-                        
-
-                        Receiver receiver = new Receiver(_port);
-                        receiver.MessageReceived += _receiver_MessageReceived;
-                        receiver.Start();
-
 
                         foreach (var onlinePeer in onlinePeers){
                             DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
@@ -148,7 +150,7 @@ namespace P2P_lib.Managers{
                         download.port = _ports.GetAvailablePort();
                         this._receiver =
                             new FileReceiver(Directory.CreateDirectory(_path + @".hidden\" + @"incoming\").FullName,
-                                download.filehash + ".aes", download.port, false);
+                                download.filehash, download.port, false);
                         this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
                         this._receiver.Start();
                         Console.WriteLine("FileReceiver opened");
