@@ -130,20 +130,13 @@ namespace P2P_lib.Managers
                         {
                             //Console.WriteLine("No online peers with file");
                             _queue.Enqueue(file);
-                            this._waitHandle.Set();
-                            continue;
-                        }
-                        else
-                        {
-
+                            break;
                         }
 
 
                         Console.WriteLine(currentFileHash);
                         if (!_sentTo.ContainsKey(currentFileHash))
                         {
-                            this._queue.Enqueue(file);
-                            _waitHandle.Set();
                             Console.WriteLine("File not on network");
                             continue;
                         }
