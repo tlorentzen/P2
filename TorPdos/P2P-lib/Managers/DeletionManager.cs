@@ -30,7 +30,6 @@ namespace P2P_lib.Managers{
             this._path = DiskHelper.getRegistryValue("Path").ToString();
             this._waitHandle = new ManualResetEvent(false);
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
-            this._port = _ports.GetAvailablePort();
             this._locationDb = locationDB;
             this._hashlist = hashList;
         }
@@ -57,6 +56,9 @@ namespace P2P_lib.Managers{
                         List<string> inputlist = _locationDb[hash];
                         Console.WriteLine(_locationDb.Count);
                         foreach (var input in inputlist){
+                            
+                            this._port = _ports.GetAvailablePort();
+                            
                             Console.WriteLine(_peers.Count);
                             if (_peers.TryGetValue(input, out Peer value)){
                                 FileDeletionMessage deletionMessage = new FileDeletionMessage(value);

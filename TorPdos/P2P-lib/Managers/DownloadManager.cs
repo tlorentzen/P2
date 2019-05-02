@@ -92,8 +92,6 @@ namespace P2P_lib.Managers{
                     }
 
 
-
-
                     List<string> updatedDownloadQueue = new List<string>();
                     if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _filehash)){
                         foreach (var currentFile in _downloadQueue){
@@ -101,15 +99,17 @@ namespace P2P_lib.Managers{
                                 updatedDownloadQueue.Add(currentFile);
                             }
                         }
+                    } else{
+                        updatedDownloadQueue = _downloadQueue;
                     }
 
                     foreach (var currentFileHash in updatedDownloadQueue){
                         _port = _ports.GetAvailablePort();
-                        
+
                         Receiver receiver = new Receiver(_port);
                         receiver.MessageReceived += _receiver_MessageReceived;
                         receiver.Start();
-                        
+
                         //See if any online peers have the file
                         List<string> sentToPeers = new List<string>();
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
@@ -132,13 +132,11 @@ namespace P2P_lib.Managers{
                             DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
                             downloadMessage.port = _port;
                             downloadMessage.filehash = currentFileHash;
-                            downloadMessage.filesize = currentFileHash.Length;
                             downloadMessage.Send();
                         }
+
                         _ports.Release(_port);
                     }
-
-                    //FileReceiver receiver = new FileReceiver();
 
                     Console.WriteLine("File: " + file.GetHash() + " was process in download manager");
                 }
@@ -160,14 +158,14 @@ namespace P2P_lib.Managers{
                         download.port = _ports.GetAvailablePort();
                         this._receiver =
                             new FileReceiver(
-                                Directory.CreateDirectory(_path + @".hidden\" + @"incoming\" + _filehash + @"\")
+                                Directory.CreateDirectory(_path + @".hidden\" + @"incoming\")
                                     .FullName,
                                 download.filehash, download.port, false);
                         this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
                         this._receiver.Start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
-                        _ports.Release(_port);
+                        _ports.Release(download.port);
                     } else if (download.statuscode == StatusCode.FILE_NOT_FOUND){
                         Console.WriteLine("File not found at peer.");
                     }

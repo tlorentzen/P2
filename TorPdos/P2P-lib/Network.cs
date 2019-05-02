@@ -12,7 +12,6 @@ using Microsoft.Win32;
 using System.Timers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
-using P2P_lib;
 using Splitter_lib;
 
 namespace P2P_lib{
@@ -180,9 +179,6 @@ namespace P2P_lib{
                     Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
                 }
             }
-
-            // List peers in console. TODO this is for debugging purposes and should be removed
-            //Console.WriteLine("My peers:");
         }
 
 
@@ -308,10 +304,11 @@ namespace P2P_lib{
 
         private void ReceivedDownloadMessage(DownloadMessage downloadMessage){
             if (downloadMessage.type.Equals(TypeCode.REQUEST)){
+                string path = _path + @".hidden\" + downloadMessage.fromUuid + @"\" +
+                              downloadMessage.fullFileName + @"\" + downloadMessage.filehash;
                 if (downloadMessage.statuscode == StatusCode.OK){
-                    Console.WriteLine(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash);
-                    if (File.Exists(_path + @".hidden\" + downloadMessage.fromUuid + @"\" +
-                                    downloadMessage.fullFileName + @"\" + downloadMessage.filehash)){
+                    Console.WriteLine(path);
+                    if (File.Exists(path)){
                         downloadMessage.CreateReply();
                         downloadMessage.statuscode = StatusCode.ACCEPTED;
                         downloadMessage.Send(downloadMessage.port);
@@ -324,7 +321,7 @@ namespace P2P_lib{
                     }
                 } else if (downloadMessage.statuscode.Equals(StatusCode.ACCEPTED)){
                     var sender = new FileSender(downloadMessage.from, downloadMessage.port);
-                    sender.Send(_path + @".hidden\" + downloadMessage.fromUuid + @"\" + downloadMessage.filehash);
+                    sender.Send(path);
                     Console.WriteLine("File send");
                 }
             }
@@ -334,7 +331,8 @@ namespace P2P_lib{
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statuscode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileName + @"\" + message.filehash;
+                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.filehash + @"\" +
+                                  message.fullFileHash;
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);

@@ -1,10 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace Splitter_lib{
