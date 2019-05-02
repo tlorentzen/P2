@@ -267,7 +267,7 @@ namespace TorPdos
             Icon = new Icon("TorPdos.ico");
 
 
-            if (MyReg.GetValue("Path") == null)
+            if (MyReg.GetValue("Path") == null || Directory.Exists(MyReg.GetValue("Path").ToString()) == false)
             {
                 FirstStartUp();
             }
@@ -394,7 +394,6 @@ namespace TorPdos
             //Labels
             Controls.Add(lblUsername);
             Controls.Add(lblLoginPassword);
-            //Controls.Add(lblGoBack);
 
             AcceptButton = btnLogin;
 
@@ -478,9 +477,7 @@ namespace TorPdos
 
             //BTN: ??
             btnLogout.TabIndex = tabNumber++;
-            Controls.Add(btnLogout);
-
-            //Controls.Add(lblLogOut);      
+            Controls.Add(btnLogout);   
         }
 
         private void BtnLogOutClick(object sender, EventArgs e)
