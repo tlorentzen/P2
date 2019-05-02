@@ -80,7 +80,7 @@ namespace P2P_lib{
                 }
 
                 client.Close();
-                if(_fileReceived){
+                if (_fileReceived){
                     FileSuccefullyDownloaded.Invoke(path);
                 }
             }
@@ -89,6 +89,10 @@ namespace P2P_lib{
             }
             catch (Exception e){
                 logger.Error(e);
+            }
+            finally{
+                _server.Stop();
+                Stop();
             }
         }
 

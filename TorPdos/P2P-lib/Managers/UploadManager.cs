@@ -47,7 +47,7 @@ namespace P2P_lib.Managers{
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
 
             this._path = registry.GetValue("Path").ToString();
-            _hiddenFolder = new HiddenFolder(this._path + @"\.hidden\");
+            _hiddenFolder = new HiddenFolder(this._path + @".hidden\");
             _hashList = hashList;
         }
 
@@ -75,8 +75,8 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
-                    if (!Directory.Exists(_path + @"\.hidden\splitterOut\")){
-                        Directory.CreateDirectory(_path + @"\.hidden\splitterOut\");
+                    if (!Directory.Exists(_path + @".hidden\splitterOut\")){
+                        Directory.CreateDirectory(_path + @".hidden\splitterOut\");
                     }
 
                     int copies = file.GetCopies();
@@ -106,16 +106,16 @@ namespace P2P_lib.Managers{
 
 
                     _hashList.Add(file.GetHash(),
-                        splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @"\.hidden\splitter\"));
+                        splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
 
 
                     foreach (var currentFileHashes in _hashList.getEntry(file.GetHash())){
                         peersSentTo.Clear();
-                        string currentFileHashPath = _path + @"\.hidden\splitter\" + currentFileHashes;
+                        string currentFileHashPath = _path + @".hidden\splitter\" + currentFileHashes;
 
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
-
+                            Console.WriteLine(port);
                             try{
                                 _receiver = new Receiver(port);
                                 _receiver.MessageReceived += this._receiver_MessageReceived;
@@ -172,7 +172,7 @@ namespace P2P_lib.Managers{
 
                 foreach (KeyValuePair<string, List<string>> currentFile in outputFiles){
                     foreach (var currentFileHashes in currentFile.Value){
-                        File.Delete(_path + @"\.hidden\splitter\" + currentFileHashes);
+                        File.Delete(_path + @".hidden\splitter\" + currentFileHashes);
                     }
                 }
 
