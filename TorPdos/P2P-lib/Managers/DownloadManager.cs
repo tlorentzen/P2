@@ -29,6 +29,7 @@ namespace P2P_lib.Managers{
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
 
         private ConcurrentDictionary<string, List<string>> _sentTo;
+        private List<Receiver> _receivers;
 
         public ConcurrentDictionary<string, List<string>> sentTo{
             get{ return _sentTo; }
@@ -93,7 +94,7 @@ namespace P2P_lib.Managers{
                     } else{
                         updatedDownloadQueue = _downloadQueue;
                     }
-                    
+
 
                     foreach (var currentFileHash in updatedDownloadQueue){
                         List<Peer> onlinePeers = this.GetPeers();
@@ -104,19 +105,13 @@ namespace P2P_lib.Managers{
 
 
                         if (onlinePeers.Count == 0){
-                            //Console.WriteLine("No online peers with file");
                             _queue.Enqueue(file);
-                            this._waitHandle.Set();
-                            continue;
-                        } else{
-                            
+                            break;
                         }
 
 
                         Console.WriteLine(currentFileHash);
                         if (!_sentTo.ContainsKey(currentFileHash)){
-                            this._queue.Enqueue(file);
-                            _waitHandle.Set();
                             Console.WriteLine("File not on network");
                             continue;
                         }
@@ -127,6 +122,7 @@ namespace P2P_lib.Managers{
                         Receiver receiver = new Receiver(port);
                         receiver.MessageReceived += _receiver_MessageReceived;
                         receiver.Start();
+                        _receivers.Add(receiver);
 
                         foreach (var onlinePeer in onlinePeers){
                             DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
@@ -137,11 +133,10 @@ namespace P2P_lib.Managers{
                         }
 
                         Console.WriteLine("File: " + file.GetHash() + " was sent to?");
-                        _ports.Release(port);
                     }
                 }
 
-                this._waitHandle.Set();
+                this._waitHandle.Reset();
             }
 
             isStopped = true;
@@ -194,7 +189,6 @@ namespace P2P_lib.Managers{
             List<Peer> result = new List<Peer>();
             foreach (Peer peer in peerlist){
                 if (hasFile.Contains(peer.UUID)){
-                    Console.WriteLine("GOT HERE");
                     result.Add(peer);
                 }
             }

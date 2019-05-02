@@ -58,13 +58,12 @@ namespace P2P_lib.Managers{
                         foreach (var input in inputlist){
                             
                             this._port = _ports.GetAvailablePort();
-                            
-                            Console.WriteLine(_peers.Count);
                             if (_peers.TryGetValue(input, out Peer value)){
                                 FileDeletionMessage deletionMessage = new FileDeletionMessage(value);
                                 deletionMessage.type = TypeCode.REQUEST;
                                 deletionMessage.statuscode = StatusCode.OK;
                                 deletionMessage.filehash = hash;
+                                deletionMessage.fullFileHash =  item;
                                 deletionMessage.port = _port;
                                 deletionMessage.Send();
                             }

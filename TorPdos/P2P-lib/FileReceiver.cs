@@ -51,7 +51,7 @@ namespace P2P_lib{
             }
         }
 
-        public void Stop(){
+        private void Stop(){
             _server.Stop();
         }
 
@@ -92,7 +92,6 @@ namespace P2P_lib{
                 logger.Error(e);
             }
             finally{
-                _server.Stop();
                 Stop();
             }
         }
