@@ -61,6 +61,7 @@
     <Compile Include="IDHandler.cs" />
     <Compile Include="Managers\DeletionManager.cs" />
     <Compile Include="Managers\DownloadManager.cs" />
+    <Compile Include="Managers\DownloadManagerV2.cs" />
     <Compile Include="Managers\Manager.cs" />
     <Compile Include="Messages\FileDeletionMessage.cs" />
     <Compile Include="QueuedFile.cs" />

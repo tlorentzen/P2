@@ -36,7 +36,6 @@ namespace P2P_lib{
                 _server = new TcpListener(this._ip, this._port);
                 _server.AllowNatTraversal(true);
                 _server.Start();
-                
             }
             catch (Exception e){
                 logger.Error(e);
@@ -95,7 +94,6 @@ namespace P2P_lib{
                 Stop();
             }
         }
-
 
         public int GetPort(){
             return this._port;
