@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Compression{
     
-    public class ByteCompressor{
+    public class Compressor{
         private static NLog.Logger logger = NLog.LogManager.GetLogger("CompressionLogger");
 
         public static byte[] CompressBytes(byte[] inData){
