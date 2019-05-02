@@ -125,15 +125,13 @@ namespace P2P_lib.Managers
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
 
-
                         if (onlinePeers.Count == 0)
                         {
                             //Console.WriteLine("No online peers with file");
                             _queue.Enqueue(file);
                             break;
                         }
-
-
+                        
                         Console.WriteLine(currentFileHash);
                         if (!_sentTo.ContainsKey(currentFileHash))
                         {
