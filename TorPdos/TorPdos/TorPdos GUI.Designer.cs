@@ -284,10 +284,6 @@ namespace TorPdos
             {
                 FirstStartUp(); 
             }
-            else if (IdHandler.GetUuid() == null)
-            {
-                Create();
-            }
             else
             {
                 Login();

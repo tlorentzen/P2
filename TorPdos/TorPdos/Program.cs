@@ -21,11 +21,10 @@ namespace TorPdos{
             bool running = true;
             RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
-            
-            if (myReg.GetValue("Path") == null || IdHandler.GetUuid() == null)
-            {
-                Application.Run(torPdos);
-            }
+
+            //if (myReg.GetValue("Path") == null || IdHandler.GetUuid() == null){
+            //    Application.Run(torPdos);
+            //}
             //End of what needs to run at the Absolute start of the program.
 
             string ownIp = NetworkHelper.GetLocalIpAddress();
@@ -55,17 +54,15 @@ namespace TorPdos{
             _idx.Start();
 
             // Prepare P2PNetwork
-            try
-            {
+            try{
                 _p2P = new Network(25565, _idx, path);
                 _p2P.Start();
             }
-            catch (SocketException)
-            {
+            catch (SocketException){
                 Application.Run(torPdos);
             }
-            
-            
+
+
             Console.WriteLine(@"Integrity check initialized...");
             _idx.MakeIntegrityCheck();
             Console.WriteLine(@"Integrity check finished!");
@@ -84,10 +81,16 @@ namespace TorPdos{
                         _p2P.Stop();
                         running = false;
                     } else{
+                        while (IdHandler.GetUuid() == null){
+                            if (console.StartsWith("login") && param.Length == 2){
+                                IdHandler.GetUuid(param[1]);
+                            } else if (console.Equals("gui")){
+                                Application.Run(torPdos);
+                            }
+                        }
+
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
-                        } else if (console.Equals("gui")){
-                            Application.Run(torPdos);
                         } else if (console.Equals("reindex")){
                             _idx.ReIndex();
                         } else if (console.Equals("status")){
@@ -98,14 +101,11 @@ namespace TorPdos{
                             _p2P.SaveFile();
                         } else if (console.Equals("ping")){
                             _p2P.Ping();
-                        } else if(console.StartsWith("download") && param.Length == 2) {
+                        } else if (console.StartsWith("download") && param.Length == 2){
                             _p2P.DownloadFile(param[1]);
-                        }else if (console.Equals("integrity"))
-                        {
+                        } else if (console.Equals("integrity")){
                             _idx.MakeIntegrityCheck();
-                        }
-                        else if (console.Equals("list")){
-
+                        } else if (console.Equals("list")){
                             List<Peer> peers = _p2P.GetPeerList();
 
                             Console.WriteLine();
@@ -126,11 +126,11 @@ namespace TorPdos{
                     }
                 }
             }
+
             Console.ReadKey();
         }
 
-        private static void Idx_FileMissing(IndexFile file)
-        {
+        private static void Idx_FileMissing(IndexFile file){
             Console.WriteLine(@"File missing init download of " + file.hash);
             _p2P.DownloadFile(file.hash);
         }
@@ -151,6 +151,5 @@ namespace TorPdos{
         private static void Idx_FileChanged(IndexFile file){
             Console.WriteLine(@"File changed: " + file.hash);
         }
-
     }
 }

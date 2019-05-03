@@ -34,7 +34,7 @@ namespace TorPdos.TEST{
         [TestMethod]
         public void ValidateUser(){
             string uuid = IdHandler.CreateUser(Password);
-            bool result = IdHandler.IsValidUser(uuid, Password);
+            bool result = IdHandler.IsValidUser(Password);
             IdHandler.RemoveUser();
 
             Assert.IsTrue(result);
@@ -43,7 +43,7 @@ namespace TorPdos.TEST{
         [TestMethod]
         public void WrongPasswordInvaildUser(){
             string uuid = IdHandler.CreateUser(Password);
-            bool result = IdHandler.IsValidUser(uuid, "wrong");
+            bool result = IdHandler.IsValidUser( "wrong");
             IdHandler.RemoveUser();
 
             Assert.IsFalse(result);
