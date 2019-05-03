@@ -6,27 +6,25 @@ using Newtonsoft.Json;
 
 namespace Splitter_lib{
     public class HashHandler{
-        private ConcurrentDictionary<string, List<string>> HashList = new ConcurrentDictionary<string, List<string>>();
-        private string _filePath;
-        private string _path;
+        private ConcurrentDictionary<string, List<string>> _hashList = new ConcurrentDictionary<string, List<string>>();
+        private readonly string _filePath;
 
-        public HashHandler(string path){
-
-            if (Directory.Exists(path + @"\.hidden\")){
-                _path = path + @"\.hidden\";
+        public HashHandler(string inputPath){
+            string path;
+            if (Directory.Exists(inputPath + @"\.hidden\")){
+                path = inputPath + @"\.hidden\";
             } else{
                 throw new DirectoryNotFoundException();
             }
-            _filePath = _path + @"hashList.json";
-            start();
+            _filePath = path + @"hashList.json";
+            Start();
         }
 
-        private int start(){
-            load();
-            return 1;
+        private void Start(){
+            Load();
         }
 
-        public bool load(){
+        private void Load(){
             if (!File.Exists(_filePath)){
                 using (FileStream fileCreate = new FileStream(_filePath,FileMode.OpenOrCreate)){
                     fileCreate.Close();
@@ -34,15 +32,14 @@ namespace Splitter_lib{
             } else{
                 string json = File.ReadAllText(_filePath);
                 if (!string.IsNullOrEmpty(json)){
-                    HashList = JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(json);
+                    _hashList = JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(json);
                 }
             }
-            return true;
         }
 
-        public List<string> getEntry(string fileName){
+        public List<string> GetEntry(string fileName){
             List< string> output = new List<string>();
-            if (HashList.TryGetValue(fileName, out output)){
+            if (_hashList.TryGetValue(fileName, out output)){
                 return output;
             } else{
                 throw new KeyNotFoundException();
@@ -50,13 +47,13 @@ namespace Splitter_lib{
         }
 
         public void Add(string hash, List<string> splittedFileHashes){
-            HashList.TryAdd(hash,splittedFileHashes);
+            _hashList.TryAdd(hash,splittedFileHashes);
         }
 
 
-        public int save(){
+        public void Save(){
             if (_filePath != null){
-                string json = JsonConvert.SerializeObject(HashList);
+                string json = JsonConvert.SerializeObject(_hashList);
 
                 using (var fileStream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.Write)){
                     byte[] jsonHashList = new UTF8Encoding(true).GetBytes(json);
@@ -64,8 +61,6 @@ namespace Splitter_lib{
                     fileStream.Close();
                 }
             }
-
-            return 1;
         }
     }
 }

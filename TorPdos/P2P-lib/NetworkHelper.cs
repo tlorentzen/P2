@@ -42,14 +42,14 @@ namespace P2P_lib{
         public static string MacAddressCombiner()
         {
             string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-            List<string> macAddresses = NetworkHelper.GetMacAddresses();
+            List<string> macAddresses = GetMacAddresses();
 
             foreach (string mac in macAddresses)
             {
                 guid += mac;
             }
 
-            return DiskHelper.createMd5(guid);
+            return DiskHelper.CreateMd5(guid);
         }
 
     }

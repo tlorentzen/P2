@@ -278,11 +278,11 @@ namespace TorPdos
             {
                 Sorry();
             }
-            else if(String.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true || Directory.Exists(DiskHelper.getRegistryValue("Path")) == false)
+            else if(String.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path")) == true || Directory.Exists(DiskHelper.GetRegistryValue("Path")) == false)
             {
                 FirstStartUp(); 
             }
-            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == false)
+            else if(File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
             {
                 Create();
             }
@@ -346,16 +346,16 @@ namespace TorPdos
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    DiskHelper.setRegistryValue(PathName());
+                    DiskHelper.SetRegistryValue(PathName());
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if (Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    DiskHelper.setRegistryValue(PathName());
+                    DiskHelper.SetRegistryValue(PathName());
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
-                    DiskHelper.setRegistryValue(newPath);
+                    DiskHelper.SetRegistryValue(newPath);
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
@@ -448,9 +448,9 @@ namespace TorPdos
 
             AcceptButton = btnConfirmPath;
 
-            if (DiskHelper.getRegistryValue("Path") != null)
+            if (DiskHelper.GetRegistryValue("Path") != null)
             {
-                txtPath.Text = DiskHelper.getRegistryValue("Path");
+                txtPath.Text = DiskHelper.GetRegistryValue("Path");
             }
         }
 

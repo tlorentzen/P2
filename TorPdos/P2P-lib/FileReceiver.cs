@@ -11,15 +11,14 @@ namespace P2P_lib{
         private int _port;
         private TcpListener _server;
         private Thread _listener;
-        private byte[] _buffer;
-        private string _filename;
-        private string _uuid;
+        private readonly byte[] _buffer;
+        private readonly string _filename;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
-        public delegate void FileDownlaoded(string path);
-        public event FileDownlaoded FileSuccefullyDownloaded;
+        public delegate void FileDownloaded(string path);
+        public event FileDownloaded FileSuccessfullyDownloaded;
         private Boolean _fileReceived;
 
-        public FileReceiver(string path, string filename, int port, bool hidden, int bufferSize = 1024){
+        public FileReceiver(string path, string filename, int port, bool hidden = false, int bufferSize = 1024){
             this._ip = IPAddress.Any;
             this._buffer = new byte[bufferSize];
             this._filename = filename;
@@ -83,7 +82,7 @@ namespace P2P_lib{
 
                 client.Close();
                 if (_fileReceived){
-                    FileSuccefullyDownloaded.Invoke(path);
+                    FileSuccessfullyDownloaded?.Invoke(path);
                 }
             }
             catch (InvalidOperationException e){

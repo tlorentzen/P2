@@ -1,9 +1,4 @@
-﻿using System;
-using Splitter_lib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Security.Cryptography;
-using System.IO;
-using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TorPdos.TEST{
     [TestClass]

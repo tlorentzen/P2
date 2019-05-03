@@ -13,29 +13,28 @@ namespace P2P_lib.Managers
 {
     class DownloadManagerV2 : Manager
     {
-        private bool is_running = true;
-        private int _port;
-        private string _filehash;
-        private string originalFileHash;
-        private string _path;
-        private NetworkPorts _ports;
-        private ManualResetEvent _waitHandle;
-        private ConcurrentDictionary<string, Peer> _peers;
+        private bool _isRunning = true;
+        private readonly int _port;
+        private string _fileHash;
+        private readonly string _path;
+        private readonly NetworkPorts _ports;
+        private readonly ManualResetEvent _waitHandle;
+        private readonly ConcurrentDictionary<string, Peer> _peers;
         private StateSaveConcurrentQueue<QueuedFile> _queue;
-        private FileReceiver _receiver;
-        private Index _index;
-        private List<string> _filelist;
+        private FileReceiver _fileReceiver;
+        private readonly Index _index;
+        private List<string> _fileList;
         public bool isStopped;
-        private HashHandler _hashList;
+        private readonly HashHandler _hashList;
         private List<string> _downloadQueue;
-        private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
-        private Receiver receiver;
+        private readonly NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
+        private readonly Receiver _receiver;
 
         private ConcurrentDictionary<string, List<string>> _sentTo;
 
-        public ConcurrentDictionary<string, List<string>> sentTo
+        public ConcurrentDictionary<string, List<string>> SentTo
         {
-            get { return _sentTo; }
+            get => _sentTo;
             set
             {
                 if (_sentTo == null) _sentTo = value;
@@ -48,16 +47,16 @@ namespace P2P_lib.Managers
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
-            this._path = DiskHelper.getRegistryValue("Path").ToString();
+            this._path = DiskHelper.GetRegistryValue("Path");
             this._waitHandle = new ManualResetEvent(false);
             this._index = index;
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._port = _ports.GetAvailablePort();
             _hashList = hashList;
 
-            receiver = new Receiver(_port);
-            receiver.MessageReceived += _receiver_MessageReceived;
-            receiver.Start();
+            _receiver = new Receiver(_port);
+            _receiver.MessageReceived += _receiver_MessageReceived;
+            _receiver.Start();
         }
 
         private void QueueElementAddedToQueue()
@@ -68,7 +67,7 @@ namespace P2P_lib.Managers
         public void Run()
         {
             isStopped = false;
-            while (is_running)
+            while (_isRunning)
             {
                 this._waitHandle.WaitOne();
 
@@ -76,36 +75,36 @@ namespace P2P_lib.Managers
 
                 while (this._queue.TryDequeue(out file))
                 {
-                    if (!is_running)
+                    if (!_isRunning)
                     {
                         this._queue.Enqueue(file);
                         break;
                     }
 
-                    _filehash = file.GetHash();
+                    _fileHash = file.GetHash();
 
                     try
                     {
-                        _filelist = _hashList.getEntry(_filehash);
-                        _downloadQueue = _hashList.getEntry(_filehash);
+                        _fileList = _hashList.GetEntry(_fileHash);
+                        _downloadQueue = _hashList.GetEntry(_fileHash);
                     }
                     catch (KeyNotFoundException e)
                     {
                         _logger.Warn(
                             e +
                             " \n Requested file not found in hashfile, located in \\hidden\\hashList.json. \n Requested hash: " +
-                            _filehash);
+                            _fileHash);
                         Console.WriteLine("File not found in hashlist, see log");
                         break;
                     }
 
 
                     List<string> updatedDownloadQueue = new List<string>();
-                    if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _filehash))
+                    if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _fileHash))
                     {
                         foreach (var currentFile in _downloadQueue)
                         {
-                            if (!File.Exists(_path + @".hidden\" + @"incoming\" + _filehash + @"\" + currentFile))
+                            if (!File.Exists(_path + @".hidden\" + @"incoming\" + _fileHash + @"\" + currentFile))
                             {
                                 updatedDownloadQueue.Add(currentFile);
                             }
@@ -165,25 +164,25 @@ namespace P2P_lib.Managers
                 DownloadMessage download = (DownloadMessage)msg;
                 if (download.type.Equals(Messages.TypeCode.RESPONSE))
                 {
-                    if (download.statuscode == StatusCode.ACCEPTED)
+                    if (download.statusCode == StatusCode.ACCEPTED)
                     {
                         download.CreateReply();
                         download.type = Messages.TypeCode.REQUEST;
-                        download.statuscode = StatusCode.ACCEPTED;
+                        download.statusCode = StatusCode.ACCEPTED;
                         download.port = _ports.GetAvailablePort();
-                        this._receiver =
+                        this._fileReceiver =
                             new FileReceiver(
                                 Directory.CreateDirectory(_path + @".hidden\" + @"incoming\" + download.fullFileName +
                                                           @"\")
                                     .FullName,
-                                download.filehash, download.port, false);
-                        this._receiver.FileSuccefullyDownloaded += _receiver_fileSuccefullyDownloaded;
-                        this._receiver.Start();
+                                download.filehash, download.port);
+                        this._fileReceiver.FileSuccessfullyDownloaded += FileReceiverFileSuccessfullyDownloaded;
+                        this._fileReceiver.Start();
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
                         _ports.Release(download.port);
                     }
-                    else if (download.statuscode == StatusCode.FILE_NOT_FOUND)
+                    else if (download.statusCode == StatusCode.FILE_NOT_FOUND)
                     {
                         Console.WriteLine("File not found at peer.");
                     }
@@ -191,7 +190,7 @@ namespace P2P_lib.Managers
             }
         }
 
-        private void _receiver_fileSuccefullyDownloaded(string path)
+        private void FileReceiverFileSuccessfullyDownloaded(string path)
         {
             Console.WriteLine("File downloaded");
             RestoreOriginalFile(path);
@@ -227,9 +226,9 @@ namespace P2P_lib.Managers
 
         private void RestoreOriginalFile(string path)
         {
-            foreach (var currentFile in _filelist)
+            foreach (var currentFile in _fileList)
             {
-                if (!File.Exists(_path + @".hidden\incoming\" + _filehash + @"\" + currentFile))
+                if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile))
                 {
                     return;
                 }
@@ -241,20 +240,20 @@ namespace P2P_lib.Managers
                         FileAccess.Write);
                     tester.Close();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return;
                 }
             }
 
             Console.WriteLine("File exist");
-            string pathWithoutExtension = (_path + @".hidden\incoming\" + _filehash);
+            string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);
 
             //Merge files
-            SplitterLibary splitterLibrary = new SplitterLibary();
-            splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _filehash + @"\",
+            SplitterLibrary splitterLibrary = new SplitterLibrary();
+            splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
-                _filelist);
+                _fileList);
 
             // Decrypt file
             FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
@@ -267,7 +266,7 @@ namespace P2P_lib.Managers
             string pathToFileForCopying =
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
             Console.WriteLine("File decompressed");
-            foreach (string filePath in _index.GetEntry(_filehash).paths)
+            foreach (string filePath in _index.GetEntry(_fileHash).paths)
             {
                 File.Copy(pathToFileForCopying, filePath);
                 Console.WriteLine("File send to: {0}", filePath);
@@ -276,9 +275,9 @@ namespace P2P_lib.Managers
 
         public override bool Shutdown()
         {
-            is_running = false;
+            _isRunning = false;
             _waitHandle.Set();
-            this.receiver.Stop();
+            this._receiver.Stop();
             Console.Write("Download thread stopping... ");
             while (!this.isStopped) { }
 

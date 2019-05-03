@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Threading;
 using Compression;
 using Encryption;
-using Index_lib;
 using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
@@ -14,24 +13,23 @@ using Splitter_lib;
 
 namespace P2P_lib.Managers{
     public class UploadManager : Manager{
-        private ManualResetEvent waitHandle;
-        private bool is_running = true;
-        private NetworkPorts _ports;
-        private ConcurrentDictionary<string, Peer> _peers;
-        private StateSaveConcurrentQueue<QueuedFile> _queue;
-        private RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"TorPdos\1.1.1.1");
-        private string _path;
+        private readonly ManualResetEvent _waitHandle;
+        private bool _isRunning = true;
+        private readonly NetworkPorts _ports;
+        private readonly ConcurrentDictionary<string, Peer> _peers;
+        private readonly StateSaveConcurrentQueue<QueuedFile> _queue;
+        private readonly RegistryKey _registry = Registry.CurrentUser.CreateSubKey(@"TorPdos\1.1.1.1");
+        private readonly string _path;
         private bool _pendingReceiver = true;
         private FileSender _sender;
         private Receiver _receiver;
-        private static Logger logger = LogManager.GetLogger("UploadLogger");
-        private HiddenFolder _hiddenFolder;
-        public bool isStopped;
+        private readonly Logger _logger = LogManager.GetLogger("UploadLogger");
+        private bool _isStopped;
         private ConcurrentDictionary<string, List<string>> _sentTo;
-        private HashHandler _hashList;
+        private readonly HashHandler _hashList;
 
-        public ConcurrentDictionary<string, List<string>> sentTo{
-            get{ return _sentTo; }
+        public ConcurrentDictionary<string, List<string>> SentTo{
+            private get => _sentTo;
             set{
                 if (_sentTo == null) _sentTo = value;
             }
@@ -43,34 +41,32 @@ namespace P2P_lib.Managers{
             this._ports = ports;
             this._peers = peers;
 
-            this.waitHandle = new ManualResetEvent(false);
+            this._waitHandle = new ManualResetEvent(false);
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
 
-            this._path = registry.GetValue("Path").ToString();
-            _hiddenFolder = new HiddenFolder(this._path + @".hidden\");
+            this._path = _registry.GetValue("Path").ToString();
             _hashList = hashList;
         }
 
         private void QueueElementAddedToQueue(){
-            this.waitHandle.Set();
+            this._waitHandle.Set();
         }
 
         public void Run(){
             var outputFiles = new Dictionary<string, List<string>>();
-            isStopped = false;
-            this.waitHandle.Set();
+            _isStopped = false;
+            this._waitHandle.Set();
 
-            while (is_running){
-                this.waitHandle.WaitOne();
+            while (_isRunning){
+                this._waitHandle.WaitOne();
 
-                if (!is_running)
+                if (!_isRunning)
                     break;
 
-                QueuedFile file;
                 var peersSentTo = new List<string>();
 
-                while (this._queue.TryDequeue(out file)){
-                    if (!is_running){
+                while (this._queue.TryDequeue(out var file)){
+                    if (!_isRunning){
                         this._queue.Enqueue(file);
                         break;
                     }
@@ -99,17 +95,15 @@ namespace P2P_lib.Managers{
                     //_hiddenFolder.removeFile(compressedFilePath + ".lzma");
                     string encryptedFilePath = compressedFilePath + ".aes";
 
-                    string filename = file.GetHash() + ".aes";
-
                     // Split
-                    SplitterLibary splitter = new SplitterLibary();
+                    SplitterLibrary splitter = new SplitterLibrary();
 
 
                     _hashList.Add(file.GetHash(),
                         splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
 
 
-                    foreach (var currentFileHashes in _hashList.getEntry(file.GetHash())){
+                    foreach (var currentFileHashes in _hashList.GetEntry(file.GetHash())){
                         peersSentTo.Clear();
                         string currentFileHashPath = _path + @".hidden\splitter\" + currentFileHashes;
 
@@ -122,11 +116,11 @@ namespace P2P_lib.Managers{
                                 _receiver.Start();
                             }
                             catch (SocketException e){
-                                logger.Log(LogLevel.Fatal, e);
+                                _logger.Log(LogLevel.Fatal, e);
                                 Console.WriteLine(port);
                             }
                             catch (Exception e){
-                                logger.Warn(e);
+                                _logger.Warn(e);
                             }
 
                             FileInfo fileInfo = new FileInfo(currentFileHashPath);
@@ -139,7 +133,7 @@ namespace P2P_lib.Managers{
                             upload.port = port;
                             upload.Send();
                             Console.WriteLine(currentFileHashes);
-
+                            
                             while (_pendingReceiver){
                                 // TODO: timeout???
                             }
@@ -158,7 +152,7 @@ namespace P2P_lib.Managers{
                         }
 
 
-                        sentTo.AddOrUpdate(currentFileHashes, peersSentTo, (key, existingValue) => {
+                        SentTo.AddOrUpdate(currentFileHashes, peersSentTo, (key, existingValue) => {
                             foreach (string peer in peersSentTo){
                                 if (!existingValue.Contains(peer)){
                                     existingValue.Add(peer);
@@ -176,10 +170,10 @@ namespace P2P_lib.Managers{
                     }
                 }
 
-                this.waitHandle.Reset();
+                this._waitHandle.Reset();
             }
 
-            isStopped = true;
+            _isStopped = true;
         }
 
         private void _receiver_MessageReceived(BaseMessage msg){
@@ -187,7 +181,7 @@ namespace P2P_lib.Managers{
                 UploadMessage upload = (UploadMessage) msg;
 
                 if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
-                    if (upload.statuscode == StatusCode.ACCEPTED){
+                    if (upload.statusCode == StatusCode.ACCEPTED){
                         _sender = new FileSender(upload.from, upload.port);
                         _pendingReceiver = false;
                     }
@@ -227,11 +221,11 @@ namespace P2P_lib.Managers{
         }
 
         public override bool Shutdown(){
-            is_running = false;
-            waitHandle.Set();
+            _isRunning = false;
+            _waitHandle.Set();
 
             Console.Write("Upload thread stopping... ");
-            while (!this.isStopped){ }
+            while (!this._isStopped){ }
 
             Console.Write("Stopped!\n");
 

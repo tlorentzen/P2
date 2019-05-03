@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using NLog.Targets;
 
 namespace Encryption{
     public class FileEncryption{
@@ -181,8 +180,7 @@ namespace Encryption{
                     using (var fileRead = new MemoryStream()){
                         //Outputs the read file into the output file.
                         try{
-                            int read;
-                            while ((read = cs.Read(buffer, 0, path.Length)) > 0){
+                            while ((cs.Read(buffer, 0, path.Length)) > 0){
                                 fileRead.Write(buffer, 0, buffer.Length);
                             }
 

@@ -11,9 +11,7 @@ namespace P2P_lib.Messages
         public string path;
         public int port;
 
-        public DownloadMessage(Peer to) : base(to){
-            forwardCount = 8;
-        }
+        public DownloadMessage(Peer to) : base(to){ }
 
         public override string GetHash()
         {

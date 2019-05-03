@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Compression;
-using System.Security.Cryptography;
 using System.IO;
 
 namespace TorPdos.TEST{

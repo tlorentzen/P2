@@ -8,7 +8,6 @@ using System.Threading;
 using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
-using Microsoft.Win32;
 using System.Timers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
@@ -16,29 +15,27 @@ using Splitter_lib;
 
 namespace P2P_lib{
     public class Network{
-        private int _numOfThreads = 5;
-        private int _port;
-        private bool _running = false;
-        private Index _index;
+        private const int NumOfThreads = 5;
+        private readonly int _port;
+        private bool _running;
+        private readonly Index _index;
         private Receiver _receive;
         private FileReceiver _fileReceiver;
-        private string _path;
-        private HiddenFolder _hiddenPath;
-        private ConcurrentDictionary<string, Peer> peers = new ConcurrentDictionary<string, Peer>();
-        private string _peerFilePath;
-        private RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-        private StateSaveConcurrentQueue<QueuedFile> upload;
-        private StateSaveConcurrentQueue<QueuedFile> download;
-        private StateSaveConcurrentQueue<string> _deletionQueue;
-        private List<Manager> _managers = new List<Manager>();
-        private NetworkPorts ports = new NetworkPorts();
-        private System.Timers.Timer pingTimer;
-        private string _locationDBPath;
-        private ConcurrentDictionary<string, List<string>> locationDB;
+        private readonly string _path;
+        private readonly HiddenFolder _hiddenPath;
+        private readonly ConcurrentDictionary<string, Peer> _peers = new ConcurrentDictionary<string, Peer>();
+        private readonly string _peerFilePath;
+        private readonly StateSaveConcurrentQueue<QueuedFile> _upload;
+        private readonly StateSaveConcurrentQueue<QueuedFile> _download;
+        private readonly StateSaveConcurrentQueue<string> _deletionQueue;
+        private readonly List<Manager> _managers = new List<Manager>();
+        private readonly NetworkPorts _ports = new NetworkPorts();
+        private System.Timers.Timer _pingTimer;
+        private readonly string _locationDbPath;
+        private ConcurrentDictionary<string, List<string>> _locationDb;
         private DeletionManager _deletionManager;
-        private HashHandler hashList;
+        private readonly HashHandler _hashList;
 
-        private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
@@ -46,21 +43,21 @@ namespace P2P_lib{
             this._path = path;
             this._index = index;
             this._peerFilePath = path + @".hidden\peer.json";
-            this._locationDBPath = path + @".hidden\locationDB.json";
+            this._locationDbPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
-            hashList = new HashHandler(_path);
+            _hashList = new HashHandler(_path);
 
             Load();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
-            upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
-            download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json");
+            _upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
+            _download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json");
         }
 
         public List<Peer> GetPeerList(){
             List<Peer> newPeerList = new List<Peer>();
 
-            foreach (var peer in peers){
+            foreach (var peer in _peers){
                 newPeerList.Add(peer.Value);
             }
 
@@ -75,19 +72,19 @@ namespace P2P_lib{
             _receive.Start();
 
 
-            LoadLocationDB();
-            _deletionManager = new DeletionManager(_deletionQueue, ports, peers, locationDB, hashList);
+            LoadLocationDb();
+            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb, _hashList);
             Thread deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
 
-            for (int i = 0; i < _numOfThreads; i++){
-                UploadManager uploadManager = new UploadManager(upload, ports, peers, hashList);
-                DownloadManagerV2 downloadManager = new DownloadManagerV2(download, ports, peers, _index, hashList);
+            for (int i = 0; i < NumOfThreads; i++){
+                UploadManager uploadManager = new UploadManager(_upload, _ports, _peers, _hashList);
+                DownloadManagerV2 downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index, _hashList);
 
                 Thread uploadThread = new Thread(uploadManager.Run);
                 Thread downloadThread = new Thread(downloadManager.Run);
 
-                uploadManager.sentTo = downloadManager.sentTo = locationDB;
+                uploadManager.SentTo = downloadManager.SentTo = _locationDb;
 
                 uploadThread.Start();
                 downloadThread.Start();
@@ -96,17 +93,17 @@ namespace P2P_lib{
                 _managers.Add(downloadManager);
             }
 
-            pingTimer = new System.Timers.Timer();
-            pingTimer.Interval = 10000;
+            _pingTimer = new System.Timers.Timer();
+            _pingTimer.Interval = 10000;
 
             // Hook up the Elapsed event for the timer. 
-            pingTimer.Elapsed += PingTimer_Elapsed;
+            _pingTimer.Elapsed += PingTimer_Elapsed;
 
             // Have the timer fire repeated events (true is the default)
-            pingTimer.AutoReset = true;
+            _pingTimer.AutoReset = true;
 
             // Start the timer
-            pingTimer.Enabled = true;
+            _pingTimer.Enabled = true;
         }
 
         private void PingTimer_Elapsed(object sender, ElapsedEventArgs e){
@@ -116,14 +113,14 @@ namespace P2P_lib{
         public void Ping(){
             long millis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            foreach (var peer in peers){
+            foreach (var peer in _peers){
                 peer.Value.Ping(millis, _path);
             }
         }
 
         public void AddPeer(string uuid, string ip){
             Peer peer = new Peer(uuid, ip);
-            this.peers.TryAdd(peer.GetUuid(), peer);
+            this._peers.TryAdd(peer.GetUuid(), peer);
         }
 
         private void Receive_MessageReceived(BaseMessage message){
@@ -136,31 +133,30 @@ namespace P2P_lib{
             } else if (msgType == typeof(DownloadMessage)){
                 ReceivedDownloadMessage((DownloadMessage) message);
             } else if (msgType == typeof(PeerFetcherMessage)){
-                RechievedPeerFetch((PeerFetcherMessage) message);
+                ReceivedPeerFetch((PeerFetcherMessage) message);
             } else if (msgType == typeof(FileDeletionMessage)){
                 ReceivedDeletionRequest((FileDeletionMessage) message);
             }
         }
 
-        private void RechievedPeerFetch(PeerFetcherMessage message){
-            if (message.type.Equals(Messages.TypeCode.REQUEST)){
-                List<Peer> incomming = new List<Peer>();
+        private void ReceivedPeerFetch(PeerFetcherMessage message){
+            if (message.type.Equals(TypeCode.REQUEST)){
                 List<Peer> outgoing = new List<Peer>();
-                incomming = message.peers;
+                var incoming = message.peers;
                 // Adding sender to list
-                if (!InPeerList(message.fromUuid, peers)){
-                    peers.TryAdd(message.fromUuid, new Peer(message.fromUuid, message.from));
+                if (!InPeerList(message.fromUuid, _peers)){
+                    _peers.TryAdd(message.fromUuid, new Peer(message.fromUuid, message.from));
                 }
 
                 //Checks whether a incomming peer exists in the peerlist.
-                foreach (var incommingPeer in incomming){
-                    if (InPeerList(incommingPeer.GetUuid(), peers)) break;
-                    peers.TryAdd(incommingPeer.GetUuid(), incommingPeer);
-                    Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
+                foreach (var incomingPeer in incoming){
+                    if (InPeerList(incomingPeer.GetUuid(), _peers)) break;
+                    _peers.TryAdd(incomingPeer.GetUuid(), incomingPeer);
+                    Console.WriteLine("Peer added: " + incomingPeer.GetUuid());
                 }
 
-                foreach (var outGoingPeer in peers){
-                    if (InPeerList(outGoingPeer.Value.GetUuid(), incomming)) break;
+                foreach (var outGoingPeer in _peers){
+                    if (InPeerList(outGoingPeer.Value.GetUuid(), incoming)) break;
                     if (outGoingPeer.Value.GetUuid() == message.fromUuid) break;
                     outgoing.Add(outGoingPeer.Value);
                 }
@@ -172,10 +168,10 @@ namespace P2P_lib{
                 // Rechieved response
 
                 foreach (Peer incommingPeer in message.peers){
-                    if (InPeerList(incommingPeer.GetUuid(), peers)) break;
+                    if (InPeerList(incommingPeer.GetUuid(), _peers)) break;
 
                     if ((IdHandler.GetUuid().Equals(incommingPeer.GetUuid()))) break;
-                    peers.TryAdd(incommingPeer.GetUuid(), incommingPeer);
+                    _peers.TryAdd(incommingPeer.GetUuid(), incommingPeer);
                     Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
                 }
             }
@@ -183,7 +179,7 @@ namespace P2P_lib{
 
 
         public void SaveFile(){
-            var json = JsonConvert.SerializeObject(peers);
+            var json = JsonConvert.SerializeObject(_peers);
             if (_path == null) return;
             using (var fileStream = _hiddenPath.WriteToFile(_peerFilePath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
@@ -197,7 +193,7 @@ namespace P2P_lib{
                 ConcurrentDictionary<string, Peer> input =
                     JsonConvert.DeserializeObject<ConcurrentDictionary<string, Peer>>(json);
                 foreach (var peer in input){
-                    peers.TryAdd(peer.Value.GetUuid(), peer.Value);
+                    _peers.TryAdd(peer.Value.GetUuid(), peer.Value);
                 }
 
                 return true;
@@ -238,16 +234,16 @@ namespace P2P_lib{
                 int replyPort = uploadMessage.port;
                 string uuid = uploadMessage.fromUuid;
 
-                if (DiskHelper.getTotalAvailableSpace("C:\\") > uploadMessage.filesize){
-                    uploadMessage.statuscode = StatusCode.ACCEPTED;
+                if (DiskHelper.GetTotalAvailableSpace("C:\\") > uploadMessage.filesize){
+                    uploadMessage.statusCode = StatusCode.ACCEPTED;
                     Console.WriteLine(@"Request accepted");
                 } else{
                     Console.WriteLine(@"Not enough space");
-                    uploadMessage.statuscode = StatusCode.INSUFFICIENT_STORAGE;
+                    uploadMessage.statusCode = StatusCode.INSUFFICIENT_STORAGE;
                 }
 
                 uploadMessage.CreateReply();
-                uploadMessage.port = ports.GetAvailablePort();
+                uploadMessage.port = _ports.GetAvailablePort();
 
                 _fileReceiver = new FileReceiver(this._path + @".hidden\" + uuid + @"\" + uploadMessage.filehash + @"\",
                     uploadMessage.filename,
@@ -261,7 +257,7 @@ namespace P2P_lib{
 
         private void RechievedPing(PingMessage ping){
             // Update peer
-            foreach (var peer in peers){
+            foreach (var peer in _peers){
                 if (peer.Value.GetUuid().Equals(ping.fromUuid)){
                     peer.Value.SetIp(ping.from);
                     peer.Value.UpdateLastSeen();
@@ -273,8 +269,8 @@ namespace P2P_lib{
             // Respond to ping
             if (ping.type.Equals(TypeCode.REQUEST)){
                 ping.CreateReply();
-                ping.statuscode = StatusCode.OK;
-                ping.diskSpace = DiskHelper.getTotalAvailableSpace(_path);
+                ping.statusCode = StatusCode.OK;
+                ping.diskSpace = DiskHelper.GetTotalAvailableSpace(_path);
                 ping.Send();
             } else{
                 // Recheved response, should send peerlist
@@ -282,7 +278,7 @@ namespace P2P_lib{
                 peerFetch.peers = this.GetPeerList();
                 //Removed the rechiever from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.peers){
-                    if (string.Compare(peer.GetIP().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
+                    if (string.Compare(peer.GetIp().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
                         peerFetch.peers.Remove(peer);
                         break;
                     }
@@ -293,7 +289,7 @@ namespace P2P_lib{
         }
 
         private Peer GetAPeer(string uuid){
-            foreach (var peer in peers){
+            foreach (var peer in _peers){
                 if (peer.Value.UUID.Equals(uuid)){
                     return peer.Value;
                 }
@@ -306,20 +302,20 @@ namespace P2P_lib{
             if (downloadMessage.type.Equals(TypeCode.REQUEST)){
                 string path = _path + @".hidden\" + downloadMessage.fromUuid + @"\" +
                               downloadMessage.fullFileName + @"\" + downloadMessage.filehash;
-                if (downloadMessage.statuscode == StatusCode.OK){
+                if (downloadMessage.statusCode == StatusCode.OK){
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         downloadMessage.CreateReply();
-                        downloadMessage.statuscode = StatusCode.ACCEPTED;
+                        downloadMessage.statusCode = StatusCode.ACCEPTED;
                         downloadMessage.Send(downloadMessage.port);
                         Console.WriteLine("Response send");
                     } else{
                         Console.WriteLine("File not found");
                         downloadMessage.CreateReply();
-                        downloadMessage.statuscode = StatusCode.FILE_NOT_FOUND;
+                        downloadMessage.statusCode = StatusCode.FILE_NOT_FOUND;
                         downloadMessage.Send(downloadMessage.port);
                     }
-                } else if (downloadMessage.statuscode.Equals(StatusCode.ACCEPTED)){
+                } else if (downloadMessage.statusCode.Equals(StatusCode.ACCEPTED)){
                     var sender = new FileSender(downloadMessage.from, downloadMessage.port);
                     sender.Send(path);
                     Console.WriteLine("File send");
@@ -330,37 +326,37 @@ namespace P2P_lib{
         private void ReceivedDeletionRequest(FileDeletionMessage message){
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
-                if (message.statuscode.Equals(StatusCode.OK)){
+                if (message.statusCode.Equals(StatusCode.OK)){
                     string path = _path + @".hidden\" + message.fromUuid + @"\" + message.filehash + @"\" +
                                   message.fullFileHash;
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
-                        message.statuscode = StatusCode.ACCEPTED;
+                        message.statusCode = StatusCode.ACCEPTED;
                         message.CreateReply();
                         message.Send();
                     } else{
-                        message.statuscode = StatusCode.FILE_NOT_FOUND;
+                        message.statusCode = StatusCode.FILE_NOT_FOUND;
                         message.CreateReply();
                         message.Send();
                     }
                 }
             } else if (message.type.Equals((TypeCode.RESPONSE))){
-                if (message.statuscode.Equals(StatusCode.OK)){
-                    List<string> updatedList = locationDB[message.filehash];
+                if (message.statusCode.Equals(StatusCode.OK)){
+                    List<string> updatedList = _locationDb[message.filehash];
                     updatedList.Remove(message.fromUuid);
                     if (updatedList.Count == 0){
-                        locationDB.TryRemove(message.filehash, out List<string> output);
+                        _locationDb.TryRemove(message.filehash, out _);
                     } else{
-                        locationDB[message.filehash] = updatedList;
+                        _locationDb[message.filehash] = updatedList;
                     }
-                } else if (message.statuscode.Equals(StatusCode.FILE_NOT_FOUND)){
-                    List<string> updatedList = locationDB[message.filehash];
+                } else if (message.statusCode.Equals(StatusCode.FILE_NOT_FOUND)){
+                    List<string> updatedList = _locationDb[message.filehash];
                     updatedList.Remove(message.fromUuid);
                     if (updatedList.Count == 0){
-                        locationDB.TryRemove(message.filehash, out List<string> output);
+                        _locationDb.TryRemove(message.filehash, out _);
                     } else{
-                        locationDB[message.filehash] = updatedList;
+                        _locationDb[message.filehash] = updatedList;
                     }
 
                     Console.WriteLine("File not found at peer");
@@ -369,46 +365,46 @@ namespace P2P_lib{
         }
 
         public void Stop(){
-            pingTimer.Enabled = false;
+            _pingTimer.Enabled = false;
             foreach (var manager in _managers){
                 manager.Shutdown();
             }
 
-            hashList.save();
-            upload.Save(_path + @".hidden\uploadQueue.json");
-            download.Save(_path + @".hidden\downloadQueue.json");
+            _hashList.Save();
+            _upload.Save(_path + @".hidden\uploadQueue.json");
+            _download.Save(_path + @".hidden\downloadQueue.json");
             _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
 
             this._running = false;
             _receive.Stop();
-            SaveLocationDB();
+            SaveLocationDb();
         }
 
-        private void LoadLocationDB(){
-            if (File.Exists(_locationDBPath)){
-                locationDB =
+        private void LoadLocationDb(){
+            if (File.Exists(_locationDbPath)){
+                _locationDb =
                     JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(
-                        File.ReadAllText(_locationDBPath));
+                        File.ReadAllText(_locationDbPath));
             } else{
-                locationDB = new ConcurrentDictionary<string, List<string>>();
+                _locationDb = new ConcurrentDictionary<string, List<string>>();
             }
         }
 
-        private void SaveLocationDB(){
-            var json = JsonConvert.SerializeObject(locationDB);
+        private void SaveLocationDb(){
+            var json = JsonConvert.SerializeObject(_locationDb);
             if (_path == null) return;
-            using (var fileStream = _hiddenPath.WriteToFile(_locationDBPath)){
+            using (var fileStream = _hiddenPath.WriteToFile(_locationDbPath)){
                 var jsonIndex = new UTF8Encoding(true).GetBytes(json);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
             }
         }
 
         public void UploadFile(string hash, string path, int copies){
-            this.upload.Enqueue(new QueuedFile(hash, path, copies));
+            this._upload.Enqueue(new QueuedFile(hash, path, copies));
         }
 
         public void DownloadFile(string hash){
-            this.download.Enqueue(new QueuedFile(hash));
+            this._download.Enqueue(new QueuedFile(hash));
         }
 
         public void DeleteFile(string hash){

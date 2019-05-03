@@ -8,30 +8,26 @@ using TypeCode = P2P_lib.Messages.TypeCode;
 
 namespace P2P_lib.Managers{
     public class DeletionManager : Manager{
-        private bool is_running = true;
+        private bool _isRunning = true;
         private int _port;
-        private string _filehash;
-        private string _path;
-        private NetworkPorts _ports;
+        private readonly NetworkPorts _ports;
         private readonly ManualResetEvent _waitHandle;
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<string> _queue;
         private readonly ConcurrentDictionary<string, List<string>> _locationDb;
-        private FileReceiver _receiver;
         public bool isStopped;
-        private HashHandler _hashlist;
+        private readonly HashHandler _hashList;
 
         public DeletionManager(StateSaveConcurrentQueue<string> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDB,
+            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDb,
             HashHandler hashList){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
-            this._path = DiskHelper.getRegistryValue("Path").ToString();
             this._waitHandle = new ManualResetEvent(false);
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
-            this._locationDb = locationDB;
-            this._hashlist = hashList;
+            this._locationDb = locationDb;
+            this._hashList = hashList;
         }
 
         private void QueueElementAddedToQueue(){
@@ -40,28 +36,27 @@ namespace P2P_lib.Managers{
 
         public void Run(){
             isStopped = false;
-            while (is_running){
-                if (!is_running){
+            while (_isRunning){
+                if (!_isRunning){
                     break;
                 }
 
                 this._waitHandle.WaitOne();
-                string item;
-                while (this._queue.TryDequeue(out item)){
-                    if (!is_running){
+                while (this._queue.TryDequeue(out var item)){
+                    if (!_isRunning){
                         _waitHandle.Set();
                         break;
                     }
-                    foreach (var hash in _hashlist.getEntry(item)){
-                        List<string> inputlist = _locationDb[hash];
+                    foreach (var hash in _hashList.GetEntry(item)){
+                        List<string> inputList = _locationDb[hash];
                         Console.WriteLine(_locationDb.Count);
-                        foreach (var input in inputlist){
+                        foreach (var input in inputList){
                             
                             this._port = _ports.GetAvailablePort();
                             if (_peers.TryGetValue(input, out Peer value)){
                                 FileDeletionMessage deletionMessage = new FileDeletionMessage(value);
                                 deletionMessage.type = TypeCode.REQUEST;
-                                deletionMessage.statuscode = StatusCode.OK;
+                                deletionMessage.statusCode = StatusCode.OK;
                                 deletionMessage.filehash = hash;
                                 deletionMessage.fullFileHash =  item;
                                 deletionMessage.port = _port;
@@ -79,7 +74,7 @@ namespace P2P_lib.Managers{
 
 
         public override bool Shutdown(){
-            is_running = false;
+            _isRunning = false;
             _waitHandle.Set();
 
             Console.Write("Deletion thread stopping... ");

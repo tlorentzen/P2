@@ -5,7 +5,7 @@ using Microsoft.Win32;
 
 namespace P2P_lib{
     public class DiskHelper{
-        public static long getTotalAvailableSpace(string driveName){
+        public static long GetTotalAvailableSpace(string driveName){
             driveName = driveName.Split('\\')[0] + '\\';
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
                 if (drive.IsReady && drive.Name == driveName){
@@ -16,7 +16,7 @@ namespace P2P_lib{
             return -1;
         }
 
-        public static string createMd5(string input){
+        public static string CreateMd5(string input){
             // Use input string to calculate MD5 hash
             using (MD5 md5 = MD5.Create()){
                 byte[] inputBytes = Encoding.ASCII.GetBytes(input);
@@ -33,7 +33,7 @@ namespace P2P_lib{
             }
         }
 
-        public static string getRegistryValue(string key){
+        public static string GetRegistryValue(string key){
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             if(registry.GetValue(key) == null)
             {
@@ -45,10 +45,9 @@ namespace P2P_lib{
             } 
         }
 
-        public static void setRegistryValue(string key)
-        {
+        public static void SetRegistryValue(string key){
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-            registry.SetValue("Path", key);
+            registry?.SetValue("Path", key);
         }
     }
 }

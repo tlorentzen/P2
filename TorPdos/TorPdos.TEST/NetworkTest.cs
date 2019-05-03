@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using P2P_lib;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TorPdos.TEST{
     [TestClass]

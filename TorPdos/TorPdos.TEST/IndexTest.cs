@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Index_lib;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace TorPdos.TEST{
@@ -10,7 +8,7 @@ namespace TorPdos.TEST{
     public class IndexTest{
         [TestMethod]
         public void IndexFileCreatedAtRightPath(){
-            var index = initIndex();
+            initIndex();
             Assert.IsTrue(File.Exists("TEST/.hidden/index.json"));
         }
 
@@ -47,7 +45,7 @@ namespace TorPdos.TEST{
         }
 
         [TestMethod]
-        public void rebuildIndexGivesSameIndex(){
+        public void RebuildIndexGivesSameIndex(){
             Helpers.MakeAFile("TESTFILE.txt");
             for (int i = 0; i < 10; i++){
                 File.Copy("TESTFILE.txt", "TEST/TESTCOPY" + i + ".txt");

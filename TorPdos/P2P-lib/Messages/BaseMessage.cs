@@ -2,7 +2,6 @@
 using System.Net.Sockets;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using P2P_lib;
 
 namespace P2P_lib.Messages{
     public enum StatusCode{
@@ -15,14 +14,13 @@ namespace P2P_lib.Messages{
 
     [Serializable]
     public abstract class BaseMessage{
-        public string toUuid;
+        private string toUuid;
         public string fromUuid;
         public string to;
         public string from;
-        public StatusCode statuscode;
+        public StatusCode statusCode;
         public TypeCode type;
-        public int forwardCount;
-        private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
+        private readonly NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
         public Type GetMessageType(){
             return this.GetType();
@@ -32,11 +30,11 @@ namespace P2P_lib.Messages{
 
         public BaseMessage(Peer to){
             this.toUuid = to.GetUuid();
-            this.to = to.GetIP();
+            this.to = to.GetIp();
             this.fromUuid = IdHandler.GetUuid();
             this.from = NetworkHelper.GetLocalIpAddress();
             this.type = TypeCode.REQUEST;
-            this.statuscode = StatusCode.OK;
+            this.statusCode = StatusCode.OK;
         }
 
         public bool Send(int receiverPort = 25565){
@@ -96,18 +94,17 @@ namespace P2P_lib.Messages{
 
         public void CreateReply(){
             this.type = TypeCode.RESPONSE;
-            string _fromIP = this.from;
+            string fromIp = this.from;
             this.from = this.to;
-            this.to = _fromIP;
-            string _fromUUID = this.toUuid;
+            this.to = fromIp;
+            string inputFromUuid = this.toUuid;
             this.toUuid = this.fromUuid;
-            this.fromUuid = _fromUUID;
+            this.fromUuid = inputFromUuid;
         }
 
         public void ForwardMessage(string toIp){
             this.to = toIp;
             this.type = TypeCode.REQUEST;
-            forwardCount -= 1;
         }
     }
 }

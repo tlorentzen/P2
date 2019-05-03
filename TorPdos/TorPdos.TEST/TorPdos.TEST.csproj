@@ -68,7 +68,7 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EncryptionTest.cs" />
-    <Compile Include="IDHandelerTest.cs" />
+    <Compile Include="IdHandlerTest.cs" />
     <Compile Include="HiddenFolderTest.cs" />
     <Compile Include="FileSplitterTest.cs" />
     <Compile Include="IndexTest.cs" />

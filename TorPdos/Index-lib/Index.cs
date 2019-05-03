@@ -351,7 +351,7 @@ namespace Index_lib{
                         break;
                     }
                 }
-                catch (Exception ex){
+                catch (Exception){
                     if (numTries > 2){
                         return false;
                     }

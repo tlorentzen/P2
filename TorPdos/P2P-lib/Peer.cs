@@ -8,19 +8,19 @@ namespace P2P_lib{
     public class Peer{
         private IPAddress _ip;
         private int _rating;
-        private readonly string _UUID;
+        private readonly string _uuid;
         private DateTime _lastSeen;
         private int _pingsWithoutResponse;
         private long _nextPing;
-        private bool _online = false;
-        private int[] _pingList = new int[5] {-1, -1, -1, -1, -1};
+        private bool _online;
+        private int[] _pingList = new int[] {-1, -1, -1, -1, -1};
         public long diskSpace, timespan = 0;
         public double uptimeScore = 50000;
 
         public Peer() : this(null, null){ }
 
         public Peer(string uuid, string ip){
-            this._UUID = uuid;
+            this._uuid = uuid;
 
             if (ip == null || ip.Equals("")){
                 this.SetIp(NetworkHelper.GetLocalIpAddress());
@@ -59,8 +59,8 @@ namespace P2P_lib{
                 PingMessage ping = new PingMessage(this);
                 ping.from = NetworkHelper.GetLocalIpAddress();
                 ping.type = Messages.TypeCode.REQUEST;
-                ping.statuscode = StatusCode.OK;
-                ping.diskSpace = DiskHelper.getTotalAvailableSpace(pathToFolder);
+                ping.statusCode = StatusCode.OK;
+                ping.diskSpace = DiskHelper.GetTotalAvailableSpace(pathToFolder);
                 ping.Send();
 
                 // Ping every 60 seconds and if a peer didnt respond add extra time before retrying.
@@ -77,7 +77,7 @@ namespace P2P_lib{
         [JsonConstructor]
         private Peer(string uuid, string stringIp, int rating, DateTime lastSeen){
             if (string.IsNullOrEmpty(uuid)) throw new NullReferenceException();
-            _UUID = uuid;
+            _uuid = uuid;
             this.SetIp(stringIp);
             Rating = rating;
             _lastSeen = lastSeen;
@@ -87,21 +87,21 @@ namespace P2P_lib{
             this._ip = IPAddress.Parse(ip);
         }
 
-        public string GetIP(){
+        public string GetIp(){
             return this._ip.ToString();
         }
 
         public DateTime lastSeen => _lastSeen;
 
-        public string stringIP => _ip.ToString();
-        public string UUID => _UUID;
+        public string StringIp => _ip.ToString();
+        public string UUID => _uuid;
 
         public void UpdateLastSeen(){
             _lastSeen = DateTime.Now;
         }
 
         public string GetUuid(){
-            return this._UUID;
+            return this._uuid;
         }
 
         public int Rating{
@@ -118,7 +118,7 @@ namespace P2P_lib{
         }
 
         public int CompareTo(object obj){
-            return string.Compare(_UUID, ((Peer) obj)._UUID, StringComparison.Ordinal);
+            return string.Compare(_uuid, ((Peer) obj)._uuid, StringComparison.Ordinal);
         }
 
         public bool Equals(Peer peer){
@@ -126,7 +126,7 @@ namespace P2P_lib{
                 return false;
             }
 
-            return this._UUID.Equals(peer._UUID);
+            return this._uuid.Equals(peer._uuid);
         }
 
         public override bool Equals(object obj){
@@ -138,11 +138,11 @@ namespace P2P_lib{
                 return false;
             }
 
-            return this._UUID.Equals(p._UUID);
+            return this._uuid.Equals(p._uuid);
         }
 
         public override int GetHashCode(){
-            return (_UUID != null ? _UUID.GetHashCode() : 0);
+            return (_uuid != null ? _uuid.GetHashCode() : 0);
         }
 
         //Adds newPing to _pingList by replacing oldest ping

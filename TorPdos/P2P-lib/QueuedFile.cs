@@ -9,9 +9,9 @@ namespace P2P_lib{
         private string _hash;
         [JsonProperty]
         private string _path;
-        public int _copies = 5;
+        public readonly int copies = 5;
         [JsonProperty]
-        private long _filesize = 0;
+        private long _fileSize;
         [JsonProperty]
         private string _filename;
         [JsonProperty]
@@ -19,29 +19,29 @@ namespace P2P_lib{
         [JsonProperty]
         private int _port;
         [JsonProperty]
-        private Peer peer;
+        private Peer _peer;
 
         public QueuedFile(string hash) : this(hash, null, 0){
             this._ghost = false;
         }
         [JsonConstructor]
-        private QueuedFile(string hash, string path, int copies,long filesize, string filename, bool ghost, int port, Peer peer){
+        private QueuedFile(string hash, string path, int copies,long fileSize, string filename, bool ghost, int port, Peer peer){
             _hash = hash;
             _path = path;
-            _copies = copies;
-            _filesize = filesize;
+            this.copies = copies;
+            _fileSize = fileSize;
             _filename = filename;
             _port = port;
-            this.peer = peer;
+            this._peer = peer;
         }
 
         public QueuedFile(string hash, string path, int copies){
             this._hash = hash;
-            this._copies = (copies <= 0 ? _copies : copies);
+            this.copies = (copies <= 0 ? this.copies : copies);
 
             if (path != null){
                 this._path = path;
-                this._filesize = new System.IO.FileInfo(this._path).Length;
+                this._fileSize = new FileInfo(this._path).Length;
                 this._filename = new FileInfo(this._path).Name;
             }
 
@@ -57,15 +57,15 @@ namespace P2P_lib{
         }
 
         public int GetCopies(){
-            return this._copies;
+            return this.copies;
         }
 
         public long GetFilesize(){
-            return this._filesize;
+            return this._fileSize;
         }
 
         public void SetFilesize(long filesize){
-            this._filesize = filesize;
+            this._fileSize = filesize;
         }
 
         public string GetFilename(){

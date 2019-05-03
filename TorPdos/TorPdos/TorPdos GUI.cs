@@ -4,10 +4,10 @@ using System.Windows.Forms;
 namespace TorPdos{
     public class AppForm : Form{
         public AppForm(){
-            initializeComponent();
+            InitializeComponent();
         }
 
-        private void initializeComponent(){
+        private void InitializeComponent(){
             SuspendLayout();
             // 
             // AppForm

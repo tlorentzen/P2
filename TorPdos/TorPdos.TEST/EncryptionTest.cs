@@ -1,14 +1,12 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Encryption;
-using System.Security.Cryptography;
 using System.IO;
 
 namespace TorPdos.TEST{
     [TestClass]
     public class EncryptionTest{
         static string FilePath = "TESTFILE.txt";
-        static FileEncryption Crypt = new FileEncryption("TESTFILE", ".txt");
+        static FileEncryption _crypt = new FileEncryption("TESTFILE", ".txt");
 
         static string password = "Password";
 
@@ -16,7 +14,7 @@ namespace TorPdos.TEST{
         public void EncryptedFileNotSame(){
             Helpers.MakeAFile(FilePath);
             byte[] notExpected = Helpers.HashFile(FilePath);
-            Crypt.DoEncrypt(password);
+            _crypt.DoEncrypt(password);
 
             byte[] actual = Helpers.HashFile("TESTFILE.aes");
 
@@ -29,8 +27,8 @@ namespace TorPdos.TEST{
         public void EncryptDecryptSameFile(){
             Helpers.MakeAFile(FilePath);
             byte[] expected = Helpers.HashFile(FilePath);
-            Crypt.DoEncrypt(password);
-            Crypt.DoDecrypt(password);
+            _crypt.DoEncrypt(password);
+            _crypt.DoDecrypt(password);
 
             byte[] result = Helpers.HashFile(FilePath);
             File.Delete("TESTFILE.aes");
@@ -43,9 +41,9 @@ namespace TorPdos.TEST{
         public void EncryptDecryptDifferentEncryptorSameFile(){
             Helpers.MakeAFile(FilePath);
             byte[] expected = Helpers.HashFile(FilePath);
-            Crypt.DoEncrypt(password);
-            Crypt = new FileEncryption("TESTFILE", "txt");
-            Crypt.DoDecrypt(password);
+            _crypt.DoEncrypt(password);
+            _crypt = new FileEncryption("TESTFILE", "txt");
+            _crypt.DoDecrypt(password);
 
             byte[] result = Helpers.HashFile(FilePath);
             File.Delete("TESTFILE.aes");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -22,8 +23,8 @@ namespace Index_lib
             }
         }
 
-        public void AddPath(string path, bool ghost=false) {
-            if (!ghost && File.Exists(path)) {
+        public void AddPath(string path, bool ghostFile=false) {
+            if (!ghostFile && File.Exists(path)) {
                 paths.Add(path);
                 MakeFileHash();
             }
@@ -32,7 +33,7 @@ namespace Index_lib
                 size = new FileInfo(path).Length;
             }
 
-            this.ghost = ghost;
+            this.ghost = ghostFile;
         }
 
         // Deep copy.
@@ -66,8 +67,8 @@ namespace Index_lib
             using (var md5 = MD5.Create())
             {
                 using (FileStream fs = new FileStream(paths[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
-                    var hash = md5.ComputeHash(fs);
-                    this.hash = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                    var fileHash = md5.ComputeHash(fs);
+                    this.hash = BitConverter.ToString(fileHash).Replace("-", "").ToLower();
                     fs.Close();
                 }
             }
@@ -81,5 +82,13 @@ namespace Index_lib
             return (obj is IndexFile) && ((IndexFile)obj).hash == hash;
         }
 
+        protected bool Equals(IndexFile other){
+            return string.Equals(hash, other.hash);
+        }
+
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
+        public override int GetHashCode(){
+            return hash != null ? hash.GetHashCode() : 0;
+        }
     }
 }

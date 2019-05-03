@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Splitter_lib{
-    public class SplitterLibary{
-        private List<string> _files = new List<string>();
-        //private List<List<string>> _files = new List<List<string>>();
-        Random _rnd = new Random();
-
-        public List<string> SplitFile(string inputFilePath, string inputFileHash, string OutputFolderpath,
+    public class SplitterLibrary{
+        public List<string> SplitFile(string inputFilePath, string inputFileHash, string outputFolderPath,
             int chunkSize = 1000000){
-            if (!Directory.Exists(OutputFolderpath)){
-                Directory.CreateDirectory(OutputFolderpath);
+            if (!Directory.Exists(outputFolderPath)){
+                Directory.CreateDirectory(outputFolderPath);
             }
 
             List<string> currentFiles = new List<string>();
@@ -24,12 +19,11 @@ namespace Splitter_lib{
 
             if (File.Exists(inputFilePath)){
                 using (Stream input = File.OpenRead(inputFilePath)){
-                    int index = 0;
                     while (input.Position < input.Length){
                         var writingBuffer = fileStreamReader(input, chunkSize);
                         Console.WriteLine(writingBuffer.Length);
 
-                        using (Stream output = File.Create(OutputFolderpath + CreateMD5(writingBuffer))){
+                        using (Stream output = File.Create(outputFolderPath + CreateMD5(writingBuffer))){
                             output.Write(writingBuffer, 0, writingBuffer.Length);
                         }
 

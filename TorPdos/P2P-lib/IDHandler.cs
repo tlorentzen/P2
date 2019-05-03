@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using Encryption;
 using Microsoft.Win32;
 
 namespace P2P_lib{
     public static class IdHandler{
-        private static readonly string
-            userdatafile = "userdata",
-            hiddenfolder = @".hidden\";
+        private const string UserDataFile = "userdata";
+
+        private const string HiddenFolder = @".hidden\";
 
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
-        private static string KeyMold = null;
-        private static string UuID = null;
+        private static string _keyMold;
+        private static string _uuId;
 
         //Create user file using generated UUID and input password (and UUID, if input)
         public static string CreateUser(string password, string uuid = null){
@@ -28,10 +27,10 @@ namespace P2P_lib{
                     }
                 }
 
-                string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+                string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
 
-                string keyMold = GenerateKeyMold(uuid, password);
-                string output = KeyMold + "\n" + uuid;
+                _keyMold = GenerateKeyMold(uuid, password);
+                string output = _keyMold + "\n" + uuid;
                 FileEncryption.UserDataEncrypt(password, output, path);
 
                 Console.WriteLine("NEW USER: " + uuid);
@@ -77,7 +76,7 @@ namespace P2P_lib{
                 guid += mac;
             }
 
-            return DiskHelper.createMd5(guid);
+            return DiskHelper.CreateMd5(guid);
         }
 
         //Check if UUID and password match existing local user
@@ -85,12 +84,12 @@ namespace P2P_lib{
         //Returns true if user details are valid, false if not
         public static bool IsValidUser(string password){
             try{
-                string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+                string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
 
                 FileEncryption.UserDataDecrypt(password, path);
                 return true;
             }
-            catch (Exception e){
+            catch (Exception){
                 return false;
             }
         }
@@ -98,15 +97,15 @@ namespace P2P_lib{
 
         //Return UUID if present, else return null
         public static string GetUuid(string password){
-            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+            string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
             if (UserExists()){
                 try{
-                    if (UuID != null){
-                        return UuID;
+                    if (_uuId != null){
+                        return _uuId;
                     } else{
-                        UuID = FileEncryption.UserDataDecrypt(password, path)[1];
-                        KeyMold = FileEncryption.UserDataDecrypt(password, path)[0];
-                        return UuID;
+                        _uuId = FileEncryption.UserDataDecrypt(password, path)[1];
+                        _keyMold = FileEncryption.UserDataDecrypt(password, path)[0];
+                        return _uuId;
                     }
                 }
                 catch (Exception){
@@ -119,10 +118,9 @@ namespace P2P_lib{
 
 
         public static string GetUuid(){
-            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
             if (UserExists()){
                 try{
-                    return UuID;
+                    return _uuId;
                 }
                 catch (Exception){
                     return null;
@@ -133,10 +131,9 @@ namespace P2P_lib{
         }
 
         public static string GetKeyMold(){
-            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
             if (UserExists()){
                 try{
-                    return KeyMold;
+                    return _keyMold;
                 }
                 catch (Exception){
                     return null;
@@ -147,7 +144,7 @@ namespace P2P_lib{
         }
 
         public static bool UserExists(){
-            string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+            string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
 
             if (File.Exists(path)){
                 return true;
@@ -159,7 +156,7 @@ namespace P2P_lib{
         //Removes userdata file, return false if failed
         public static bool RemoveUser(){
             try{
-                string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
+                string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
 
                 File.Delete(path);
                 return true;

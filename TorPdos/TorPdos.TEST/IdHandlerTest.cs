@@ -1,16 +1,14 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using P2P_lib;
-using System.IO;
 
 namespace TorPdos.TEST{
     [TestClass]
-    public class IDHandelerTest{
-        static string path = "TEST/";
-        static string Password = "Password";
+    public class IdHandlerTest{
+        public static string path = "TEST/";
+        private const string Password = "Password";
 
         [TestMethod]
-        public void GenereateUUIDIsRandom(){
+        private void GenerateUuidIsRandom(){
             string notExpected = IdHandler.CreateUser(Password);
             System.Threading.Thread.Sleep(5000);
             string actual = IdHandler.CreateUser(Password);
@@ -33,7 +31,7 @@ namespace TorPdos.TEST{
 
         [TestMethod]
         public void ValidateUser(){
-            string uuid = IdHandler.CreateUser(Password);
+            IdHandler.CreateUser(Password);
             bool result = IdHandler.IsValidUser(Password);
             IdHandler.RemoveUser();
 
@@ -41,8 +39,8 @@ namespace TorPdos.TEST{
         }
 
         [TestMethod]
-        public void WrongPasswordInvaildUser(){
-            string uuid = IdHandler.CreateUser(Password);
+        public void WrongPasswordInvalidUser(){
+            IdHandler.CreateUser(Password);
             bool result = IdHandler.IsValidUser( "wrong");
             IdHandler.RemoveUser();
 

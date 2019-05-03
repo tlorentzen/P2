@@ -23,8 +23,8 @@ namespace P2P_lib{
 
         private IPAddress ip;
         private int port;
-        private TcpListener _server = null;
-        private bool _listening = false;
+        private TcpListener _server;
+        private bool _listening;
         private Thread _listener;
         private byte[] _buffer = new byte[1024];
 

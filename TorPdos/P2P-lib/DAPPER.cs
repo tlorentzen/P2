@@ -1,13 +1,8 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace P2P_lib
 {
-    public class DAPPER {
+    public class Dapper {
         //Deliberately Amazing Peer Practicality Estimation Ranker
         public int GetRank(Peer peer) {
 
@@ -22,7 +17,7 @@ namespace P2P_lib
 
         //Calc score from disk space
         private int ScoreDiskSpace(long diskSpaceBytes) {
-            double diskSpace = (double)diskSpaceBytes / 1e+9; //Convert to GB
+            double diskSpace = diskSpaceBytes / 1e+9; //Convert to GB
 
             int score = diskSpace < 5 ? 10000 : diskSpace < 10 ? 20000 : 30000;
             return score;

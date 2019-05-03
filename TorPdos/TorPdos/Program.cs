@@ -4,35 +4,32 @@ using System.IO;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using Index_lib;
-using Microsoft.Win32;
 using P2P_lib;
 
 namespace TorPdos{
-    class Program{
+    static class Program{
         static Index _idx;
         static Network _p2P;
         public static string publicUuid;
         public static string filePath;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         [STAThread]
         static void Main(){
             //Start of what needs to run at the Absolute start of the program.
             bool running = true;
-            RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
             
-            if (string.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true ){
+            if (string.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path"))){
                 Application.Run(torPdos);
             }
-            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == false)
+            else if(File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
             {
                 Application.Run(torPdos);
             }
             //End of what needs to run at the Absolute start of the program.
 
             string ownIp = NetworkHelper.GetLocalIpAddress();
-            string path = (DiskHelper.getRegistryValue("Path"));
+            string path = (DiskHelper.GetRegistryValue("Path"));
 
             Console.WriteLine(IdHandler.GetUuid());
             while (running){
@@ -87,7 +84,7 @@ namespace TorPdos{
                         Console.WriteLine(@"Integrity check finished!");
                         
                         Console.WriteLine(@"Local: " + ownIp);
-                        Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalAvailableSpace("C:\\"));
+                        Console.WriteLine(@"Free space on C: " + DiskHelper.GetTotalAvailableSpace("C:\\"));
                         Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
                         
                         if (console.StartsWith("add") && param.Length == 3){
@@ -113,7 +110,7 @@ namespace TorPdos{
                             Console.WriteLine(@"### Your Peerlist contains ###");
                             if (peers.Count > 0){
                                 foreach (Peer peer in peers){
-                                    Console.WriteLine(peer.GetUuid() + @" - " + peer.GetIP() + @" - " +
+                                    Console.WriteLine(peer.GetUuid() + @" - " + peer.GetIp() + @" - " +
                                                       (peer.IsOnline() ? "Online" : "Offline"));
                                 }
                             } else{
