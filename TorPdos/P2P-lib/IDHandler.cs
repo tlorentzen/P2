@@ -31,11 +31,8 @@ namespace P2P_lib{
                 string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
                 string keyMold = GenerateKeyMold(uuid, password);
-                using (StreamWriter userFile = File.CreateText(path)){
-                    userFile.WriteLine(keyMold);
-                    userFile.WriteLine(uuid);
-                    userFile.Close();
-                }
+                string output = KeyMold + "\n" + uuid;
+                FileEncryption.UserDataEncrypt(password,output,path);
 
                 Console.WriteLine("NEW USER: " + uuid);
                 return uuid;

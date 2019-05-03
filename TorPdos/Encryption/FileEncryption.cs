@@ -204,6 +204,50 @@ namespace Encryption{
             return output;
         }
 
+        public static void UserDataEncrypt(string password, string fileInformation, string path){
+            //Uses the GetSalt function to create the salt for the encryption.
+            var salt = GetSalt();
+
+
+            //The encrypted output file.
+            using (FileStream fsCrypt = new FileStream(path, FileMode.Create)){
+                //Converts password into bytes
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+
+                //Set up AES for encryption
+                RijndaelManaged aes = new RijndaelManaged{KeySize = 256, BlockSize = 128, Padding = PaddingMode.PKCS7};
+
+
+                //Password, used for encryption key of the file.
+                var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
+                aes.Key = key.GetBytes(aes.KeySize / 8);
+                aes.IV = key.GetBytes(aes.BlockSize / 8);
+
+                //Ciphermode helps mask potential patterns within the encrypted text.
+                aes.Mode = CipherMode.CFB;
+
+                //Adds the random salt to the start of the output file.
+                fsCrypt.Write(salt, 0, salt.Length);
+
+                //Runs through the file using CryptoStream
+                using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write)){
+                    try{
+                        //Tries and catches regarding opening and reading file
+                        cs.Write(ASCIIEncoding.Unicode.GetBytes(fileInformation), 0, fileInformation.Length);
+                    }
+                    catch (Exception e){
+                        Logger.Fatal(e);
+                    }
+
+
+                    cs.Close();
+                }
+
+                fsCrypt.Close();
+            }
+        }
+
+
         private static byte[] GetSalt(){
             byte[] data = new byte[64];
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider()){
