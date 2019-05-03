@@ -10,7 +10,7 @@ namespace P2P_lib{
     public static class IdHandler{
         private static readonly string
             userdatafile = "userdata",
-            hiddenfolder = @"\.hidden\";
+            hiddenfolder = @".hidden\";
 
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
         private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
@@ -83,11 +83,11 @@ namespace P2P_lib{
         //Check if UUID and password match existing local user
         //Compare keymolds (hashes)
         //Returns true if user details are valid, false if not
-        public static bool IsValidUser(string uuid, string password){
+        public static bool IsValidUser(string password){
             try{
                 string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
-                FileEncryption.UserDataDecrypt(password, password);
+                FileEncryption.UserDataDecrypt(password, path);
                 return true;
 
                 //using (StreamReader userFile = new StreamReader(path)){

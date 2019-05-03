@@ -280,9 +280,9 @@ namespace TorPdos
             {
                 Sorry();
             }
-            if (MyReg.GetValue("Path") == null || Directory.Exists(MyReg.GetValue("Path").ToString()) == false)
+            else if(MyReg.GetValue("Path") == null || Directory.Exists(MyReg.GetValue("Path").ToString()) == false)
             {
-                FirstStartUp();
+                FirstStartUp(); 
             }
             else if (IdHandler.GetUuid() == null)
             {
@@ -292,7 +292,6 @@ namespace TorPdos
             {
                 Login();
             }
-
             EventHandlers();
         }
 
@@ -300,10 +299,10 @@ namespace TorPdos
         {
             noiTorPdos.Click += noiTorPdosClick;
             FormClosing += MyFormClosing;
-            btnLogin.Click += BtnClickLogin;
+            btnLogin.Click += BtnLoginClick;
             btnBrowse.Click += BtnBrowseClick;
             btnCreate.Click += BtnCreateClick;
-            btnConfirmPath.Click += BtnConfirmPath;
+            btnConfirmPath.Click += BtnConfirmPathClick;
             btnChangePath.Click += BtnChangePathClick;
             btnLogout.Click += BtnLogOutClick;
             btnOkay.Click += BtnOkayClick;
@@ -328,10 +327,10 @@ namespace TorPdos
             }
         }
 
-        void BtnClickLogin(object sender, EventArgs e)
+        void BtnLoginClick(object sender, EventArgs e)
         {
-            string uuid = txtUsername.Text, pass = txtConfirmPassword.Text;
-            if (IdHandler.IsValidUser(uuid, pass))
+            string pass = txtConfirmPassword.Text;
+            if (IdHandler.IsValidUser(pass))
             {
                 LoggedIn();
                 loggedIn = true;
@@ -341,7 +340,7 @@ namespace TorPdos
                 Controls.Add(lblNope);
             }
         }
-        private void BtnConfirmPath(object sender, EventArgs e)
+        private void BtnConfirmPathClick(object sender, EventArgs e)
         {
 
             string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"TorPdos\";
@@ -502,6 +501,7 @@ namespace TorPdos
 
         private void Sorry()
         {
+            Controls.Clear();
             MessageBox.Show("Sorry that port is unavailable, the program will now close. Please close MineCraft you bakaneko");
             Controls.Add(btnOkay);
         }

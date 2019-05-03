@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Windows.Forms;
 using Index_lib;
 using Microsoft.Win32;
@@ -20,7 +21,7 @@ namespace TorPdos{
             bool running = true;
             RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
-
+            
             if (myReg.GetValue("Path") == null || IdHandler.GetUuid() == null)
             {
                 Application.Run(torPdos);
@@ -54,8 +55,16 @@ namespace TorPdos{
             _idx.Start();
 
             // Prepare P2PNetwork
-            _p2P = new Network(25565, _idx, path);
-            _p2P.Start();
+            try
+            {
+                _p2P = new Network(25565, _idx, path);
+                _p2P.Start();
+            }
+            catch (SocketException)
+            {
+                Application.Run(torPdos);
+            }
+            
             
             Console.WriteLine(@"Integrity check initialized...");
             _idx.MakeIntegrityCheck();
