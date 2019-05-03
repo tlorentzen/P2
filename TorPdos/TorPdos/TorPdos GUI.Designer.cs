@@ -282,7 +282,7 @@ namespace TorPdos
             {
                 FirstStartUp(); 
             }
-            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata.file") == true)
+            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == true)
             {
                 Create();
             }
