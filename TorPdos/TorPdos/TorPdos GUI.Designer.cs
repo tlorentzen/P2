@@ -39,7 +39,6 @@ namespace TorPdos
             textSizeDefault = 12,
             textSizeInput = 14,
             textSizeBtn = textSizeDefault; //25
-        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
         public bool loggedIn = false;
 
         Label lblUsername = new Label
@@ -279,11 +278,11 @@ namespace TorPdos
             {
                 Sorry();
             }
-            else if(MyReg.GetValue("Path") == null || Directory.Exists(MyReg.GetValue("Path").ToString()) == false)
+            else if(String.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true || Directory.Exists(DiskHelper.getRegistryValue("Path")) == false)
             {
                 FirstStartUp(); 
             }
-            else if(File.Exists(MyReg.GetValue("Path").ToString() + @".hidden\userdata.file") == true)
+            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata.file") == true)
             {
                 Create();
             }
@@ -347,16 +346,16 @@ namespace TorPdos
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName());
+                    DiskHelper.setRegistryValue(PathName());
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if (Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    MyReg.SetValue("Path", PathName());
+                    DiskHelper.setRegistryValue(PathName());
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
-                    MyReg.SetValue("Path", newPath);
+                    DiskHelper.setRegistryValue(PathName());
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
@@ -449,9 +448,9 @@ namespace TorPdos
 
             AcceptButton = btnConfirmPath;
 
-            if (MyReg.GetValue("Path") != null)
+            if (DiskHelper.getRegistryValue("Path") != null)
             {
-                txtPath.Text = MyReg.GetValue("Path").ToString();
+                txtPath.Text = DiskHelper.getRegistryValue("Path");
             }
         }
 
@@ -512,18 +511,17 @@ namespace TorPdos
 
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
-            {
-                e.Cancel = true;
-                Hide();
-                noiTorPdos.Visible = true;
-            }
-            else
-            {
-                noiTorPdos.Visible = false;
-                Environment.Exit(0);
-            }
-
+            //if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+            //{
+            //    e.Cancel = true;
+            //    Hide();
+            //    noiTorPdos.Visible = true;
+            //}
+            //else
+            //{
+            //    noiTorPdos.Visible = false;
+            //    Environment.Exit(0);
+            //}
         }
 
         void noiTorPdosClick(object sender, EventArgs e)

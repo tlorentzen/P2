@@ -22,13 +22,13 @@ namespace TorPdos{
             RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
 
-            //if (myReg.GetValue("Path") == null || IdHandler.GetUuid() == null){
-            //    Application.Run(torPdos);
-            //}
+            if (string.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true || Directory.Exists(DiskHelper.getRegistryValue("Path")) == false){
+                Application.Run(torPdos);
+            }
             //End of what needs to run at the Absolute start of the program.
 
             string ownIp = NetworkHelper.GetLocalIpAddress();
-            string path = (myReg.GetValue("Path").ToString());
+            string path = (DiskHelper.getRegistryValue("Path"));
 
             Console.WriteLine(IdHandler.GetUuid());
             while (running){
