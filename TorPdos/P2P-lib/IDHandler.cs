@@ -32,7 +32,7 @@ namespace P2P_lib{
 
                 string keyMold = GenerateKeyMold(uuid, password);
                 string output = KeyMold + "\n" + uuid;
-                FileEncryption.UserDataEncrypt(password,output,path);
+                FileEncryption.UserDataEncrypt(password, output, path);
 
                 Console.WriteLine("NEW USER: " + uuid);
                 return uuid;
@@ -87,32 +87,36 @@ namespace P2P_lib{
             try{
                 string path = MyReg.GetValue("Path") + hiddenfolder + userdatafile;
 
-                using (StreamReader userFile = new StreamReader(path)){
-                    //Hash userdata, load 
-                    //?? Checker for null value
-                    byte[] hashBytes =
-                        Convert.FromBase64String(userFile.ReadLine() ?? throw new NullReferenceException());
-                    byte[] salt = new byte[saltlength];
-                    Array.Copy(hashBytes, 0, salt, 0, saltlength);
-                    Rfc2898DeriveBytes keymold =
-                        new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
-                    byte[] hash = keymold.GetBytes(hashlength);
+                FileEncryption.UserDataDecrypt(password, password);
+                return true;
 
-                    //Compare hashes
-                    for (int i = 0; i < hashlength; i++){
-                        if (hashBytes[i + saltlength] != hash[i]){
-                            return false;
-                        }
-                    }
+                //using (StreamReader userFile = new StreamReader(path)){
+                //Hash userdata, load 
+                //?? Checker for null value
+                //  byte[] hashBytes =
+                //    Convert.FromBase64String(userFile.ReadLine() ?? throw new NullReferenceException());
+                //byte[] salt = new byte[saltlength];
+                //Array.Copy(hashBytes, 0, salt, 0, saltlength);
+                //Rfc2898DeriveBytes keymold =
+                //    new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
+                //byte[] hash = keymold.GetBytes(hashlength);
 
-                    userFile.Close();
-                    return true;
-                }
+                //Compare hashes
+                //for (int i = 0; i < hashlength; i++){
+                //    if (hashBytes[i + saltlength] != hash[i]){
+                //        return false;
+                //    }
+                //}
+
+                //userFile.Close();
+                //return true;
+                //}
             }
             catch (Exception){
                 return false;
             }
         }
+
 
         //Return UUID if present, else return null
         public static string GetUuid(string password){
