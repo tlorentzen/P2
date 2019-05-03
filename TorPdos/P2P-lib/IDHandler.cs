@@ -112,7 +112,8 @@ namespace P2P_lib{
                 //return true;
                 //}
             }
-            catch (Exception){
+            catch (Exception e){
+                throw e;
                 return false;
             }
         }
