@@ -186,7 +186,7 @@ namespace Encryption{
                                 fileRead.Write(buffer, 0, buffer.Length);
                             }
 
-                            var result = Encoding.Unicode.GetString(fileRead.ToArray());
+                            var result = Encoding.UTF8.GetString(fileRead.ToArray());
                             output = result.Split('\n');
                         }
                         catch (Exception e){
@@ -233,7 +233,7 @@ namespace Encryption{
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write)){
                     try{
                         //Tries and catches regarding opening and reading file
-                        cs.Write(Encoding.Unicode.GetBytes(fileInformation), 0, fileInformation.Length);
+                        cs.Write(Encoding.UTF8.GetBytes(fileInformation), 0, fileInformation.Length);
                     }
                     catch (Exception e){
                         Logger.Fatal(e);
