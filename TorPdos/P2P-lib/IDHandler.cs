@@ -89,31 +89,8 @@ namespace P2P_lib{
 
                 FileEncryption.UserDataDecrypt(password, path);
                 return true;
-
-                //using (StreamReader userFile = new StreamReader(path)){
-                //Hash userdata, load 
-                //?? Checker for null value
-                //  byte[] hashBytes =
-                //    Convert.FromBase64String(userFile.ReadLine() ?? throw new NullReferenceException());
-                //byte[] salt = new byte[saltlength];
-                //Array.Copy(hashBytes, 0, salt, 0, saltlength);
-                //Rfc2898DeriveBytes keymold =
-                //    new Rfc2898DeriveBytes(string.Concat(uuid, password), salt, iterations);
-                //byte[] hash = keymold.GetBytes(hashlength);
-
-                //Compare hashes
-                //for (int i = 0; i < hashlength; i++){
-                //    if (hashBytes[i + saltlength] != hash[i]){
-                //        return false;
-                //    }
-                //}
-
-                //userFile.Close();
-                //return true;
-                //}
             }
             catch (Exception e){
-                throw e;
                 return false;
             }
         }
