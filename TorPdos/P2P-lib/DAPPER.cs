@@ -10,12 +10,12 @@ namespace P2P_lib
     public class DAPPER {
         //Deliberately Amazing Peer Practicality Estimation Ranker
         public int GetRank(Peer peer) {
-            double
-                scoreUptime = UpdateUptime(peer.IsOnline(), peer.uptimeScore, peer.timespan);
+
             int
                 scoreDiskSpace = ScoreDiskSpace(peer.diskSpace),
                 scoreLatency = ScoreLatency(peer.GetAverageLatency()),
-                scoreTotal = scoreLatency + scoreDiskSpace + Convert.ToInt32(Math.Round(scoreUptime));
+                scoreUptime = UpdateUptime(peer, false),
+                scoreTotal = scoreLatency + scoreDiskSpace + scoreUptime;
 
             return scoreTotal;
         }
@@ -35,39 +35,46 @@ namespace P2P_lib
         }
 
         //Update uptime score
-        public double UpdateUptime(bool online, double uptimeScore, long timespan) {
+        public int UpdateUptime(Peer peer, bool changedSinceLast = true) {
             int
                 max = 100000,
                 mid = max / 2;
+            bool
+                online = peer.IsOnline();
+
+            if (changedSinceLast){
+                online = !online;
+            }
 
             if (online) {
-                for (long i = 0; i < timespan; i++) {
-                    if (uptimeScore >= max) {
-                        uptimeScore = max;
+                for (long i = 0; i < peer.timespan; i++) {
+                    if (peer.uptimeScore >= max) {
+                        peer.uptimeScore = max;
                         break;
                     }
-                    else if (uptimeScore < mid) {
-                        uptimeScore++;
+                    else if (peer.uptimeScore < mid) {
+                        peer.uptimeScore++;
                     }
-                    else if (uptimeScore < max) {
-                        uptimeScore = uptimeScore + mid / uptimeScore;
+                    else if (peer.uptimeScore < max) {
+                        peer.uptimeScore = peer.uptimeScore + mid / peer.uptimeScore;
                     }
                 }
             } else {
-                for (long i = 0; i < timespan; i++) {
-                    if (uptimeScore <= 0) {
-                        uptimeScore = 0;
+                for (long i = 0; i < peer.timespan; i++) {
+                    if (peer.uptimeScore <= 0) {
+                        peer.uptimeScore = 0;
                         break;
                     }
-                    else if (uptimeScore > mid) {
-                        uptimeScore--;
+                    else if (peer.uptimeScore > mid) {
+                        peer.uptimeScore--;
                     }
-                    else if (uptimeScore > 0) {
-                        uptimeScore = uptimeScore - uptimeScore / mid;
+                    else if (peer.uptimeScore > 0) {
+                        peer.uptimeScore = peer.uptimeScore - peer.uptimeScore / mid;
                     }
                 }
             }
-            return uptimeScore;
+            peer.timespan = 0;
+            return Convert.ToInt32(Math.Round(peer.uptimeScore));
         }
     }
 }
