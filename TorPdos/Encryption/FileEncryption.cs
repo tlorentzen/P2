@@ -233,7 +233,7 @@ namespace Encryption{
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write)){
                     try{
                         //Tries and catches regarding opening and reading file
-                        cs.Write(ASCIIEncoding.Unicode.GetBytes(fileInformation), 0, fileInformation.Length);
+                        cs.Write(Encoding.Unicode.GetBytes(fileInformation), 0, fileInformation.Length);
                     }
                     catch (Exception e){
                         Logger.Fatal(e);

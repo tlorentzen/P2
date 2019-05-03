@@ -29,9 +29,7 @@ namespace TorPdos{
 
             string ownIp = NetworkHelper.GetLocalIpAddress();
 
-            Console.WriteLine(@"Local: " + ownIp);
-            Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalAvailableSpace("C:\\"));
-            Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
+
 
             string path = (myReg.GetValue("Path").ToString());
 
@@ -88,7 +86,9 @@ namespace TorPdos{
                                 Application.Run(torPdos);
                             }
                         }
-
+                        Console.WriteLine(@"Local: " + ownIp);
+                        Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalAvailableSpace("C:\\"));
+                        Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("reindex")){
