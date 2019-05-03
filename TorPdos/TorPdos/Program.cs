@@ -25,7 +25,7 @@ namespace TorPdos{
             if (string.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true ){
                 Application.Run(torPdos);
             }
-            else if(Directory.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == false)
+            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == false)
             {
                 Application.Run(torPdos);
             }
