@@ -282,7 +282,7 @@ namespace TorPdos
             {
                 FirstStartUp(); 
             }
-            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == true)
+            else if(File.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata") == false)
             {
                 Create();
             }
@@ -355,7 +355,7 @@ namespace TorPdos
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
-                    DiskHelper.setRegistryValue(PathName());
+                    DiskHelper.setRegistryValue(newPath);
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
