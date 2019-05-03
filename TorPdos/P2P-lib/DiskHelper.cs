@@ -35,7 +35,14 @@ namespace P2P_lib{
 
         public static string getRegistryValue(string key){
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-            return registry.GetValue(key).ToString();
+            if(registry.GetValue(key) == null)
+            {
+                return null;
+            }
+            else
+            {
+                return registry.GetValue(key).ToString();
+            } 
         }
 
         public static void setRegistryValue(string key)

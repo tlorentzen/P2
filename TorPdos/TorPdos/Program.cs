@@ -22,7 +22,11 @@ namespace TorPdos{
             RegistryKey myReg = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             MyForm torPdos = new MyForm();
 
-            if (string.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true || Directory.Exists(DiskHelper.getRegistryValue("Path")) == false){
+            if (string.IsNullOrEmpty(DiskHelper.getRegistryValue("Path")) == true ){
+                Application.Run(torPdos);
+            }
+            else if(Directory.Exists(DiskHelper.getRegistryValue("Path") + @".hidden\userdata.file") == false)
+            {
                 Application.Run(torPdos);
             }
             //End of what needs to run at the Absolute start of the program.
