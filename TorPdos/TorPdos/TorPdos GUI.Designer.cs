@@ -7,8 +7,7 @@ using Index_lib;
 using P2P_lib;
 
 namespace TorPdos
-{
-
+{ 
     public class MyForm : Form
     {
         private static readonly string
@@ -283,6 +282,10 @@ namespace TorPdos
             else if(MyReg.GetValue("Path") == null || Directory.Exists(MyReg.GetValue("Path").ToString()) == false)
             {
                 FirstStartUp(); 
+            }
+            else if(File.Exists(MyReg.GetValue("Path").ToString() + @".hidden\userdata.file") == true)
+            {
+                Create();
             }
             else
             {
