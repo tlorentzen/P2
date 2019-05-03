@@ -71,9 +71,7 @@ namespace P2P_lib.Managers
             {
                 this._waitHandle.WaitOne();
 
-                QueuedFile file;
-
-                while (this._queue.TryDequeue(out file))
+                while (this._queue.TryDequeue(out var file))
                 {
                     if (!_isRunning)
                     {
