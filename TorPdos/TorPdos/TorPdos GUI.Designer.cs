@@ -239,7 +239,7 @@ namespace TorPdos
         {
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
-            Visible = true,
+            Visible = false,
         };
         CheckBox chkCreateFolder = new CheckBox()
         {
@@ -251,6 +251,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Checked = true
         };
+
 
         public MyForm()
         {
@@ -492,6 +493,7 @@ namespace TorPdos
             {
                 e.Cancel = true;
                 Hide();
+                noiTorPdos.Visible = true;
             }
             else
             {
@@ -505,6 +507,7 @@ namespace TorPdos
         {
             Show();
             WindowState = FormWindowState.Normal;
+            noiTorPdos.Visible = false;
         }
 
         public string PathName()
