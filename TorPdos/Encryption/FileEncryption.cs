@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using NLog.Targets;
 
 namespace Encryption{
     public class FileEncryption{
@@ -15,7 +16,7 @@ namespace Encryption{
         private string Extension{ get; set; }
 
         public FileEncryption(string path, string extension){
-            Path = path;
+            this.Path = path;
             Extension = extension;
         }
 
@@ -139,6 +140,68 @@ namespace Encryption{
 
                 fsCrypt.Close();
             }
+        }
+
+        public static string[] UserDataDecrypt(string password, string path){
+            //Setup to read the salt from the start of the file
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+            byte[] salt = new byte[64];
+            string[] output = null;
+
+            Console.WriteLine(path);
+
+            //Reading through the file
+            using (FileStream fsCrypt =
+                new FileStream(path + ".aes", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
+                //Reads the random salt of the file.
+                fsCrypt.Read(salt, 0, salt.Length);
+
+
+                //Opening a new instance of Rijandeal AES
+                RijndaelManaged aes = new RijndaelManaged();
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+
+                //Takes the password, and verifies it towards the salt, read from the start of the file.
+                var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
+                aes.Key = key.GetBytes(aes.KeySize / 8);
+                aes.IV = key.GetBytes(aes.BlockSize / 8);
+
+                //The padding is used to make it harder to see the length of the encrypted text.
+                aes.Padding = PaddingMode.PKCS7;
+
+                //Cipher mode is a way to mask potential patterns within the encrypted text, to make it harder to decrypt.
+                aes.Mode = CipherMode.CFB;
+
+                //Runs through the encrypted files, and decrypts it using AES.
+                using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read)){
+                    //Creates the output file
+                    byte[] buffer = new byte[path.Length];
+
+                    using (var fileRead = new MemoryStream()){
+                        //Outputs the read file into the output file.
+                        try{
+                            int read;
+                            while ((read = cs.Read(buffer, 0, path.Length)) > 0){
+                                fileRead.Write(buffer, 0, buffer.Length);
+                            }
+
+                            var result = Encoding.Unicode.GetString(fileRead.ToArray());
+                            output = result.Split('\n');
+                        }
+                        catch (Exception e){
+                            Logger.Fatal(e);
+                        }
+                        finally{
+                            cs.Flush();
+                        }
+                    }
+
+                    cs.Close();
+                }
+            }
+
+            return output;
         }
 
         private static byte[] GetSalt(){

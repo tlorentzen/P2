@@ -203,7 +203,7 @@ namespace P2P_lib.Managers{
                 }
 
                 try{
-                    FileStream tester = new FileStream(_path + @".hidden\incoming\" + currentFile,
+                    FileStream tester = new FileStream(_path + @".hidden\incoming\"+_filehash + @"\" + currentFile,
                         FileMode.Open,
                         FileAccess.Write);
                     tester.Close();

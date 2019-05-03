@@ -220,7 +220,6 @@ namespace P2P_lib.Managers
             {
                 if (hasFile.Contains(peer.UUID))
                 {
-                    Console.WriteLine("GOT HERE");
                     result.Add(peer);
                 }
             }
