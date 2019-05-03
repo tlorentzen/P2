@@ -235,11 +235,20 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
+        Button btnOkay = new Button()
+        {
+            Location = new Point(posConfirmW, posConfirmH),
+            Width = confirmBtnW,
+            Height = confirmBtnH,
+            Text = "Okay",
+            Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
         NotifyIcon noiTorPdos = new NotifyIcon()
         {
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
-            Visible = true,
+            Visible = false,
         };
         CheckBox chkCreateFolder = new CheckBox()
         {
@@ -251,6 +260,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Checked = true
         };
+
 
         public MyForm()
         {
@@ -266,7 +276,10 @@ namespace TorPdos
             BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
 
-
+            if(NetworkPorts.IsPortAvailable(25565) == false)
+            {
+                Sorry();
+            }
             if (MyReg.GetValue("Path") == null || Directory.Exists(MyReg.GetValue("Path").ToString()) == false)
             {
                 FirstStartUp();
@@ -293,7 +306,14 @@ namespace TorPdos
             btnConfirmPath.Click += BtnConfirmPath;
             btnChangePath.Click += BtnChangePathClick;
             btnLogout.Click += BtnLogOutClick;
+            btnOkay.Click += BtnOkayClick;
         }
+
+        private void BtnOkayClick(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
         private void BtnCreateClick(object sender, EventArgs e)
         {
             if (txtPassword.Text == txtConfirmPassword.Text)
@@ -480,6 +500,11 @@ namespace TorPdos
             Controls.Add(btnLogout);   
         }
 
+        private void Sorry()
+        {
+            MessageBox.Show("Sorry that port is unavailable, the program will now close. Please close MineCraft you bakaneko");
+            Controls.Add(btnOkay);
+        }
         private void BtnLogOutClick(object sender, EventArgs e)
         {
             Login();
@@ -492,6 +517,7 @@ namespace TorPdos
             {
                 e.Cancel = true;
                 Hide();
+                noiTorPdos.Visible = true;
             }
             else
             {
@@ -505,6 +531,7 @@ namespace TorPdos
         {
             Show();
             WindowState = FormWindowState.Normal;
+            noiTorPdos.Visible = false;
         }
 
         public string PathName()

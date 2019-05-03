@@ -91,7 +91,7 @@ namespace P2P_lib.Managers{
                     }
 
                     // Compress file
-                    ByteCompressor.CompressFile(filePath, compressedFilePath);
+                    Compressor.CompressFile(filePath, compressedFilePath);
 
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");

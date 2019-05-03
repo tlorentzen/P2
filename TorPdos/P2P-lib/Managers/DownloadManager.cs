@@ -231,7 +231,7 @@ namespace P2P_lib.Managers{
 
             // Decompress file
             string pathToFileForCopying =
-                ByteCompressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
+                Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
             Console.WriteLine("File decompressed");
             foreach (string filePath in _index.GetEntry(_filehash).paths){
                 File.Copy(pathToFileForCopying, filePath);
