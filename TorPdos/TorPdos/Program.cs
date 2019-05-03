@@ -28,42 +28,7 @@ namespace TorPdos{
             //End of what needs to run at the Absolute start of the program.
 
             string ownIp = NetworkHelper.GetLocalIpAddress();
-
-
-
             string path = (myReg.GetValue("Path").ToString());
-
-            // Load Index
-            if (!Directory.Exists(path)){
-                Directory.CreateDirectory(path);
-            }
-
-            _idx = new Index(path);
-            _idx.Load();
-            _idx.FileAdded += Idx_FileAdded;
-            _idx.FileChanged += Idx_FileChanged;
-            _idx.FileDeleted += Idx_FileDeleted;
-            _idx.FileMissing += Idx_FileMissing;
-
-            if (!_idx.Load()){
-                _idx.BuildIndex();
-            }
-
-            _idx.Start();
-
-            // Prepare P2PNetwork
-            try{
-                _p2P = new Network(25565, _idx, path);
-                _p2P.Start();
-            }
-            catch (SocketException){
-                Application.Run(torPdos);
-            }
-
-
-            Console.WriteLine(@"Integrity check initialized...");
-            _idx.MakeIntegrityCheck();
-            Console.WriteLine(@"Integrity check finished!");
 
             Console.WriteLine(IdHandler.GetUuid());
             while (running){
@@ -86,9 +51,41 @@ namespace TorPdos{
                                 Application.Run(torPdos);
                             }
                         }
+                        // Load Index
+                        if (!Directory.Exists(path)){
+                            Directory.CreateDirectory(path);
+                        }
+
+                        _idx = new Index(path);
+                        _idx.Load();
+                        _idx.FileAdded += Idx_FileAdded;
+                        _idx.FileChanged += Idx_FileChanged;
+                        _idx.FileDeleted += Idx_FileDeleted;
+                        _idx.FileMissing += Idx_FileMissing;
+
+                        if (!_idx.Load()){
+                            _idx.BuildIndex();
+                        }
+
+                        _idx.Start();
+
+                        // Prepare P2PNetwork
+                        try{
+                            _p2P = new Network(25565, _idx, path);
+                            _p2P.Start();
+                        }
+                        catch (SocketException){
+                            Application.Run(torPdos);
+                        }
+                        
+                        Console.WriteLine(@"Integrity check initialized...");
+                        _idx.MakeIntegrityCheck();
+                        Console.WriteLine(@"Integrity check finished!");
+                        
                         Console.WriteLine(@"Local: " + ownIp);
                         Console.WriteLine(@"Free space on C: " + DiskHelper.getTotalAvailableSpace("C:\\"));
                         Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
+                        
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("reindex")){
