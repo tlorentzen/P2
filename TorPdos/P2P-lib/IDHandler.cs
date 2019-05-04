@@ -102,11 +102,10 @@ namespace P2P_lib{
                 try{
                     if (_uuId != null){
                         return _uuId;
-                    } else{
-                        _uuId = FileEncryption.UserDataDecrypt(password, path)[1];
-                        _keyMold = FileEncryption.UserDataDecrypt(password, path)[0];
-                        return _uuId;
                     }
+                    _uuId = FileEncryption.UserDataDecrypt(password, path)[1];
+                    _keyMold = FileEncryption.UserDataDecrypt(password, path)[0];
+                    return _uuId;
                 }
                 catch (Exception){
                     return null;

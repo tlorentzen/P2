@@ -175,17 +175,20 @@ namespace Encryption{
                 //Runs through the encrypted files, and decrypts it using AES.
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read)){
                     //Creates the output file
-                    byte[] buffer = new byte[path.Length];
+                    byte[] buffer = new byte[BufferSize];
 
                     using (var fileRead = new MemoryStream()){
                         //Outputs the read file into the output file.
-                        try{
-                            while ((cs.Read(buffer, 0, path.Length)) > 0){
-                                fileRead.Write(buffer, 0, buffer.Length);
+                        try{int read;
+                            while ((read = cs.Read(buffer, 0, buffer.Length)) > 0){
+                                fileRead.Write(buffer, 0, read);
                             }
 
                             var result = Encoding.UTF8.GetString(fileRead.ToArray());
+                            Console.WriteLine("Complete result:" + result);
                             output = result.Split('\n');
+                            Console.WriteLine("UUID Check: "+ output[1]);
+                            Console.WriteLine("KeyLog Check: "+ output[0]);
                         }
                         catch (Exception e){
                             Logger.Fatal(e);
@@ -230,14 +233,15 @@ namespace Encryption{
                 //Runs through the file using CryptoStream
                 using (CryptoStream cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write)){
                     try{
+                        var buffer = Encoding.UTF8.GetBytes(fileInformation);
                         //Tries and catches regarding opening and reading file
-                        cs.Write(Encoding.UTF8.GetBytes(fileInformation), 0, fileInformation.Length);
+                        cs.Write(buffer, 0, buffer.Length);
                     }
                     catch (Exception e){
                         Logger.Fatal(e);
                     }
 
-
+                    cs.Flush();
                     cs.Close();
                 }
 
