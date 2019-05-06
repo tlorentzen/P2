@@ -270,7 +270,7 @@ namespace TorPdos
         void EventHandlers()
         {
             noiTorPdos.Click += noiTorPdosClick;
-            FormClosing += MyFormClosing;
+            //FormClosing += MyFormClosing;
             btnLogin.Click += BtnLoginClick;
             btnBrowse.Click += BtnBrowseClick;
             btnCreate.Click += BtnCreateClick;
@@ -474,17 +474,17 @@ namespace TorPdos
 
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
-            //if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
-            //{
-            //    e.Cancel = true;
-            //    Hide();
-            //    noiTorPdos.Visible = true;
-            //}
-            //else
-            //{
-            //    noiTorPdos.Visible = false;
-            //    Environment.Exit(0);
-            //}
+            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+            {
+                e.Cancel = true;
+                Hide();
+                noiTorPdos.Visible = true;
+            }
+            else
+            {
+                noiTorPdos.Visible = false;
+                Environment.Exit(0);
+            }
         }
 
         void noiTorPdosClick(object sender, EventArgs e)
