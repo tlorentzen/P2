@@ -328,8 +328,8 @@ namespace P2P_lib{
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statusCode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fileHash + @"\" +
-                                  message.fullFileHash;
+                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
+                                  message.fileHash;
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
