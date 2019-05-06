@@ -20,7 +20,7 @@ namespace P2P_lib.Messages{
         public string from;
         public StatusCode statusCode;
         public TypeCode type;
-        private readonly NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
+        private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
 
         public Type GetMessageType(){
             return this.GetType();

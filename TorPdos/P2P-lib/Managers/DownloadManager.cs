@@ -25,7 +25,7 @@ namespace P2P_lib.Managers{
         public bool isStopped;
         private readonly HashHandler _hashList;
         private List<string> _downloadQueue;
-        private readonly NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
+        private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
 
         private ConcurrentDictionary<string, List<string>> _sentTo;
         private List<Receiver> _receivers;
