@@ -327,7 +327,7 @@ namespace TorPdos
 
         void BtnLoginClick(object sender, EventArgs e)
         {
-            string pass = txtConfirmPassword.Text;
+            string pass = txtPassword.Text;
             if (IdHandler.IsValidUser(pass))
             {
                 LoggedIn();
@@ -391,14 +391,10 @@ namespace TorPdos
             Controls.Clear();
             int tabNumber = 0;
 
-            //TXT: Username
-            txtUsername.TabIndex = tabNumber++;
-            Controls.Add(txtUsername);
-
-            //TXT: Confirm password
-            txtConfirmPassword.TabIndex = tabNumber++;
-            txtConfirmPassword.Text = null;
-            Controls.Add(txtConfirmPassword);
+            //TXT: Password
+            txtPassword.TabIndex = tabNumber++;
+            txtPassword.Text = null;
+            Controls.Add(txtPassword);
 
             //BTN: Login
             btnLogin.TabIndex = tabNumber++;
@@ -409,8 +405,7 @@ namespace TorPdos
             Controls.Add(btnChangePath);
 
             //Labels
-            Controls.Add(lblUsername);
-            Controls.Add(lblLoginPassword);
+            Controls.Add(lblPassword);
 
             AcceptButton = btnLogin;
 
