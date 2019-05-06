@@ -41,15 +41,6 @@ namespace TorPdos
             textSizeBtn = textSizeDefault; //25
         public bool loggedIn = false;
 
-        Label lblUsername = new Label
-        {
-            Location = new Point(leftAlign, posFirst),
-            Height = 25,
-            Width = 150,
-            Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
-            Text = "User ID:",
-            ForeColor = ColorTranslator.FromHtml(lblColour)
-        };
         Label lblPassword = new Label
         {
             Location = new Point(leftAlign, posFirst),
@@ -66,15 +57,6 @@ namespace TorPdos
             Width = 150,
             Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
             Text = "Confirm password:",
-            ForeColor = ColorTranslator.FromHtml(lblColour)
-        };
-        Label lblLoginPassword = new Label()
-        {
-            Location = new Point(leftAlign, posSecond),
-            Height = 25,
-            Width = 150,
-            Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
-            Text = "Password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
         Label lblBrowse = new Label()
@@ -130,15 +112,6 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeDefault, FontStyle.Regular),
             Text = "Log out",
             ForeColor = ColorTranslator.FromHtml(lblColour)
-        };
-        TextBox txtUsername = new TextBox()
-        {
-            Location = new Point(leftAlign, posFirst + 20),
-            Height = 45,
-            Width = boxWidth,
-            Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
-            ForeColor = ColorTranslator.FromHtml(backgroundColour),
-            BackColor = ColorTranslator.FromHtml(txtColour)
         };
         TextBox txtPassword = new TextBox()
         {
@@ -317,7 +290,6 @@ namespace TorPdos
             {
                 IdHandler.CreateUser(txtPassword.Text);
                 Login();
-                txtUsername.Text = IdHandler.GetUuid();
             }
             else
             {
@@ -408,11 +380,6 @@ namespace TorPdos
             Controls.Add(lblPassword);
 
             AcceptButton = btnLogin;
-
-            if (IdHandler.GetUuid() != null)
-            {
-                txtUsername.Text = IdHandler.GetUuid();
-            }
         }
 
         public void FirstStartUp()
