@@ -344,12 +344,14 @@ namespace P2P_lib{
                 }
             } else if (message.type.Equals((TypeCode.RESPONSE))){
                 if (message.statusCode.Equals(StatusCode.OK)){
+                    
                     List<string> updatedList = _locationDb[message.fileHash];
                     updatedList.Remove(message.fromUuid);
+                    
                     if (updatedList.Count == 0){
                         _locationDb.TryRemove(message.fileHash, out _);
                     } else{
-                        _locationDb[message.fileHash] = updatedList;
+                        _locationDb.TryAdd(message.fileHash,updatedList);
                     }
                 } else if (message.statusCode.Equals(StatusCode.FILE_NOT_FOUND)){
                     List<string> updatedList = _locationDb[message.fileHash];
@@ -357,7 +359,7 @@ namespace P2P_lib{
                     if (updatedList.Count == 0){
                         _locationDb.TryRemove(message.fileHash, out _);
                     } else{
-                        _locationDb[message.fileHash] = updatedList;
+                        _locationDb.TryAdd(message.fileHash,updatedList);
                     }
 
                     Console.WriteLine("File not found at peer");
