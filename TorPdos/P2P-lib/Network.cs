@@ -328,7 +328,7 @@ namespace P2P_lib{
             Console.WriteLine("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statusCode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.filehash + @"\" +
+                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fileHash + @"\" +
                                   message.fullFileHash;
                     Console.WriteLine(path);
                     if (File.Exists(path)){
@@ -344,20 +344,20 @@ namespace P2P_lib{
                 }
             } else if (message.type.Equals((TypeCode.RESPONSE))){
                 if (message.statusCode.Equals(StatusCode.OK)){
-                    List<string> updatedList = _locationDb[message.filehash];
+                    List<string> updatedList = _locationDb[message.fileHash];
                     updatedList.Remove(message.fromUuid);
                     if (updatedList.Count == 0){
-                        _locationDb.TryRemove(message.filehash, out _);
+                        _locationDb.TryRemove(message.fileHash, out _);
                     } else{
-                        _locationDb[message.filehash] = updatedList;
+                        _locationDb[message.fileHash] = updatedList;
                     }
                 } else if (message.statusCode.Equals(StatusCode.FILE_NOT_FOUND)){
-                    List<string> updatedList = _locationDb[message.filehash];
+                    List<string> updatedList = _locationDb[message.fileHash];
                     updatedList.Remove(message.fromUuid);
                     if (updatedList.Count == 0){
-                        _locationDb.TryRemove(message.filehash, out _);
+                        _locationDb.TryRemove(message.fileHash, out _);
                     } else{
-                        _locationDb[message.filehash] = updatedList;
+                        _locationDb[message.fileHash] = updatedList;
                     }
 
                     Console.WriteLine("File not found at peer");
