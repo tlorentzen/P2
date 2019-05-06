@@ -32,11 +32,12 @@ namespace TorPdos{
             string path = (DiskHelper.GetRegistryValue("Path"));
 
             Console.WriteLine(IdHandler.GetUuid());
+            Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
             while (running){
                 string console = Console.ReadLine();
                 if (console != null){
                     string[] param = console.Split(' ');
-
+                    
                     if (console.Equals("quit") || console.Equals("q")){
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
@@ -45,7 +46,9 @@ namespace TorPdos{
                         _p2P.Stop();
                         running = false;
                     } else{
+                        
                         while (IdHandler.GetUuid() == null){
+                            
                             if (console.StartsWith("login") && param.Length == 2){
                                 IdHandler.GetUuid(param[1]);
                             } else if (console.Equals("gui")){

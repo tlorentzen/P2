@@ -9,7 +9,7 @@ namespace P2P_lib{
             driveName = driveName.Split('\\')[0] + '\\';
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
                 if (drive.IsReady && drive.Name == driveName){
-                    return drive.TotalFreeSpace - (long)(drive.TotalSize * 0.2);
+                    return drive.TotalFreeSpace - (long) (drive.TotalSize * 0.2);
                 }
             }
 
@@ -35,14 +35,11 @@ namespace P2P_lib{
 
         public static string GetRegistryValue(string key){
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-            if(registry.GetValue(key) == null)
-            {
+            if (registry.GetValue(key) == null){
                 return null;
-            }
-            else
-            {
+            } else{
                 return registry.GetValue(key).ToString();
-            } 
+            }
         }
 
         public static void SetRegistryValue(string key){
