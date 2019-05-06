@@ -74,6 +74,8 @@ namespace TorPdos{
                             }
                             catch (SocketException){
                                 Application.Run(torPdos);
+                                Console.WriteLine(NetworkPorts.IsPortAvailable(25565).ToString());
+                                Console.ReadKey();
                             }
                         
                             Console.WriteLine(@"Integrity check initialized...");
@@ -86,16 +88,12 @@ namespace TorPdos{
                             firstRun = false;
                         }
                         while (IdHandler.GetUuid() == null){
-                            
                             if (console.StartsWith("login") && param.Length == 2){
                                 IdHandler.GetUuid(param[1]);
                             } else if (console.Equals("gui")){
                                 Application.Run(torPdos);
                             }
                         }
-                        
-
-                        
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("reindex")){
