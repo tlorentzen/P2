@@ -12,11 +12,13 @@ namespace TorPdos{
         static Network _p2P;
         public static string publicUuid;
         public static string filePath;
+        
 
         [STAThread]
         static void Main(){
             //Start of what needs to run at the Absolute start of the program.
             bool running = true;
+            bool firstRun = true;
             MyForm torPdos = new MyForm();
             
             if (string.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path"))){
@@ -46,7 +48,43 @@ namespace TorPdos{
                         _p2P.Stop();
                         running = false;
                     } else{
+                        if (firstRun){
+                            // Load Index
+                            if (!Directory.Exists(path)){
+                                Directory.CreateDirectory(path);
+                            }
+
+                            _idx = new Index(path);
+                            _idx.Load();
+                            _idx.FileAdded += Idx_FileAdded;
+                            _idx.FileChanged += Idx_FileChanged;
+                            _idx.FileDeleted += Idx_FileDeleted;
+                            _idx.FileMissing += Idx_FileMissing;
+
+                            if (!_idx.Load()){
+                                _idx.BuildIndex();
+                            }
+
+                            _idx.Start();
+
+                            // Prepare P2PNetwork
+                            try{
+                                _p2P = new Network(25565, _idx, path);
+                                _p2P.Start();
+                            }
+                            catch (SocketException){
+                                Application.Run(torPdos);
+                            }
                         
+                            Console.WriteLine(@"Integrity check initialized...");
+                            _idx.MakeIntegrityCheck();
+                            Console.WriteLine(@"Integrity check finished!");
+                        
+                            Console.WriteLine(@"Local: " + ownIp);
+                            Console.WriteLine(@"Free space on C: " + DiskHelper.GetTotalAvailableSpace("C:\\"));
+                            Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
+                            firstRun = false;
+                        }
                         while (IdHandler.GetUuid() == null){
                             
                             if (console.StartsWith("login") && param.Length == 2){
@@ -55,40 +93,8 @@ namespace TorPdos{
                                 Application.Run(torPdos);
                             }
                         }
-                        // Load Index
-                        if (!Directory.Exists(path)){
-                            Directory.CreateDirectory(path);
-                        }
-
-                        _idx = new Index(path);
-                        _idx.Load();
-                        _idx.FileAdded += Idx_FileAdded;
-                        _idx.FileChanged += Idx_FileChanged;
-                        _idx.FileDeleted += Idx_FileDeleted;
-                        _idx.FileMissing += Idx_FileMissing;
-
-                        if (!_idx.Load()){
-                            _idx.BuildIndex();
-                        }
-
-                        _idx.Start();
-
-                        // Prepare P2PNetwork
-                        try{
-                            _p2P = new Network(25565, _idx, path);
-                            _p2P.Start();
-                        }
-                        catch (SocketException){
-                            Application.Run(torPdos);
-                        }
                         
-                        Console.WriteLine(@"Integrity check initialized...");
-                        _idx.MakeIntegrityCheck();
-                        Console.WriteLine(@"Integrity check finished!");
-                        
-                        Console.WriteLine(@"Local: " + ownIp);
-                        Console.WriteLine(@"Free space on C: " + DiskHelper.GetTotalAvailableSpace("C:\\"));
-                        Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
+
                         
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
