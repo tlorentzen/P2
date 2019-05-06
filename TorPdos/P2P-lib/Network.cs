@@ -127,7 +127,7 @@ namespace P2P_lib{
             Type msgType = message.GetMessageType();
 
             if (msgType == typeof(PingMessage)){
-                RechievedPing((PingMessage) message);
+                ReceivedPing((PingMessage) message);
             } else if (msgType == typeof(UploadMessage)){
                 ReceivedUpload((UploadMessage) message);
             } else if (msgType == typeof(DownloadMessage)){
@@ -255,7 +255,7 @@ namespace P2P_lib{
             }
         }
 
-        private void RechievedPing(PingMessage ping){
+        private void ReceivedPing(PingMessage ping){
             // Update peer
             foreach (var peer in _peers){
                 if (peer.Value.GetUuid().Equals(ping.fromUuid)){
@@ -263,6 +263,7 @@ namespace P2P_lib{
                     peer.Value.UpdateLastSeen();
                     peer.Value.SetOnline(true);
                     peer.Value.diskSpace = ping.diskSpace;
+                    peer.Value.AddPingToList(ping.GetPingTime());
                 }
             }
 
@@ -273,10 +274,10 @@ namespace P2P_lib{
                 ping.diskSpace = DiskHelper.GetTotalAvailableSpace(_path);
                 ping.Send();
             } else{
-                // Recheved response, should send peerlist
+                // Received response, should send peerlist
                 PeerFetcherMessage peerFetch = new PeerFetcherMessage(GetAPeer(ping.fromUuid));
                 peerFetch.peers = this.GetPeerList();
-                //Removed the rechiever from the list, as he should not add himself
+                // Removed the receiver from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.peers){
                     if (string.Compare(peer.GetIp().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
                         peerFetch.peers.Remove(peer);

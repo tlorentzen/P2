@@ -13,7 +13,7 @@ namespace P2P_lib{
         private int _pingsWithoutResponse;
         private long _nextPing;
         private bool _online;
-        private int[] _pingList = new int[] {-1, -1, -1, -1, -1};
+        private long[] _pingList = new long[] {-1, -1, -1, -1, -1};
         public long diskSpace, timespan = 0;
         public double uptimeScore = 50000;
 
@@ -146,7 +146,7 @@ namespace P2P_lib{
         }
 
         //Adds newPing to _pingList by replacing oldest ping
-        public int AddPingToList(int newPing){
+        public int AddPingToList(long newPing){
             if (this._pingList[0] == -1){
                 for (int i = 0; i < _pingList.Length; i++){
                     this._pingList[i] = newPing;
@@ -161,8 +161,8 @@ namespace P2P_lib{
         }
 
         //Gets average latency from _pingList
-        public int GetAverageLatency(){
-            int sum = 0;
+        public long GetAverageLatency(){
+            long sum = 0;
             for (int i = 0; i < _pingList.Length; i++){
                 sum += this._pingList[i];
             }
