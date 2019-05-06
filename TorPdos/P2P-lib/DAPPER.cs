@@ -24,7 +24,7 @@ namespace P2P_lib
         }
 
         //Calc score from average latency
-        private int ScoreLatency(int ping) {
+        private int ScoreLatency(long ping) {
             int score = ping < 50 ? 50000 : ping < 100 ? 25000 : 0;
             return score;
         }
