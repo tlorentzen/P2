@@ -25,7 +25,7 @@ namespace Compression{
             return decompressed;
         }
 
-        public static void CompressFile(string inPath, string outPath){
+        public static bool CompressFile(string inPath, string outPath){
             int pakg = 1;
 
             if (File.Exists(inPath)){
@@ -101,6 +101,8 @@ namespace Compression{
             else{
                 logger.Fatal(new FileNotFoundException());
             }
+
+            return true;
         }
 
         public static string DecompressFile(string inPath, string outPath){

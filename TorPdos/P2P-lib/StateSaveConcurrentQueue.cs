@@ -36,7 +36,7 @@ namespace P2P_lib{
         public bool Save(string path){
             var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects,Formatting = Formatting.Indented};
             string output = JsonConvert.SerializeObject(this, settings);
-            Console.WriteLine("Queue size: " + this.Count);
+            
             using (var fileStream = new FileStream(path, FileMode.Create)){
                 byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);

@@ -53,7 +53,7 @@ namespace Splitter_lib{
             }
         }
 
-        public void MergeFiles(string inputDir, string outputFilePath, List<string> fileList){
+        public void  MergeFiles(string inputDir, string outputFilePath, List<string> fileList){
             if (Directory.Exists(inputDir)){
                 if (fileList.Count > 0){
                     if (!File.Exists(outputFilePath)){
@@ -67,6 +67,7 @@ namespace Splitter_lib{
                         }
                     }
                 }
+                
             } else{
                 throw new FileNotFoundException();
             }

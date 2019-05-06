@@ -19,7 +19,7 @@ namespace Encryption{
             Extension = extension;
         }
 
-        public void DoEncrypt(string password){
+        public bool DoEncrypt(string password){
             //Uses the GetSalt function to create the salt for the encryption.
             var salt = GetSalt();
 
@@ -63,6 +63,7 @@ namespace Encryption{
                             }
                             catch (Exception e){
                                 Logger.Fatal(e);
+                                return false;
                             }
                             finally{
                                 fsIn.Close();
@@ -71,9 +72,11 @@ namespace Encryption{
                     }
                     catch (FileNotFoundException e){
                         Logger.Fatal(e);
+                        return false;
                     }
                     catch (Exception e){
                         Logger.Warn(e);
+                        return false;
                     }
 
                     cs.Close();
@@ -81,6 +84,8 @@ namespace Encryption{
 
                 fsCrypt.Close();
             }
+
+            return true;
         }
 
         public void DoDecrypt(string password){

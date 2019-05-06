@@ -48,8 +48,7 @@ namespace P2P_lib.Managers{
                         break;
                     }
                     foreach (var hash in _hashList.GetEntry(item)){
-                        List<string> receiversOfTheFileUuid = _locationDb[hash];
-                        Console.WriteLine(_locationDb.Count);
+                        _locationDb.TryGetValue(hash,out var receiversOfTheFileUuid);
                         foreach (var currentReceiverUuid in receiversOfTheFileUuid){
 
                             if (_peers.TryGetValue(currentReceiverUuid, out Peer currentReceiver)){

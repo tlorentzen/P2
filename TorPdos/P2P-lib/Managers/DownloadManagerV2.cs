@@ -9,10 +9,8 @@ using Index_lib;
 using P2P_lib.Messages;
 using Splitter_lib;
 
-namespace P2P_lib.Managers
-{
-    class DownloadManagerV2 : Manager
-    {
+namespace P2P_lib.Managers{
+    class DownloadManagerV2 : Manager{
         private bool _isRunning = true;
         private readonly int _port;
         private string _fileHash;
@@ -32,18 +30,15 @@ namespace P2P_lib.Managers
 
         private ConcurrentDictionary<string, List<string>> _sentTo;
 
-        public ConcurrentDictionary<string, List<string>> SentTo
-        {
+        public ConcurrentDictionary<string, List<string>> SentTo{
             get => _sentTo;
-            set
-            {
+            set{
                 if (_sentTo == null) _sentTo = value;
             }
         }
 
         public DownloadManagerV2(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers, Index index, HashHandler hashList)
-        {
+            ConcurrentDictionary<string, Peer> peers, Index index, HashHandler hashList){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -59,35 +54,28 @@ namespace P2P_lib.Managers
             _receiver.Start();
         }
 
-        private void QueueElementAddedToQueue()
-        {
+        private void QueueElementAddedToQueue(){
             this._waitHandle.Set();
         }
 
-        public void Run()
-        {
+        public void Run(){
             isStopped = false;
-            while (_isRunning)
-            {
+            while (_isRunning){
                 this._waitHandle.WaitOne();
 
-                while (this._queue.TryDequeue(out var file))
-                {
-                    if (!_isRunning)
-                    {
+                while (this._queue.TryDequeue(out var file)){
+                    if (!_isRunning){
                         this._queue.Enqueue(file);
                         break;
                     }
 
                     _fileHash = file.GetHash();
 
-                    try
-                    {
+                    try{
                         _fileList = _hashList.GetEntry(_fileHash);
                         _downloadQueue = _hashList.GetEntry(_fileHash);
                     }
-                    catch (KeyNotFoundException e)
-                    {
+                    catch (KeyNotFoundException e){
                         _logger.Warn(
                             e +
                             " \n Requested file not found in hashfile, located in \\hidden\\hashList.json. \n Requested hash: " +
@@ -98,46 +86,37 @@ namespace P2P_lib.Managers
 
 
                     List<string> updatedDownloadQueue = new List<string>();
-                    if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _fileHash))
-                    {
-                        foreach (var currentFile in _downloadQueue)
-                        {
-                            if (!File.Exists(_path + @".hidden\" + @"incoming\" + _fileHash + @"\" + currentFile))
-                            {
+                    if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _fileHash)){
+                        foreach (var currentFile in _downloadQueue){
+                            if (!File.Exists(_path + @".hidden\" + @"incoming\" + _fileHash + @"\" + currentFile)){
                                 updatedDownloadQueue.Add(currentFile);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else{
                         updatedDownloadQueue = _downloadQueue;
                     }
 
 
-                    foreach (var currentFileHash in updatedDownloadQueue)
-                    {
+                    foreach (var currentFileHash in updatedDownloadQueue){
                         List<Peer> onlinePeers = this.GetPeers();
                         //See if any online peers have the file
                         List<string> sentToPeers = new List<string>();
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
 
-                        if (onlinePeers.Count == 0)
-                        {
+                        if (onlinePeers.Count == 0){
                             //Console.WriteLine("No online peers with file");
                             _queue.Enqueue(file);
                             break;
                         }
-                        
+
                         Console.WriteLine(currentFileHash);
-                        if (!_sentTo.ContainsKey(currentFileHash))
-                        {
+                        if (!_sentTo.ContainsKey(currentFileHash)){
                             Console.WriteLine("File not on network");
                             continue;
                         }
 
-                        foreach (var onlinePeer in onlinePeers)
-                        {
+                        foreach (var onlinePeer in onlinePeers){
                             DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
                             downloadMessage.port = _port;
                             downloadMessage.fullFileName = file.GetHash();
@@ -155,15 +134,11 @@ namespace P2P_lib.Managers
             isStopped = true;
         }
 
-        private void _receiver_MessageReceived(BaseMessage msg)
-        {
-            if (msg.GetMessageType() == typeof(DownloadMessage))
-            {
-                DownloadMessage download = (DownloadMessage)msg;
-                if (download.type.Equals(Messages.TypeCode.RESPONSE))
-                {
-                    if (download.statusCode == StatusCode.ACCEPTED)
-                    {
+        private void _receiver_MessageReceived(BaseMessage msg){
+            if (msg.GetMessageType() == typeof(DownloadMessage)){
+                DownloadMessage download = (DownloadMessage) msg;
+                if (download.type.Equals(Messages.TypeCode.RESPONSE)){
+                    if (download.statusCode == StatusCode.ACCEPTED){
                         download.CreateReply();
                         download.type = Messages.TypeCode.REQUEST;
                         download.statusCode = StatusCode.ACCEPTED;
@@ -179,28 +154,22 @@ namespace P2P_lib.Managers
                         Console.WriteLine("FileReceiver opened");
                         download.Send();
                         _ports.Release(download.port);
-                    }
-                    else if (download.statusCode == StatusCode.FILE_NOT_FOUND)
-                    {
+                    } else if (download.statusCode == StatusCode.FILE_NOT_FOUND){
                         Console.WriteLine("File not found at peer.");
                     }
                 }
             }
         }
 
-        private void FileReceiverFileSuccessfullyDownloaded(string path)
-        {
+        private void FileReceiverFileSuccessfullyDownloaded(string path){
             Console.WriteLine("File downloaded");
             RestoreOriginalFile(path);
         }
 
-        private List<Peer> GetPeers()
-        {
+        private List<Peer> GetPeers(){
             List<Peer> availablePeers = new List<Peer>();
-            foreach (var peer in this._peers)
-            {
-                if (peer.Value.IsOnline())
-                {
+            foreach (var peer in this._peers){
+                if (peer.Value.IsOnline()){
                     availablePeers.Add(peer.Value);
                 }
             }
@@ -208,13 +177,10 @@ namespace P2P_lib.Managers
             return availablePeers;
         }
 
-        private List<Peer> OnlinePeersWithFile(List<Peer> peerlist, List<string> hasFile)
-        {
+        private List<Peer> OnlinePeersWithFile(List<Peer> peerlist, List<string> hasFile){
             List<Peer> result = new List<Peer>();
-            foreach (Peer peer in peerlist)
-            {
-                if (hasFile.Contains(peer.UUID))
-                {
+            foreach (Peer peer in peerlist){
+                if (hasFile.Contains(peer.UUID)){
                     result.Add(peer);
                 }
             }
@@ -222,14 +188,11 @@ namespace P2P_lib.Managers
             return result;
         }
 
-        private void RestoreOriginalFile(string path)
-        {
-            foreach (var currentFile in _fileList)
-            {
-                if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile))
-                {
+        private void RestoreOriginalFile(string path){
+            foreach (var currentFile in _fileList){
+                if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile)){
                     return;
-                } 
+                }
             }
 
             Console.WriteLine("File exist");
@@ -240,6 +203,7 @@ namespace P2P_lib.Managers
             splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
                 _fileList);
+
 
             // Decrypt file
             FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
@@ -252,20 +216,18 @@ namespace P2P_lib.Managers
             string pathToFileForCopying =
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
             Console.WriteLine("File decompressed");
-            foreach (string filePath in _index.GetEntry(_fileHash).paths)
-            {
+            foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 File.Copy(pathToFileForCopying, filePath);
                 Console.WriteLine("File send to: {0}", filePath);
             }
         }
 
-        public override bool Shutdown()
-        {
+        public override bool Shutdown(){
             _isRunning = false;
             _waitHandle.Set();
             this._receiver.Stop();
             Console.Write("Download thread stopping... ");
-            while (!this.isStopped) { }
+            while (!this.isStopped){ }
 
             Console.Write("Stopped!");
             return true;

@@ -87,12 +87,21 @@ namespace P2P_lib.Managers{
                     }
 
                     // Compress file
-                    Compressor.CompressFile(filePath, compressedFilePath);
-
+                    bool compressionCompleted = Compressor.CompressFile(filePath, compressedFilePath);
+                    if (!compressionCompleted){
+                        this._queue.Enqueue(file);
+                        continue;
+                    }
+                    
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
-                    encryption.DoEncrypt(IdHandler.GetKeyMold());
+                    
+                    bool encryptionCompleted = encryption.DoEncrypt(IdHandler.GetKeyMold());
                     //_hiddenFolder.removeFile(compressedFilePath + ".lzma");
+                    if (!encryptionCompleted){
+                        this._queue.Enqueue(file);
+                        continue;
+                    }
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     // Split
