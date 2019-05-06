@@ -229,19 +229,7 @@ namespace P2P_lib.Managers
                 if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile))
                 {
                     return;
-                }
-
-                try
-                {
-                    FileStream tester = new FileStream(_path + @".hidden\incoming\" + currentFile,
-                        FileMode.Open,
-                        FileAccess.Write);
-                    tester.Close();
-                }
-                catch (Exception)
-                {
-                    return;
-                }
+                } 
             }
 
             Console.WriteLine("File exist");
