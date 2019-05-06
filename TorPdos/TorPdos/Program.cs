@@ -77,9 +77,12 @@ namespace TorPdos{
                         try{
                             _p2P = new Network(25565, _idx, path);
                             _p2P.Start();
+                            
                         }
                         catch (SocketException){
                             Application.Run(torPdos);
+                            Console.WriteLine(NetworkPorts.IsPortAvailable(25565).ToString());
+                            Console.ReadKey();
                         }
                         
                         Console.WriteLine(@"Integrity check initialized...");

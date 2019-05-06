@@ -264,6 +264,7 @@ namespace TorPdos
                 Login();
             }
             EventHandlers();
+            
         }
 
         void EventHandlers()
