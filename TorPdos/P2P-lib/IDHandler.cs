@@ -108,7 +108,8 @@ namespace P2P_lib{
                     return _uuId;
                 }
                 catch (Exception){
-                    return null;
+                    //return null;
+                    return "Invalid Password";
                 }
             } else{
                 return null;

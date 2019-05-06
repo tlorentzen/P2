@@ -48,6 +48,26 @@ namespace TorPdos{
                         _p2P.Stop();
                         running = false;
                     } else{
+                        while (IdHandler.GetUuid() == null) {
+                            
+                            
+                            if (console.StartsWith("login") && param.Length == 2) {
+                                if (IdHandler.GetUuid(param[1]) == "Invalid Password") {
+                                    Console.WriteLine();
+                                    Console.WriteLine("Invalid password, try again");
+                                    Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
+                                    console = Console.ReadLine();
+                                    param = console.Split(' ');
+                                }
+                            } else if (console.Equals("gui")) {
+                                Application.Run(torPdos);
+                            } else {
+                                Console.WriteLine("Error! Try again");
+                                Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
+                                console = Console.ReadLine();
+                                param = console.Split(' ');
+                            }
+                        }
                         if (firstRun){
                             // Load Index
                             if (!Directory.Exists(path)){
@@ -87,13 +107,7 @@ namespace TorPdos{
                             Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
                             firstRun = false;
                         }
-                        while (IdHandler.GetUuid() == null){
-                            if (console.StartsWith("login") && param.Length == 2){
-                                IdHandler.GetUuid(param[1]);
-                            } else if (console.Equals("gui")){
-                                Application.Run(torPdos);
-                            }
-                        }
+                        
                         if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("reindex")){
