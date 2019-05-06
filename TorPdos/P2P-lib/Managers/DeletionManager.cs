@@ -48,9 +48,9 @@ namespace P2P_lib.Managers{
                         break;
                     }
                     foreach (var hash in _hashList.GetEntry(item)){
-                        List<string> receiversOfTheFileHash = _locationDb[hash];
+                        List<string> receiversOfTheFileUuid = _locationDb[hash];
                         Console.WriteLine(_locationDb.Count);
-                        foreach (var currentReceiverHash in receiversOfTheFileHash){
+                        foreach (var currentReceiverHash in receiversOfTheFileUuid){
 
                             if (_peers.TryGetValue(currentReceiverHash, out Peer currentReceiver)){
                                 FileDeletionMessage deletionMessage = new FileDeletionMessage(currentReceiver);
