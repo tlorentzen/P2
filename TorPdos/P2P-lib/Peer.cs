@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Net;
 using P2P_lib.Messages;
+using System.Collections.Generic;
 
 namespace P2P_lib{
     [Serializable]
@@ -110,13 +111,7 @@ namespace P2P_lib{
         public int Rating{
             get => _rating;
             set{
-                if ((_rating + value) > 100){
-                    _rating = 100;
-                } else if ((_rating + value) < 0){
-                    _rating = 0;
-                } else{
-                    _rating += value;
-                }
+                _rating = value;
             }
         }
 
@@ -172,5 +167,11 @@ namespace P2P_lib{
             return (sum / _pingList.Length);
         }
 
+    }
+
+    public class ComparePeersByRating : IComparer<Peer> {
+        public int Compare(Peer x, Peer y) {
+            return (x.Rating < y.Rating ? 1 : (x.Rating > y.Rating ? -1 : 0));
+        }
     }
 }

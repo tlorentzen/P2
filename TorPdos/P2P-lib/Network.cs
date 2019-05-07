@@ -35,6 +35,8 @@ namespace P2P_lib{
         private ConcurrentDictionary<string, List<string>> _locationDb;
         private DeletionManager _deletionManager;
         private readonly HashHandler _hashList;
+        public List<string> topPeers;
+        private int _numberOfPrimaryPeers = 10;
 
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -48,6 +50,7 @@ namespace P2P_lib{
             _hashList = new HashHandler(_path);
 
             Load();
+            UpdateTopPeers();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             _upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
@@ -176,7 +179,6 @@ namespace P2P_lib{
                 }
             }
         }
-
 
         public void SaveFile(){
             var json = JsonConvert.SerializeObject(_peers);
@@ -413,6 +415,20 @@ namespace P2P_lib{
 
         public void DeleteFile(string hash){
             this._deletionQueue.Enqueue(hash);
+        }
+
+        public void UpdateTopPeers() {
+            int i = 0;
+            Peer[] sortedArray = new Peer[_peers.Count];
+            foreach (Peer peer in _peers.Values) {
+                sortedArray[i] = peer;
+                i++;
+            }
+            Array.Sort(sortedArray, new ComparePeersByRating());
+            topPeers = new List<string>();
+            for(i = 0; (i < _numberOfPrimaryPeers && i < sortedArray.Length); i++) {
+                topPeers.Add(sortedArray[i].UUID);
+            }
         }
     }
 }
