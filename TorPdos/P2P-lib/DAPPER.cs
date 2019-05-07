@@ -31,18 +31,23 @@ namespace P2P_lib
 
         //Update uptime score
         public int UpdateUptime(Peer peer, bool changedSinceLast = true) {
-            int
-                max = 100000,
-                mid = max / 2;
-            bool
-                online = peer.IsOnline();
 
+            //Calculate time since last state shift (online/offline) or uptime update
+            long timespan = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() - peer.timestamp;
+            int max = 100000, mid = max / 2;
+            bool online = peer.IsOnline();
+
+            //Update the timestamp on peer
+            peer.timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+
+            //Flips online, if the state has changed. This is done, because the rating is calculated from the last timestamp until now.
             if (changedSinceLast){
                 online = !online;
             }
 
+            //The rating is then calculated based on the peer state doing the timespan and the length of the timespan
             if (online) {
-                for (long i = 0; i < peer.timespan; i++) {
+                for (long i = 0; i < timespan; i++) {
                     if (peer.uptimeScore >= max) {
                         peer.uptimeScore = max;
                         break;
@@ -55,7 +60,7 @@ namespace P2P_lib
                     }
                 }
             } else {
-                for (long i = 0; i < peer.timespan; i++) {
+                for (long i = 0; i < timespan; i++) {
                     if (peer.uptimeScore <= 0) {
                         peer.uptimeScore = 0;
                         break;
@@ -68,7 +73,7 @@ namespace P2P_lib
                     }
                 }
             }
-            peer.timespan = 0;
+            //The score is then returned
             return Convert.ToInt32(Math.Round(peer.uptimeScore));
         }
     }

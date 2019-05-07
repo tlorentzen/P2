@@ -14,7 +14,7 @@ namespace P2P_lib{
         private long _nextPing;
         private bool _online;
         private long[] _pingList = new long[] {-1, -1, -1, -1, -1};
-        public long diskSpace, timespan = 0;
+        public long diskSpace, timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
         public double uptimeScore = 50000;
 
         public Peer() : this(null, null){ }
@@ -39,8 +39,10 @@ namespace P2P_lib{
             if (online != this._online){
                 if (online){
                     Console.WriteLine(this._ip + " - is now online!");
+                    timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
                 } else{
                     Console.WriteLine(this._ip + " - is now offline!");
+                    timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
                 }
             }
 
