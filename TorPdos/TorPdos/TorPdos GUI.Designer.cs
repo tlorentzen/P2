@@ -235,19 +235,10 @@ namespace TorPdos
 
         public MyForm()
         {
-            SuspendLayout();
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            StartPosition = FormStartPosition.CenterScreen;
-            MaximizeBox = false;
-            Width = fullWidth;
-            Height = fullHeight;
-            Name = "TorPdos";
-            Text = "TorPdos";
-            ResumeLayout(false);
-            BackColor = ColorTranslator.FromHtml(backgroundColour);
-            Icon = new Icon("TorPdos.ico");
+            EventHandlers();
+            GuiLayout();
 
-            if(NetworkPorts.IsPortAvailable(25565) == false)
+            if (NetworkPorts.IsPortAvailable(25565) == false)
             {
                 Sorry();
             }
@@ -267,9 +258,23 @@ namespace TorPdos
             {
                 LoggedIn();
             }
-            EventHandlers();  
+            
         }
 
+        void GuiLayout()
+        {
+            SuspendLayout();
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            StartPosition = FormStartPosition.CenterScreen;
+            MaximizeBox = false;
+            Width = fullWidth;
+            Height = fullHeight;
+            Name = "TorPdos";
+            Text = "TorPdos";
+            ResumeLayout(false);
+            BackColor = ColorTranslator.FromHtml(backgroundColour);
+            Icon = new Icon("TorPdos.ico");
+        }
         void EventHandlers()
         {
             noiTorPdos.Click += noiTorPdosClick;
