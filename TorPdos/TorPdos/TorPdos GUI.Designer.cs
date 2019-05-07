@@ -259,12 +259,15 @@ namespace TorPdos
             {
                 Create();
             }
-            else
+            else if(IdHandler.GetUuid() == null)
             {
                 Login();
             }
-            EventHandlers();
-            
+            else
+            {
+                LoggedIn();
+            }
+            EventHandlers();  
         }
 
         void EventHandlers()
@@ -400,8 +403,6 @@ namespace TorPdos
             chkCreateFolder.TabIndex = tabNumber++;
             Controls.Add(chkCreateFolder);
 
-            //Controls.Add(lblOkay);
-
             //BTN: Confirm path
             btnConfirmPath.TabIndex = tabNumber++;
             Controls.Add(btnConfirmPath);
@@ -451,11 +452,11 @@ namespace TorPdos
             Controls.Clear();
             int tabNumber = 0;
 
-            //BTN: ???
+            //BTN: Download
             btnDownload.TabIndex = tabNumber++;
             Controls.Add(btnDownload);
 
-            //BTN: ??
+            //BTN: Logout
             btnLogout.TabIndex = tabNumber++;
             Controls.Add(btnLogout);   
         }
@@ -472,20 +473,20 @@ namespace TorPdos
             loggedIn = false;
         }
 
-        void MyFormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
-            {
-                e.Cancel = true;
-                Hide();
-                noiTorPdos.Visible = true;
-            }
-            else
-            {
-                noiTorPdos.Visible = false;
-                Environment.Exit(0);
-            }
-        }
+        //void MyFormClosing(object sender, FormClosingEventArgs e)
+        //{
+        //    if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+        //    {
+        //        e.Cancel = true;
+        //        Hide();
+        //        noiTorPdos.Visible = true;
+        //    }
+        //    else
+        //    {
+        //        noiTorPdos.Visible = false;
+        //        Environment.Exit(0);
+        //    }
+        //}
 
         void noiTorPdosClick(object sender, EventArgs e)
         {
