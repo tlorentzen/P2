@@ -59,9 +59,7 @@ namespace TorPdos{
                                     console = Console.ReadLine();
                                     param = console.Split(' ');
                                 }
-                            } else if (console.Equals("gui")) {
-                                Application.Run(torPdos);
-                            } else {
+                            }  else {
                                 Console.WriteLine("Error! Try again");
                                 Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
                                 console = Console.ReadLine();
@@ -112,6 +110,8 @@ namespace TorPdos{
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("reindex")){
                             _idx.ReIndex();
+                        } else if (console.Equals("gui")){
+                            Application.Run(torPdos);
                         } else if (console.Equals("status")){
                             _idx.Status();
                         } else if (console.Equals("idxsave")){

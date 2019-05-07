@@ -38,7 +38,7 @@ namespace Index_lib{
         public void Remove(string path)
         {
             if (File.Exists(path)) {
-                File.Delete( path);
+                File.Delete(path);
             } else if (Directory.Exists(path)) {
                 string[] files = Directory.GetFiles(path);
                 foreach(string p in files) {
