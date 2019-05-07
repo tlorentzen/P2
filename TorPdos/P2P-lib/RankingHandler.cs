@@ -2,6 +2,7 @@
 
 namespace P2P_lib
 {
+    [Serializable]
     public class RankingHandler {
         //Deliberately Amazing Peer Practicality Estimation Ranker
         public int GetRank(Peer peer) {
