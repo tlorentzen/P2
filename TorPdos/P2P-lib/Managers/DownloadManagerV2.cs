@@ -27,6 +27,9 @@ namespace P2P_lib.Managers{
         private List<string> _downloadQueue;
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
         private readonly Receiver _receiver;
+        private int count = 0;
+        private int sentCount = 0;
+        private QueuedFile _currentQueuedFile;
 
         private ConcurrentDictionary<string, List<string>> _sentTo;
 
@@ -51,10 +54,17 @@ namespace P2P_lib.Managers{
 
             _receiver = new Receiver(_port);
             _receiver.MessageReceived += _receiver_MessageReceived;
+
+            Peer.PeerSwitchedOnline += PeerSwitchedOnline;
+
             _receiver.Start();
         }
 
         private void QueueElementAddedToQueue(){
+            this._waitHandle.Set();
+        }
+
+        private void PeerSwitchedOnline(){
             this._waitHandle.Set();
         }
 
@@ -70,6 +80,7 @@ namespace P2P_lib.Managers{
                     }
 
                     _fileHash = file.GetHash();
+                    _currentQueuedFile = file;
 
                     try{
                         _fileList = _hashList.GetEntry(_fileHash);
@@ -105,7 +116,6 @@ namespace P2P_lib.Managers{
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
 
                         if (onlinePeers.Count == 0){
-                            //Console.WriteLine("No online peers with file");
                             _queue.Enqueue(file);
                             break;
                         }
@@ -124,7 +134,7 @@ namespace P2P_lib.Managers{
                             downloadMessage.Send();
                         }
 
-                        Console.WriteLine("File: " + file.GetHash() + " was sent to?");
+                        Console.WriteLine("File: " + file.GetHash() + " was received?");
                     }
                 }
 
@@ -149,6 +159,7 @@ namespace P2P_lib.Managers{
                                                           @"\")
                                     .FullName,
                                 download.filehash, download.port);
+                        sentCount++;
                         this._fileReceiver.FileSuccessfullyDownloaded += FileReceiverFileSuccessfullyDownloaded;
                         this._fileReceiver.Start();
                         Console.WriteLine("FileReceiver opened");
@@ -163,6 +174,7 @@ namespace P2P_lib.Managers{
 
         private void FileReceiverFileSuccessfullyDownloaded(string path){
             Console.WriteLine("File downloaded");
+            Console.WriteLine(count++);
             RestoreOriginalFile(path);
         }
 
@@ -189,11 +201,15 @@ namespace P2P_lib.Managers{
         }
 
         private void RestoreOriginalFile(string path){
-            foreach (var currentFile in _fileList){
-                if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile)){
-                    return;
+            if (sentCount == count){
+                foreach (var currentFile in _fileList){
+                    if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile)){
+                        _queue.Enqueue(_currentQueuedFile);
+                        return;
+                    }
                 }
             }
+
 
             Console.WriteLine("File exist");
             string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);

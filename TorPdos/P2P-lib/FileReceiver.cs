@@ -74,7 +74,7 @@ namespace P2P_lib{
 
                         Console.WriteLine(@"File done downloading");
                         fileStream.Close();
-                        _fileReceived = true;
+                        _fileReceived = File.Exists(path);
                     }
 
                     stream.Close();

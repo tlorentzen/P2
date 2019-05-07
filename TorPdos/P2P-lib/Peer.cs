@@ -17,6 +17,8 @@ namespace P2P_lib{
         public long diskSpace, timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
         public double uptimeScore = 50000;
         private RankingHandler rankHandler = new RankingHandler();
+        public delegate void PeerWentOnline();
+        public static event PeerWentOnline PeerSwitchedOnline;
 
         public Peer() : this(null, null){ }
 
@@ -41,6 +43,7 @@ namespace P2P_lib{
                 if (online){
                     Console.WriteLine(this._ip + " - is now online!");
                     rankHandler.UpdateUptime(this);
+                    PeerSwitchedOnline?.Invoke();
                 } else{
                     Console.WriteLine(this._ip + " - is now offline!");
                     rankHandler.UpdateUptime(this);
