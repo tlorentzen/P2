@@ -333,6 +333,7 @@ namespace P2P_lib{
                     Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
+                        
                         message.statusCode = StatusCode.ACCEPTED;
                         message.CreateReply();
                         message.Send();
