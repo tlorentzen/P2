@@ -40,11 +40,9 @@ namespace P2P_lib{
             if (online != this._online){
                 if (online){
                     Console.WriteLine(this._ip + " - is now online!");
-                    timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
                     rankHandler.UpdateUptime(this);
                 } else{
                     Console.WriteLine(this._ip + " - is now offline!");
-                    timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
                     rankHandler.UpdateUptime(this);
                 }
             }
