@@ -2,7 +2,7 @@
 
 namespace P2P_lib
 {
-    public class Dapper {
+    public class RankingHandler {
         //Deliberately Amazing Peer Practicality Estimation Ranker
         public int GetRank(Peer peer) {
 
