@@ -19,7 +19,9 @@ namespace P2P_lib{
         public void Send(string path){
             if (File.Exists(path)){
                 try{
+                    
                     using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
+                        client.ReceiveTimeout = 500;
                         using (NetworkStream stream = client.GetStream()){
                             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read,
                                 FileShare.ReadWrite)){

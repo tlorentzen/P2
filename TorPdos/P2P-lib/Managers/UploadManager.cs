@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Security.Permissions;
 using System.Threading;
 using Compression;
 using Encryption;
+using Index_lib;
 using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
@@ -27,6 +29,7 @@ namespace P2P_lib.Managers{
         private bool _isStopped;
         private ConcurrentDictionary<string, List<string>> _sentTo;
         private readonly HashHandler _hashList;
+        private HiddenFolder _hiddenFolder;
 
         public ConcurrentDictionary<string, List<string>> SentTo{
             private get => _sentTo;
@@ -35,6 +38,7 @@ namespace P2P_lib.Managers{
             }
         }
 
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public UploadManager(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
             ConcurrentDictionary<string, Peer> peers, HashHandler hashList){
             this._queue = queue;
@@ -43,6 +47,7 @@ namespace P2P_lib.Managers{
 
             this._waitHandle = new ManualResetEvent(false);
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
+            _hiddenFolder = new HiddenFolder(_path + @".hidden");
 
             this._path = _registry.GetValue("Path").ToString();
             _hashList = hashList;
@@ -53,7 +58,6 @@ namespace P2P_lib.Managers{
         }
 
         public void Run(){
-            var outputFiles = new Dictionary<string, List<string>>();
             _isStopped = false;
             this._waitHandle.Set();
 
@@ -92,16 +96,18 @@ namespace P2P_lib.Managers{
                         this._queue.Enqueue(file);
                         continue;
                     }
-                    
+
                     // Encrypt file
                     FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
-                    
+
                     bool encryptionCompleted = encryption.DoEncrypt(IdHandler.GetKeyMold());
-                    //_hiddenFolder.removeFile(compressedFilePath + ".lzma");
+                    _hiddenFolder.Remove(compressedFilePath + ".lzma");
+
                     if (!encryptionCompleted){
                         this._queue.Enqueue(file);
                         continue;
                     }
+
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     // Split
@@ -142,14 +148,11 @@ namespace P2P_lib.Managers{
                             upload.port = port;
                             upload.Send();
                             Console.WriteLine(currentFileHashes);
-                            
+
                             while (_pendingReceiver){
                                 // TODO: timeout???
                             }
 
-                            while (!_receiver.Stop()){ }
-
-                            //_ports.Release(port);
 
                             if (_sender != null){
                                 _sender.Send(currentFileHashPath);
@@ -171,13 +174,12 @@ namespace P2P_lib.Managers{
                             return existingValue;
                         });
                     }
-                }
 
-                foreach (KeyValuePair<string, List<string>> currentFile in outputFiles){
-                    foreach (var currentFileHashes in currentFile.Value){
-                        File.Delete(_path + @".hidden\splitter\" + currentFileHashes);
+                    foreach (var currentFileHash in _hashList.GetEntry(file.GetHash())){
+                        File.Delete(_path + @".hidden\splitter\" + currentFileHash);
                     }
                 }
+
 
                 this._waitHandle.Reset();
             }

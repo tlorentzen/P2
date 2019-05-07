@@ -12,7 +12,6 @@ namespace P2P_lib{
         private const string HiddenFolder = @".hidden\";
 
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
-        private static RegistryKey MyReg = Registry.CurrentUser.OpenSubKey("TorPdos\\1.1.1.1", true);
         private static string _keyMold;
         private static string _uuId;
 
@@ -27,7 +26,7 @@ namespace P2P_lib{
                     }
                 }
 
-                string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
+                string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
 
                 _keyMold = GenerateKeyMold(uuid, password);
                 string output = _keyMold + "\n" + uuid;
@@ -84,7 +83,7 @@ namespace P2P_lib{
         //Returns true if user details are valid, false if not
         public static bool IsValidUser(string password){
             try{
-                string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
+                string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
 
                 FileEncryption.UserDataDecrypt(password, path);
                 return true;
@@ -97,7 +96,7 @@ namespace P2P_lib{
 
         //Return UUID if present, else return null
         public static string GetUuid(string password){
-            string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
+            string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
             if (UserExists()){
                 try{
                     if (_uuId != null){
@@ -144,7 +143,7 @@ namespace P2P_lib{
         }
 
         public static bool UserExists(){
-            string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
+            string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
 
             if (File.Exists(path)){
                 return true;
@@ -156,7 +155,7 @@ namespace P2P_lib{
         //Removes userdata file, return false if failed
         public static bool RemoveUser(){
             try{
-                string path = MyReg.GetValue("Path") + HiddenFolder + UserDataFile;
+                string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
 
                 File.Delete(path);
                 return true;
