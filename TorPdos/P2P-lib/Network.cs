@@ -265,7 +265,8 @@ namespace P2P_lib{
                     peer.Value.UpdateLastSeen();
                     peer.Value.SetOnline(true);
                     peer.Value.diskSpace = ping.diskSpace;
-                    peer.Value.AddPingToList(ping.GetElapsedTime());
+                    if(ping.type.Equals(TypeCode.RESPONSE))
+                        peer.Value.AddPingToList(ping.GetElapsedTime());
                 }
             }
 
