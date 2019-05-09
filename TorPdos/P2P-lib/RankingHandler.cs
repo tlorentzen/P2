@@ -6,13 +6,13 @@ namespace P2P_lib
     public class RankingHandler {
         //Deliberately Amazing Peer Practicality Estimation Ranker
         public int GetRank(Peer peer) {
-
             int
                 scoreDiskSpace = ScoreDiskSpace(peer.diskSpace),
                 scoreLatency = ScoreLatency(peer.GetAverageLatency()),
                 scoreUptime = UpdateUptime(peer, false),
                 scoreTotal = scoreLatency + scoreDiskSpace + scoreUptime;
-
+ 
+            peer.Rating = scoreTotal;
             return scoreTotal;
         }
 
@@ -20,13 +20,21 @@ namespace P2P_lib
         private int ScoreDiskSpace(long diskSpaceBytes) {
             double diskSpace = diskSpaceBytes / 1e+9; //Convert to GB
 
-            int score = diskSpace < 5 ? 10000 : diskSpace < 10 ? 20000 : 30000;
+            int score =
+                diskSpace < 0 ? 0:
+                diskSpace < 5 ? 10000 : 
+                diskSpace < 10 ? 20000 : 
+                30000;
             return score;
         }
 
         //Calc score from average latency
         private int ScoreLatency(long ping) {
-            int score = ping < 50 ? 50000 : ping < 100 ? 25000 : 0;
+            int score = 
+                ping < 0 ? 0 : 
+                ping < 50 ? 50000 : 
+                ping < 100 ? 25000 : 
+                0;
             return score;
         }
 
