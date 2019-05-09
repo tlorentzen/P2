@@ -65,7 +65,6 @@ namespace P2P_lib.Managers{
         }
 
         private void PeerSwitchedOnline(){
-            Console.WriteLine("PeerHandleCheck");
             this._waitHandle.Set();
         }
 
@@ -108,9 +107,6 @@ namespace P2P_lib.Managers{
                         updatedDownloadQueue = _downloadQueue;
                     }
 
-                    if (_downloadQueue.Count == 0){
-                        RestoreOriginalFile(_fileHash,true);
-                    }
 
                     foreach (var currentFileHash in updatedDownloadQueue){
                         List<Peer> onlinePeers = this.GetPeers();
@@ -163,9 +159,7 @@ namespace P2P_lib.Managers{
                                                           @"\")
                                     .FullName,
                                 download.filehash, download.port);
-
                         sentCount++;
-
                         this._fileReceiver.FileSuccessfullyDownloaded += FileReceiverFileSuccessfullyDownloaded;
                         this._fileReceiver.Start();
                         Console.WriteLine("FileReceiver opened");
@@ -180,7 +174,7 @@ namespace P2P_lib.Managers{
 
         private void FileReceiverFileSuccessfullyDownloaded(string path){
             Console.WriteLine("File downloaded");
-            count++;
+            Console.WriteLine(count++);
             RestoreOriginalFile(path);
         }
 
@@ -206,20 +200,16 @@ namespace P2P_lib.Managers{
             return result;
         }
 
-        private void RestoreOriginalFile(string path,bool forceRestore = false){
-            if (!forceRestore){
-                if (sentCount == _fileList.Count){
-                    if (sentCount == count){
-                        foreach (var currentFile in _fileList){
-                            if (File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile)) continue;
-                            _queue.Enqueue(_currentQueuedFile);
-                            return;
-                        }
-                    } else{
-                       // _queue.Enqueue(_currentQueuedFile);
+        private void RestoreOriginalFile(string path){
+            if (sentCount == count){
+                foreach (var currentFile in _fileList){
+                    if (!File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile)){
+                        _queue.Enqueue(_currentQueuedFile);
+                        return;
                     }
                 }
             }
+
 
             Console.WriteLine("File exist");
             string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);

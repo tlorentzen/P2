@@ -113,7 +113,8 @@ namespace P2P_lib.Managers{
 
                     // Split
                     SplitterLibrary splitter = new SplitterLibrary();
-                    
+
+
                     _hashList.Add(file.GetHash(),
                         splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
 
@@ -181,7 +182,7 @@ namespace P2P_lib.Managers{
                 }
 
 
-                this._waitHandle.Set();
+                this._waitHandle.Reset();
             }
 
             _isStopped = true;
