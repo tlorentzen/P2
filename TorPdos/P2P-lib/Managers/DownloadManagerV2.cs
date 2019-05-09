@@ -55,19 +55,13 @@ namespace P2P_lib.Managers{
             _receiver = new Receiver(_port);
             _receiver.MessageReceived += _receiver_MessageReceived;
 
-            Peer.PeerSwitchedOnline += PeerSwitchedOnline;
-
             _receiver.Start();
         }
 
         private void QueueElementAddedToQueue(){
             this._waitHandle.Set();
         }
-
-        private void PeerSwitchedOnline(){
-            Console.WriteLine("PeerHandleCheck");
-            this._waitHandle.Set();
-        }
+        
 
         public void Run(){
             isStopped = false;
@@ -226,9 +220,12 @@ namespace P2P_lib.Managers{
 
             //Merge files
             SplitterLibrary splitterLibrary = new SplitterLibrary();
-            splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
+            bool splitterDone = splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
                 _fileList);
+            while (!splitterDone){
+                //Wait
+            }
 
 
             // Decrypt file
@@ -236,6 +233,7 @@ namespace P2P_lib.Managers{
             decryption.DoDecrypt(IdHandler.GetKeyMold());
             Console.WriteLine("File decrypted");
             File.Delete(path);
+            
             Console.WriteLine(pathWithoutExtension);
 
             // Decompress file
