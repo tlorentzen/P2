@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Win32;
@@ -9,7 +10,8 @@ namespace P2P_lib{
             driveName = driveName.Split('\\')[0] + '\\';
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
                 if (drive.IsReady && drive.Name == driveName){
-                    return drive.TotalFreeSpace - (long) (drive.TotalSize * 0.2);
+                    long space = drive.TotalFreeSpace - (long)(drive.TotalSize * 0.2);
+                    return space > 0 ? space : 0;
                 }
             }
 
