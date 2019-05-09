@@ -58,8 +58,8 @@ namespace Index_lib
             return hash;
         }
 
-        public string GetPath(int pathNumberInput = 0) {
-            int pathNumber = (pathNumberInput > paths.Count ? paths.Count -1 : pathNumberInput);
+        public string GetPath(int pathNumberInput = -1) {
+            int pathNumber = (pathNumberInput > paths.Count || pathNumberInput == -1 ? paths.Count -1 : pathNumberInput);
             return paths[pathNumber];
         }
 
