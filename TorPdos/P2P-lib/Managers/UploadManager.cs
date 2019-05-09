@@ -181,7 +181,7 @@ namespace P2P_lib.Managers{
                 }
 
 
-                this._waitHandle.Set();
+                this._waitHandle.Reset();
             }
 
             _isStopped = true;

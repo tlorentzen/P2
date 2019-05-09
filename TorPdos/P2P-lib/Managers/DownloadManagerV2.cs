@@ -210,7 +210,7 @@ namespace P2P_lib.Managers{
                             return;
                         }
                     } else{
-                       // _queue.Enqueue(_currentQueuedFile);
+                       _queue.Enqueue(_currentQueuedFile);
                     }
                 }
             }
@@ -220,12 +220,10 @@ namespace P2P_lib.Managers{
 
             //Merge files
             SplitterLibrary splitterLibrary = new SplitterLibrary();
-            bool splitterDone = splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
+            splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
                 _fileList);
-            while (!splitterDone){
-                //Wait
-            }
+
 
 
             // Decrypt file

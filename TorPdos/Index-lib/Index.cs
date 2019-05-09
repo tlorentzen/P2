@@ -138,12 +138,6 @@ namespace Index_lib{
             _debug = value;
         }
 
-        /*public void listFiles(){
-            foreach (IndexFile file in _index){
-                Console.WriteLine(file.getPath() + " Paths: " + file.paths.Count);
-            }
-        }*/
-
         public int GetIndexSize(){
             return _index.Count;
         }
