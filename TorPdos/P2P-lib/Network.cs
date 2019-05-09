@@ -51,7 +51,7 @@ namespace P2P_lib{
             _hashList = new HashHandler(_path);
 
             Load();
-            UpdateTopPeers();
+            //UpdateTopPeers();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             _upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
