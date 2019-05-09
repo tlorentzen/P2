@@ -46,7 +46,7 @@ namespace P2P_lib
                 online = !online;
             }
 
-            //The rating is then calculated based on the peer state doing the timespan and the length of the timespan
+            //The uptime score is then calculated based on the peer state doing the timespan and the length of the timespan
             if (online) {
                 for (long i = 0; i < timespan; i++) {
                     if (peer.uptimeScore >= max) {

@@ -12,6 +12,7 @@ using System.Timers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
 using Splitter_lib;
+using System.Linq;
 
 namespace P2P_lib{
     public class Network{
@@ -417,18 +418,17 @@ namespace P2P_lib{
             this._deletionQueue.Enqueue(hash);
         }
 
-        public void UpdateTopPeers() {
-            int i = 0;
-            Peer[] sortedArray = new Peer[_peers.Count];
-            foreach (Peer peer in _peers.Values) {
-                sortedArray[i] = peer;
-                i++;
+        /*public void UpdateTopPeers() {
+            List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
+            topPeers.Sort(new ComparePeersByRating());
+            Console.WriteLine($"_peers:{_peers.Count}       topPeers: {topPeers.Count}");
+            Console.ReadKey();
+            if(topPeers.Count > 0) {
+                topPeers.RemoveRange(_numberOfPrimaryPeers, topPeers.Count - _numberOfPrimaryPeers);
+                foreach (Peer peer in topPeers) {
+                    Console.WriteLine(peer.Rating);
+                }
             }
-            Array.Sort(sortedArray, new ComparePeersByRating());
-            topPeers = new List<string>();
-            for(i = 0; (i < _numberOfPrimaryPeers && i < sortedArray.Length); i++) {
-                topPeers.Add(sortedArray[i].UUID);
-            }
-        }
+        }*/
     }
 }
