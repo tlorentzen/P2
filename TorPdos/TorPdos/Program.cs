@@ -130,8 +130,10 @@ namespace TorPdos{
                             Console.WriteLine(@"### Your Peerlist contains ###");
                             if (peers.Count > 0){
                                 foreach (Peer peer in peers){
-                                    Console.WriteLine(peer.GetUuid() + @" - " + peer.GetIp() + @" - " +
-                                                      (peer.IsOnline() ? "Online" : "Offline"));
+                                    RankingHandler rankingHandler = new RankingHandler();
+                                    rankingHandler.GetRank(peer);
+                                    Console.WriteLine("(R:" + peer.Rating + ") " + peer.GetUuid() + @" - " + peer.GetIp() + @" - " +
+                                                      (peer.IsOnline() ? "Online" : "Offline") + "\n");
                                 }
                             } else{
                                 Console.WriteLine(@"The list is empty...");

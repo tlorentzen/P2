@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Net;
 using P2P_lib.Messages;
+using System.Collections.Generic;
 
 namespace P2P_lib{
     [Serializable]
@@ -14,7 +15,7 @@ namespace P2P_lib{
         private long _nextPing;
         private bool _online;
         private long[] _pingList = new long[] {-1, -1, -1, -1, -1};
-        public long diskSpace, timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+        public long diskSpace = 0, timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
         public double uptimeScore = 50000;
         private RankingHandler rankHandler = new RankingHandler();
         public delegate void PeerWentOnline();
@@ -31,7 +32,7 @@ namespace P2P_lib{
                 this.SetIp(ip);
             }
 
-            Rating = 100;
+            Rating = 0;
         }
 
         public bool IsOnline(){
@@ -113,13 +114,7 @@ namespace P2P_lib{
         public int Rating{
             get => _rating;
             set{
-                if ((_rating + value) > 100){
-                    _rating = 100;
-                } else if ((_rating + value) < 0){
-                    _rating = 0;
-                } else{
-                    _rating += value;
-                }
+                _rating = value;
             }
         }
 
@@ -175,5 +170,11 @@ namespace P2P_lib{
             return (sum / _pingList.Length);
         }
 
+    }
+
+    public class ComparePeersByRating : IComparer<Peer> {
+        public int Compare(Peer x, Peer y) {
+            return (x.Rating < y.Rating ? 1 : (x.Rating > y.Rating ? -1 : 0));
+        }
     }
 }

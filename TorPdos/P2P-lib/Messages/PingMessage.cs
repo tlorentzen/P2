@@ -20,7 +20,8 @@ namespace P2P_lib.Messages
 
         public long GetElapsedTime()
         {
-            return DateTimeOffset.Now.ToUnixTimeMilliseconds() - _pinged;
+            long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            return now - _pinged;
         }
 
         public override string GetHash(){
