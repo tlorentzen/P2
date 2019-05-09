@@ -78,7 +78,7 @@ namespace Encryption{
                         Logger.Warn(e);
                         return false;
                     }
-
+                    cs.Flush();
                     cs.Close();
                 }
 
@@ -138,7 +138,7 @@ namespace Encryption{
                             fsOut.Close();
                         }
                     }
-
+                    cs.Flush();
                     cs.Close();
                 }
 

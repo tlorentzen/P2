@@ -48,17 +48,21 @@ namespace P2P_lib.Managers{
                         break;
                     }
                     foreach (var hash in _hashList.GetEntry(item)){
+                        
                         _locationDb.TryGetValue(hash,out var receiversOfTheFileUuid);
+                        
+                        if (receiversOfTheFileUuid == null) continue;
+                        
                         foreach (var currentReceiverUuid in receiversOfTheFileUuid){
-
-                            if (_peers.TryGetValue(currentReceiverUuid, out Peer currentReceiver)){
-                                FileDeletionMessage deletionMessage = new FileDeletionMessage(currentReceiver);
-                                deletionMessage.type = TypeCode.REQUEST;
-                                deletionMessage.statusCode = StatusCode.OK;
-                                deletionMessage.fileHash = hash;
-                                deletionMessage.fullFileHash =  item;
-                                deletionMessage.Send();
-                            }
+                            if (!_peers.TryGetValue(currentReceiverUuid, out Peer currentReceiver)) continue;
+                            
+                            FileDeletionMessage deletionMessage = new FileDeletionMessage(currentReceiver){
+                                type = TypeCode.REQUEST,
+                                statusCode = StatusCode.OK,
+                                fileHash = hash,
+                                fullFileHash = item
+                            };
+                            deletionMessage.Send();
                         }
                     }
                 }
