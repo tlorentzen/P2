@@ -11,8 +11,7 @@ namespace P2P_lib
                 scoreLatency = ScoreLatency(peer.GetAverageLatency()),
                 scoreUptime = UpdateUptime(peer, false),
                 scoreTotal = scoreLatency + scoreDiskSpace + scoreUptime;
-
-            Console.WriteLine(peer.GetIp() + " | disk:" + (peer.diskSpace / 1e+9) + " = " + scoreDiskSpace + " | ping:" + peer.GetAverageLatency() + " = " + scoreLatency + " | upt:" + scoreUptime); 
+ 
             peer.Rating = scoreTotal;
             return scoreTotal;
         }
