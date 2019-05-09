@@ -66,7 +66,7 @@ namespace P2P_lib.Managers{
                         }
                     }
                 }
-                _waitHandle.Set();
+                _waitHandle.Reset();
             }
             isStopped = true;
         }
