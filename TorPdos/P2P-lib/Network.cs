@@ -51,6 +51,7 @@ namespace P2P_lib{
             _hashList = new HashHandler(_path);
 
             Load();
+            //UpdateTopPeers();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             _upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
@@ -418,16 +419,17 @@ namespace P2P_lib{
             this._deletionQueue.Enqueue(hash);
         }
 
-        public void UpdateTopPeers() {
+        /*public void UpdateTopPeers() {
             List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
             topPeers.Sort(new ComparePeersByRating());
             Console.WriteLine($"_peers:{_peers.Count}       topPeers: {topPeers.Count}");
-            if (topPeers.Count > 0) {
-                topPeers.RemoveRange(Math.Min(_numberOfPrimaryPeers, topPeers.Count), Math.Max(0, topPeers.Count - _numberOfPrimaryPeers));
+            Console.ReadKey();
+            if(topPeers.Count > 0) {
+                topPeers.RemoveRange(_numberOfPrimaryPeers, topPeers.Count - _numberOfPrimaryPeers);
                 foreach (Peer peer in topPeers) {
                     Console.WriteLine(peer.Rating);
                 }
             }
-        }
+        }*/
     }
 }

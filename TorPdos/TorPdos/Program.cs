@@ -123,8 +123,6 @@ namespace TorPdos{
                             _p2P.DownloadFile(param[1]);
                         } else if (console.Equals("integrity")){
                             _idx.MakeIntegrityCheck();
-                        } else if (console.Equals("top")) {
-                            _p2P.UpdateTopPeers();
                         } else if (console.Equals("list")){
                             List<Peer> peers = _p2P.GetPeerList();
 
