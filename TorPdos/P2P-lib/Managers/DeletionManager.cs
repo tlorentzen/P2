@@ -56,7 +56,7 @@ namespace P2P_lib.Managers{
                         foreach (var currentReceiverUuid in receiversOfTheFileUuid){
                             if (!_peers.TryGetValue(currentReceiverUuid, out Peer currentReceiver)) continue;
                             
-                            FileDeletionMessage deletionMessage = new FileDeletionMessage(currentReceiver){
+                            var deletionMessage = new FileDeletionMessage(currentReceiver){
                                 type = TypeCode.REQUEST,
                                 statusCode = StatusCode.OK,
                                 fileHash = hash,

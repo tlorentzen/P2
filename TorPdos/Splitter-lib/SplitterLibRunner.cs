@@ -6,8 +6,10 @@ using System.Text;
 
 namespace Splitter_lib{
     public class SplitterLibrary{
+        //list with the splitted files
         public List<string> SplitFile(string inputFilePath, string inputFileHash, string outputFolderPath,
-            int chunkSize = 1000000){
+                                      int chunkSize = 1000000){
+            //If the folder for the chunk files do not exist make said folder
             if (!Directory.Exists(outputFolderPath)){
                 Directory.CreateDirectory(outputFolderPath);
             }
@@ -16,7 +18,7 @@ namespace Splitter_lib{
 
             // https://stackoverflow.com/questions/3967541/how-to-split-large-files-efficiently
 
-
+            //If the file to be splitted exists it will begin splitting the file and hashing it
             if (File.Exists(inputFilePath)){
                 using (Stream input = File.OpenRead(inputFilePath)){
                     while (input.Position < input.Length){
@@ -30,13 +32,14 @@ namespace Splitter_lib{
                         currentFiles.Add(CreateMD5(writingBuffer));
                     }
                 }
-            } else{
+               } else{
                 throw new FileNotFoundException();
             }
 
             return currentFiles;
         }
 
+        //Helper function which opens a memorystream and reads it into a buffer and returns an array
         private byte[] fileStreamReader(Stream input, int chunkSize){
             using (MemoryStream ms = new MemoryStream()){
                 const int BufferSize = 1024;
@@ -53,6 +56,7 @@ namespace Splitter_lib{
             }
         }
 
+        //Function to merge the files when downloaded from the network in chunks
         public bool MergeFiles(string inputDir, string outputFilePath, List<string> fileList){
             if (Directory.Exists(inputDir)){
                 if (fileList.Count > 0){

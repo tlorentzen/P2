@@ -39,7 +39,7 @@ namespace Compression{
                         //Buffersize 128 MB
                         const long BufferSize = 1024 * 1024 * 128;
 
-                        using (FileStream file = new FileStream(inPath, FileMode.Open, FileAccess.Read,
+                        using (var file = new FileStream(inPath, FileMode.Open, FileAccess.Read,
                             FileShare.Read)){
                             long fileSize = file.Length;
                             Console.WriteLine(fileSize);
@@ -52,9 +52,9 @@ namespace Compression{
                         }
 
 
-                        using (FileStream inStream =
+                        using (var inStream =
                             new FileStream(inPath, FileMode.Open, FileAccess.Read, FileShare.Read)){
-                            using (FileStream outStream = new FileStream(outPath, FileMode.Create, FileAccess.Write)){
+                            using (var outStream = new FileStream(outPath, FileMode.Create, FileAccess.Write)){
                                 // Save file extension
                                 string ext = Path.GetExtension(inPath);
                                 ext = ext.Length + ext;

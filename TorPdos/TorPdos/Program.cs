@@ -12,7 +12,7 @@ namespace TorPdos{
         static Network _p2P;
         public static string publicUuid;
         public static string filePath;
-        
+
 
         [STAThread]
         static void Main(){
@@ -20,7 +20,7 @@ namespace TorPdos{
             bool running = true;
             bool firstRun = true;
             MyForm torPdos = new MyForm();
-            
+
             if (string.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path"))){
                 Application.Run(torPdos);
             }
@@ -34,23 +34,25 @@ namespace TorPdos{
             string path = (DiskHelper.GetRegistryValue("Path"));
 
             Console.WriteLine(IdHandler.GetUuid());
+            Console.WriteLine("Welcome to TorPdos!");
             Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
             while (running){
                 string console = Console.ReadLine();
                 if (console != null){
                     string[] param = console.Split(' ');
-                    
-                    if (console.Equals("quit") || console.Equals("q")){
+                    //Close program
+                    if (console.Equals("quit") || console.Equals("q")) {
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
                         _idx.Stop();
                         _p2P.SaveFile();
                         _p2P.Stop();
                         running = false;
-                    } else{
+                        Console.WriteLine("\nPress any button to quit!");
+
+                    } else {
                         while (IdHandler.GetUuid() == null) {
-                            
-                            
+
                             if (console.StartsWith("login") && param.Length == 2) {
                                 if (IdHandler.GetUuid(param[1]) == "Invalid Password") {
                                     Console.WriteLine();
@@ -59,16 +61,16 @@ namespace TorPdos{
                                     console = Console.ReadLine();
                                     param = console.Split(' ');
                                 }
-                            }  else {
+                            } else {
                                 Console.WriteLine("Error! Try again");
                                 Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
                                 console = Console.ReadLine();
                                 param = console.Split(' ');
                             }
                         }
-                        if (firstRun){
+                        if (firstRun) {
                             // Load Index
-                            if (!Directory.Exists(path)){
+                            if (!Directory.Exists(path)) {
                                 Directory.CreateDirectory(path);
                             }
 
@@ -79,69 +81,79 @@ namespace TorPdos{
                             _idx.FileDeleted += Idx_FileDeleted;
                             _idx.FileMissing += Idx_FileMissing;
 
-                            if (!_idx.Load()){
+                            if (!_idx.Load()) {
                                 _idx.BuildIndex();
                             }
 
                             _idx.Start();
 
-                             
+
                             // Prepare P2PNetwork
-                            try{
+                            try {
                                 _p2P = new Network(25565, _idx, path);
                                 _p2P.Start();
                             }
-                            catch (SocketException){
+                            catch (SocketException) {
                                 Application.Run(torPdos);
                             }
-                        
+
                             Console.WriteLine(@"Integrity check initialized...");
                             _idx.MakeIntegrityCheck();
                             Console.WriteLine(@"Integrity check finished!");
-                        
+
                             Console.WriteLine(@"Local: " + ownIp);
                             Console.WriteLine(@"Free space on C: " + DiskHelper.GetTotalAvailableSpace("C:\\"));
                             Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
                             firstRun = false;
+
+                            //Restart loop to take input
+                            continue;
+
                         }
-                        
-                        if (console.StartsWith("add") && param.Length == 3){
+
+
+                        // Handle input
+                        if (console.StartsWith("add") && param.Length == 3) {
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
-                        } else if (console.Equals("reindex")){
+                        } else if (console.Equals("reindex")) {
                             _idx.ReIndex();
-                        } else if (console.Equals("gui")){
+                        } else if (console.Equals("gui")) {
                             Application.Run(torPdos);
-                        } else if (console.Equals("status")){
+                        } else if (console.Equals("status")) {
                             _idx.Status();
-                        } else if (console.Equals("idxsave")){
+                        } else if (console.Equals("idxsave")) {
                             _idx.Save();
-                        } else if (console.Equals("peersave")){
+                        } else if (console.Equals("peersave")) {
                             _p2P.SaveFile();
-                        } else if (console.Equals("ping")){
+                        } else if (console.Equals("ping")) {
                             _p2P.Ping();
-                        } else if (console.StartsWith("download") && param.Length == 2){
+                        } else if (console.Equals("download all")) {
+                          _p2P.DownloadAllFiles();
+                        } else if (console.StartsWith("download") && param.Length == 2) {
                             _p2P.DownloadFile(param[1]);
-                        } else if (console.Equals("integrity")){
+                        } else if (console.Equals("integrity")) {
                             _idx.MakeIntegrityCheck();
                         } else if (console.Equals("list")){
                             List<Peer> peers = _p2P.GetPeerList();
 
                             Console.WriteLine();
                             Console.WriteLine(@"### Your Peerlist contains ###");
-                            if (peers.Count > 0){
-                                foreach (Peer peer in peers){
+                            if (peers.Count > 0) {
+                                foreach (Peer peer in peers) {
                                     RankingHandler rankingHandler = new RankingHandler();
                                     rankingHandler.GetRank(peer);
                                     Console.WriteLine("(R:" + peer.Rating + ") " + peer.GetUuid() + @" - " + peer.GetIp() + @" - " +
                                                       (peer.IsOnline() ? "Online" : "Offline"));
                                     Console.WriteLine("disk: " + Convert.ToInt32((peer.diskSpace / 1e+9)) + "GB | avgPing: " + peer.GetAverageLatency() + "\n");
                                 }
-                            } else{
+                            } else {
                                 Console.WriteLine(@"The list is empty...");
                             }
 
                             Console.WriteLine();
-                        } else{
+                        } else if (console.Trim().Equals("")){
+
+                        }else{
                             Console.WriteLine(@"Unknown command");
                         }
                     }
