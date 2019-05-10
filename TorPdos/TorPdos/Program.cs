@@ -34,12 +34,13 @@ namespace TorPdos{
             string path = (DiskHelper.GetRegistryValue("Path"));
 
             Console.WriteLine(IdHandler.GetUuid());
+            Console.WriteLine("Welcome to TorPdos!");
             Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
             while (running){
                 string console = Console.ReadLine();
                 if (console != null){
                     string[] param = console.Split(' ');
-
+                    //Close program 
                     if (console.Equals("quit") || console.Equals("q")) {
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
@@ -48,9 +49,9 @@ namespace TorPdos{
                         _p2P.Stop();
                         running = false;
                         Console.WriteLine("\nPress any button to quit!");
+
                     } else {
                         while (IdHandler.GetUuid() == null) {
-
 
                             if (console.StartsWith("login") && param.Length == 2) {
                                 if (IdHandler.GetUuid(param[1]) == "Invalid Password") {
@@ -104,12 +105,14 @@ namespace TorPdos{
                             Console.WriteLine(@"Free space on C: " + DiskHelper.GetTotalAvailableSpace("C:\\"));
                             Console.WriteLine(@"UUID: " + IdHandler.GetUuid());
                             firstRun = false;
+
+                            //Restart loop to take input
                             continue;
 
                         }
 
 
-
+                        // Handle input
                         if (console.StartsWith("add") && param.Length == 3) {
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
                         } else if (console.Equals("reindex")) {
