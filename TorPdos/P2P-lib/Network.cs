@@ -192,7 +192,7 @@ namespace P2P_lib{
         public bool Load(){
             if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
-                ConcurrentDictionary<string, Peer> input =
+                var input =
                     JsonConvert.DeserializeObject<ConcurrentDictionary<string, Peer>>(json);
                 foreach (var peer in input){
                     _peers.TryAdd(peer.Value.GetUuid(), peer.Value);
@@ -247,7 +247,8 @@ namespace P2P_lib{
                 uploadMessage.CreateReply();
                 uploadMessage.port = _ports.GetAvailablePort();
 
-                _fileReceiver = new FileReceiver(this._path + @".hidden\" + uuid + @"\" + uploadMessage.filehash + @"\",
+                _fileReceiver = new FileReceiver(
+                    this._path + @".hidden\" + uuid + @"\" + uploadMessage.filehash + @"\",
                     uploadMessage.filename,
                     uploadMessage.port,
                     true);
@@ -278,8 +279,8 @@ namespace P2P_lib{
                 ping.Send();
             } else{
                 // Received response, should send peerlist
-                PeerFetcherMessage peerFetch = new PeerFetcherMessage(GetAPeer(ping.fromUuid));
-                peerFetch.peers = this.GetPeerList();
+                var peerFetch =
+                    new PeerFetcherMessage(GetAPeer(ping.fromUuid)){peers = this.GetPeerList()};
                 // Removed the receiver from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.peers){
                     if (string.Compare(peer.GetIp().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
