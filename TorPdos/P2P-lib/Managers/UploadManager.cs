@@ -29,7 +29,7 @@ namespace P2P_lib.Managers{
         private bool _isStopped;
         private ConcurrentDictionary<string, List<string>> _sentTo;
         private readonly HashHandler _hashList;
-        private HiddenFolder _hiddenFolder;
+        private readonly HiddenFolder _hiddenFolder;
 
         public ConcurrentDictionary<string, List<string>> SentTo{
             private get => _sentTo;
@@ -75,10 +75,6 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
-                    if (!Directory.Exists(_path + @".hidden\splitterOut\")){
-                        Directory.CreateDirectory(_path + @".hidden\splitterOut\");
-                    }
-
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
                     string compressedFilePath = this._path + @".hidden\" + file.GetHash();
@@ -92,13 +88,14 @@ namespace P2P_lib.Managers{
 
                     // Compress file
                     bool compressionCompleted = Compressor.CompressFile(filePath, compressedFilePath);
+                    
                     if (!compressionCompleted){
                         this._queue.Enqueue(file);
                         continue;
                     }
 
                     // Encrypt file
-                    FileEncryption encryption = new FileEncryption(compressedFilePath, ".lzma");
+                    var encryption = new FileEncryption(compressedFilePath, ".lzma");
 
                     bool encryptionCompleted = encryption.DoEncrypt(IdHandler.GetKeyMold());
                     
@@ -107,12 +104,13 @@ namespace P2P_lib.Managers{
                         this._queue.Enqueue(file);
                         continue;
                     }
+                    
                     _hiddenFolder.Remove(compressedFilePath + ".lzma");
 
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     // Split
-                    SplitterLibrary splitter = new SplitterLibrary();
+                    var splitter = new SplitterLibrary();
                     
                     _hashList.Add(file.GetHash(),
                         splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
@@ -124,6 +122,7 @@ namespace P2P_lib.Managers{
 
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
+                            
                             Console.WriteLine(port);
                             try{
                                 _receiver = new Receiver(port);
@@ -138,9 +137,9 @@ namespace P2P_lib.Managers{
                                 _logger.Warn(e);
                             }
 
-                            FileInfo fileInfo = new FileInfo(currentFileHashPath);
+                            var fileInfo = new FileInfo(currentFileHashPath);
 
-                            UploadMessage upload = new UploadMessage(peer){
+                            var upload = new UploadMessage(peer){
                                 filesize = fileInfo.Length,
                                 filename = currentFileHashes,
                                 filehash = file.GetHash(),
@@ -176,7 +175,7 @@ namespace P2P_lib.Managers{
                         });
                     }
 
-                    foreach (var currentFileHash in _hashList.GetEntry(file.GetHash())){
+                    foreach (string currentFileHash in _hashList.GetEntry(file.GetHash())){
                         File.Delete(_path + @".hidden\splitter\" + currentFileHash);
                     }
                 }
@@ -190,7 +189,7 @@ namespace P2P_lib.Managers{
 
         private void _receiver_MessageReceived(BaseMessage msg){
             if (msg.GetMessageType() == typeof(UploadMessage)){
-                UploadMessage upload = (UploadMessage) msg;
+                var upload = (UploadMessage) msg;
 
                 if (upload.type.Equals(Messages.TypeCode.RESPONSE)){
                     if (upload.statusCode == StatusCode.ACCEPTED){
@@ -202,7 +201,8 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> GetPeers(int count){
-            List<Peer> availablePeers = new List<Peer>();
+            var availablePeers = new List<Peer>();
+            
             int counter = 1;
 
             foreach (var peer in this._peers){

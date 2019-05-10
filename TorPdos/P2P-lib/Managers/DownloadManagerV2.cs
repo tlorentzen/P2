@@ -91,7 +91,8 @@ namespace P2P_lib.Managers{
                     }
 
 
-                    List<string> updatedDownloadQueue = new List<string>();
+                    var updatedDownloadQueue = new List<string>();
+                    
                     if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _fileHash)){
                         foreach (var currentFile in _downloadQueue){
                             if (!File.Exists(_path + @".hidden\" + @"incoming\" + _fileHash + @"\" + currentFile)){
@@ -109,7 +110,8 @@ namespace P2P_lib.Managers{
                     foreach (var currentFileHash in updatedDownloadQueue){
                         List<Peer> onlinePeers = this.GetPeers();
                         //See if any online peers have the file
-                        List<string> sentToPeers = new List<string>();
+                        var sentToPeers = new List<string>();
+                        
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
 
@@ -125,7 +127,7 @@ namespace P2P_lib.Managers{
                         }
 
                         foreach (var onlinePeer in onlinePeers){
-                            DownloadMessage downloadMessage = new DownloadMessage(onlinePeer){
+                            var downloadMessage = new DownloadMessage(onlinePeer){
                                 port = _port, 
                                 fullFileName = file.GetHash(), 
                                 filehash = currentFileHash
@@ -145,7 +147,8 @@ namespace P2P_lib.Managers{
 
         private void _receiver_MessageReceived(BaseMessage msg){
             if (msg.GetMessageType() == typeof(DownloadMessage)){
-                DownloadMessage download = (DownloadMessage) msg;
+                var download = (DownloadMessage) msg;
+                
                 if (download.type.Equals(Messages.TypeCode.RESPONSE)){
                     if (download.statusCode == StatusCode.ACCEPTED){
                         download.CreateReply();
@@ -180,7 +183,8 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> GetPeers(){
-            List<Peer> availablePeers = new List<Peer>();
+            var availablePeers = new List<Peer>();
+            
             foreach (var peer in this._peers){
                 if (peer.Value.IsOnline()){
                     availablePeers.Add(peer.Value);
@@ -191,7 +195,7 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> OnlinePeersWithFile(List<Peer> peerlist, List<string> hasFile){
-            List<Peer> result = new List<Peer>();
+            var result = new List<Peer>();
             foreach (Peer peer in peerlist){
                 if (hasFile.Contains(peer.UUID)){
                     result.Add(peer);
@@ -220,7 +224,7 @@ namespace P2P_lib.Managers{
             string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);
 
             //Merge files
-            SplitterLibrary splitterLibrary = new SplitterLibrary();
+            var splitterLibrary = new SplitterLibrary();
             splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
                 _fileList);
@@ -228,7 +232,7 @@ namespace P2P_lib.Managers{
 
 
             // Decrypt file
-            FileEncryption decryption = new FileEncryption(pathWithoutExtension, ".lzma");
+            var decryption = new FileEncryption(pathWithoutExtension, ".lzma");
             decryption.DoDecrypt(IdHandler.GetKeyMold());
             Console.WriteLine("File decrypted");
             File.Delete(path);

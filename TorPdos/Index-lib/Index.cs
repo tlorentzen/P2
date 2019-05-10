@@ -171,7 +171,7 @@ namespace Index_lib{
                     }
 
                     if (e.ChangeType.Equals(WatcherChangeTypes.Created)){
-                        IndexFile eventFile = new IndexFile(e.FullPath);
+                        var eventFile = new IndexFile(e.FullPath);
 
                         if (_index.ContainsKey(eventFile.hash)){
                             _index[eventFile.hash].AddPath(e.FullPath);
@@ -181,7 +181,7 @@ namespace Index_lib{
                         }
                     } else if (e.ChangeType.Equals(WatcherChangeTypes.Changed)){
                         bool fileRemoved = false;
-                        IndexFile eventFile = new IndexFile(e.FullPath);
+                        var eventFile = new IndexFile(e.FullPath);
 
                         if (!_index.ContainsKey(eventFile.hash)){
                             foreach (KeyValuePair<string, IndexFile> pair in _index){
@@ -294,7 +294,7 @@ namespace Index_lib{
                     }
                 }
             } else{
-                IndexFile renamedFile = new IndexFile(e.FullPath);
+                var renamedFile = new IndexFile(e.FullPath);
 
                 if (_index.ContainsKey(renamedFile.hash)){
                     for (int i = 0; i < _index[renamedFile.hash].paths.Count; i++){
