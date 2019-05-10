@@ -75,10 +75,6 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
-                    if (!Directory.Exists(_path + @".hidden\splitterOut\")){
-                        Directory.CreateDirectory(_path + @".hidden\splitterOut\");
-                    }
-
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
                     string compressedFilePath = this._path + @".hidden\" + file.GetHash();
