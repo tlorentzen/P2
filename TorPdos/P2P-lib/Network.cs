@@ -58,7 +58,7 @@ namespace P2P_lib{
         }
 
         public List<Peer> GetPeerList(){
-            List<Peer> newPeerList = new List<Peer>();
+            var newPeerList = new List<Peer>();
 
             foreach (var peer in _peers){
                 newPeerList.Add(peer.Value);
@@ -77,15 +77,15 @@ namespace P2P_lib{
 
             LoadLocationDb();
             _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb, _hashList);
-            Thread deletionManager = new Thread(_deletionManager.Run);
+            var deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
 
             for (int i = 0; i < NumOfThreads; i++){
-                UploadManager uploadManager = new UploadManager(_upload, _ports, _peers, _hashList);
-                DownloadManagerV2 downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index, _hashList);
+                var uploadManager = new UploadManager(_upload, _ports, _peers, _hashList);
+                var downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index, _hashList);
 
-                Thread uploadThread = new Thread(uploadManager.Run);
-                Thread downloadThread = new Thread(downloadManager.Run);
+                var uploadThread = new Thread(uploadManager.Run);
+                var downloadThread = new Thread(downloadManager.Run);
 
                 uploadManager.SentTo = downloadManager.SentTo = _locationDb;
 
@@ -122,7 +122,7 @@ namespace P2P_lib{
         }
 
         public void AddPeer(string uuid, string ip){
-            Peer peer = new Peer(uuid, ip);
+            var peer = new Peer(uuid, ip);
             this._peers.TryAdd(peer.GetUuid(), peer);
         }
 
@@ -144,7 +144,7 @@ namespace P2P_lib{
 
         private void ReceivedPeerFetch(PeerFetcherMessage message){
             if (message.type.Equals(TypeCode.REQUEST)){
-                List<Peer> outgoing = new List<Peer>();
+                var outgoing = new List<Peer>();
                 var incoming = message.peers;
                 // Adding sender to list
                 if (!InPeerList(message.fromUuid, _peers)){
@@ -170,12 +170,12 @@ namespace P2P_lib{
             } else{
                 // Rechieved response
 
-                foreach (Peer incommingPeer in message.peers){
-                    if (InPeerList(incommingPeer.GetUuid(), _peers)) break;
+                foreach (Peer incomingPeer in message.peers){
+                    if (InPeerList(incomingPeer.GetUuid(), _peers)) break;
 
-                    if ((IdHandler.GetUuid().Equals(incommingPeer.GetUuid()))) break;
-                    _peers.TryAdd(incommingPeer.GetUuid(), incommingPeer);
-                    Console.WriteLine("Peer added: " + incommingPeer.GetUuid());
+                    if ((IdHandler.GetUuid().Equals(incomingPeer.GetUuid()))) break;
+                    _peers.TryAdd(incomingPeer.GetUuid(), incomingPeer);
+                    Console.WriteLine("Peer added: " + incomingPeer.GetUuid());
                 }
             }
         }
