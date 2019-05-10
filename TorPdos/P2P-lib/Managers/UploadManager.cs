@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
 using Splitter_lib;
+using System.Linq;
 
 namespace P2P_lib.Managers{
     public class UploadManager : Manager{
@@ -30,6 +31,7 @@ namespace P2P_lib.Managers{
         private ConcurrentDictionary<string, List<string>> _sentTo;
         private readonly HashHandler _hashList;
         private readonly HiddenFolder _hiddenFolder;
+        private int _numberOfPrimaryPeers = 10;
 
         public ConcurrentDictionary<string, List<string>> SentTo{
             private get => _sentTo;
@@ -88,7 +90,7 @@ namespace P2P_lib.Managers{
 
                     // Compress file
                     bool compressionCompleted = Compressor.CompressFile(filePath, compressedFilePath);
-                    
+
                     if (!compressionCompleted){
                         this._queue.Enqueue(file);
                         continue;
@@ -98,20 +100,20 @@ namespace P2P_lib.Managers{
                     var encryption = new FileEncryption(compressedFilePath, ".lzma");
 
                     bool encryptionCompleted = encryption.DoEncrypt(IdHandler.GetKeyMold());
-                    
+
 
                     if (!encryptionCompleted){
                         this._queue.Enqueue(file);
                         continue;
                     }
-                    
+
                     _hiddenFolder.Remove(compressedFilePath + ".lzma");
 
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     // Split
                     var splitter = new SplitterLibrary();
-                    
+
                     _hashList.Add(file.GetHash(),
                         splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
 
@@ -122,7 +124,7 @@ namespace P2P_lib.Managers{
 
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
-                            
+
                             Console.WriteLine(port);
                             try{
                                 _receiver = new Receiver(port);
@@ -207,23 +209,24 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> GetPeers(int count){
-            var availablePeers = new List<Peer>();
-            
-            int counter = 1;
 
-            foreach (var peer in this._peers){
-                if (peer.Value.IsOnline()){
-                    availablePeers.Add(peer.Value);
+            List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
+            topPeers.Sort(new ComparePeersByRating());
+            Console.WriteLine($"_peers:{_peers.Count}       topPeers: {topPeers.Count}");
 
-                    if (counter.Equals(count)){
-                        break;
-                    }
+            if (topPeers.Count > 0) {
 
-                    counter++;
+                int wantedLengthOfTopList = Math.Min(_numberOfPrimaryPeers, Math.Min(topPeers.Count, count));
+
+                topPeers.RemoveRange(wantedLengthOfTopList, Math.Max(0, topPeers.Count - wantedLengthOfTopList));
+
+                foreach (Peer peer in topPeers) {
+
+                    Console.WriteLine($"{peer.UUID} with a rating of {peer.Rating}");
                 }
             }
 
-            return availablePeers;
+            return topPeers;
         }
 
         private int CountOnlinePeers(){

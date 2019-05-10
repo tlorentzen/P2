@@ -12,7 +12,6 @@ using System.Timers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
 using Splitter_lib;
-using System.Linq;
 
 namespace P2P_lib{
     public class Network{
@@ -36,7 +35,6 @@ namespace P2P_lib{
         private ConcurrentDictionary<string, List<string>> _locationDb;
         private DeletionManager _deletionManager;
         private readonly HashHandler _hashList;
-        public List<string> topPeers;
         private int _numberOfPrimaryPeers = 10;
 
 
@@ -425,18 +423,6 @@ namespace P2P_lib{
 
         public void DeleteFile(string hash){
             this._deletionQueue.Enqueue(hash);
-        }
-
-        public void UpdateTopPeers() {
-            List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
-            topPeers.Sort(new ComparePeersByRating());
-            Console.WriteLine($"_peers:{_peers.Count}       topPeers: {topPeers.Count}");
-            if (topPeers.Count > 0) {
-                topPeers.RemoveRange(Math.Min(_numberOfPrimaryPeers, topPeers.Count), Math.Max(0, topPeers.Count - _numberOfPrimaryPeers));
-                foreach (Peer peer in topPeers) {
-                    Console.WriteLine(peer.Rating);
-                }
-            }
         }
     }
 }

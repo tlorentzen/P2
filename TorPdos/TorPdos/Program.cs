@@ -12,7 +12,7 @@ namespace TorPdos{
         static Network _p2P;
         public static string publicUuid;
         public static string filePath;
-        
+
 
         [STAThread]
         static void Main(){
@@ -20,7 +20,7 @@ namespace TorPdos{
             bool running = true;
             bool firstRun = true;
             MyForm torPdos = new MyForm();
-            
+
             if (string.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path"))){
                 Application.Run(torPdos);
             }
@@ -40,7 +40,7 @@ namespace TorPdos{
                 string console = Console.ReadLine();
                 if (console != null){
                     string[] param = console.Split(' ');
-                    //Close program 
+                    //Close program
                     if (console.Equals("quit") || console.Equals("q")) {
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
@@ -133,9 +133,7 @@ namespace TorPdos{
                             _p2P.DownloadFile(param[1]);
                         } else if (console.Equals("integrity")) {
                             _idx.MakeIntegrityCheck();
-                        } else if (console.Equals("top")) {
-                            _p2P.UpdateTopPeers();
-                        } else if (console.Equals("list")) {
+                        } else if (console.Equals("list")){
                             List<Peer> peers = _p2P.GetPeerList();
 
                             Console.WriteLine();
