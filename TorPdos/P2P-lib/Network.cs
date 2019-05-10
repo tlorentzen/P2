@@ -416,6 +416,13 @@ namespace P2P_lib{
             this._download.Enqueue(new QueuedFile(hash));
         }
 
+        public void DownloadAllFiles()
+        {
+            foreach(var key in _locationDb) {
+                this._download.Enqueue(new QueuedFile(key.Key));
+            }
+        }
+
         public void DeleteFile(string hash){
             this._deletionQueue.Enqueue(hash);
         }
