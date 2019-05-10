@@ -148,9 +148,15 @@ namespace P2P_lib.Managers{
                             };
                             upload.Send();
                             Console.WriteLine(currentFileHashes);
-
+                            int pendingCount = 0;
                             while (_pendingReceiver){
-                                // TODO: timeout???
+                                pendingCount++;
+                                System.Threading.Thread.Sleep(1000);
+                                if (pendingCount == 3){
+                                    _receiver.Stop();
+                                    _queue.Enqueue(file);
+                                    break;
+                                }
                             }
 
 
