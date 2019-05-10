@@ -140,12 +140,13 @@ namespace P2P_lib.Managers{
 
                             FileInfo fileInfo = new FileInfo(currentFileHashPath);
 
-                            UploadMessage upload = new UploadMessage(peer);
-                            upload.filesize = fileInfo.Length;
-                            upload.filename = currentFileHashes;
-                            upload.filehash = file.GetHash();
-                            upload.path = currentFileHashPath;
-                            upload.port = port;
+                            UploadMessage upload = new UploadMessage(peer){
+                                filesize = fileInfo.Length,
+                                filename = currentFileHashes,
+                                filehash = file.GetHash(),
+                                path = currentFileHashPath,
+                                port = port
+                            };
                             upload.Send();
                             Console.WriteLine(currentFileHashes);
 

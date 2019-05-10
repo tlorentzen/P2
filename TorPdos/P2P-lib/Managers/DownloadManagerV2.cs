@@ -125,10 +125,11 @@ namespace P2P_lib.Managers{
                         }
 
                         foreach (var onlinePeer in onlinePeers){
-                            DownloadMessage downloadMessage = new DownloadMessage(onlinePeer);
-                            downloadMessage.port = _port;
-                            downloadMessage.fullFileName = file.GetHash();
-                            downloadMessage.filehash = currentFileHash;
+                            DownloadMessage downloadMessage = new DownloadMessage(onlinePeer){
+                                port = _port, 
+                                fullFileName = file.GetHash(), 
+                                filehash = currentFileHash
+                            };
                             downloadMessage.Send();
                         }
 
