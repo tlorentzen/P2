@@ -124,8 +124,7 @@ namespace Index_lib{
                         }
 
                         if (_debug){
-                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") + file.GetHash() +
-                                              " - " + filePath);
+                            Console.WriteLine((foundInIndex ? "Path added: " : "File Added: ") +$" {file.GetHash()} - {filePath}");
                         }
                     }
                 }

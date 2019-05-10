@@ -42,7 +42,6 @@ namespace Compression{
                         using (var file = new FileStream(inPath, FileMode.Open, FileAccess.Read,
                             FileShare.Read)){
                             long fileSize = file.Length;
-                            Console.WriteLine(fileSize);
 
                             if (fileSize > BufferSize){
                                 pakg = (int) (fileSize / BufferSize);
@@ -71,10 +70,11 @@ namespace Compression{
 
                                     if (bytesRead != bytesToRead){
                                         //throw exception
+                                        //TODO throw an actual exception
                                         Console.WriteLine(@"Woopsie :)");
                                     } else{
                                         //Compress buffer and write to outfile
-                                        Console.WriteLine($@"Compressing {compressed} out of {pakg}");
+                                        Console.WriteLine($"Compressing {compressed} out of {pakg}");
                                         byte[] compressedBytes = CompressBytes(buffer);
                                         outStream.Write(compressedBytes, 0, compressedBytes.Length);
                                         compressed++;
@@ -140,6 +140,7 @@ namespace Compression{
 
                                     if (bytesRead != bytesToRead){
                                         //throw exception
+                                        //TODO throw an actual exception
                                         Console.WriteLine(@"Woopsie :)");
                                     } else{
                                         //Decompress buffer

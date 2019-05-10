@@ -108,7 +108,7 @@ namespace P2P_lib.Managers{
                         }
 
 
-                        Console.WriteLine(currentFileHash);
+                        Console.WriteLine($"Looking for: {currentFileHash}");
                         if (!_sentTo.ContainsKey(currentFileHash)){
                             Console.WriteLine("File not on network");
                             continue;
@@ -116,7 +116,6 @@ namespace P2P_lib.Managers{
 
                         int port;
                         port = _ports.GetAvailablePort();
-                        Console.WriteLine("THIS IS A PORT: " + port);
                         Receiver receiver = new Receiver(port);
                         receiver.MessageReceived += _receiver_MessageReceived;
                         receiver.Start();
@@ -129,8 +128,6 @@ namespace P2P_lib.Managers{
                             downloadMessage.filehash = currentFileHash;
                             downloadMessage.Send();
                         }
-
-                        Console.WriteLine("File: " + file.GetHash() + " was sent to?");
                     }
                 }
 
@@ -157,7 +154,6 @@ namespace P2P_lib.Managers{
                                 download.filehash, download.port);
                         this._receiver.FileSuccessfullyDownloaded += ReceiverFileSuccessfullyDownloaded;
                         this._receiver.Start();
-                        Console.WriteLine("FileReceiver opened");
                         download.Send();
                         _ports.Release(download.port);
                     } else if (download.statusCode == StatusCode.FILE_NOT_FOUND){
@@ -225,7 +221,6 @@ namespace P2P_lib.Managers{
             decryption.DoDecrypt(IdHandler.GetKeyMold());
             Console.WriteLine("File decrypted");
             File.Delete(path);
-            Console.WriteLine(pathWithoutExtension);
 
             // Decompress file
             string pathToFileForCopying =
@@ -233,7 +228,7 @@ namespace P2P_lib.Managers{
             Console.WriteLine("File decompressed");
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 File.Copy(pathToFileForCopying, filePath);
-                Console.WriteLine("File send to: {0}", filePath);
+                Console.WriteLine($"File saved to: {filePath}");
             }
         }
 

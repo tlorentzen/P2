@@ -25,7 +25,7 @@ namespace P2P_lib{
             var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
 
             if (File.Exists(path)){
-                Console.WriteLine("PATH           " + path);
+                Console.WriteLine($"PATH           {path}");
                 string input = File.ReadAllText(path);
                 return JsonConvert.DeserializeObject<StateSaveConcurrentQueue<T>>(input, settings);
             }
