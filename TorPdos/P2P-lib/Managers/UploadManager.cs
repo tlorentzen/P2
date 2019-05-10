@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
 using Splitter_lib;
+using System.Linq;
 
 namespace P2P_lib.Managers{
     public class UploadManager : Manager{
@@ -30,6 +31,7 @@ namespace P2P_lib.Managers{
         private ConcurrentDictionary<string, List<string>> _sentTo;
         private readonly HashHandler _hashList;
         private HiddenFolder _hiddenFolder;
+        private int _numberOfPrimaryPeers = 10;
 
         public ConcurrentDictionary<string, List<string>> SentTo{
             private get => _sentTo;
@@ -202,22 +204,20 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> GetPeers(int count){
-            List<Peer> availablePeers = new List<Peer>();
-            int counter = 1;
+            List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
+            topPeers.Sort(new ComparePeersByRating());
+            Console.WriteLine($"_peers:{_peers.Count}       topPeers: {topPeers.Count}");
+            if (topPeers.Count > 0) {
+                int wantedLengthOfTopList = Math.Min(_numberOfPrimaryPeers, Math.Min(topPeers.Count, count));
 
-            foreach (var peer in this._peers){
-                if (peer.Value.IsOnline()){
-                    availablePeers.Add(peer.Value);
+                topPeers.RemoveRange(wantedLengthOfTopList, Math.Max(0, topPeers.Count - wantedLengthOfTopList));
 
-                    if (counter.Equals(count)){
-                        break;
-                    }
-
-                    counter++;
+                foreach (Peer peer in topPeers) {
+                    Console.WriteLine($"{peer.UUID} with a rating of {peer.Rating}");
                 }
             }
 
-            return availablePeers;
+            return topPeers;
         }
 
         private int CountOnlinePeers(){
