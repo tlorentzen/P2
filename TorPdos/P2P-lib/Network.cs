@@ -79,6 +79,7 @@ namespace P2P_lib{
             _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb, _hashList);
             Thread deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
+            _managers.Add(_deletionManager);
 
             for (int i = 0; i < NumOfThreads; i++){
                 UploadManager uploadManager = new UploadManager(_upload, _ports, _peers, _hashList);
