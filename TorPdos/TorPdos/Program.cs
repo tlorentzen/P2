@@ -127,6 +127,8 @@ namespace TorPdos{
                             _p2P.SaveFile();
                         } else if (console.Equals("ping")) {
                             _p2P.Ping();
+                        } else if (console.Equals("download all")) {
+                          _p2P.DownloadAllFiles();
                         } else if (console.StartsWith("download") && param.Length == 2) {
                             _p2P.DownloadFile(param[1]);
                         } else if (console.Equals("integrity")) {
