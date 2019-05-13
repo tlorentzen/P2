@@ -6,11 +6,14 @@ namespace Index_lib{
         private readonly string _path;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("HiddenFolderLogger");
 
+        
         public HiddenFolder(string path){
             DirectoryInfo directory;
             _path = path;
+            //Create the hidden folder at the given path if it does not exist already
             if (!Directory.Exists(_path)){
                 directory = Directory.CreateDirectory(_path);
+                //Get information about the folder if it does already exist
             } else{
                 directory = new DirectoryInfo(_path);
             }
