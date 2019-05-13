@@ -74,6 +74,10 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
+                    if (_queue == null){
+                        return;
+                    }
+
                     _fileHash = file.GetHash();
                     _currentQueuedFile = file;
 
@@ -90,6 +94,9 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
+                    if (_downloadQueue == null){
+                        return;
+                    }
 
                     var updatedDownloadQueue = new List<string>();
                     
