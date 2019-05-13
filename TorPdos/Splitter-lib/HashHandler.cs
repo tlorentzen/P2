@@ -6,10 +6,14 @@ using Newtonsoft.Json;
 
 namespace Splitter_lib{
     public class HashHandler{
+       
         private ConcurrentDictionary<string, List<string>> _hashList = new ConcurrentDictionary<string, List<string>>();
         private readonly string _filePath;
 
-        //Make a path to the hashlist in hidden folder
+        /// <summary>
+        /// Make a path to the hashlist in hidden folder
+        /// </summary>
+        /// <param name="inputPath"></param>
         public HashHandler(string inputPath){
             string path;
             if (Directory.Exists(inputPath + @"\.hidden\")){
@@ -18,14 +22,12 @@ namespace Splitter_lib{
                 throw new DirectoryNotFoundException();
             }
             _filePath = path + @"hashList.json";
-            Start();
-        }
-
-        private void Start(){
             Load();
         }
 
-        //Loads in the file with the original hash and its splitted parts
+        /// <summary>
+        /// Loads in the file with the original hash and its splitted parts
+        /// </summary>
         private void Load(){
             //If the file doesn't exist the file will be created
             if (!File.Exists(_filePath)){
@@ -41,7 +43,11 @@ namespace Splitter_lib{
             }
         }
 
-        //Gets the hashed value out of the file in a list.
+        /// <summary>
+        /// Gets the hashed value out of the file in a list.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public List<string> GetEntry(string fileName){
             List< string> output = new List<string>();
             if (_hashList.TryGetValue(fileName, out output)){
@@ -51,13 +57,19 @@ namespace Splitter_lib{
             }
         }
 
-        //Adds the splitted file hashes to the hashed file list
-        //Takes the splitted file hash and the list it has to be added to as inputs 
+        /// <summary>
+        /// Adds the splitted file hashes to the hashed file list
+        /// Takes the splitted file hash and the list it has to be added to as inputs 
+        /// </summary>
+        /// <param name="hash">Original file hash</param>
+        /// <param name="splittedFileHashes">List of chunk hashes</param>
         public void Add(string hash, List<string> splittedFileHashes){
             _hashList.TryAdd(hash,splittedFileHashes);
         }
 
-        //Saves the list to the json file
+        /// <summary>
+        /// Saves the list to the json file
+        /// </summary>
         public void Save(){
             if (_filePath != null){
                 string json = JsonConvert.SerializeObject(_hashList);
