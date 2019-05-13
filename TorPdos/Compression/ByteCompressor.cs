@@ -98,10 +98,12 @@ namespace Compression{
                 }
                 catch (Exception e){
                     logger.Error(e);
+                    return false;
                 }
             }
             else{
                 logger.Fatal(new FileNotFoundException());
+                return false;
             }
 
             return true;

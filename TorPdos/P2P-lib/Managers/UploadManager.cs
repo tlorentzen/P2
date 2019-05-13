@@ -112,7 +112,7 @@ namespace P2P_lib.Managers{
 
                     string encryptedFilePath = compressedFilePath + ".aes";
 
-                    // Split
+                    // Initialize splitter
                     var splitter = new SplitterLibrary();
 
                     _hashList.Add(fileHash,
@@ -182,9 +182,10 @@ namespace P2P_lib.Managers{
                         });
                     }
 
-                    foreach (string currentFileHash in _hashList.GetEntry(fileHash)){
-                        File.Delete(_path + @".hidden\splitter\" + currentFileHash);
-                    }
+                    //foreach (string currentFileHash in _hashList.GetEntry(file.GetHash())){
+                    //    File.Delete(_path + @".hidden\splitter\" + currentFileHash);
+                    //}
+
                 }
 
 

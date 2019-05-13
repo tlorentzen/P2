@@ -47,7 +47,7 @@ namespace Splitter_lib{
             if (_hashList.TryGetValue(fileName, out output)){
                 return output;
             } else{
-                throw new KeyNotFoundException();
+                return null;
             }
         }
 

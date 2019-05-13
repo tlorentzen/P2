@@ -8,7 +8,7 @@ namespace Splitter_lib{
     public class SplitterLibrary{
         //list with the splitted files
         public List<string> SplitFile(string inputFilePath, string inputFileHash, string outputFolderPath,
-                                      int chunkSize = 1000000){
+            int chunkSize = 1000000){
             //If the folder for the chunk files do not exist make said folder
             if (!Directory.Exists(outputFolderPath)){
                 Directory.CreateDirectory(outputFolderPath);
@@ -32,7 +32,7 @@ namespace Splitter_lib{
                         currentFiles.Add(CreateMD5(writingBuffer));
                     }
                 }
-               } else{
+            } else{
                 throw new FileNotFoundException();
             }
 
@@ -72,7 +72,6 @@ namespace Splitter_lib{
                         }
                     }
                 }
-                
             } else{
                 throw new FileNotFoundException();
             }
