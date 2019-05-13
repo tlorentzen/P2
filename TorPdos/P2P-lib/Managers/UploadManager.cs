@@ -79,7 +79,8 @@ namespace P2P_lib.Managers{
 
                     int copies = file.GetCopies();
                     string filePath = file.GetPath();
-                    string compressedFilePath = this._path + @".hidden\" + file.GetHash();
+                    string fileHash = file.GetHash();
+                    string compressedFilePath = this._path + @".hidden\" + fileHash;
 
                     List<Peer> receivingPeers = this.GetPeers(Math.Min(copies, this.CountOnlinePeers()));
 
@@ -114,11 +115,11 @@ namespace P2P_lib.Managers{
                     // Initialize splitter
                     var splitter = new SplitterLibrary();
 
-                    _hashList.Add(file.GetHash(),
-                        splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
+                    _hashList.Add(fileHash,
+                        splitter.SplitFile(encryptedFilePath, fileHash, _path + @".hidden\splitter\"));
 
 
-                    foreach (var currentFileHashes in _hashList.GetEntry(file.GetHash())){
+                    foreach (var currentFileHashes in _hashList.GetEntry(fileHash)){
                         peersSentTo.Clear();
                         string currentFileHashPath = _path + @".hidden\splitter\" + currentFileHashes;
 
@@ -142,7 +143,7 @@ namespace P2P_lib.Managers{
                             var upload = new UploadMessage(peer){
                                 filesize = fileInfo.Length,
                                 filename = currentFileHashes,
-                                filehash = file.GetHash(),
+                                filehash = fileHash,
                                 path = currentFileHashPath,
                                 port = port
                             };
@@ -151,8 +152,8 @@ namespace P2P_lib.Managers{
                             int pendingCount = 0;
                             while (_pendingReceiver){
                                 pendingCount++;
-                                System.Threading.Thread.Sleep(1000);
-                                if (pendingCount == 3){
+                                System.Threading.Thread.Sleep(500);
+                                if (pendingCount == 40){
                                     _receiver.Stop();
                                     _queue.Enqueue(file);
                                     break;
@@ -184,6 +185,7 @@ namespace P2P_lib.Managers{
                     //foreach (string currentFileHash in _hashList.GetEntry(file.GetHash())){
                     //    File.Delete(_path + @".hidden\splitter\" + currentFileHash);
                     //}
+
                 }
 
 
