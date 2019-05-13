@@ -52,6 +52,7 @@ namespace Splitter_lib{
         }
 
         //Adds the splitted file hashes to the hashed file list
+        //Takes the splitted file hash and the list it has to be added to as inputs 
         public void Add(string hash, List<string> splittedFileHashes){
             _hashList.TryAdd(hash,splittedFileHashes);
         }

@@ -34,14 +34,17 @@ namespace Index_lib{
         }
 
         //Deletes file or directory form the relative path from hidden directory
-
         public void Remove(string path)
         {
-            if (!path.Contains(".hidden")) {
+            //If it is not an absolute path it will be turned into an absolute path
+            if (!path.Contains(".hidden"))
+            {
                 path = _path + "\\" + path;
             }
+            //If a file exists on the path the file will be deleted
             if (File.Exists(path)) {
                 File.Delete(path);
+                //Else if the path is a directory it will find all the files in the directory and delete said files. 
             } else if (Directory.Exists(path)) {
                 string[] files = Directory.GetFiles(path);
                 foreach(string p in files) {
@@ -51,15 +54,19 @@ namespace Index_lib{
                 foreach(string p in paths) {
                     Remove(p);
                 }
+                //Deletes the entire directory
                 Directory.Delete(path);
+                //If the path doesn't exist it will throw the exception that it's not a valid path
             } else
                 throw new ArgumentException("Path invalid", path);
         }
 
+        //Deletes a file at the inputted path
         public static void RemoveFile(string path) {
             File.Delete(path);
         }
 
+        //Makes it possible to edit files located in hidden folders
         public FileStream WriteToFile(string path){
             return new FileStream(path, FileMode.Create, FileAccess.Write);
         }
