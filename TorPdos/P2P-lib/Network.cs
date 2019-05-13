@@ -45,7 +45,7 @@ namespace P2P_lib{
             this._index = index;
             this._peerFilePath = path + @".hidden\peer.json";
             this._locationDbPath = path + @".hidden\locationDB.json";
-            _hiddenPath = new HiddenFolder(_path + @"\.hidden\");
+            _hiddenPath = new HiddenFolder(_path + @".hidden\");
             _hashList = new HashHandler(_path);
 
             Load();

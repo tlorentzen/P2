@@ -57,6 +57,7 @@ namespace Splitter_lib{
         }
 
         //Function to merge the files when downloaded from the network in chunks
+        //Takes an input directory where all the split files are and puts them in the output filepath.
         public bool MergeFiles(string inputDir, string outputFilePath, List<string> fileList){
             if (Directory.Exists(inputDir)){
                 if (fileList.Count > 0){
