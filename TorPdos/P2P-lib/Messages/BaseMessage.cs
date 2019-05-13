@@ -72,8 +72,9 @@ namespace P2P_lib.Messages{
 
         //https://stackoverflow.com/questions/33022660/how-to-convert-byte-array-to-any-type
         private byte[] ToByteArray(){
-            if (this == null)
+            if (this == null) {
                 return null;
+            }
             BinaryFormatter bf = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream()){
                 bf.Serialize(ms, this);
@@ -82,8 +83,9 @@ namespace P2P_lib.Messages{
         }
 
         public static BaseMessage FromByteArray(byte[] data){
-            if (data == null)
+            if (data == null) {
                 return null;
+            }
             BinaryFormatter bf = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream(data)){
                 object obj = bf.Deserialize(ms);

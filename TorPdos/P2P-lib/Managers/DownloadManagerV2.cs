@@ -120,7 +120,7 @@ namespace P2P_lib.Managers{
                             break;
                         }
 
-                        Console.WriteLine(currentFileHash);
+                        Console.WriteLine($"Looking for: {currentFileHash}");
                         if (!_sentTo.ContainsKey(currentFileHash)){
                             Console.WriteLine("File not on network");
                             continue;
@@ -134,8 +134,6 @@ namespace P2P_lib.Managers{
                             };
                             downloadMessage.Send();
                         }
-
-                        Console.WriteLine("File: " + file.GetHash() + " was received?");
                     }
                 }
 
@@ -236,8 +234,6 @@ namespace P2P_lib.Managers{
             decryption.DoDecrypt(IdHandler.GetKeyMold());
             Console.WriteLine("File decrypted");
             File.Delete(path);
-            
-            Console.WriteLine(pathWithoutExtension);
 
             // Decompress file
             string pathToFileForCopying =
@@ -248,7 +244,7 @@ namespace P2P_lib.Managers{
                     Directory.CreateDirectory(Path.GetDirectoryName(pathToFileForCopying));
                 }
                 File.Copy(pathToFileForCopying, filePath);
-                Console.WriteLine("File send to: {0}", filePath);
+                Console.WriteLine($"File saved to: {filePath}");
             }
         }
 

@@ -307,7 +307,6 @@ namespace P2P_lib{
                 string path = _path + @".hidden\" + downloadMessage.fromUuid + @"\" +
                               downloadMessage.fullFileName + @"\" + downloadMessage.filehash;
                 if (downloadMessage.statusCode == StatusCode.OK){
-                    Console.WriteLine(path);
                     if (File.Exists(path)){
                         downloadMessage.CreateReply();
                         downloadMessage.statusCode = StatusCode.ACCEPTED;
@@ -333,7 +332,6 @@ namespace P2P_lib{
                 if (message.statusCode.Equals(StatusCode.OK)){
                     string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
                                   message.fileHash;
-                    Console.WriteLine(path);
                     if (File.Exists(path)){
                         File.Delete(path);
                         

@@ -93,8 +93,6 @@ namespace Encryption{
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
 
-            Console.WriteLine(Path);
-
             //Reading through the file
             using (FileStream fsCrypt =
                 new FileStream(Path + ".aes", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){
@@ -151,8 +149,6 @@ namespace Encryption{
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
             string[] output = null;
-
-            Console.WriteLine(path);
 
             //Reading through the file
             using (FileStream fsCrypt =

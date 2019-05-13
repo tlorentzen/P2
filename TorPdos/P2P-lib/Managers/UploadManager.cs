@@ -124,8 +124,6 @@ namespace P2P_lib.Managers{
 
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
-
-                            Console.WriteLine(port);
                             try{
                                 _receiver = new Receiver(port);
                                 _receiver.MessageReceived += this._receiver_MessageReceived;
@@ -149,7 +147,7 @@ namespace P2P_lib.Managers{
                                 port = port
                             };
                             upload.Send();
-                            Console.WriteLine(currentFileHashes);
+                            Console.WriteLine($"Sending: {currentFileHashes}");
                             int pendingCount = 0;
                             while (_pendingReceiver){
                                 pendingCount++;
@@ -212,20 +210,10 @@ namespace P2P_lib.Managers{
 
             List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
             topPeers.Sort(new ComparePeersByRating());
-            Console.WriteLine($"_peers:{_peers.Count}       topPeers: {topPeers.Count}");
-
             if (topPeers.Count > 0) {
-
                 int wantedLengthOfTopList = Math.Min(_numberOfPrimaryPeers, Math.Min(topPeers.Count, count));
-
                 topPeers.RemoveRange(wantedLengthOfTopList, Math.Max(0, topPeers.Count - wantedLengthOfTopList));
-
-                foreach (Peer peer in topPeers) {
-
-                    Console.WriteLine($"{peer.UUID} with a rating of {peer.Rating}");
-                }
             }
-
             return topPeers;
         }
 
