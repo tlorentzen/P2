@@ -110,7 +110,7 @@ namespace Compression{
         public static string DecompressFile(string inPath, string outPath){
             //Add .lzma to infile, if extesion not provided
             if (!Path.HasExtension(inPath)){
-                inPath = inPath + ".lzma";
+                inPath += ".lzma";
             }
 
             if (File.Exists(inPath)){
@@ -124,7 +124,7 @@ namespace Compression{
                         inStream.Read(extbuf, 0, extlen);
                         string ext = Encoding.ASCII.GetString(extbuf);
                         if (!Path.HasExtension(outPath) || Path.GetExtension(outPath) != ext){
-                            outPath = outPath + ext;
+                            outPath += ext;
                         }
 
                         if (!File.Exists(outPath)){
