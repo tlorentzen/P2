@@ -19,6 +19,11 @@ namespace Encryption{
             Extension = extension;
         }
 
+        /// <summary>
+        /// Function to encrypt files
+        /// </summary>
+        /// <param name="password">Keymold from our hashes of UUID and user password</param>
+        /// <returns>Returns true if encryption is succesful and false if not</returns>
         public bool DoEncrypt(string password){
             //Uses the GetSalt function to create the salt for the encryption.
             var salt = GetSalt();
@@ -88,6 +93,10 @@ namespace Encryption{
             return true;
         }
 
+        /// <summary>
+        /// Function to decrypt 
+        /// </summary>
+        /// <param name="password">Keymold from our hashes of UUID and user password</param>
         public void DoDecrypt(string password){
             //Setup to read the salt from the start of the file
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
@@ -144,6 +153,12 @@ namespace Encryption{
             }
         }
 
+        /// <summary>
+        /// Decrypt the Userdata file so it is readable by the program
+        /// </summary>
+        /// <param name="password">The user's password</param>
+        /// <param name="path">Where the Userdata file is stored</param>
+        /// <returns></returns>
         public static string[] UserDataDecrypt(string password, string path){
             //Setup to read the salt from the start of the file
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
@@ -206,6 +221,12 @@ namespace Encryption{
             return output;
         }
 
+        /// <summary>
+        /// Encrypts the userdata
+        /// </summary>
+        /// <param name="password">User password</param>
+        /// <param name="fileInformation">Is the data in the userfile</param>
+        /// <param name="path">Path to where the userdata is located</param>
         public static void UserDataEncrypt(string password, string fileInformation, string path){
             //Uses the GetSalt function to create the salt for the encryption.
             var salt = GetSalt();
@@ -250,7 +271,10 @@ namespace Encryption{
             }
         }
 
-
+        /// <summary>
+        /// Fetches the salt from the log
+        /// </summary>
+        /// <returns></returns>
         private static byte[] GetSalt(){
             byte[] data = new byte[64];
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider()){

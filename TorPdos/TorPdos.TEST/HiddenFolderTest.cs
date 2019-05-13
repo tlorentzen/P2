@@ -3,7 +3,7 @@ using Index_lib;
 using System.IO;
 using System.Text;
 
-namespace TorPdos.TEST{
+/*namespace TorPdos.TEST{
     [TestClass]
     public class HiddenFolderTest{
         [TestMethod]
@@ -39,7 +39,7 @@ namespace TorPdos.TEST{
         }
         */
 
-        [TestMethod]
+        /*[TestMethod]
         public void WriteToFileCreatedFile(){
             var hidden = MakeHiddenFolder();
             using (FileStream fs = hidden.WriteToFile("TEST/.hidden/TESTFILE.txt")){
@@ -101,4 +101,4 @@ namespace TorPdos.TEST{
             return new HiddenFolder("TEST/.hidden");
         }
     }
-}
+}*/

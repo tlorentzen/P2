@@ -7,6 +7,10 @@ namespace Index_lib{
         private static NLog.Logger logger = NLog.LogManager.GetLogger("HiddenFolderLogger");
 
         
+        /// <summary>
+        /// Creates a hidden folder
+        /// </summary>
+        /// <param name="path">Path to the hidden folder</param>
         public HiddenFolder(string path){
             DirectoryInfo directory;
             _path = path;
@@ -25,18 +29,11 @@ namespace Index_lib{
             }
         }
 
-        //Adds file or directory from path to the hidden directory
-        public void Add(string path){
-            //string nameExt = path.Split('\\').Last();
-            Directory.Move(path, _path + path);
-        }
 
-        public void Add(string path, string inpath)
-        {
-            Directory.Move(path, _path + inpath);
-        }
-
-        //Deletes file or directory form the relative path from hidden directory
+        /// <summary>
+        /// Deletes file or directory form the relative path from hidden directory
+        /// </summary>
+        /// <param name="path">Path to the file/directory which has to be removed, can be both relative and absolute</param>
         public void Remove(string path)
         {
             //If it is not an absolute path it will be turned into an absolute path
@@ -64,28 +61,13 @@ namespace Index_lib{
                 throw new ArgumentException("Path invalid", path);
         }
 
-        //Deletes a file at the inputted path
-        public static void RemoveFile(string path) {
-            File.Delete(path);
-        }
-
-        //Makes it possible to edit files located in hidden folders
+        /// <summary>
+        /// Makes it possible to edit files located in hidden folders
+        /// </summary>
+        /// <param name="path">Path to the file which has to be edited</param>
+        /// <returns>Returns the file with the modifications</returns>
         public FileStream WriteToFile(string path){
             return new FileStream(path, FileMode.Create, FileAccess.Write);
-        }
-
-        public FileStream ReadFromFile(string path){
-            try{
-                return new FileStream(path, FileMode.Open, FileAccess.Read);
-            }
-            catch (FileNotFoundException e){
-                logger.Fatal(e);
-            }
-            catch (Exception e){
-                logger.Error(e);
-            }
-
-            return null;
         }
     }
 }
