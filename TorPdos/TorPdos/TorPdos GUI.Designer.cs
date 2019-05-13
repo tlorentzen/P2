@@ -469,7 +469,7 @@ namespace TorPdos
         private void Sorry()
         {
             Controls.Clear();
-            MessageBox.Show("Sorry that port is unavailable, the program will now close. Please close MineCraft you bakaneko");
+            MessageBox.Show("Sorry that port is unavailable, the program will now close.");
             Controls.Add(btnOkay);
         }
         private void BtnLogOutClick(object sender, EventArgs e)
