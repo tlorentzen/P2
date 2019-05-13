@@ -7,7 +7,11 @@ namespace Compression{
     public class Compressor{
         private static NLog.Logger logger = NLog.LogManager.GetLogger("CompressionLogger");
 
-        //Function to compess bytes using SevenZipHelper
+        /// <summary>
+        /// Function to compress bytes using SevenZipHelper
+        /// </summary>
+        /// <param name="inData">The byte which needs to be compressed</param>
+        /// <returns>Returns the byte compressed</returns>
         public static byte[] CompressBytes(byte[] inData){
             Console.WriteLine("Original data is {0} bytes", inData.Length);
             //Compress byte array
@@ -17,7 +21,11 @@ namespace Compression{
             return compressed;
         }
 
-        //Function to decompress bytes using SevenZipHelper
+        /// <summary>
+        /// Function to decompress bytes using SevenZipHelper
+        /// </summary>
+        /// <param name="inData">The byte which needs to be decompressed</param>
+        /// <returns>Returns the byte decompressed</returns>
         public static byte[] DecompressBytes(byte[] inData){
             Console.WriteLine("Compressed data is {0} bytes", inData.Length);
             //Decompress byte array
@@ -27,6 +35,12 @@ namespace Compression{
             return decompressed;
         }
 
+        /// <summary>
+        /// Function to convert fiels into byte arrays
+        /// </summary>
+        /// <param name="inPath">The path to where the original file is</param>
+        /// <param name="outPath">The path to where the byte array ends up</param>
+        /// <returns>Returns true if the file is succesfully turned into a byte array</returns>
         public static bool CompressFile(string inPath, string outPath){
             int pakg = 1;
 
@@ -109,6 +123,12 @@ namespace Compression{
             return true;
         }
 
+        /// <summary>
+        /// Function to decompress file
+        /// </summary>
+        /// <param name="inPath">The path to where the compressed byte is</param>
+        /// <param name="outPath">The path to where the decompressed file should end up</param>
+        /// <returns>Returns the path to where the decompressed files are</returns>
         public static string DecompressFile(string inPath, string outPath){
             //Add .lzma to infile, if extesion not provided
             if (!Path.HasExtension(inPath)){

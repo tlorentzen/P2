@@ -41,6 +41,11 @@ namespace Compression{
             eos
         };
 
+        /// <summary>
+        /// The function which does the compression
+        /// </summary>
+        /// <param name="inputBytes">The bytes which needs to be compressed</param>
+        /// <returns></returns>
         public static byte[] Compress(byte[] inputBytes){
             MemoryStream inStream = new MemoryStream(inputBytes);
             MemoryStream outStream = new MemoryStream();
@@ -54,6 +59,11 @@ namespace Compression{
             return outStream.ToArray();
         }
 
+        /// <summary>
+        /// The function which does the decompression
+        /// </summary>
+        /// <param name="inputBytes">The bytes which needs to be decompressed</param>
+        /// <returns></returns>
         public static byte[] Decompress(byte[] inputBytes){
             MemoryStream newInStream = new MemoryStream(inputBytes);
 
