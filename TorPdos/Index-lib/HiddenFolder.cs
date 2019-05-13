@@ -28,12 +28,12 @@ namespace Index_lib{
         //Adds file or directory from path to the hidden directory
         public void Add(string path){
             //string nameExt = path.Split('\\').Last();
-            Directory.Move(path, _path + "/" + path);
+            Directory.Move(path, _path + path);
         }
 
         public void Add(string path, string inpath)
         {
-            Directory.Move(path, _path + "/" + inpath);
+            Directory.Move(path, _path + inpath);
         }
 
         //Deletes file or directory form the relative path from hidden directory
@@ -42,7 +42,7 @@ namespace Index_lib{
             //If it is not an absolute path it will be turned into an absolute path
             if (!path.Contains(".hidden"))
             {
-                path = _path + "\\" + path;
+                path = _path + path;
             }
             //If a file exists on the path the file will be deleted
             if (File.Exists(path)) {

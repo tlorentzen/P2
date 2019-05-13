@@ -41,7 +41,7 @@ namespace Index_lib{
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Index(string path){
-            _indexFilePath = path + @"\.hidden\index.json";
+            _indexFilePath = path + @".hidden\index.json";
             
 
             if (Directory.Exists(path)){
@@ -55,7 +55,7 @@ namespace Index_lib{
             //watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
 
             // Make hidden directory
-            _hiddenFolder = new HiddenFolder(_path + @"\.hidden\");
+            _hiddenFolder = new HiddenFolder(_path + @".hidden\");
 
             // Add event handlers.
             watcher.Changed += OnChanged;
