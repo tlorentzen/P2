@@ -111,10 +111,10 @@ namespace P2P_lib.Managers{
                     }
 
                     if (_downloadQueue.Count == 0){
-                        RestoreOriginalFile(_fileHash,true);
+                        RestoreOriginalFile(_fileHash, true);
                     }
 
-                    foreach (var currentFileHash in updatedDownloadQueue){
+                    foreach (string currentFileHash in updatedDownloadQueue){
                         List<Peer> onlinePeers = this.GetPeers();
                         //See if any online peers have the file
                         var sentToPeers = new List<string>();
@@ -260,7 +260,7 @@ namespace P2P_lib.Managers{
             _waitHandle.Set();
             this._receiver.Stop();
             Console.Write("Download thread stopping... ");
-            while (!this.isStopped){ }
+            while (!this.isStopped){}
 
             Console.Write("Stopped!");
             return true;
