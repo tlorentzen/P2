@@ -286,9 +286,9 @@ namespace Index_lib{
             if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)){
                 foreach (KeyValuePair<string, IndexFile> pair in _index){
                     for (int i = 0; i < _index[pair.Key].paths.Count; i++){
-                        if (_index[pair.Key].paths[i].StartsWith(_path + @"\" + e.OldName)){
+                        if (_index[pair.Key].paths[i].StartsWith(_path + e.OldName)){
                             _index[pair.Key].paths[i] = _index[pair.Key].paths[i]
-                                .Replace(_path + @"\" + e.OldName, _path + @"\" + e.Name);
+                                .Replace(_path + e.OldName, _path + e.Name);
                         }
                     }
                 }
