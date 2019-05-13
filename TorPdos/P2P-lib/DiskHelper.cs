@@ -7,6 +7,11 @@ using Microsoft.Win32;
 namespace P2P_lib{
     public class DiskHelper{
 
+        /// <summary>
+        /// Get how much space is available on the chosen drive
+        /// </summary>
+        /// <param name="driveName">The name of the drive to be checked</param>
+        /// <returns>Returns amount of space available on the drive</returns>
         public static long GetTotalAvailableSpace(string driveName){
             driveName = driveName.Split('\\')[0] + '\\';
             foreach (DriveInfo drive in DriveInfo.GetDrives()){
@@ -36,7 +41,11 @@ namespace P2P_lib{
             }
         }
 
-        //Function to get a valure from the registry.
+        /// <summary>
+        /// Function to get a value from the registry.
+        /// </summary>
+        /// <param name="key">The key from the registry we want to work with</param>
+        /// <returns>Returns the value stored in the key</returns>
         public static string GetRegistryValue(string key){
             //Sets the RegistryKey to the TorPdos registry
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
@@ -49,10 +58,14 @@ namespace P2P_lib{
             }
         }
 
-        //Function to set the registry value
-        public static void SetRegistryValue(string key){
+        /// <summary>
+        /// Set value in registry
+        /// </summary>
+        /// <param name="key">The key which has to be saved</param>
+        /// <param name="value">The value which has to be saved in the key</param>
+        public static void SetRegistryValue(string key, string value){
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-            registry?.SetValue("Path", key);
+            registry?.SetValue(key, value);
         }
     }
 }

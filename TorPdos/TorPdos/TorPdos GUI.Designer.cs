@@ -327,16 +327,16 @@ namespace TorPdos
             {
                 if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    DiskHelper.SetRegistryValue(PathName());
+                    DiskHelper.SetRegistryValue("Path", PathName());
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
                 }
                 else if (Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
                 {
-                    DiskHelper.SetRegistryValue(PathName());
+                    DiskHelper.SetRegistryValue("Path", PathName());
                 }
                 else if (chkCreateFolder.Checked == true)
                 {
-                    DiskHelper.SetRegistryValue(newPath);
+                    DiskHelper.SetRegistryValue("Path", newPath);
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
