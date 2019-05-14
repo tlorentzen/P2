@@ -43,16 +43,17 @@ namespace Index_lib{
         public Index(string path){
             _indexFilePath = path + @".hidden\index.json";
             
-
+            //Checks if the index file exists
             if (Directory.Exists(path)){
                 _path = path;
             } else{
                 throw new DirectoryNotFoundException();
             }
 
+
             watcher.Path = _path;
             watcher.IncludeSubdirectories = true;
-            //watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
+            //TODO watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
 
             // Make hidden directory
             _hiddenFolder = new HiddenFolder(_path + @".hidden\");
@@ -64,10 +65,12 @@ namespace Index_lib{
             watcher.Renamed += OnRenamed;
         }
 
+        /// <summary>
+        /// Starts the indexer and a filehandler on a new thread
+        /// </summary>
         public void Start(){
             isRunning = true;
             _waitHandle = new ManualResetEvent(false);
-            //_indexWaitHandler = new ManualResetEvent(false);
 
             _fileHandlerThread = new Thread(HandleFileEvent);
             _fileHandlerThread.Start();
@@ -78,6 +81,9 @@ namespace Index_lib{
             watcher.EnableRaisingEvents = true;
         }
 
+        /// <summary>
+        /// Stops the indexer and makes signals, when it has stop running
+        /// </summary>
         public void Stop(){
             watcher.EnableRaisingEvents = false;
             isRunning = false;
@@ -86,19 +92,25 @@ namespace Index_lib{
             while (!isStopped){
                 
             }
-            //_indexWaitHandler.Close();
-           
         }
 
         public string GetPath(){
             return _path;
         }
-
+        /// <summary>
+        /// Clears the index and rebuilds it
+        /// </summary>
         public void ReIndex(){
             _index.Clear();
             BuildIndex();
         }
 
+        /// <summary>
+        /// Returns the index file of the given hash, if it is in index.
+        /// Else it returns null
+        /// </summary>
+        /// <param name="hash">The hash of the wanted file</param>
+        /// <returns>The indexfile associated with the specified hash</returns>
         public IndexFile GetEntry(string hash){
             if (_index.ContainsKey(hash)){
                 return _index[hash];
@@ -107,10 +119,11 @@ namespace Index_lib{
             }
         }
 
+        /// <summary>
+        /// Runs through all the files in the folder and adds new files to the index or the path, if it already exists
+        /// </summary>
         public void BuildIndex(){
-            string[] files =
-                Directory.GetFiles(_path, "*",
-                    SearchOption.AllDirectories); //TODO rewrite windows functionality D://
+            string[] files = Directory.GetFiles(_path, "*", SearchOption.AllDirectories);
 
             foreach (string filePath in files){
                 if (!IgnoreHidden(filePath)){
@@ -129,7 +142,6 @@ namespace Index_lib{
                     }
                 }
             }
-
             Save();
         }
 
@@ -141,6 +153,9 @@ namespace Index_lib{
             return _index.Count;
         }
 
+        /// <summary>
+        /// Handles changed files, added files and files deleted in the directory
+        /// </summary>
         private void HandleFileEvent(){
             isStopped = false;
             while (isRunning){
@@ -151,24 +166,36 @@ namespace Index_lib{
                 }
                 FileSystemEventArgs e;
 
+                //Tries to take event from queue
                 while (_fileHandlingQueue.TryDequeue(out e)){
                     if (!isRunning){
                         _fileHandlingQueue.Enqueue(e);
                         break;
                     }
-                    if (IgnoreHidden(e.FullPath))
+                    if (IgnoreHidden(e.FullPath)) {
                         continue;
+                    }
 
+                    //If the event is not the deletion of a file,
+                    //this avoids handling directories snd unfinished files
                     if (!e.ChangeType.Equals(WatcherChangeTypes.Deleted)){
-                        if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory))
+                        //Checks if the event is called on a directory
+                        if (File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)) {
                             continue;
+                        }
 
+                        //Checks if the file is done saving,
+                        //else it enqueues it again
                         if (!WaitForFile(e.FullPath)){
                             _fileHandlingQueue.Enqueue(e);
                             continue;
                         }
                     }
 
+                    //Handles create events, by checking if the event is
+                    //called on a new file or dublicate file with a new path.
+                    //If it is a new file, the file is added to the index,
+                    //else the new path to the file is added
                     if (e.ChangeType.Equals(WatcherChangeTypes.Created)){
                         var eventFile = new IndexFile(e.FullPath);
 
@@ -178,7 +205,12 @@ namespace Index_lib{
                             _index.Add(eventFile.hash, eventFile);
                             FileAdded?.Invoke(eventFile);
                         }
-                    } else if (e.ChangeType.Equals(WatcherChangeTypes.Changed)){
+                    }
+
+                    //Handles changes to files, by removing old file, or the
+                    //path to the file if more paths exist, from index and
+                    //adding the new one. This is done, because the hash is changed
+                    else if (e.ChangeType.Equals(WatcherChangeTypes.Changed)){
                         bool fileRemoved = false;
                         var eventFile = new IndexFile(e.FullPath);
 
@@ -223,18 +255,20 @@ namespace Index_lib{
                         }
 
                         FileChanged?.Invoke(eventFile);
-                    } else if (e.ChangeType.Equals(WatcherChangeTypes.Deleted)){
+                    } 
+                    
+                    //Handles delete events, by deleting file from index or path,
+                    //if file has multiple paths
+                    else if (e.ChangeType.Equals(WatcherChangeTypes.Deleted)){
                         foreach (KeyValuePair<string, IndexFile> pair in _index){
-                            List<string> pathsToDelete = _index[pair.Key].paths
-                                .Where(p => p.Equals(e.FullPath) || p.StartsWith(e.FullPath)).ToList();
+                            List<string> pathsToDelete = _index[pair.Key].paths.Where(p => p.Equals(e.FullPath) || p.StartsWith(e.FullPath)).ToList();
 
                             foreach (string path in pathsToDelete){
                                 _index[pair.Key].paths.Remove(path);
                             }
                         }
 
-                        List<KeyValuePair<string, IndexFile>> filesToDelete =
-                            _index.Where(p => _index[p.Key].paths.Count == 0).ToList();
+                        List<KeyValuePair<string, IndexFile>> filesToDelete = _index.Where(p => _index[p.Key].paths.Count == 0).ToList();
 
                         foreach (KeyValuePair<string, IndexFile> pair in filesToDelete){
                             FileDeleted.Invoke(pair.Key);
@@ -249,6 +283,11 @@ namespace Index_lib{
             isStopped = true;
         }
 
+        /// <summary>
+        /// Checks if the directory and index contain the same files.
+        /// If not, FileMissing is called on every file in the index
+        /// not in the directory
+        /// </summary>
         public void MakeIntegrityCheck(){
             foreach (KeyValuePair<string, IndexFile> entry in _index){
                 foreach (String path in entry.Value.paths){
@@ -277,7 +316,11 @@ namespace Index_lib{
             _waitHandle.Set();
         }
 
-
+        /// <summary>
+        /// Changes old path to new path in index
+        /// </summary>
+        /// <param name="source">The object invoking the event</param>
+        /// <param name="e">IndexFile, which caused the event</param>
         public void OnRenamed(object source, RenamedEventArgs e){
             //Ignore hidden folder
             if (IgnoreHidden(e.FullPath))
@@ -287,8 +330,7 @@ namespace Index_lib{
                 foreach (KeyValuePair<string, IndexFile> pair in _index){
                     for (int i = 0; i < _index[pair.Key].paths.Count; i++){
                         if (_index[pair.Key].paths[i].StartsWith(_path + e.OldName)){
-                            _index[pair.Key].paths[i] = _index[pair.Key].paths[i]
-                                .Replace(_path + e.OldName, _path + e.Name);
+                            _index[pair.Key].paths[i] = _index[pair.Key].paths[i].Replace(_path + e.OldName, _path + e.Name);
                         }
                     }
                 }
@@ -306,6 +348,11 @@ namespace Index_lib{
             }
         }
 
+        /// <summary>
+        /// Checks if a file is done saving and is ready to be handled
+        /// </summary>
+        /// <param name="path">Path to the file to be checked</param>
+        /// <returns></returns>
         public bool IsFileReady(string path){
             bool exist = false;
             FileStream inputStream = null;
