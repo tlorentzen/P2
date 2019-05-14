@@ -465,6 +465,7 @@ namespace TorPdos
             _p2P?.Stop();
             _idx?.Save();
             _idx?.Stop();
+            loggedIn = false;
             Login();
         }
         private void IdxFileMissing(IndexFile file)
