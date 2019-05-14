@@ -53,11 +53,11 @@ namespace P2P_lib{
             _server.Stop();
         }
 
-        private async void ConnectionHandler(){
+        private void ConnectionHandler(){
             string path = this._path + this._filename;
 
             try{
-                var client = await _server.AcceptTcpClientAsync();
+                var client = _server.AcceptTcpClient();
                 client.ReceiveTimeout = 5000;
 
                 using (NetworkStream stream = client.GetStream()){
