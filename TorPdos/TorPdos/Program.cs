@@ -33,7 +33,7 @@ namespace TorPdos{
             string ownIp = NetworkHelper.GetLocalIpAddress();
             string path = (DiskHelper.GetRegistryValue("Path"));
 
-            DiskHelper.ConsoleWrite("Welcome to TorPdos!");
+            Console.WriteLine("Welcome to TorPdos!");
             Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
             while (running){
                 string console = Console.ReadLine();
