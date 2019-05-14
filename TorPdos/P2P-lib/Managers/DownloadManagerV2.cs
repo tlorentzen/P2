@@ -247,8 +247,8 @@ namespace P2P_lib.Managers{
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
             Console.WriteLine("File decompressed");
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
-                if (!Directory.Exists(Path.GetDirectoryName(pathToFileForCopying))){
-                    Directory.CreateDirectory(Path.GetDirectoryName(pathToFileForCopying));
+                if (!Directory.Exists(Path.GetDirectoryName(filePath))){
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 }
                 File.Copy(pathToFileForCopying, filePath);
                 Console.WriteLine($"File saved to: {filePath}");
