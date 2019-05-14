@@ -101,7 +101,6 @@ namespace P2P_lib.Managers{
 
                     bool encryptionCompleted = encryption.DoEncrypt(IdHandler.GetKeyMold());
 
-
                     if (!encryptionCompleted){
                         this._queue.Enqueue(file);
                         continue;
@@ -116,7 +115,6 @@ namespace P2P_lib.Managers{
 
                     _hashList.Add(file.GetHash(),
                         splitter.SplitFile(encryptedFilePath, file.GetHash(), _path + @".hidden\splitter\"));
-
 
                     foreach (var currentFileHashes in _hashList.GetEntry(file.GetHash())){
                         peersSentTo.Clear();
@@ -146,6 +144,7 @@ namespace P2P_lib.Managers{
                                 path = currentFileHashPath,
                                 port = port
                             };
+
                             upload.Send();
                             DiskHelper.ConsoleWrite("Sending: "+ currentFileHashes);
                             int pendingCount = 0;
