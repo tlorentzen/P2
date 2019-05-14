@@ -352,7 +352,7 @@ namespace Index_lib{
         /// Checks if a file is done saving and is ready to be handled
         /// </summary>
         /// <param name="path">Path to the file to be checked</param>
-        /// <returns>Rather the file is ready or not</returns>
+        /// <returns></returns>
         public bool IsFileReady(string path){
             bool exist = false;
             FileStream inputStream = null;
@@ -379,7 +379,7 @@ namespace Index_lib{
         /// Tries to read file or waits for it to be ready
         /// </summary>
         /// <param name="fullPath">Full path to file</param>
-        /// <returns>Rather the file was ready within the wait time or not</returns>
+        /// <returns></returns>
         private bool WaitForFile(string fullPath){
             int numTries = 0;
             while (true){
@@ -408,19 +408,11 @@ namespace Index_lib{
             return true;
         }
 
-        /// <summary>
-        /// Returns rather the path is pointing to a file in the .hidden directory
-        /// </summary>
-        /// <param name="filePath">Path to the file to be check</param>
-        /// <returns>Rather the path is pointing to a file in the .hidden directory</returns>
+        //Ignore file events in .hidden folder
         private bool IgnoreHidden(string filePath){
             return filePath.Contains(".hidden");
         }
 
-        /// <summary>
-        /// Loads the index from index.json
-        /// </summary>
-        /// <returns>Rather the method was successful or not</returns>
         public bool Load(){
             if (_indexFilePath != null && File.Exists(_indexFilePath)){
                 string json = File.ReadAllText(_indexFilePath);
@@ -431,9 +423,6 @@ namespace Index_lib{
             return false;
         }
 
-        /// <summary>
-        /// Saves the index to index.json
-        /// </summary>
         public void Save(){
             if (_indexFilePath != null){
                 string json = JsonConvert.SerializeObject(_index);
@@ -446,9 +435,6 @@ namespace Index_lib{
             }
         }
 
-        /// <summary>
-        /// Prints unique files and number of paths in index
-        /// </summary>
         public void Status(){
             Console.WriteLine(@"");
             Console.WriteLine(@"#### Index status ####");
@@ -464,9 +450,6 @@ namespace Index_lib{
             Console.WriteLine(@"");
         }
 
-        /// <summary>
-        /// Prints files in the index, their paths and the size of the file
-        /// </summary>
         public void PrintInfo(){
             int pathNum;
             foreach (KeyValuePair<string, IndexFile> pair in _index){
