@@ -33,7 +33,7 @@ namespace TorPdos{
             string ownIp = NetworkHelper.GetLocalIpAddress();
             string path = (DiskHelper.GetRegistryValue("Path"));
 
-            Console.WriteLine("Welcome to TorPdos!");
+            DiskHelper.ConsoleWrite("Welcome to TorPdos!");
             Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
             while (running){
                 string console = Console.ReadLine();
@@ -121,7 +121,8 @@ namespace TorPdos{
                         } else if (console.Equals("reindex")) {
                             _idx.ReIndex();
                         } else if (console.Equals("gui")) {
-                            Application.Run(torPdos);
+                            MyForm torPdos2 = new MyForm();
+                            Application.Run(torPdos2);
                         } else if (console.Equals("status")) {
                             _idx.Status();
                         } else if (console.Equals("idxsave")) {
