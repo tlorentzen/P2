@@ -23,11 +23,6 @@ namespace Index_lib
             }
         }
 
-        /// <summary>
-        /// Adds a path to a file already in index
-        /// </summary>
-        /// <param name="path">New path pointing to file already in index</param>
-        /// <param name="ghostFile">Rather the file should be ignored, when downloading files</param>
         public void AddPath(string path, bool ghostFile=false) {
             if (!ghostFile && File.Exists(path)) {
                 paths.Add(path);
@@ -41,10 +36,7 @@ namespace Index_lib
             this.ghost = ghostFile;
         }
 
-        /// <summary>
-        /// Makes a deep copy of self
-        /// </summary>
-        /// <returns>A deep copy IndexFile of self</returns>
+        // Deep copy.
         public IndexFile Copy(){
             IndexFile file = new IndexFile();
             file.hash = hash;
@@ -66,21 +58,11 @@ namespace Index_lib
             return hash;
         }
 
-        /// <summary>
-        /// Retrieves path to self. Standard -1,
-        /// which takes the latest path of the IndexFile.
-        /// Else it takes the specified entry
-        /// </summary>
-        /// <param name="pathNumberInput">Entry number of the path</param>
-        /// <returns>One of the paths to the self</returns>
         public string GetPath(int pathNumberInput = -1) {
             int pathNumber = (pathNumberInput > paths.Count || pathNumberInput == -1 ? paths.Count -1 : pathNumberInput);
             return paths[pathNumber];
         }
 
-        /// <summary>
-        /// Makes hash for self, based on content
-        /// </summary>
         private void MakeFileHash() {
             using (var md5 = MD5.Create())
             {
@@ -92,9 +74,6 @@ namespace Index_lib
             }
         }
 
-        /// <summary>
-        /// Makes a new hash based on content
-        /// </summary>
         public void Rehash() {
             MakeFileHash();
         }

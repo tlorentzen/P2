@@ -54,7 +54,7 @@ namespace Splitter_lib{
         /// </summary>
         /// <param name="input">Input stream</param>
         /// <param name="chunkSize">Chunksize</param>
-        /// <returns>The byte array being read by the FileStream</returns>
+        /// <returns></returns>
         private byte[] fileStreamReader(Stream input, int chunkSize){
             using (MemoryStream ms = new MemoryStream()){
                 const int BufferSize = 1024;
