@@ -61,17 +61,17 @@ namespace P2P_lib{
                 client.ReceiveTimeout = 1000;
 
                 using (NetworkStream stream = client.GetStream()){
-                    DiskHelper.ConsoleWrite(@"Receiving file");
+                    Console.WriteLine(@"Receiving file");
 
                     using (var fileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write)){
-                        DiskHelper.ConsoleWrite("Creating file: " + this._filename);
+                        Console.WriteLine("Creating file: " + this._filename);
                         int i;
 
                         while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
                             fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
                         }
 
-                        DiskHelper.ConsoleWrite(@"File done downloading");
+                        Console.WriteLine(@"File done downloading");
                         fileStream.Close();
                         _fileReceived = File.Exists(path);
                     }
