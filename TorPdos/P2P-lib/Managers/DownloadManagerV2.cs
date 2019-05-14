@@ -134,7 +134,7 @@ namespace P2P_lib.Managers{
 
                         Console.WriteLine($"Looking for: {currentFileHash}");
                         if (!_sentTo.ContainsKey(currentFileHash)){
-                            Console.WriteLine("File not on network");
+                            DiskHelper.ConsoleWrite("File not on network");
                             continue;
                         }
 
@@ -176,7 +176,7 @@ namespace P2P_lib.Managers{
 
                         this._fileReceiver.FileSuccessfullyDownloaded += FileReceiverFileSuccessfullyDownloaded;
                         this._fileReceiver.Start();
-                        Console.WriteLine("FileReceiver opened");
+                        DiskHelper.ConsoleWrite("FileReceiver opened");
                         download.Send();
                         _ports.Release(download.port);
                     } else if (download.statusCode == StatusCode.FILE_NOT_FOUND){
@@ -187,7 +187,7 @@ namespace P2P_lib.Managers{
         }
 
         private void FileReceiverFileSuccessfullyDownloaded(string path){
-            Console.WriteLine("File downloaded");
+            DiskHelper.ConsoleWrite("File downloaded");
             count++;
             RestoreOriginalFile(path);
         }
@@ -230,7 +230,7 @@ namespace P2P_lib.Managers{
                 }
             }
 
-            Console.WriteLine("File exist");
+            DiskHelper.ConsoleWrite("File exist");
             string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);
 
             //Merge files
@@ -244,19 +244,21 @@ namespace P2P_lib.Managers{
             // Decrypt file
             var decryption = new FileEncryption(pathWithoutExtension, ".lzma");
             decryption.DoDecrypt(IdHandler.GetKeyMold());
-            Console.WriteLine("File decrypted");
+            DiskHelper.ConsoleWrite("File decrypted");
             File.Delete(path);
 
             // Decompress file
             string pathToFileForCopying =
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
-            Console.WriteLine("File decompressed");
+            
+            DiskHelper.ConsoleWrite("File decompressed");
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 if (!Directory.Exists(Path.GetDirectoryName(filePath))){
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 }
                 File.Copy(pathToFileForCopying, filePath);
-                Console.WriteLine($"File saved to: {filePath}");
+                
+                DiskHelper.ConsoleWrite($"File saved to: {filePath}");
             }
         }
 
