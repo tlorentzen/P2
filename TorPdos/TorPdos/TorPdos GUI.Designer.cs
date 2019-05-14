@@ -602,6 +602,10 @@ namespace TorPdos
             Controls.Clear();
             int tabNumber = 0;
 
+            //BTN: Add Peer
+            btnAddPeer.TabIndex = tabNumber++;
+            Controls.Add(btnAddPeer);
+
             //BTN: Download
             btnDownload.TabIndex = tabNumber++;
             Controls.Add(btnDownload);
@@ -609,13 +613,7 @@ namespace TorPdos
             //BTN: Logout
             btnLogout.TabIndex = tabNumber++;
             Controls.Add(btnLogout);
-
-            //BTN: Add Peer
-            btnAddPeer.TabIndex = tabNumber++;
-            Controls.Add(btnAddPeer);
         }
-        
-
         public string PathName()
         {
             if (txtPath.Text.EndsWith(@"\"))
