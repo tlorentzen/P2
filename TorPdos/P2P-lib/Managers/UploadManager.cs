@@ -129,7 +129,7 @@ namespace P2P_lib.Managers{
                             }
                             catch (SocketException e){
                                 _logger.Log(LogLevel.Fatal, e);
-                                Console.WriteLine("Current port" + port);
+                                DiskHelper.ConsoleWrite("Current port" + port);
                             }
                             catch (Exception e){
                                 _logger.Warn(e);
@@ -146,7 +146,7 @@ namespace P2P_lib.Managers{
                             };
 
                             upload.Send();
-                            Console.WriteLine($"Sending: {currentFileHashes}");
+                            DiskHelper.ConsoleWrite("Sending: "+ currentFileHashes);
                             int pendingCount = 0;
                             while (_pendingReceiver){
                                 pendingCount++;
@@ -232,10 +232,10 @@ namespace P2P_lib.Managers{
             _isRunning = false;
             _waitHandle.Set();
 
-            Console.Write("Upload thread stopping... ");
+            DiskHelper.ConsoleWrite("Upload thread stopping... ");
             while (!this._isStopped){ }
 
-            Console.Write("Stopped!\n");
+            DiskHelper.ConsoleWrite("Stopped!\n");
 
             return true;
         }
