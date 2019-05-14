@@ -392,20 +392,22 @@ namespace TorPdos
             string path = DiskHelper.GetRegistryValue("Path");
             if (IdHandler.IsValidUser(pass))
             {
+                
                 IdHandler.GetUuid(pass);
                 LoggedIn();
                 loggedIn = true;
                 _idx = new Index(path);
                 _idx.Load();
                 _idx.Start();
-                _idx.MakeIntegrityCheck();
+                _p2P = new Network(25565, _idx, path);
+                _p2P.Start();
                 IndexEventHandlers();
+                _idx.MakeIntegrityCheck();
+                
                 if (!_idx.Load())
                 {
                     _idx.BuildIndex();
                 }
-                _p2P = new Network(25565, _idx, path);
-                _p2P.Start();
             }
             else
             {
@@ -497,7 +499,6 @@ namespace TorPdos
             }
             else
             {
-               
                 noiTorPdos.Visible = false;
                 Environment.Exit(0);
             }
