@@ -77,18 +77,6 @@ namespace TorPdos{
                             }
 
                             _idx = new Index(path);
-                            _idx.Load();
-                            _idx.FileAdded += Idx_FileAdded;
-                            _idx.FileChanged += Idx_FileChanged;
-                            _idx.FileDeleted += Idx_FileDeleted;
-                            _idx.FileMissing += Idx_FileMissing;
-
-                            if (!_idx.Load()) {
-                                _idx.BuildIndex();
-                            }
-
-                            _idx.Start();
-
 
                             // Prepare P2PNetwork
                             try {
@@ -99,6 +87,19 @@ namespace TorPdos{
                             catch (SocketException) {
                                 Application.Run(torPdos);
                             }
+
+                            _idx.Load();
+                            _idx.FileAdded += Idx_FileAdded;
+                            _idx.FileChanged += Idx_FileChanged;
+                            _idx.FileDeleted += Idx_FileDeleted;
+                            _idx.FileMissing += Idx_FileMissing;
+
+                            if (!_idx.Load())
+                            {
+                                _idx.BuildIndex();
+                            }
+
+                            _idx.Start();
 
                             Console.WriteLine(@"Integrity check initialized...");
                             _idx.MakeIntegrityCheck();
@@ -113,7 +114,6 @@ namespace TorPdos{
                             continue;
 
                         }
-
 
                         // Handle input
                         if (console.StartsWith("add") && param.Length == 3) {

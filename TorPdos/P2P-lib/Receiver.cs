@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -39,7 +40,6 @@ namespace P2P_lib{
             _server.AllowNatTraversal(true);
             _server.Start();
 
-
             _listening = true;
 
             _listener = new Thread(this.connectionHandler);
@@ -52,26 +52,30 @@ namespace P2P_lib{
             return true;
         }
 
-        private void connectionHandler(){
+        private async void connectionHandler(){
             while (this._listening){
                 try{
-                    TcpClient client = _server.AcceptTcpClient();
+                    //TcpClient client = _server.AcceptTcpClient();
+                    var client = await _server.AcceptTcpClientAsync();
                     client.ReceiveTimeout = 500;
-                    NetworkStream stream = client.GetStream();
+
                     int i;
+                    using (NetworkStream stream = client.GetStream()){
+                        using (MemoryStream memory = new MemoryStream())
+                        {
+                            while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0)
+                            {
+                                memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
+                            }
 
-                    using (MemoryStream memory = new MemoryStream()){
-                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                            memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
+                            memory.Seek(0, SeekOrigin.Begin);
+                            byte[] messageBytes = new byte[memory.Length];
+                            memory.Read(messageBytes, 0, messageBytes.Length);
+                            memory.Close();
+
+                            BaseMessage message = BaseMessage.FromByteArray(messageBytes);
+                            if (MessageReceived != null) MessageReceived.Invoke(message);
                         }
-
-                        memory.Seek(0, SeekOrigin.Begin);
-                        byte[] messageBytes = new byte[memory.Length];
-                        memory.Read(messageBytes, 0, messageBytes.Length);
-                        memory.Close();
-
-                        BaseMessage message = BaseMessage.FromByteArray(messageBytes);
-                        if (MessageReceived != null) MessageReceived.Invoke(message);
                     }
 
                     client.Close();

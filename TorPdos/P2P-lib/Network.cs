@@ -37,7 +37,6 @@ namespace P2P_lib{
         private readonly HashHandler _hashList;
         private int _numberOfPrimaryPeers = 10;
 
-
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
             this._port = port;

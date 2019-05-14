@@ -66,7 +66,6 @@ namespace P2P_lib.Managers{
         private void PeerWentOnlineCheck(){
             this._waitHandle.Set();
         }
-        
 
         public void Run(){
             isStopped = false;
@@ -262,8 +261,9 @@ namespace P2P_lib.Managers{
 
         public override bool Shutdown(){
             _isRunning = false;
-            _waitHandle.Set();
             this._receiver.Stop();
+            _waitHandle.Set();
+
             Console.Write("Download thread stopping... ");
             while (!this.isStopped){}
 

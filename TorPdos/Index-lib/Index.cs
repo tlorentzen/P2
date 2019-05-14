@@ -199,10 +199,10 @@ namespace Index_lib{
                     if (e.ChangeType.Equals(WatcherChangeTypes.Created)){
                         var eventFile = new IndexFile(e.FullPath);
 
-                        if (_index.ContainsKey(eventFile.hash)){
+                        if (_index.ContainsKey(eventFile.GetHash())){
                             _index[eventFile.hash].AddPath(e.FullPath);
-                        } else{
-                            _index.Add(eventFile.hash, eventFile);
+                        } else {
+                            _index.Add(eventFile.GetHash(), eventFile);
                             FileAdded?.Invoke(eventFile);
                         }
                     }
