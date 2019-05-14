@@ -25,7 +25,7 @@ namespace P2P_lib {
 
         public static bool IsPortAvailable(int port) {
             bool isAvailable = true;
-            // This is a hybrid of the two following links
+            // This solution is inspired by:
             // https://stackoverflow.com/questions/570098/in-c-how-to-check-if-a-tcp-port-is-available
             // https://gist.github.com/jrusbatch/4211535
             // Evaluate current system tcp connections, TCP Listeners and UDP Listeners.

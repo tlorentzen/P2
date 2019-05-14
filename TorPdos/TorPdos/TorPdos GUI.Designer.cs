@@ -44,6 +44,7 @@ namespace TorPdos
         public bool loggedIn = false;
 
         public Network _p2P;
+        public Index _idx;
 
         Label lblPassword = new Label
         {
@@ -287,26 +288,30 @@ namespace TorPdos
             EventHandlers();
             GuiLayout();
 
-            if (NetworkPorts.IsPortAvailable(25565) == false)
-            {
-                Sorry();
-            }
-            else if(String.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path")) == true || Directory.Exists(DiskHelper.GetRegistryValue("Path")) == false)
-            {
-                FirstStartUp(); 
-            }
-            else if(File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
-            {
-                Create();
-            }
-            else if(IdHandler.GetUuid() == null)
-            {
-                Login();
-            }
-            else
+            if(!string.IsNullOrEmpty(IdHandler.GetUuid()))
             {
                 LoggedIn();
             }
+            else
+            {
+                if (NetworkPorts.IsPortAvailable(25565) == false)
+                {
+                    Sorry();
+                }
+                else if (String.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path")) == true || Directory.Exists(DiskHelper.GetRegistryValue("Path")) == false)
+                {
+                    FirstStartUp();
+                }
+                else if (File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
+                {
+                    Create();
+                }
+                else
+                {
+                    Login();
+                }
+            }
+            
             
         }
 
@@ -335,28 +340,36 @@ namespace TorPdos
             btnChangePath.Click += BtnChangePathClick;
             btnLogout.Click += BtnLogOutClick;
             btnOkay.Click += BtnOkayClick;
-            btnAddPeer.Click += BtnAddPeer_Click;
+            btnAddPeer.Click += BtnAddPeerClick;
             btnDownload.Click += BtnDownloadClick;
+        }
+
+        void IndexEventHandlers()
+        {
+            _idx.FileAdded += IdxFileAdded;
+            _idx.FileChanged += IdxFileChanged;
+            _idx.FileDeleted += IdxFileDeleted;
+            _idx.FileMissing += IdxFileMissing;
         }
 
         private void BtnDownloadClick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            _p2P.DownloadAllFiles();
         }
 
-        private void BtnAddPeer_Click(object sender, EventArgs e)
+        private void BtnAddPeerClick(object sender, EventArgs e)
         {
             Controls.Clear();
-            Controls.Add(lblUUID);
-            Controls.Add(lblIP);
             Controls.Add(txtUUID);
             Controls.Add(txtIP);
+            Controls.Add(lblUUID);
+            Controls.Add(lblIP);
             Controls.Add(btnOkay);
         }
 
         private void BtnOkayClick(object sender, EventArgs e)
         {
-            _p2P.AddPeer(txtUUID.Text, txtIP.Text);
+            _p2P?.AddPeer(txtUUID.Text, txtIP.Text);
             LoggedIn();
         }
 
@@ -376,10 +389,25 @@ namespace TorPdos
         void BtnLoginClick(object sender, EventArgs e)
         {
             string pass = txtPassword.Text;
+            string path = DiskHelper.GetRegistryValue("Path");
             if (IdHandler.IsValidUser(pass))
             {
+                
+                IdHandler.GetUuid(pass);
                 LoggedIn();
                 loggedIn = true;
+                _idx = new Index(path);
+                _idx.Load();
+                _idx.Start();
+                _p2P = new Network(25565, _idx, path);
+                _p2P.Start();
+                IndexEventHandlers();
+                _idx.MakeIntegrityCheck();
+                
+                if (!_idx.Load())
+                {
+                    _idx.BuildIndex();
+                }
             }
             else
             {
@@ -426,7 +454,6 @@ namespace TorPdos
                     txtPath.Text = fbd.SelectedPath;
             }
         }
-
         private void BtnChangePathClick(object sender, EventArgs e)
         {
             FirstStartUp();
@@ -434,10 +461,35 @@ namespace TorPdos
         }  
         private void BtnLogOutClick(object sender, EventArgs e)
         {
-            Login();
+            _p2P?.SaveFile();
+            _p2P?.Stop();
+            _idx?.Save();
+            _idx?.Stop();
             loggedIn = false;
+            Login();
+        }
+        private void IdxFileMissing(IndexFile file)
+        {
+            Console.WriteLine(@"File missing init download of " + file.hash);
+            _p2P.DownloadFile(file.hash);
         }
 
+        private void IdxFileDeleted(string hash)
+        {
+            Console.WriteLine(@"Deleted: " + hash);
+            _p2P.DeleteFile(hash);
+        }
+
+        private void IdxFileAdded(IndexFile file)
+        {
+            Console.WriteLine(@"Added: " + file.hash);
+            _p2P.UploadFile(file.hash, file.GetPath(), 5);
+        }
+
+        private void IdxFileChanged(IndexFile file)
+        {
+            Console.WriteLine(@"File changed: " + file.hash);
+        }
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
@@ -552,6 +604,10 @@ namespace TorPdos
             Controls.Clear();
             int tabNumber = 0;
 
+            //BTN: Add Peer
+            btnAddPeer.TabIndex = tabNumber++;
+            Controls.Add(btnAddPeer);
+
             //BTN: Download
             btnDownload.TabIndex = tabNumber++;
             Controls.Add(btnDownload);
@@ -559,12 +615,7 @@ namespace TorPdos
             //BTN: Logout
             btnLogout.TabIndex = tabNumber++;
             Controls.Add(btnLogout);
-
-            //BTN: Add Peer
-            btnAddPeer.TabIndex = tabNumber++;
-            Controls.Add(btnAddPeer);
         }
-        
         public string PathName()
         {
             if (txtPath.Text.EndsWith(@"\"))
