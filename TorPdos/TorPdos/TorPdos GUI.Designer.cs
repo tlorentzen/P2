@@ -288,7 +288,7 @@ namespace TorPdos
             EventHandlers();
             GuiLayout();
 
-            if(IdHandler.GetUuid() != null)
+            if(!string.IsNullOrEmpty(IdHandler.GetUuid()))
             {
                 LoggedIn();
             }
@@ -308,7 +308,7 @@ namespace TorPdos
                 }
                 else
                 {
-                    LoggedIn();
+                    Login();
                 }
             }
             
@@ -392,6 +392,7 @@ namespace TorPdos
             string path = DiskHelper.GetRegistryValue("Path");
             if (IdHandler.IsValidUser(pass))
             {
+                IdHandler.GetUuid(pass);
                 LoggedIn();
                 loggedIn = true;
                 _idx = new Index(path);
@@ -458,8 +459,11 @@ namespace TorPdos
         }  
         private void BtnLogOutClick(object sender, EventArgs e)
         {
+            _p2P?.SaveFile();
+            _p2P?.Stop();
+            _idx?.Save();
+            _idx?.Stop();
             Login();
-            
         }
         private void IdxFileMissing(IndexFile file)
         {
@@ -493,10 +497,7 @@ namespace TorPdos
             }
             else
             {
-                _p2P?.SaveFile();
-                _p2P?.Stop();
-                _idx?.Save();
-                _idx?.Stop();
+               
                 noiTorPdos.Visible = false;
                 Environment.Exit(0);
             }
