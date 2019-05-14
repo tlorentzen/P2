@@ -320,7 +320,7 @@ namespace P2P_lib{
                 } else if (downloadMessage.statusCode.Equals(StatusCode.ACCEPTED)){
                     var sender = new FileSender(downloadMessage.from, downloadMessage.port);
                     sender.Send(path);
-                    Console.WriteLine("File send");
+                    DiskHelper.ConsoleWrite("File send" + downloadMessage.filehash);
                 }
             }
         }
