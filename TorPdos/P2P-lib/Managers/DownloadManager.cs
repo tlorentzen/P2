@@ -164,7 +164,7 @@ namespace P2P_lib.Managers{
         }
 
         private void ReceiverFileSuccessfullyDownloaded(string path){
-            Console.WriteLine("File downloaded");
+            DiskHelper.ConsoleWrite("File downloaded");
             RestoreOriginalFile(path);
         }
 
