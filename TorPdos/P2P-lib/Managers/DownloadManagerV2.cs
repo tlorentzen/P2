@@ -219,7 +219,8 @@ namespace P2P_lib.Managers{
                 if (sentCount == _fileList.Count){
                     if (sentCount == count){
                         foreach (var currentFile in _fileList){
-                            if (File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile)) continue;
+                            if (File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile))
+                                continue;
                             _queue.Enqueue(_currentQueuedFile);
                             return;
                         }
