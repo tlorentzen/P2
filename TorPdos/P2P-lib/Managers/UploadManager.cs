@@ -131,7 +131,7 @@ namespace P2P_lib.Managers{
                             }
                             catch (SocketException e){
                                 _logger.Log(LogLevel.Fatal, e);
-                                Console.WriteLine(port);
+                                Console.WriteLine("Current port" + port);
                             }
                             catch (Exception e){
                                 _logger.Warn(e);
