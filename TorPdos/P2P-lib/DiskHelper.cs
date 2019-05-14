@@ -41,6 +41,10 @@ namespace P2P_lib{
             }
         }
 
+        public static void ConsoleWrite(string message){
+            Console.WriteLine(DateTime.Now +" "+ message);
+        }
+
         /// <summary>
         /// Function to get a value from the registry.
         /// </summary>
