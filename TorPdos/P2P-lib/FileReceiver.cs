@@ -81,6 +81,7 @@ namespace P2P_lib{
                 }
 
                 client.Close();
+
                 if (_fileReceived){
                     FileSuccessfullyDownloaded?.Invoke(path);
                 }
