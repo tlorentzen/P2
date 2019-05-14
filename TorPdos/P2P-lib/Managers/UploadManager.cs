@@ -232,10 +232,10 @@ namespace P2P_lib.Managers{
             _isRunning = false;
             _waitHandle.Set();
 
-            DiskHelper.ConsoleWrite("Upload thread stopping... ");
+            Console.Write("Upload thread stopping... ");
             while (!this._isStopped){ }
 
-            DiskHelper.ConsoleWrite("Stopped!\n");
+            Console.Write("Stopped!\n");
 
             return true;
         }
