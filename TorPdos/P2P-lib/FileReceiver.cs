@@ -57,7 +57,7 @@ namespace P2P_lib{
             string path = this._path + this._filename;
 
             try{
-                TcpClient client = _server.AcceptTcpClient();
+                var client = _server.AcceptTcpClient();
                 client.ReceiveTimeout = 5000;
 
                 using (NetworkStream stream = client.GetStream()){

@@ -114,7 +114,7 @@ namespace P2P_lib.Managers{
                         updatedDownloadQueue = _downloadQueue;
                     }
 
-                    if (_downloadQueue.Count == 0){
+                    if (updatedDownloadQueue.Count == 0){
                         RestoreOriginalFile(_fileHash, true);
                     }
 
