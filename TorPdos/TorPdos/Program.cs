@@ -60,6 +60,8 @@ namespace TorPdos{
                                     console = Console.ReadLine();
                                     param = console.Split(' ');
                                 }
+                            } else if(console.Equals("gui")){
+                                Application.Run(torPdos);
                             } else {
                                 Console.WriteLine();
                                 Console.WriteLine("Error! Try again");
@@ -92,6 +94,7 @@ namespace TorPdos{
                             try {
                                 _p2P = new Network(25565, _idx, path);
                                 _p2P.Start();
+                                torPdos._p2P = _p2P;
                             }
                             catch (SocketException) {
                                 Application.Run(torPdos);

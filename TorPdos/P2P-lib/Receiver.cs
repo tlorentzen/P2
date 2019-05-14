@@ -58,7 +58,6 @@ namespace P2P_lib{
                     TcpClient client = _server.AcceptTcpClient();
                     client.ReceiveTimeout = 500;
                     NetworkStream stream = client.GetStream();
-
                     int i;
 
                     using (MemoryStream memory = new MemoryStream()){
@@ -74,6 +73,8 @@ namespace P2P_lib{
                         BaseMessage message = BaseMessage.FromByteArray(messageBytes);
                         if (MessageReceived != null) MessageReceived.Invoke(message);
                     }
+
+                    client.Close();
                 }
                 catch (SocketException e){
                     slogger.Log(LogLevel.Info,e);

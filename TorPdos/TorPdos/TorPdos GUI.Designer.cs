@@ -24,6 +24,7 @@ namespace TorPdos
             //Box
             boxWidth = 325,
             boxBtnWidth = 85,
+            boxHeight = 45,
             //Confirm Buttons
             confirmBtnW = 100,
             confirmBtnH = 27,
@@ -35,11 +36,14 @@ namespace TorPdos
             posConfirmW = fullWidth - confirmBtnW - 30,
             posConfirmH = fullHeight - confirmBtnH - 53,
             posCancelW = posConfirmW - confirmBtnW - 15,
+            posAddW = posCancelW - confirmBtnW - 15,
             //Text
             textSizeDefault = 12,
             textSizeInput = 14,
             textSizeBtn = textSizeDefault; //25
         public bool loggedIn = false;
+
+        public Network _p2P;
 
         Label lblPassword = new Label
         {
@@ -113,10 +117,28 @@ namespace TorPdos
             Text = "Log out",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
+        Label lblUUID = new Label
+        {
+            Location = new Point(leftAlign, posFirst),
+            Height = 25,
+            Width = 150,
+            Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
+            Text = "UUID:",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
+        };
+        Label lblIP = new Label()
+        {
+            Location = new Point(leftAlign, posSecond),
+            Height = 25,
+            Width = 150,
+            Font = new Font("Consolas", textSizeDefault, FontStyle.Bold),
+            Text = "IP-address:",
+            ForeColor = ColorTranslator.FromHtml(lblColour)
+        };
         TextBox txtPassword = new TextBox()
         {
             Location = new Point(leftAlign, posFirst + 20),
-            Height = 45,
+            Height = boxHeight,
             Width = boxWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             PasswordChar = '*',
@@ -126,7 +148,7 @@ namespace TorPdos
         TextBox txtConfirmPassword = new TextBox()
         {
             Location = new Point(leftAlign, posSecond + 20),
-            Height = 45,
+            Height = boxHeight,
             Width = boxWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             PasswordChar = '*',
@@ -136,12 +158,30 @@ namespace TorPdos
         TextBox txtPath = new TextBox()
         {
             Location = new Point(leftAlign, posSecond + 20),
-            Height = 45,
+            Height = boxHeight,
             Width = boxWidth - boxBtnWidth,
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour),
             Text = ""
+        };
+        TextBox txtUUID = new TextBox()
+        {
+            Location = new Point(leftAlign, posFirst + 20),
+            Height = boxHeight,
+            Width = boxWidth,
+            Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(backgroundColour),
+            BackColor = ColorTranslator.FromHtml(txtColour)
+        };
+        TextBox txtIP = new TextBox()
+        {
+            Location = new Point(leftAlign, posSecond + 20),
+            Height = boxHeight,
+            Width = boxWidth,
+            Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(backgroundColour),
+            BackColor = ColorTranslator.FromHtml(txtColour)
         };
         Button btnConfirmPath = new Button()
         {
@@ -190,7 +230,7 @@ namespace TorPdos
         };
         Button btnDownload = new Button()
         {
-            Location = new Point(posConfirmW, posConfirmH),
+            Location = new Point(posCancelW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
             Text = "Donwnload",
@@ -199,7 +239,7 @@ namespace TorPdos
         };
         Button btnLogout = new Button()
         {
-            Location = new Point(posCancelW, posConfirmH),
+            Location = new Point(posConfirmW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
             Text = "Logout",
@@ -214,6 +254,15 @@ namespace TorPdos
             Text = "Okay",
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
+        };
+        Button btnAddPeer = new Button()
+        {
+            Location = new Point(posAddW, posConfirmH),
+            Width = confirmBtnW,
+            Height = confirmBtnH,
+            Text = "Add peer",
+            Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
+            ForeColor = ColorTranslator.FromHtml(btnColour),
         };
         NotifyIcon noiTorPdos = new NotifyIcon()
         {
@@ -278,7 +327,7 @@ namespace TorPdos
         void EventHandlers()
         {
             noiTorPdos.Click += noiTorPdosClick;
-            //FormClosing += MyFormClosing;
+            FormClosing += MyFormClosing;
             btnLogin.Click += BtnLoginClick;
             btnBrowse.Click += BtnBrowseClick;
             btnCreate.Click += BtnCreateClick;
@@ -286,11 +335,29 @@ namespace TorPdos
             btnChangePath.Click += BtnChangePathClick;
             btnLogout.Click += BtnLogOutClick;
             btnOkay.Click += BtnOkayClick;
+            btnAddPeer.Click += BtnAddPeer_Click;
+            btnDownload.Click += BtnDownloadClick;
+        }
+
+        private void BtnDownloadClick(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BtnAddPeer_Click(object sender, EventArgs e)
+        {
+            Controls.Clear();
+            Controls.Add(lblUUID);
+            Controls.Add(lblIP);
+            Controls.Add(txtUUID);
+            Controls.Add(txtIP);
+            Controls.Add(btnOkay);
         }
 
         private void BtnOkayClick(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            _p2P.AddPeer(txtUUID.Text, txtIP.Text);
+            LoggedIn();
         }
 
         private void BtnCreateClick(object sender, EventArgs e)
@@ -351,7 +418,6 @@ namespace TorPdos
                 }
             }
         }
-
         private void BtnBrowseClick(object sender, EventArgs e)
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
@@ -365,32 +431,40 @@ namespace TorPdos
         {
             FirstStartUp();
             chkCreateFolder.Checked = false;
+        }  
+        private void BtnLogOutClick(object sender, EventArgs e)
+        {
+            Login();
+            loggedIn = false;
         }
 
-        public void Login()
+        void MyFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
+            {
+                e.Cancel = true;
+                Hide();
+                noiTorPdos.Visible = true;
+            }
+            else
+            {
+                noiTorPdos.Visible = false;
+                Environment.Exit(0);
+            }
+        }
+
+        void noiTorPdosClick(object sender, EventArgs e)
+        {
+            Show();
+            WindowState = FormWindowState.Normal;
+            noiTorPdos.Visible = false;
+        }
+
+        private void Sorry()
         {
             Controls.Clear();
-            int tabNumber = 0;
-
-            //TXT: Password
-            txtPassword.TabIndex = tabNumber++;
-            txtPassword.Text = null;
-            Controls.Add(txtPassword);
-
-            //BTN: Login
-            btnLogin.TabIndex = tabNumber++;
-            Controls.Add(btnLogin);
-
-            //BTN: Back
-            btnChangePath.TabIndex = tabNumber++;
-            Controls.Add(btnChangePath);
-
-            //Labels
-            Controls.Add(lblPassword);
-
-            AcceptButton = btnLogin;
+            MessageBox.Show("Sorry that port is unavailable, the program will now close.");
         }
-
         public void FirstStartUp()
         {
             Controls.Clear();
@@ -422,7 +496,6 @@ namespace TorPdos
                 txtPath.Text = DiskHelper.GetRegistryValue("Path");
             }
         }
-
         public void Create()
         {
             Controls.Clear();
@@ -451,7 +524,29 @@ namespace TorPdos
 
             AcceptButton = btnCreate;
         }
+        public void Login()
+        {
+            Controls.Clear();
+            int tabNumber = 0;
 
+            //TXT: Password
+            txtPassword.TabIndex = tabNumber++;
+            txtPassword.Text = null;
+            Controls.Add(txtPassword);
+
+            //BTN: Login
+            btnLogin.TabIndex = tabNumber++;
+            Controls.Add(btnLogin);
+
+            //BTN: Back
+            btnChangePath.TabIndex = tabNumber++;
+            Controls.Add(btnChangePath);
+
+            //Labels
+            Controls.Add(lblPassword);
+
+            AcceptButton = btnLogin;
+        }
         public void LoggedIn()
         {
             Controls.Clear();
@@ -463,43 +558,13 @@ namespace TorPdos
 
             //BTN: Logout
             btnLogout.TabIndex = tabNumber++;
-            Controls.Add(btnLogout);   
-        }
+            Controls.Add(btnLogout);
 
-        private void Sorry()
-        {
-            Controls.Clear();
-            MessageBox.Show("Sorry that port is unavailable, the program will now close.");
-            Controls.Add(btnOkay);
+            //BTN: Add Peer
+            btnAddPeer.TabIndex = tabNumber++;
+            Controls.Add(btnAddPeer);
         }
-        private void BtnLogOutClick(object sender, EventArgs e)
-        {
-            Login();
-            loggedIn = false;
-        }
-
-        //void MyFormClosing(object sender, FormClosingEventArgs e)
-        //{
-        //    if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
-        //    {
-        //        e.Cancel = true;
-        //        Hide();
-        //        noiTorPdos.Visible = true;
-        //    }
-        //    else
-        //    {
-        //        noiTorPdos.Visible = false;
-        //        Environment.Exit(0);
-        //    }
-        //}
-
-        void noiTorPdosClick(object sender, EventArgs e)
-        {
-            Show();
-            WindowState = FormWindowState.Normal;
-            noiTorPdos.Visible = false;
-        }
-
+        
         public string PathName()
         {
             if (txtPath.Text.EndsWith(@"\"))
