@@ -375,15 +375,18 @@ namespace Index_lib{
             return exist;
         }
 
+        /// <summary>
+        /// Tries to read file or waits for it to be ready
+        /// </summary>
+        /// <param name="fullPath">Full path to file</param>
+        /// <returns></returns>
         private bool WaitForFile(string fullPath){
             int numTries = 0;
             while (true){
                 ++numTries;
                 try{
                     // Attempt to open the file exclusively.
-                    using (FileStream fs = new FileStream(fullPath,
-                        FileMode.Open, FileAccess.ReadWrite,
-                        FileShare.None, 100)){
+                    using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None, 100)){
                         fs.ReadByte();
                         fs.Close();
 
