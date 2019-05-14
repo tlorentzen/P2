@@ -82,6 +82,7 @@ namespace TorPdos{
                             _idx.FileChanged += Idx_FileChanged;
                             _idx.FileDeleted += Idx_FileDeleted;
                             _idx.FileMissing += Idx_FileMissing;
+                            torPdos._idx = _idx;
 
                             if (!_idx.Load()) {
                                 _idx.BuildIndex();
@@ -121,7 +122,8 @@ namespace TorPdos{
                         } else if (console.Equals("reindex")) {
                             _idx.ReIndex();
                         } else if (console.Equals("gui")) {
-                            Application.Run(torPdos);
+                            MyForm torPdos2 = new MyForm();
+                            Application.Run(torPdos2);
                         } else if (console.Equals("status")) {
                             _idx.Status();
                         } else if (console.Equals("idxsave")) {
