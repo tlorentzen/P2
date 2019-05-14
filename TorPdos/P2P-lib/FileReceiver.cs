@@ -58,8 +58,7 @@ namespace P2P_lib{
 
             try{
                 TcpClient client = _server.AcceptTcpClient();
-                client.ReceiveTimeout = 3000;
-                client.SendTimeout = 3000;
+                client.ReceiveTimeout = 1000;
 
                 using (NetworkStream stream = client.GetStream()){
                     Console.WriteLine(@"Receiving file");
