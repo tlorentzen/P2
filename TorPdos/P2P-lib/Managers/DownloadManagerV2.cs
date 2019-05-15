@@ -18,18 +18,18 @@ namespace P2P_lib.Managers{
         private readonly NetworkPorts _ports;
         private readonly ManualResetEvent _waitHandle;
         private readonly ConcurrentDictionary<string, Peer> _peers;
-        private StateSaveConcurrentQueue<QueuedFile> _queue;
+        private StateSaveConcurrentQueue<FileDownloader> _queue;
         private FileReceiver _fileReceiver;
         private readonly Index _index;
         private List<string> _fileList;
-        public bool isStopped;
+        private bool isStopped;
         private readonly HashHandler _hashList;
         private List<string> _downloadQueue;
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
         private readonly Receiver _receiver;
-        private int count = 0;
-        private int sentCount = 0;
-        private QueuedFile _currentQueuedFile;
+        private int _count = 0;
+        private int _sentCount = 0;
+        private FileDownloader _currentQueuedFile;
 
         private ConcurrentDictionary<string, List<string>> _sentTo;
 
@@ -40,7 +40,7 @@ namespace P2P_lib.Managers{
             }
         }
 
-        public DownloadManagerV2(StateSaveConcurrentQueue<QueuedFile> queue, NetworkPorts ports,
+        public DownloadManagerV2(StateSaveConcurrentQueue<FileDownloader> queue, NetworkPorts ports,
             ConcurrentDictionary<string, Peer> peers, Index index, HashHandler hashList){
             this._queue = queue;
             this._ports = ports;
@@ -103,7 +103,7 @@ namespace P2P_lib.Managers{
                     }
 
                     var updatedDownloadQueue = new List<string>();
-                    
+
                     if (Directory.Exists(_path + @".hidden\" + @"incoming\" + _fileHash)){
                         foreach (var currentFile in _downloadQueue){
                             if (!File.Exists(_path + @".hidden\" + @"incoming\" + _fileHash + @"\" + currentFile)){
@@ -122,7 +122,7 @@ namespace P2P_lib.Managers{
                         List<Peer> onlinePeers = this.GetPeers();
                         //See if any online peers have the file
                         var sentToPeers = new List<string>();
-                        
+
                         _sentTo.TryGetValue(currentFileHash, out sentToPeers);
                         onlinePeers = OnlinePeersWithFile(onlinePeers, sentToPeers);
 
@@ -139,8 +139,8 @@ namespace P2P_lib.Managers{
 
                         foreach (var onlinePeer in onlinePeers){
                             var downloadMessage = new DownloadMessage(onlinePeer){
-                                port = _port, 
-                                fullFileName = file.GetHash(), 
+                                port = _port,
+                                fullFileName = file.GetHash(),
                                 filehash = currentFileHash
                             };
                             downloadMessage.Send();
@@ -157,7 +157,7 @@ namespace P2P_lib.Managers{
         private void _receiver_MessageReceived(BaseMessage msg){
             if (msg.GetMessageType() == typeof(DownloadMessage)){
                 var download = (DownloadMessage) msg;
-                
+
                 if (download.type.Equals(Messages.TypeCode.RESPONSE)){
                     if (download.statusCode == StatusCode.ACCEPTED){
                         download.CreateReply();
@@ -171,7 +171,7 @@ namespace P2P_lib.Managers{
                                     .FullName,
                                 download.filehash, download.port);
 
-                        sentCount++;
+                        _sentCount++;
 
                         this._fileReceiver.FileSuccessfullyDownloaded += FileReceiverFileSuccessfullyDownloaded;
                         this._fileReceiver.Start();
@@ -187,13 +187,13 @@ namespace P2P_lib.Managers{
 
         private void FileReceiverFileSuccessfullyDownloaded(string path){
             DiskHelper.ConsoleWrite("File downloaded");
-            count++;
+            _count++;
             RestoreOriginalFile(path);
         }
 
         private List<Peer> GetPeers(){
             var availablePeers = new List<Peer>();
-            
+
             foreach (var peer in this._peers){
                 if (peer.Value.IsOnline()){
                     availablePeers.Add(peer.Value);
@@ -214,19 +214,14 @@ namespace P2P_lib.Managers{
             return result;
         }
 
-        private void RestoreOriginalFile(string path,bool forceRestore = false){
+        private void RestoreOriginalFile(string path, bool forceRestore = false){
+            List<string> currentFileList = _hashList.GetEntry(Path.GetFileName(path));
             if (!forceRestore){
-                if (sentCount == _fileList.Count){
-                    if (sentCount == count){
-                        foreach (var currentFile in _fileList){
-                            if (File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile))
-                                continue;
-                            _queue.Enqueue(_currentQueuedFile);
-                            return;
-                        }
-                    } else{
-                       _queue.Enqueue(_currentQueuedFile);
-                    }
+                foreach (var currentFile in currentFileList){
+                    if (File.Exists(_path + @".hidden\incoming\" + _fileHash + @"\" + currentFile))
+                        continue;
+                    _queue.Enqueue(_currentQueuedFile);
+                    return;
                 }
             }
 
@@ -240,7 +235,6 @@ namespace P2P_lib.Managers{
                 _fileList);
 
 
-
             // Decrypt file
             var decryption = new FileEncryption(pathWithoutExtension, ".lzma");
             decryption.DoDecrypt(IdHandler.GetKeyMold());
@@ -250,14 +244,15 @@ namespace P2P_lib.Managers{
             // Decompress file
             string pathToFileForCopying =
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
-            
+
             DiskHelper.ConsoleWrite("File decompressed");
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 if (!Directory.Exists(Path.GetDirectoryName(filePath))){
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 }
+
                 File.Copy(pathToFileForCopying, filePath);
-                
+
                 DiskHelper.ConsoleWrite($"File saved to: {filePath}");
             }
         }
@@ -268,7 +263,7 @@ namespace P2P_lib.Managers{
             _waitHandle.Set();
 
             Console.Write("Download thread stopping... ");
-            while (!this.isStopped){}
+            while (!this.isStopped){ }
 
             Console.Write("Stopped!");
             return true;

@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileDownloader.cs" />
     <Compile Include="RankingHandler.cs" />
     <Compile Include="DiskHelper.cs" />
     <Compile Include="IDHandler.cs" />

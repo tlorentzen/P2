@@ -26,7 +26,7 @@ namespace P2P_lib{
         private readonly ConcurrentDictionary<string, Peer> _peers = new ConcurrentDictionary<string, Peer>();
         private readonly string _peerFilePath;
         private readonly StateSaveConcurrentQueue<QueuedFile> _upload;
-        private readonly StateSaveConcurrentQueue<QueuedFile> _download;
+        private readonly StateSaveConcurrentQueue<FileDownloader> _download;
         private readonly StateSaveConcurrentQueue<string> _deletionQueue;
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
@@ -51,7 +51,7 @@ namespace P2P_lib{
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
             _upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
-            _download = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\downloadQueue.json");
+            _download = StateSaveConcurrentQueue<FileDownloader>.Load(_path + @".hidden\downloadQueue.json");
         }
 
         public List<Peer> GetPeerList(){
@@ -408,13 +408,13 @@ namespace P2P_lib{
         }
 
         public void DownloadFile(string hash){
-            this._download.Enqueue(new QueuedFile(hash));
+            this._download.Enqueue(new FileDownloader(hash));
         }
 
         public void DownloadAllFiles()
         {
             foreach(var key in _locationDb) {
-                this._download.Enqueue(new QueuedFile(key.Key));
+                this._download.Enqueue(new FileDownloader(key.Key));
             }
         }
 
