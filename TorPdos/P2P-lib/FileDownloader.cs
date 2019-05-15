@@ -17,7 +17,7 @@ namespace P2P_lib{
         private TcpListener _server;
         private Thread _listener;
         private string _hash;
-        private readonly List<Peer> _peersToAsk;
+        private List<Peer> _peersToAsk;
         private readonly int _port;
         private readonly IPAddress _ip;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("FileDownloader");
@@ -29,20 +29,17 @@ namespace P2P_lib{
         private string _fullFileName;
 
 
-        public FileDownloader(string hash, List<Peer> peersToAsk, NetworkPorts ports, string fullFileName,
-            int bufferSize = 1024){
-            _hash = hash;
+        public FileDownloader(NetworkPorts ports,int bufferSize = 1024){
             _ports = ports;
             this._ip = IPAddress.Any;
-            _fullFileName = fullFileName;
-            _peersToAsk = peersToAsk;
             _port = _ports.GetAvailablePort();
             this._path = DiskHelper.GetRegistryValue("Path");
             this._buffer = new byte[bufferSize];
-            Start();
         }
 
-        private bool Start(){
+        public bool Fetch(P2PChunk chunk){
+            _hash = chunk.Hash;
+            _peersToAsk = chunk.Peers;
             foreach (var Peer in _peersToAsk){
                 if (!Peer.IsOnline()) break;
 
@@ -60,6 +57,7 @@ namespace P2P_lib{
                 catch (Exception e){
                     Logger.Error(e);
                 }
+                
 
                 var client = _server.AcceptTcpClient();
                 client.ReceiveTimeout = 5000;
