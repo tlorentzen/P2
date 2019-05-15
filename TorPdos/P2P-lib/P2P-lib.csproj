@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileDownloader.cs" />
+    <Compile Include="P2PChunk.cs" />
+    <Compile Include="P2PFile.cs" />
     <Compile Include="RankingHandler.cs" />
     <Compile Include="DiskHelper.cs" />
     <Compile Include="IDHandler.cs" />

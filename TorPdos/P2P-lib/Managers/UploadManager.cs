@@ -8,7 +8,6 @@ using System.Threading;
 using Compression;
 using Encryption;
 using Index_lib;
-using Microsoft.Win32;
 using NLog;
 using P2P_lib.Messages;
 using Splitter_lib;
