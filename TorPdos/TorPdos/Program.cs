@@ -165,11 +165,7 @@ namespace TorPdos{
 
         private static void Idx_FileMissing(IndexFile idxfile){
             Console.WriteLine(@"File missing init download of " + idxfile.hash);
-
-            P2PFile file = new P2PFile(idxfile.GetHash());
-            file.AddPath(file.Paths);
-
-            _p2P.DownloadFile(file);
+            _p2P.DownloadFile(idxfile.hash);
         }
 
         private static void Idx_FileDeleted(string hash){
@@ -182,7 +178,7 @@ namespace TorPdos{
             Console.WriteLine(@"Added: " + idxfile.GetHash());
 
             P2PFile file = new P2PFile(idxfile.GetHash());
-            file.AddPath(file.Paths);
+            file.AddPath(idxfile.paths);
 
             _p2P.UploadFile(file);
             //p2p.UploadFileToNetwork(file.paths[0], 3);

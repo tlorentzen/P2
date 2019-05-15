@@ -19,15 +19,13 @@ namespace P2P_lib.Managers{
         private readonly HashHandler _hashList;
 
         public DeletionManager(StateSaveConcurrentQueue<string> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDb,
-            HashHandler hashList){
+            ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, List<string>> locationDb){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
             this._waitHandle = new ManualResetEvent(false);
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._locationDb = locationDb;
-            this._hashList = hashList;
         }
 
         private void QueueElementAddedToQueue(){

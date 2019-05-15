@@ -18,14 +18,12 @@ namespace P2P_lib.Managers{
         private readonly ManualResetEvent _waitHandle;
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private StateSaveConcurrentQueue<P2PFile> _queue;
-        private FileReceiver _fileReceiver;
         private readonly Index _index;
         private List<string> _fileList;
         private bool isStopped;
         private readonly HashHandler _hashList;
         private List<string> _downloadQueue;
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
-        private readonly Receiver _receiver;
         private int _count = 0;
         private int _sentCount = 0;
         private ConcurrentQueue<FileDownloader> _queueBuilder;
@@ -33,7 +31,7 @@ namespace P2P_lib.Managers{
         private FileDownloader _fileDownloader;
 
         public DownloadManagerV2(StateSaveConcurrentQueue<P2PFile> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers, Index index, HashHandler hashList){
+            ConcurrentDictionary<string, Peer> peers, Index index){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -42,10 +40,11 @@ namespace P2P_lib.Managers{
             this._index = index;
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._port = _ports.GetAvailablePort();
-            _hashList = hashList;
-            
-
+            this._fileDownloader= new FileDownloader(ports,_peers);
+           
+           
             Peer.PeerSwitchedOnline += PeerWentOnlineCheck;
+
         }
 
         private void QueueElementAddedToQueue(){
@@ -72,10 +71,10 @@ namespace P2P_lib.Managers{
                     }
 
                     _fileHash = file.Hash;
-
+                    Console.WriteLine("Asking for chunks");
                     foreach (var chunk in file.Chunks){
-                        if (!_fileDownloader.Fetch(chunk)){
-                            _queue.Enqueue(file);
+                        if (!_fileDownloader.Fetch(chunk,file.Hash)){
+                            this._queue.Enqueue(file);
                             break;
                         }
                     }
@@ -92,18 +91,6 @@ namespace P2P_lib.Managers{
             }
 
             isStopped = true;
-        }
-
-        private List<Peer> GetPeers(){
-            var availablePeers = new List<Peer>();
-
-            foreach (var peer in this._peers){
-                if (peer.Value.IsOnline()){
-                    availablePeers.Add(peer.Value);
-                }
-            }
-
-            return availablePeers;
         }
 
         private void RestoreOriginalFile(string path, bool forceRestore = false){
@@ -141,7 +128,6 @@ namespace P2P_lib.Managers{
 
         public override bool Shutdown(){
             _isRunning = false;
-            this._receiver.Stop();
             _waitHandle.Set();
 
             Console.Write("Download thread stopping... ");

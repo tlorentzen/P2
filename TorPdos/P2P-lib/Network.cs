@@ -28,14 +28,14 @@ namespace P2P_lib{
         private readonly StateSaveConcurrentQueue<P2PFile> _upload;
         private readonly StateSaveConcurrentQueue<P2PFile> _download;
         private readonly StateSaveConcurrentQueue<string> _deletionQueue;
+        private ConcurrentDictionary<string,P2PFile> _filesList = new ConcurrentDictionary<string, P2PFile>();
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
         private System.Timers.Timer _pingTimer;
-        private readonly string _locationDbPath;
         private ConcurrentDictionary<string, List<string>> _locationDb;
         private DeletionManager _deletionManager;
-        private readonly HashHandler _hashList;
         private int _numberOfPrimaryPeers = 10;
+        private readonly string _localtionPath;
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public Network(int port, Index index, string path = "C:\\TorPdos\\"){
@@ -43,15 +43,16 @@ namespace P2P_lib{
             this._path = path;
             this._index = index;
             this._peerFilePath = path + @".hidden\peer.json";
-            this._locationDbPath = path + @".hidden\locationDB.json";
             _hiddenPath = new HiddenFolder(_path + @".hidden\");
-            _hashList = new HashHandler(_path);
 
             Load();
+            _localtionPath = _path + @".hidden\location.json";
+            LoadFile();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletion.json");
             _upload = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\upload.json");
             _download = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\download.json");
+            
         }
 
         public List<Peer> GetPeerList(){
@@ -70,17 +71,15 @@ namespace P2P_lib{
             _receive = new Receiver(this._port);
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.Start();
-
-
-            LoadLocationDb();
-            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb, _hashList);
+            
+            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb);
             var deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
             _managers.Add(_deletionManager);
 
             for (int i = 0; i < NumOfThreads; i++){
-                var uploadManager = new UploadManager(_upload, _ports, _peers, _hashList);
-                var downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index, _hashList);
+                var uploadManager = new UploadManager(_upload, _ports, _peers);
+                var downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index);
 
                 var uploadThread = new Thread(uploadManager.Run);
                 var downloadThread = new Thread(downloadManager.Run);
@@ -186,7 +185,7 @@ namespace P2P_lib{
             }
         }
 
-        public bool Load(){
+        private bool Load(){
             if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
                 var input =
@@ -373,41 +372,52 @@ namespace P2P_lib{
                 manager.Shutdown();
             }
 
-            _hashList.Save();
             _upload.Save(_path + @".hidden\uploadQueue.json");
             _download.Save(_path + @".hidden\downloadQueue.json");
             _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
+            Save();
 
             this._running = false;
             _receive.Stop();
-            SaveLocationDb();
         }
 
-        private void LoadLocationDb(){
-            if (File.Exists(_locationDbPath)){
-                _locationDb =
-                    JsonConvert.DeserializeObject<ConcurrentDictionary<string, List<string>>>(
-                        File.ReadAllText(_locationDbPath));
-            } else{
-                _locationDb = new ConcurrentDictionary<string, List<string>>();
-            }
-        }
-
-        private void SaveLocationDb(){
-            var json = JsonConvert.SerializeObject(_locationDb);
-            if (_path == null) return;
-            using (var fileStream = _hiddenPath.WriteToFile(_locationDbPath)){
-                var jsonIndex = new UTF8Encoding(true).GetBytes(json);
+        private bool Save(){
+            var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects,Formatting = Formatting.Indented};
+            string output = JsonConvert.SerializeObject(_filesList, settings);
+            
+            using (var fileStream = new FileStream(_localtionPath, FileMode.Create)){
+                byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
+                fileStream.Close();
             }
+
+            return true;
         }
+
+        private bool LoadFile(){
+            if (_filesList != null && File.Exists(this._localtionPath)){
+                var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
+                string json = File.ReadAllText(this._localtionPath ?? throw new NullReferenceException());
+                var input =
+                    JsonConvert.DeserializeObject<ConcurrentDictionary<string, P2PFile>>(json,settings);
+                _filesList = input;
+
+                return true;
+            } 
+
+            return false;
+        }
+        
+        
 
         public void UploadFile(P2PFile file){
+            _filesList.TryAdd(file.Hash,file);
             this._upload.Enqueue(file);
         }
 
-        public void DownloadFile(P2PFile file){
-            this._download.Enqueue(file);
+        public void DownloadFile(string file){
+            _filesList.TryGetValue(file, out var outputFile);
+            this._download.Enqueue(outputFile);
         }
         
         public void DeleteFile(string hash){

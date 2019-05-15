@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -27,20 +27,13 @@ namespace P2P_lib.Managers{
         private readonly Logger _logger = LogManager.GetLogger("UploadLogger");
         private bool _isStopped;
         private ConcurrentDictionary<string, List<string>> _sentTo;
-        private readonly HashHandler _hashList;
         private readonly HiddenFolder _hiddenFolder;
         private int _numberOfPrimaryPeers = 10;
 
-        public ConcurrentDictionary<string, List<string>> SentTo{
-            private get => _sentTo;
-            set{
-                if (_sentTo == null) _sentTo = value;
-            }
-        }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public UploadManager(StateSaveConcurrentQueue<P2PFile> queue, NetworkPorts ports,
-            ConcurrentDictionary<string, Peer> peers, HashHandler hashList){
+            ConcurrentDictionary<string, Peer> peers){
             this._queue = queue;
             this._ports = ports;
             this._peers = peers;
@@ -50,7 +43,6 @@ namespace P2P_lib.Managers{
             _hiddenFolder = new HiddenFolder(_path + @".hidden");
 
             this._path = DiskHelper.GetRegistryValue("Path");
-            _hashList = hashList;
         }
 
         private void QueueElementAddedToQueue(){
@@ -66,8 +58,7 @@ namespace P2P_lib.Managers{
 
                 if (!_isRunning)
                     break;
-
-                var peersSentTo = new List<string>();
+                
 
                 while (this._queue.TryDequeue(out P2PFile file)){
                     if (!_isRunning){
@@ -111,13 +102,12 @@ namespace P2P_lib.Managers{
                     // Initialize splitter
                     var splitter = new SplitterLibrary();
 
-                    List<string> chunks = splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
+                    List<string> chunks =
+                        splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
                     file.AddChunk(chunks);
 
-                    foreach (string chunk in chunks)
-                    {
-                        peersSentTo.Clear();
-                        string currentFileHashPath = _path + @".hidden\splitter\" + chunk;
+                    foreach (var chunk in file.Chunks){
+                        string currentFileHashPath = _path + @".hidden\splitter\" + chunk.Hash;
 
                         foreach (Peer peer in receivingPeers){
                             int port = _ports.GetAvailablePort();
@@ -138,18 +128,18 @@ namespace P2P_lib.Managers{
 
                             var upload = new UploadMessage(peer){
                                 filesize = fileInfo.Length,
-                                filename = chunk,
+                                filename = chunk.Hash,
                                 filehash = file.Hash,
                                 path = currentFileHashPath,
                                 port = port
                             };
 
                             upload.Send();
-                            DiskHelper.ConsoleWrite("Sending: "+ chunk);
+                            DiskHelper.ConsoleWrite("Sending: " + chunk.Hash);
                             int pendingCount = 0;
                             while (_pendingReceiver){
                                 pendingCount++;
-                                System.Threading.Thread.Sleep(1000);
+                                Thread.Sleep(1000);
                                 if (pendingCount == 3){
                                     _receiver.Stop();
                                     _queue.Enqueue(file);
@@ -159,27 +149,14 @@ namespace P2P_lib.Managers{
 
                             if (_sender != null){
                                 _sender.Send(currentFileHashPath);
-                                peersSentTo.Add(peer.UUID);
+                                chunk.AddPeer(peer.UUID);
+                                
+                                
                             }
-
                             _pendingReceiver = true;
                             _ports.Release(port);
                         }
-
-                        SentTo.AddOrUpdate(chunk, peersSentTo, (key, existingValue) => {
-                            foreach (string peer in peersSentTo){
-                                if (!existingValue.Contains(peer)){
-                                    existingValue.Add(peer);
-                                }
-                            }
-
-                            return existingValue;
-                        });
                     }
-
-                    //foreach (string currentFileHash in _hashList.GetEntry(file.GetHash())){
-                    //    File.Delete(_path + @".hidden\splitter\" + currentFileHash);
-                    //}
                 }
 
                 this._waitHandle.Reset();
@@ -202,13 +179,13 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> GetPeers(int count){
-
             List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
             topPeers.Sort(new ComparePeersByRating());
-            if (topPeers.Count > 0) {
+            if (topPeers.Count > 0){
                 int wantedLengthOfTopList = Math.Min(_numberOfPrimaryPeers, Math.Min(topPeers.Count, count));
                 topPeers.RemoveRange(wantedLengthOfTopList, Math.Max(0, topPeers.Count - wantedLengthOfTopList));
             }
+
             return topPeers;
         }
 

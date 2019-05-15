@@ -17,7 +17,7 @@ namespace P2P_lib{
         private TcpListener _server;
         private Thread _listener;
         private string _hash;
-        private List<Peer> _peersToAsk;
+        private List<string> _peersToAsk;
         private readonly int _port;
         private readonly IPAddress _ip;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("FileDownloader");
@@ -26,26 +26,27 @@ namespace P2P_lib{
         private readonly byte[] _buffer;
         private readonly Receiver _receiver;
         private NetworkPorts _ports;
-        private string _fullFileName;
+        private ConcurrentDictionary<string, Peer> _peers;
 
 
-        public FileDownloader(NetworkPorts ports,int bufferSize = 1024){
+        public FileDownloader(NetworkPorts ports,ConcurrentDictionary<string,Peer> peers,int bufferSize = 1024){
             _ports = ports;
             this._ip = IPAddress.Any;
             _port = _ports.GetAvailablePort();
-            this._path = DiskHelper.GetRegistryValue("Path");
+            this._path = DiskHelper.GetRegistryValue("Path")+@".hidden\incoming\";
             this._buffer = new byte[bufferSize];
+            this._peers = peers;
         }
 
-        public bool Fetch(P2PChunk chunk){
+        public bool Fetch(P2PChunk chunk, string fullFileName){
             _hash = chunk.Hash;
             _peersToAsk = chunk.Peers;
             foreach (var Peer in _peersToAsk){
-                if (!Peer.IsOnline()) break;
+                _peers.TryGetValue(Peer, out var currentPeer);
 
-                var downloadMessage = new DownloadMessage(Peer){
+                var downloadMessage = new DownloadMessage(currentPeer){
                     port = this._port,
-                    fullFileName = _fullFileName,
+                    fullFileName = fullFileName,
                     filehash = _hash
                 };
                 downloadMessage.Send();
@@ -87,9 +88,12 @@ namespace P2P_lib{
                             download.port = _port;
                             DiskHelper.ConsoleWrite("FileReceiver opened");
                             download.Send();
-                            _ports.Release(download.port);
+                            
+                            if (!Directory.Exists(_path + fullFileName +@"\")){
+                                Directory.CreateDirectory(_path + fullFileName + @"\");
+                            }
 
-                            using (var fileStream = File.Open(_path + _fullFileName + _hash,
+                            using (var fileStream = File.Open(_path + fullFileName +@"\"+ _hash,
                                 FileMode.OpenOrCreate, FileAccess.Write)){
                                 DiskHelper.ConsoleWrite("Creating file: " + this._hash);
 
@@ -100,6 +104,7 @@ namespace P2P_lib{
                                 DiskHelper.ConsoleWrite(@"File done downloading");
                                 fileStream.Close();
                             }
+                            _ports.Release(download.port);
                         }
 
                         if (download.statusCode == StatusCode.FILE_NOT_FOUND){
@@ -109,7 +114,7 @@ namespace P2P_lib{
                 }
             }
             Stop();
-            return _fileReceived = File.Exists(_path + _fullFileName + _hash);;
+            return File.Exists(_path + fullFileName +@"\"+ _hash);;
         }
 
         private void Stop(){
