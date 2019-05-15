@@ -403,21 +403,14 @@ namespace P2P_lib{
             }
         }
 
-        public void UploadFile(string hash, string path, int copies){
-            this._upload.Enqueue(new QueuedFile(hash, path, copies));
+        public void UploadFile(P2PFile file){
+            this._upload.Enqueue(file);
         }
 
-        public void DownloadFile(string hash){
-            this._download.Enqueue(new FileDownloader(hash));
+        public void DownloadFile(P2PFile file){
+            this._download.Enqueue(file);
         }
-
-        public void DownloadAllFiles()
-        {
-            foreach(var key in _locationDb) {
-                this._download.Enqueue(new FileDownloader(key.Key));
-            }
-        }
-
+        
         public void DeleteFile(string hash){
             this._deletionQueue.Enqueue(hash);
         }

@@ -21,6 +21,13 @@ namespace P2P_lib
             this.Paths.Add(path);
         }
 
+        public void AddPath(List<string> paths){
+            foreach (string path in paths)
+            {
+                this.Paths.Add(path);
+            }
+        }
+
         public void AddChunk(P2PChunk chunk){
             this.Chunks.Add(chunk);
         }

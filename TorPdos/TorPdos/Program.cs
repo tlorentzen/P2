@@ -131,10 +131,6 @@ namespace TorPdos{
                             _p2P.SaveFile();
                         } else if (console.Equals("ping")) {
                             _p2P.Ping();
-                        } else if (console.Equals("download all")) {
-                          _p2P.DownloadAllFiles();
-                        } else if (console.StartsWith("download") && param.Length == 2) {
-                            _p2P.DownloadFile(param[1]);
                         } else if (console.Equals("integrity")) {
                             _idx.MakeIntegrityCheck();
                         } else if (console.Equals("list")){
@@ -167,9 +163,13 @@ namespace TorPdos{
             Console.ReadKey();
         }
 
-        private static void Idx_FileMissing(IndexFile file){
-            Console.WriteLine(@"File missing init download of " + file.hash);
-            _p2P.DownloadFile(file.hash);
+        private static void Idx_FileMissing(IndexFile idxfile){
+            Console.WriteLine(@"File missing init download of " + idxfile.hash);
+
+            P2PFile file = new P2PFile(idxfile.GetHash());
+            file.AddPath(file.Paths);
+
+            _p2P.DownloadFile(file);
         }
 
         private static void Idx_FileDeleted(string hash){
@@ -178,10 +178,13 @@ namespace TorPdos{
             _p2P.DeleteFile(hash);
         }
 
-        private static void Idx_FileAdded(IndexFile file){
-            Console.WriteLine(@"Added: " + file.hash);
+        private static void Idx_FileAdded(IndexFile idxfile){
+            Console.WriteLine(@"Added: " + idxfile.GetHash());
 
-            _p2P.UploadFile(file.hash, file.GetPath(), 5);
+            P2PFile file = new P2PFile(idxfile.GetHash());
+            file.AddPath(file.Paths);
+
+            _p2P.UploadFile(file);
             //p2p.UploadFileToNetwork(file.paths[0], 3);
         }
 
