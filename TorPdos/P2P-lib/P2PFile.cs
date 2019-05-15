@@ -57,8 +57,17 @@ namespace P2P_lib
             return true;
         }
 
-        public string GetChunkDirectory(string path){
-            return path + @"\" + this.Hash;
+        public List<string> getChunksAsString(){
+            List<string> output=new List<string>();
+            foreach (var chunk in this.Chunks){
+                output.Add(chunk.Hash);
+            }
+
+            return output;
+        }
+
+        private string GetChunkDirectory(string path){
+            return path + this.Hash;
         }
     }
 }

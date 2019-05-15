@@ -40,11 +40,10 @@ namespace P2P_lib.Managers{
             this._index = index;
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._port = _ports.GetAvailablePort();
-            this._fileDownloader= new FileDownloader(ports,_peers);
-           
-           
-            Peer.PeerSwitchedOnline += PeerWentOnlineCheck;
+            this._fileDownloader = new FileDownloader(ports, _peers);
 
+
+            Peer.PeerSwitchedOnline += PeerWentOnlineCheck;
         }
 
         private void QueueElementAddedToQueue(){
@@ -52,6 +51,7 @@ namespace P2P_lib.Managers{
         }
 
         private void PeerWentOnlineCheck(){
+            Console.WriteLine("This is positive?");
             this._waitHandle.Set();
         }
 
@@ -70,21 +70,25 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
+                    foreach (var path in _index.GetEntry(file.Hash).paths){
+                        if (File.Exists(path)){
+                            return;
+                        }
+                    }
+
                     _fileHash = file.Hash;
                     Console.WriteLine("Asking for chunks");
                     foreach (var chunk in file.Chunks){
-                        if (!_fileDownloader.Fetch(chunk,file.Hash)){
+                        if (!_fileDownloader.Fetch(chunk, file.Hash)){
                             this._queue.Enqueue(file);
                             break;
                         }
                     }
 
-
-
-                    if (file.Downloaded(_path+@"\incoming")){
-                        RestoreOriginalFile(_fileHash, true);
+                    Console.WriteLine(file.Downloaded(_path + @".hidden\incoming\"));
+                    if (file.Downloaded(_path + @".hidden\incoming\")){
+                        RestoreOriginalFile(_fileHash,file);
                     }
-                    
                 }
 
                 this._waitHandle.Reset();
@@ -93,7 +97,7 @@ namespace P2P_lib.Managers{
             isStopped = true;
         }
 
-        private void RestoreOriginalFile(string path, bool forceRestore = false){
+        private void RestoreOriginalFile(string path, P2PFile fileInformation){
             DiskHelper.ConsoleWrite("File exist");
             string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);
 
@@ -101,7 +105,7 @@ namespace P2P_lib.Managers{
             var splitterLibrary = new SplitterLibrary();
             splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
-                _fileList);
+                fileInformation.getChunksAsString());
 
 
             // Decrypt file

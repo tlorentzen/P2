@@ -18,7 +18,7 @@ namespace P2P_lib{
         private Thread _listener;
         private string _hash;
         private List<string> _peersToAsk;
-        private readonly int _port;
+        private int _port;
         private readonly IPAddress _ip;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("FileDownloader");
         private bool _fileReceived;
@@ -43,13 +43,14 @@ namespace P2P_lib{
             _peersToAsk = chunk.Peers;
             foreach (var Peer in _peersToAsk){
                 _peers.TryGetValue(Peer, out var currentPeer);
-
+                if (!currentPeer.IsOnline()) continue;
                 var downloadMessage = new DownloadMessage(currentPeer){
                     port = this._port,
                     fullFileName = fullFileName,
                     filehash = _hash
                 };
                 downloadMessage.Send();
+                
                 try{
                     _server = new TcpListener(this._ip, this._port);
                     _server.AllowNatTraversal(true);
@@ -59,7 +60,6 @@ namespace P2P_lib{
                     Logger.Error(e);
                 }
                 
-
                 var client = _server.AcceptTcpClient();
                 client.ReceiveTimeout = 5000;
 
@@ -82,28 +82,20 @@ namespace P2P_lib{
                         if (!download.type.Equals(Messages.TypeCode.RESPONSE)) continue;
                         
                         if (download.statusCode == StatusCode.ACCEPTED){
+                            int receiverPort = _ports.GetAvailablePort();
                             download.CreateReply();
                             download.type = Messages.TypeCode.REQUEST;
                             download.statusCode = StatusCode.ACCEPTED;
-                            download.port = _port;
+                            download.port = receiverPort;
                             DiskHelper.ConsoleWrite("FileReceiver opened");
                             download.Send();
                             
                             if (!Directory.Exists(_path + fullFileName +@"\")){
                                 Directory.CreateDirectory(_path + fullFileName + @"\");
                             }
-
-                            using (var fileStream = File.Open(_path + fullFileName +@"\"+ _hash,
-                                FileMode.OpenOrCreate, FileAccess.Write)){
-                                DiskHelper.ConsoleWrite("Creating file: " + this._hash);
-
-                                while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                                    fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
-                                }
-
-                                DiskHelper.ConsoleWrite(@"File done downloading");
-                                fileStream.Close();
-                            }
+                            _server.Stop();
+                            Downloader(fullFileName,receiverPort);
+                           
                             _ports.Release(download.port);
                         }
 
@@ -113,7 +105,7 @@ namespace P2P_lib{
                     }
                 }
             }
-            Stop();
+
             return File.Exists(_path + fullFileName +@"\"+ _hash);;
         }
 
@@ -123,6 +115,36 @@ namespace P2P_lib{
 
         public int GetPort(){
             return this._port;
+        }
+
+        private void Downloader(string fullFileName, int port){
+            var server = new TcpListener(this._ip, port);
+            try{
+                server.AllowNatTraversal(true);
+                server.Start();
+            }
+            catch (Exception e){
+                Logger.Error(e);
+                return;
+            }
+            var client = server.AcceptTcpClient();
+            client.ReceiveTimeout = 5000;
+            using (NetworkStream stream = client.GetStream()){
+                using (var fileStream = File.Open(_path + fullFileName + @"\" + _hash,
+                    FileMode.OpenOrCreate, FileAccess.Write)){
+                    DiskHelper.ConsoleWrite("Creating file: " + this._hash);
+
+                    int i;
+                    while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
+                        fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
+                    }
+
+                    DiskHelper.ConsoleWrite(@"File done downloading");
+                    fileStream.Close();
+                }
+                stream.Close();
+                _ports.Release(port);
+            }
         }
     }
 }
