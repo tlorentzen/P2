@@ -25,8 +25,8 @@ namespace P2P_lib{
         private readonly HiddenFolder _hiddenPath;
         private readonly ConcurrentDictionary<string, Peer> _peers = new ConcurrentDictionary<string, Peer>();
         private readonly string _peerFilePath;
-        private readonly StateSaveConcurrentQueue<QueuedFile> _upload;
-        private readonly StateSaveConcurrentQueue<FileDownloader> _download;
+        private readonly StateSaveConcurrentQueue<P2PFile> _upload;
+        private readonly StateSaveConcurrentQueue<P2PFile> _download;
         private readonly StateSaveConcurrentQueue<string> _deletionQueue;
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
@@ -49,9 +49,9 @@ namespace P2P_lib{
 
             Load();
 
-            _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletionQueue.json");
-            _upload = StateSaveConcurrentQueue<QueuedFile>.Load(_path + @".hidden\uploadQueue.json");
-            _download = StateSaveConcurrentQueue<FileDownloader>.Load(_path + @".hidden\downloadQueue.json");
+            _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletion.json");
+            _upload = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\upload.json");
+            _download = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\download.json");
         }
 
         public List<Peer> GetPeerList(){
