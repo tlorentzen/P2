@@ -354,7 +354,7 @@ namespace TorPdos
 
         private void BtnDownloadClick(object sender, EventArgs e)
         {
-            _p2P.DownloadAllFiles();
+            //_p2P.DownloadAllFiles();
         }
 
         private void BtnAddPeerClick(object sender, EventArgs e)
@@ -471,7 +471,7 @@ namespace TorPdos
         private void IdxFileMissing(IndexFile file)
         {
             Console.WriteLine(@"File missing init download of " + file.hash);
-            _p2P.DownloadFile(file.hash);
+            //_p2P.DownloadFile(file.hash);
         }
 
         private void IdxFileDeleted(string hash)
@@ -483,7 +483,7 @@ namespace TorPdos
         private void IdxFileAdded(IndexFile file)
         {
             Console.WriteLine(@"Added: " + file.hash);
-            _p2P.UploadFile(file.hash, file.GetPath(), 5);
+            //_p2P.UploadFile(file.hash, file.GetPath(), 5);
         }
 
         private void IdxFileChanged(IndexFile file)

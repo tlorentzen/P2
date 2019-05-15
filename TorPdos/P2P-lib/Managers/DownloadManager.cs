@@ -45,11 +45,7 @@ namespace P2P_lib.Managers{
             _hashList = hashList;
             
 
-            _receiver = new Receiver(_port);
-            _receiver.MessageReceived += _receiver_MessageReceived;
             Peer.PeerSwitchedOnline += PeerWentOnlineCheck;
-
-            _receiver.Start();
         }
 
         private void QueueElementAddedToQueue(){
