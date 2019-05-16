@@ -18,7 +18,7 @@ namespace P2P_lib{
         private readonly byte[] _buffer = new byte[1024];
         private static readonly Logger Logger = LogManager.GetLogger("FileDeleter");
 
-        public FileDeleter(ConcurrentDictionary<string, Peer> peers,NetworkPorts ports){
+        public FileDeleter(ConcurrentDictionary<string, Peer> peers, NetworkPorts ports){
             _ports = ports;
             _peers = peers;
             _port = _ports.GetAvailablePort();
@@ -28,18 +28,17 @@ namespace P2P_lib{
         public bool ChunkDeleter(P2PChunk currentFileChunk, P2PFile currentFile){
             _server = new TcpListener(this._ip, this._port);
             try{
-                
                 _server.AllowNatTraversal(true);
                 _server.Start();
             }
             catch (Exception e){
                 Logger.Error(e);
             }
+
             var client = _server.AcceptTcpClient();
             client.ReceiveTimeout = 5000;
 
             foreach (var receivingPeers in currentFileChunk.Peers){
-
                 if (!_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) continue;
                 var deletionMessage = new FileDeletionMessage(currentReceiver){
                     type = TypeCode.REQUEST,
@@ -50,7 +49,6 @@ namespace P2P_lib{
                 };
                 deletionMessage.Send();
             }
-
 
 
             using (NetworkStream stream = client.GetStream()){
@@ -92,6 +90,7 @@ namespace P2P_lib{
                     }
                 }
             }
+
             _server.Stop();
 
             return true;
