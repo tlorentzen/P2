@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using P2P_lib;
 
 namespace P2P_lib.Messages{
     public enum StatusCode{

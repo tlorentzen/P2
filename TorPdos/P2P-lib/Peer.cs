@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Net;
 using P2P_lib.Messages;
 using System.Collections.Generic;
+using P2P_lib;
 
 namespace P2P_lib{
     [Serializable]

@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Encryption;
 using Microsoft.Win32;
+using P2P_lib;
 
 namespace P2P_lib{
     public static class IdHandler{

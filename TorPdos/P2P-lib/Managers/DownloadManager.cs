@@ -6,7 +6,6 @@ using System.Threading;
 using Compression;
 using Encryption;
 using Index_lib;
-using P2P_lib.Messages;
 using Splitter_lib;
 
 namespace P2P_lib.Managers{

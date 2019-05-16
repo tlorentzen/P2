@@ -6,8 +6,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Encryption;
-using Newtonsoft.Json;
 using P2P_lib.Messages;
 
 namespace P2P_lib{

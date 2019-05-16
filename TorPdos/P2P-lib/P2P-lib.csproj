@@ -57,19 +57,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileDownloader.cs" />
+    <Compile Include="FileHandlers\FileDeleter.cs" />
+    <Compile Include="FileHandlers\FileDownloader.cs" />
+    <Compile Include="FileHandlers\FileReceiver.cs" />
+    <Compile Include="FileHandlers\FileSender.cs" />
+    <Compile Include="Handlers\IDHandler.cs" />
+    <Compile Include="Handlers\RankingHandler.cs" />
+    <Compile Include="Helpers\DiskHelper.cs" />
+    <Compile Include="Helpers\NetworkHelper.cs" />
     <Compile Include="P2PChunk.cs" />
     <Compile Include="P2PFile.cs" />
-    <Compile Include="RankingHandler.cs" />
-    <Compile Include="DiskHelper.cs" />
-    <Compile Include="IDHandler.cs" />
     <Compile Include="Managers\DeletionManager.cs" />
     <Compile Include="Managers\DownloadManager.cs" />
     <Compile Include="Managers\Manager.cs" />
     <Compile Include="Messages\FileDeletionMessage.cs" />
     <Compile Include="QueuedFile.cs" />
-    <Compile Include="FileReceiver.cs" />
-    <Compile Include="FileSender.cs" />
     <Compile Include="Messages\BaseMessage.cs" />
     <Compile Include="Messages\DownloadMessage.cs" />
     <Compile Include="Messages\PeerFetcherMessage.cs" />
@@ -78,7 +80,6 @@
     <Compile Include="Messages\TransferStatusMessage.cs" />
     <Compile Include="Messages\UploadMessage.cs" />
     <Compile Include="Network.cs" />
-    <Compile Include="NetworkHelper.cs" />
     <Compile Include="Peer.cs" />
     <Compile Include="NetworkPorts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
