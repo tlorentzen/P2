@@ -11,8 +11,6 @@ using P2P_lib.Messages;
 namespace P2P_lib{
     [Serializable]
     public class FileDownloader{
-
-        private TcpListener _server;
         private string _hash;
         private List<string> _peersToAsk;
         private int _port;
@@ -26,7 +24,6 @@ namespace P2P_lib{
         public FileDownloader(NetworkPorts ports,ConcurrentDictionary<string,Peer> peers,int bufferSize = 1024){
             _ports = ports;
             this._ip = IPAddress.Any;
-            _port = _ports.GetAvailablePort();
             this._path = DiskHelper.GetRegistryValue("Path")+@".hidden\incoming\";
             this._buffer = new byte[bufferSize];
             this._peers = peers;
@@ -39,75 +36,57 @@ namespace P2P_lib{
         /// <param name="fullFileName">The name of the full file.</param>
         /// <returns>Rather the chunk has been fetched.</returns>
         public bool Fetch(P2PChunk chunk, string fullFileName){
+            _port = _ports.GetAvailablePort();
             _hash = chunk.hash;
             _peersToAsk = chunk.peers;
+            Listener listener = new Listener(this._port);
+
             foreach (var Peer in _peersToAsk){
-                _peers.TryGetValue(Peer, out var currentPeer);
-                if (!currentPeer.IsOnline()) continue;
-                var downloadMessage = new DownloadMessage(currentPeer){
-                    port = this._port,
-                    fullFileName = fullFileName,
-                    filehash = _hash
-                };
-                downloadMessage.Send();
-                
-                try{
-                    _server = new TcpListener(this._ip, this._port);
-                    _server.AllowNatTraversal(true);
-                    _server.Start();
-                }
-                catch (Exception e){
-                    Logger.Error(e);
-                }
-                
-                var client = _server.AcceptTcpClient();
-                client.ReceiveTimeout = 5000;
+                _peers.TryGetValue(Peer, out Peer currentPeer);
+                if (currentPeer.IsOnline()) {
+                    var download = new DownloadMessage(currentPeer) {
+                        port = this._port,
+                        fullFileName = fullFileName,
+                        filehash = _hash
+                    };
 
-                using (NetworkStream stream = client.GetStream()){
-                    int i;
-                    using (MemoryStream memory = new MemoryStream()){
-                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                            memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
-                        }
+                    //Sends the download message and waits for a
+                    //"response" download message to be received.
+                    //Then changed 'download' to this message and
+                    //returns true. If a response is not received
+                    //within time, it returns false.
+                    if (listener.SendAndAwaitResponse(ref download, 2000)) {
 
-                        memory.Seek(0, SeekOrigin.Begin);
-                        byte[] messageBytes = new byte[memory.Length];
-                        memory.Read(messageBytes, 0, messageBytes.Length);
-                        memory.Close();
-
-                        var msg = BaseMessage.FromByteArray(messageBytes);
-                        if (msg.GetMessageType() != typeof(DownloadMessage)) continue;
-                        var download = (DownloadMessage) msg;
-
-                        if (!download.type.Equals(Messages.TypeCode.RESPONSE)) continue;
-                        
-                        if (download.statusCode == StatusCode.ACCEPTED){
+                        //If the download is accepted, a receiver is
+                        //started and the port of the receiver is
+                        //sent to the peer.
+                        if (download.statusCode == StatusCode.ACCEPTED) {
                             int receiverPort = _ports.GetAvailablePort();
                             download.CreateReply();
                             download.type = Messages.TypeCode.REQUEST;
                             download.statusCode = StatusCode.ACCEPTED;
                             download.port = receiverPort;
-                            download.Send();
-                            
-                            if (!Directory.Exists(_path + fullFileName +@"\")){
+
+                            if (!Directory.Exists(_path + fullFileName + @"\")) {
                                 Directory.CreateDirectory(_path + fullFileName + @"\");
                             }
-                            _server.Stop();
-                            DiskHelper.ConsoleWrite("FileReceiver opened");
-                            Downloader(fullFileName,receiverPort);
-                           
-                            _ports.Release(download.port);
-                        }
 
-                        if (download.statusCode == StatusCode.FILE_NOT_FOUND){
+                            Downloader(fullFileName, receiverPort);
+                            DiskHelper.ConsoleWrite("FileReceiver opened");
+
+                            download.Send();
+
+                            _ports.Release(download.port);
+                        } else if (download.statusCode == StatusCode.FILE_NOT_FOUND) {
                             Console.WriteLine("File not found at peer.");
+                            //TODO Remove peer from location DB
                         }
                     }
                 }
             }
-
-            return File.Exists(_path + fullFileName +@"\"+ _hash);;
+            return File.Exists(_path + fullFileName + @"\" + _hash);
         }
+
         /// <summary>
         /// This is a helper function for the fetching function, this is responsible for downloading the chunk.
         /// </summary>
