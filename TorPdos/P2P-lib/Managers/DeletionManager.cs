@@ -44,13 +44,13 @@ namespace P2P_lib.Managers{
 
                 this._waitHandle.WaitOne();
 
-                while (this._queue.TryDequeue(out var item)){
+                while (this._queue.TryDequeue(out string item)){
                     if (!_isRunning){
                         _waitHandle.Set();
                         break;
                     }
                     
-                    _filesList.TryGetValue(item, out var currentFile);
+                    _filesList.TryGetValue(item, out P2PFile currentFile);
                     if (currentFile == null){
                         return;
                     }
