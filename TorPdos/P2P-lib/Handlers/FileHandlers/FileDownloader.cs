@@ -43,8 +43,8 @@ namespace P2P_lib{
         /// <param name="fullFileName">The name of the full file.</param>
         /// <returns></returns>
         public bool Fetch(P2PChunk chunk, string fullFileName){
-            _hash = chunk.Hash;
-            _peersToAsk = chunk.Peers;
+            _hash = chunk.hash;
+            _peersToAsk = chunk.peers;
             foreach (var Peer in _peersToAsk){
                 _peers.TryGetValue(Peer, out var currentPeer);
                 if (!currentPeer.IsOnline()) continue;

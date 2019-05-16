@@ -36,8 +36,8 @@ namespace P2P_lib
             foreach (Peer peer in peers){
                 var upload = new UploadMessage(peer){
                     filesize = fileInfo.Length,
-                    fullFilename = chunk.OriginalHash,
-                    chunkHash = chunk.Hash,
+                    fullFilename = chunk.originalHash,
+                    chunkHash = chunk.hash,
                     path = chunk_path,
                     port = this._port
                 };
@@ -46,7 +46,7 @@ namespace P2P_lib
                     if(upload.statusCode == StatusCode.ACCEPTED){
                         ChunkSender sender = new ChunkSender(peer.StringIp, upload.port);
 
-                        if(sender.Send(chunk.Path(chunk_path))){
+                        if(sender.Send(chunk_path)){
                             chunk.AddPeer(peer.GetUuid());
                         }else{
                             sendToAll = false;

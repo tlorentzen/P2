@@ -36,7 +36,7 @@ namespace P2P_lib
         }
 
         public void AddChunk(P2PChunk chunk){
-            chunk.OriginalHash = this.Hash;
+            chunk.originalHash = this.Hash;
             this.Chunks.Add(chunk);
         }
 
@@ -66,7 +66,7 @@ namespace P2P_lib
         public List<string> GetChunksAsString(){
             List<string> output=new List<string>();
             foreach (var chunk in this.Chunks){
-                output.Add(chunk.Hash);
+                output.Add(chunk.hash);
             }
 
             return output;
