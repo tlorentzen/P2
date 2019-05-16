@@ -94,7 +94,7 @@ namespace P2P_lib.Managers{
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     // Initialize splitter
-                    var splitter = new SplitterLibrary();
+                    var splitter = new SplitterLibrary(); 
 
                     List<string> chunks = splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
                     file.AddChunk(chunks);
@@ -111,7 +111,7 @@ namespace P2P_lib.Managers{
                     }
                 
                     if(!uploaded){
-
+                        this._queue.Enqueue(file);
                     }
                 }
 
