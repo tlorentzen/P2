@@ -33,7 +33,7 @@ namespace Splitter_lib{
                 using (Stream input = File.OpenRead(inputFilePath)){
                     while (input.Position < input.Length){
                         var writingBuffer = fileStreamReader(input, chunkSize);
-                        Console.WriteLine(writingBuffer.Length);
+                        Console.WriteLine($"Writing buffer length: {writingBuffer.Length}");
 
                         using (Stream output = File.Create(outputFolderPath + CreateMD5(writingBuffer))){
                             output.Write(writingBuffer, 0, writingBuffer.Length);
