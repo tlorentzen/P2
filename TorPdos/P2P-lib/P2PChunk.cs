@@ -12,6 +12,7 @@ namespace P2P_lib
     public class P2PChunk
     {
         public readonly string Hash;
+        public readonly string OriginalHash;
         public readonly List<string> Peers;
         public int fetch_count = 0;
         
@@ -20,8 +21,9 @@ namespace P2P_lib
             this.Peers = new List<string>();
         }
 
-        public P2PChunk(string hash, List<string> peers){
-            this.Hash = hash;
+        public P2PChunk(string chunk_hash, string org_hash, List<string> peers){
+            this.Hash = chunk_hash;
+            this.OriginalHash = org_hash;
             this.Peers = peers;
         }
         
@@ -31,9 +33,6 @@ namespace P2P_lib
             Peers = peers;
             fetch_count = fetchCount;
         }
-
-        
-        
 
         public void AddPeer(string peer){
             this.Peers.Add(peer);
@@ -46,6 +45,10 @@ namespace P2P_lib
 
         public Boolean exist(string path){
             return File.Exists(path + @"\" + this.Hash);
+        }
+
+        public string Path(string base_path){
+            return base_path + @"\" + this.Hash;
         }
     }
 }
