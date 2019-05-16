@@ -12,9 +12,9 @@ namespace P2P_lib{
     public class FileDeleter{
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private NetworkPorts _ports;
-        private int _port;
+        private readonly int _port;
         private TcpListener _server;
-        private IPAddress _ip;
+        private readonly IPAddress _ip;
         private readonly byte[] _buffer = new byte[1024];
         private static readonly Logger Logger = LogManager.GetLogger("FileDeleter");
 

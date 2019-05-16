@@ -64,12 +64,7 @@ namespace P2P_lib.Helpers{
             //Sets the RegistryKey to the TorPdos registry
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             //If there is no current value in the registry the function will return null
-            if (registry.GetValue(key) == null){
-                return null;
-                //Else it will return the value in a string
-            } else{
-                return registry.GetValue(key).ToString();
-            }
+            return registry?.GetValue(key) == null ? null : registry.GetValue(key).ToString();
         }
 
         /// <summary>

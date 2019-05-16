@@ -105,7 +105,7 @@ namespace P2P_lib.Managers{
             var splitterLibrary = new SplitterLibrary();
             splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
                 pathWithoutExtension + ".aes",
-                fileInformation.getChunksAsString());
+                fileInformation.GetChunksAsString());
 
 
             // Decrypt file

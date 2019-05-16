@@ -12,7 +12,6 @@ using NLog;
 using P2P_lib.Messages;
 using Splitter_lib;
 using System.Linq;
-using P2P_lib;
 using P2P_lib.Handlers;
 using P2P_lib.Helpers;
 
@@ -184,7 +183,7 @@ namespace P2P_lib.Managers{
         }
 
         private List<Peer> GetPeers(int count){
-            List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
+            List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline()).ToList();
             topPeers.Sort(new ComparePeersByRating());
             if (topPeers.Count > 0){
                 int wantedLengthOfTopList = Math.Min(_numberOfPrimaryPeers, Math.Min(topPeers.Count, count));

@@ -65,7 +65,7 @@ namespace P2P_lib.Handlers
                         peer.uptimeScore++;
                     }
                     else if (peer.uptimeScore < max) {
-                        peer.uptimeScore = peer.uptimeScore + mid / peer.uptimeScore;
+                        peer.uptimeScore += mid / peer.uptimeScore;
                     }
                 }
             } else {
@@ -78,7 +78,7 @@ namespace P2P_lib.Handlers
                         peer.uptimeScore--;
                     }
                     else if (peer.uptimeScore > 0) {
-                        peer.uptimeScore = peer.uptimeScore - peer.uptimeScore / mid;
+                        peer.uptimeScore -= peer.uptimeScore / mid;
                     }
                 }
             }
