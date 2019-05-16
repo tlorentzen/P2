@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 namespace P2P_lib.Helpers{
-    public class NetworkHelper{
+    public static class NetworkHelper{
         public static string GetLocalIpAddress(){
             // https://stackoverflow.com/questions/6803073/get-local-ip-address
             string localIp;
