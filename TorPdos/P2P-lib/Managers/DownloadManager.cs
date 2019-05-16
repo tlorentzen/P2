@@ -70,7 +70,7 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
-                    foreach (var path in _index.GetEntry(file.Hash).paths){
+                    foreach (string path in _index.GetEntry(file.Hash).paths){
                         if (File.Exists(path)){
                             return;
                         }

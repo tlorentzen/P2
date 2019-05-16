@@ -37,7 +37,7 @@ namespace P2P_lib{
         /// </summary>
         /// <param name="chunk">The chunk wanted to download.</param>
         /// <param name="fullFileName">The name of the full file.</param>
-        /// <returns></returns>
+        /// <returns>Rather the chunk has been fetched.</returns>
         public bool Fetch(P2PChunk chunk, string fullFileName){
             _hash = chunk.hash;
             _peersToAsk = chunk.peers;
