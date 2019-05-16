@@ -10,6 +10,7 @@ using Encryption;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
 using System.Linq;
+using P2P_lib.Helpers;
 
 namespace P2P_lib
 {
@@ -40,7 +41,7 @@ namespace P2P_lib
             this._port = _ports.GetAvailablePort();
             List<Peer> peers = this.GetPeers(num_of_receving_peers);
             FileInfo fileInfo = new FileInfo(chunk_path);
-            Listener listner = new Listener(this._port);
+            Listener listener = new Listener(this._port);
             Boolean sendToAll = true;
 
             foreach (Peer peer in peers){
@@ -54,7 +55,7 @@ namespace P2P_lib
                     port = this._port
                 };
 
-                if(listner.SendAndAwaitResponse(ref upload, 2000))
+                if(listener.SendAndAwaitResponse(ref upload, 2000))
                 {
                     if(upload.statusCode == StatusCode.ACCEPTED){
                         FileSender sender = new FileSender(peer.StringIp, upload.port);
