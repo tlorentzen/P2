@@ -232,7 +232,7 @@ namespace P2P_lib{
                 int replyPort = uploadMessage.port;
                 string uuid = uploadMessage.fromUuid;
 
-                if (DiskHelper.GetTotalAvailableSpace("C:\\") > uploadMessage.filesize){
+                if (DiskHelper.GetTotalAvailableSpace(@"C:\") > uploadMessage.filesize){
                     uploadMessage.statusCode = StatusCode.ACCEPTED;
                     Console.WriteLine(@"Request accepted");
                 } else{
