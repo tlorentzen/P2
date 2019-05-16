@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace P2P_lib
@@ -45,7 +42,7 @@ namespace P2P_lib
             return true;
         }
 
-        public Boolean exist(string path){
+        public bool exist(string path){
             return File.Exists(path + @"\" + this.Hash);
         }
 

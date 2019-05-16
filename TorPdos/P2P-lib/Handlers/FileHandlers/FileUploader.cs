@@ -16,14 +16,11 @@ namespace P2P_lib
 {
     class FileUploader
     {
-        private TcpListener _server;
-        private Thread _listener;
         private int _port;
         private string _path;
         private readonly IPAddress _ip;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("FileUploader");
         private readonly byte[] _buffer;
-        private readonly Receiver _receiver;
         private NetworkPorts _ports;
         private ConcurrentDictionary<string, Peer> _peers;
 
