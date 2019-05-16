@@ -6,15 +6,13 @@ using Newtonsoft.Json;
 namespace P2P_lib
 {
     [Serializable]
-    public class P2PChunk
-    {
+    public class P2PChunk {
         public readonly string Hash;
         public string OriginalHash;
         public readonly List<string> Peers;
         public int fetch_count = 0;
         
-        public P2PChunk(string hash, string org_hash)
-        {
+        public P2PChunk(string hash, string org_hash) {
             this.Hash = hash;
             this.OriginalHash = org_hash;
             this.Peers = new List<string>();

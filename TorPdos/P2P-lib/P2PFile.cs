@@ -30,8 +30,7 @@ namespace P2P_lib
         }
 
         public void AddPath(List<string> paths){
-            foreach (string path in paths)
-            {
+            foreach (string path in paths) {
                 this.Paths.Add(path);
             }
         }

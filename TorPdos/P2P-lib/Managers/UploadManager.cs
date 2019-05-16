@@ -113,7 +113,7 @@ namespace P2P_lib.Managers{
             _isStopped = true;
         }
 
-        public override bool Shutdown(){
+        public override bool Shutdown() {
             _isRunning = false;
             _waitHandle.Set();
 
