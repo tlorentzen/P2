@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using Encryption;
-using Microsoft.Win32;
+using P2P_lib.Helpers;
 
-namespace P2P_lib{
+namespace P2P_lib.Handlers{
     public static class IdHandler{
         private const string UserDataFile = "userdata";
 

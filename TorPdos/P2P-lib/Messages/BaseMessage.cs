@@ -2,6 +2,9 @@
 using System.Net.Sockets;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using P2P_lib;
+using P2P_lib.Handlers;
+using P2P_lib.Helpers;
 
 namespace P2P_lib.Messages{
     public enum StatusCode{
@@ -102,11 +105,6 @@ namespace P2P_lib.Messages{
             string inputFromUuid = this.toUuid;
             this.toUuid = this.fromUuid;
             this.fromUuid = inputFromUuid;
-        }
-
-        public void ForwardMessage(string toIp){
-            this.to = toIp;
-            this.type = TypeCode.REQUEST;
         }
     }
 }

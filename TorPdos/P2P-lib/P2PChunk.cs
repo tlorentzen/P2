@@ -38,6 +38,11 @@ namespace P2P_lib
             this.Peers.Add(peer);
         }
 
+        public bool RemovePeer(string peer){
+            this.Peers.Remove(peer);
+            return true;
+        }
+
         public Boolean exist(string path){
             return File.Exists(path + @"\" + this.Hash);
         }

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Win32;
 
-namespace P2P_lib{
+namespace P2P_lib.Helpers{
     public class DiskHelper{
 
         /// <summary>
@@ -23,6 +23,11 @@ namespace P2P_lib{
 
             return -1;
         }
+        /// <summary>
+        /// This returns a MD5 hash of the given string input.
+        /// </summary>
+        /// <param name="input">The input for which to return the Hash</param>
+        /// <returns></returns>
 
         public static string CreateMd5(string input){
             // Use input string to calculate MD5 hash
@@ -41,6 +46,11 @@ namespace P2P_lib{
             }
         }
 
+        /// <summary>
+        /// This allows for timestamps being added to console output.
+        /// Use the same way as Console.WriteLine
+        /// </summary>
+        /// <param name="message">The message to get printed.</param>
         public static void ConsoleWrite(string message){
             Console.WriteLine(DateTime.Now +" "+ message);
         }
@@ -54,12 +64,7 @@ namespace P2P_lib{
             //Sets the RegistryKey to the TorPdos registry
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
             //If there is no current value in the registry the function will return null
-            if (registry.GetValue(key) == null){
-                return null;
-                //Else it will return the value in a string
-            } else{
-                return registry.GetValue(key).ToString();
-            }
+            return registry?.GetValue(key) == null ? null : registry.GetValue(key).ToString();
         }
 
         /// <summary>

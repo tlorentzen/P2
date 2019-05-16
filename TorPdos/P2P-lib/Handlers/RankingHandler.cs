@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace P2P_lib
+namespace P2P_lib.Handlers
 {
     [Serializable]
     public class RankingHandler {
@@ -65,7 +65,7 @@ namespace P2P_lib
                         peer.uptimeScore++;
                     }
                     else if (peer.uptimeScore < max) {
-                        peer.uptimeScore = peer.uptimeScore + mid / peer.uptimeScore;
+                        peer.uptimeScore += mid / peer.uptimeScore;
                     }
                 }
             } else {
@@ -78,7 +78,7 @@ namespace P2P_lib
                         peer.uptimeScore--;
                     }
                     else if (peer.uptimeScore > 0) {
-                        peer.uptimeScore = peer.uptimeScore - peer.uptimeScore / mid;
+                        peer.uptimeScore -= peer.uptimeScore / mid;
                     }
                 }
             }

@@ -9,6 +9,8 @@ using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
 using System.Timers;
+using P2P_lib.Handlers;
+using P2P_lib.Helpers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
 using Splitter_lib;
@@ -32,7 +34,6 @@ namespace P2P_lib{
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
         private System.Timers.Timer _pingTimer;
-        private ConcurrentDictionary<string, List<string>> _locationDb;
         private DeletionManager _deletionManager;
         private int _numberOfPrimaryPeers = 10;
         private readonly string _localtionPath;
@@ -72,7 +73,7 @@ namespace P2P_lib{
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.Start();
             
-            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb);
+            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _filesList);
             var deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
             _managers.Add(_deletionManager);
@@ -151,7 +152,7 @@ namespace P2P_lib{
                 foreach (var incomingPeer in incoming){
                     if (InPeerList(incomingPeer.GetUuid(), _peers)) break;
                     _peers.TryAdd(incomingPeer.GetUuid(), incomingPeer);
-                    Console.WriteLine("Peer added: " + incomingPeer.GetUuid());
+                    DiskHelper.ConsoleWrite("Peer added: " + incomingPeer.GetUuid());
                 }
 
                 foreach (var outGoingPeer in _peers){
@@ -324,45 +325,21 @@ namespace P2P_lib{
         }
 
         private void ReceivedDeletionRequest(FileDeletionMessage message){
-            Console.WriteLine("Deletion Message Received.");
-            if (message.type.Equals(TypeCode.REQUEST)){
-                if (message.statusCode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
-                                  message.fileHash;
-                    if (File.Exists(path)){
-                        File.Delete(path);
-                        
-                        message.statusCode = StatusCode.ACCEPTED;
-                        message.CreateReply();
-                        message.Send();
-                    } else{
-                        message.statusCode = StatusCode.FILE_NOT_FOUND;
-                        message.CreateReply();
-                        message.Send();
-                    }
-                }
-            } else if (message.type.Equals((TypeCode.RESPONSE))){
-                if (message.statusCode.Equals(StatusCode.OK)){
-                    
-                    List<string> updatedList = _locationDb[message.fileHash];
-                    updatedList.Remove(message.fromUuid);
-                    
-                    if (updatedList.Count == 0){
-                        _locationDb.TryRemove(message.fileHash, out _);
-                    } else{
-                        _locationDb.TryAdd(message.fileHash,updatedList);
-                    }
-                } else if (message.statusCode.Equals(StatusCode.FILE_NOT_FOUND)){
-                    List<string> updatedList = _locationDb[message.fileHash];
-                    updatedList.Remove(message.fromUuid);
-                    if (updatedList.Count == 0){
-                        _locationDb.TryRemove(message.fileHash, out _);
-                    } else{
-                        _locationDb.TryAdd(message.fileHash,updatedList);
-                    }
-
-                    Console.WriteLine("File not found at peer");
-                }
+            DiskHelper.ConsoleWrite("Deletion Message Received.");
+            if (!message.type.Equals(TypeCode.REQUEST)) return;
+            if (!message.statusCode.Equals(StatusCode.OK)) return;
+            string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
+                          message.fileHash;
+            DiskHelper.ConsoleWrite(path);
+            if (File.Exists(path)){
+                File.Delete(path);
+                message.statusCode = StatusCode.ACCEPTED;
+                message.CreateReply();
+                message.Send(message.port);
+            } else{
+                message.statusCode = StatusCode.FILE_NOT_FOUND;
+                message.CreateReply();
+                message.Send(message.port);
             }
         }
 

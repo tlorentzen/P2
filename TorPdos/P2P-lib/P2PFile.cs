@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace P2P_lib
@@ -42,10 +40,18 @@ namespace P2P_lib
             this.Chunks.Add(chunk);
         }
 
-        public void AddChunk(List<string> chunks){
+        public bool AddChunk(List<string> chunks){
             foreach(String chunk_hash in chunks){
                 this.Chunks.Add(new P2PChunk(chunk_hash));
             }
+
+            return true;
+        }
+        public bool RemoveChunk(string chunk){
+            
+            this.Chunks.Remove(Chunks.First(chunks => Hash.Equals(chunk)));
+            
+            return true;
         }
 
         public Boolean Downloaded(string path){
@@ -57,7 +63,7 @@ namespace P2P_lib
             return true;
         }
 
-        public List<string> getChunksAsString(){
+        public List<string> GetChunksAsString(){
             List<string> output=new List<string>();
             foreach (var chunk in this.Chunks){
                 output.Add(chunk.Hash);

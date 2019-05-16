@@ -3,6 +3,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.IO;
+using P2P_lib;
+using P2P_lib.Helpers;
 
 namespace P2P_lib{
     public class FileReceiver{
@@ -14,9 +16,6 @@ namespace P2P_lib{
         private readonly byte[] _buffer;
         private readonly string _filename;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
-        public delegate void FileDownloaded(string path);
-        public event FileDownloaded FileSuccessfullyDownloaded;
-        private Boolean _fileReceived;
 
         public FileReceiver(string path, string filename, int port, bool hidden = false, int bufferSize = 1024){
             this._ip = IPAddress.Any;
@@ -29,6 +28,9 @@ namespace P2P_lib{
                 Directory.CreateDirectory(this._path);
             }
         }
+        /// <summary>
+        /// Starts the receiver.
+        /// </summary>
 
         public void Start(){
             try{             
@@ -48,11 +50,16 @@ namespace P2P_lib{
                 logger.Error(e);
             }
         }
+        /// <summary>
+        /// Stops the receiver.
+        /// </summary>
 
         private void Stop(){
             _server.Stop();
         }
-
+        /// <summary>
+        /// Handles the connection, creates and downloads the file.
+        /// </summary>
         private void ConnectionHandler(){
             string path = this._path + this._filename;
 
@@ -73,17 +80,12 @@ namespace P2P_lib{
 
                         DiskHelper.ConsoleWrite(@"File done downloading");
                         fileStream.Close();
-                        _fileReceived = File.Exists(path);
                     }
 
                     stream.Close();
                 }
 
                 client.Close();
-
-                if (_fileReceived){
-                    FileSuccessfullyDownloaded?.Invoke(path);
-                }
             }
             catch (InvalidOperationException e){
                 logger.Fatal(e);
@@ -94,10 +96,6 @@ namespace P2P_lib{
             finally{
                 Stop();
             }
-        }
-
-        public int GetPort(){
-            return this._port;
         }
     }
 }
