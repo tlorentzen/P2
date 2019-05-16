@@ -7,27 +7,20 @@ using System.Threading;
 namespace P2P_lib.Managers{
     public class DeletionManager : Manager{
         private bool _isRunning = true;
-        private int _port;
-        private Thread _listener;
         private readonly NetworkPorts _ports;
         private readonly ManualResetEvent _waitHandle;
-        private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<string> _queue;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("DeletionManager");
-        private ConcurrentDictionary<string, P2PFile> _filesList = new ConcurrentDictionary<string, P2PFile>();
-        public bool isStopped;
-        private IPAddress _ip;
-        private FileDeleter _fileDeleter;
-
+        private readonly ConcurrentDictionary<string, P2PFile> _filesList;
+        private bool _isStopped;
+        private readonly FileDeleter _fileDeleter;
+        
         public DeletionManager(StateSaveConcurrentQueue<string> queue, NetworkPorts ports,
             ConcurrentDictionary<string, Peer> peers, ConcurrentDictionary<string, P2PFile> locations){
             this._queue = queue;
             this._ports = ports;
-            this._peers = peers;
             this._waitHandle = new ManualResetEvent(false);
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
             this._filesList = locations;
-            _ip = IPAddress.Any;
             Peer.PeerSwitchedOnline += PeerWentOnline;
             _fileDeleter = new FileDeleter(peers,_ports);
         }
@@ -40,8 +33,11 @@ namespace P2P_lib.Managers{
             this._waitHandle.Set();
         }
 
+        /// <summary>
+        /// This is the runner function, needs to be called when the manager needs to run.
+        /// </summary>
         public void Run(){
-            isStopped = false;
+            _isStopped = false;
             while (_isRunning){
                 if (!_isRunning){
                     break;
@@ -69,16 +65,19 @@ namespace P2P_lib.Managers{
                     _waitHandle.Reset();
                 }
 
-                isStopped = true;
+                _isStopped = true;
             }
         }
 
-
+        /// <summary>
+        /// Shutdown function, used to stop managers.
+        /// </summary>
+        /// <returns> Returns a boolean, returns true when the manager is stopped.</returns>
         public override bool Shutdown(){
             _isRunning = false;
             _waitHandle.Set();
             Console.Write("Deletion thread stopping... ");
-            while (!this.isStopped){ }
+            while (!this._isStopped){ }
 
             Console.Write("Stopped!");
             return true;

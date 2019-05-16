@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -36,6 +35,12 @@ namespace P2P_lib{
             this._peers = peers;
         }
 
+        /// <summary>
+        /// Fetching function, this fetches the given chunk from the network, returns true if the chunk is fetched.
+        /// </summary>
+        /// <param name="chunk">The chunk wanted to download.</param>
+        /// <param name="fullFileName">The name of the full file.</param>
+        /// <returns></returns>
         public bool Fetch(P2PChunk chunk, string fullFileName){
             _hash = chunk.Hash;
             _peersToAsk = chunk.Peers;
@@ -106,15 +111,11 @@ namespace P2P_lib{
 
             return File.Exists(_path + fullFileName +@"\"+ _hash);;
         }
-
-        private void Stop(){
-            _server.Stop();
-        }
-
-        public int GetPort(){
-            return this._port;
-        }
-
+        /// <summary>
+        /// This is a helper function for the fetching function, this is responsible for downloading the chunk.
+        /// </summary>
+        /// <param name="fullFileName">Full name of the file.</param>
+        /// <param name="port">Port for which to download from.</param>
         private void Downloader(string fullFileName, int port){
             var server = new TcpListener(this._ip, port);
             try{
