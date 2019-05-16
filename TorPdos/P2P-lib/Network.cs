@@ -316,7 +316,7 @@ namespace P2P_lib{
                         downloadMessage.Send(downloadMessage.port);
                     }
                 } else if (downloadMessage.statusCode.Equals(StatusCode.ACCEPTED)){
-                    var sender = new FileSender(downloadMessage.from, downloadMessage.port);
+                    var sender = new ChunkSender(downloadMessage.from, downloadMessage.port);
                     sender.Send(path);
                     DiskHelper.ConsoleWrite("File send " + downloadMessage.filehash);
                 }

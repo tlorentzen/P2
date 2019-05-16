@@ -58,7 +58,7 @@ namespace P2P_lib
                 if(listener.SendAndAwaitResponse(ref upload, 2000))
                 {
                     if(upload.statusCode == StatusCode.ACCEPTED){
-                        FileSender sender = new FileSender(peer.StringIp, upload.port);
+                        ChunkSender sender = new ChunkSender(peer.StringIp, upload.port);
 
                         if(sender.Send(chunk.Path(chunk_path))){
                             chunk.AddPeer(peer.GetUuid());

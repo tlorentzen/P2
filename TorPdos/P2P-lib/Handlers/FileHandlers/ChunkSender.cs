@@ -5,13 +5,13 @@ using System.IO;
 
 
 namespace P2P_lib{
-    public class FileSender{
+    public class ChunkSender{
         IPAddress ip;
         private int port;
         const int ChunkSize = 1024;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileSender");
 
-        public FileSender(string ip, int port){
+        public ChunkSender(string ip, int port){
             this.ip = IPAddress.Parse(ip);
             this.port = port;
         }
