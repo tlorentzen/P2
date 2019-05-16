@@ -49,7 +49,7 @@ namespace P2P_lib
                 var upload = new UploadMessage(peer)
                 {
                     filesize = fileInfo.Length,
-                    fullFilename = chunk.Hash,
+                    fullFilename = chunk.OriginalHash,
                     chunkHash = chunk.Hash,
                     path = chunk_path,
                     port = this._port

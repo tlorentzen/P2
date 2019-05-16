@@ -37,12 +37,13 @@ namespace P2P_lib
         }
 
         public void AddChunk(P2PChunk chunk){
+            chunk.OriginalHash = this.Hash;
             this.Chunks.Add(chunk);
         }
 
         public bool AddChunk(List<string> chunks){
             foreach(String chunk_hash in chunks){
-                this.Chunks.Add(new P2PChunk(chunk_hash));
+                this.Chunks.Add(new P2PChunk(chunk_hash, this.Hash));
             }
 
             return true;
