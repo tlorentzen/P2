@@ -16,10 +16,9 @@ namespace P2P_lib{
             this.port = port;
         }
 
-        public void Send(string path){
+        public Boolean Send(string path){
             if (File.Exists(path)){
                 try{
-                    
                     using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
                         client.ReceiveTimeout = 500;
                         using (NetworkStream stream = client.GetStream()){
@@ -39,12 +38,16 @@ namespace P2P_lib{
 
                         client.Close();
                     }
+
+                    return true;
                 }
                 catch (Exception e){
                     logger.Error(e);
+                    return false;
                 }
             } else{
                 logger.Error(new FileNotFoundException());
+                return false;
             }
         }
     }
