@@ -44,11 +44,11 @@ namespace P2P_lib{
         public void SetOnline(bool online){
             if (online != this._online){
                 if (online){
-                    Console.WriteLine(this._ip + " - is now online!");
+                    DiskHelper.ConsoleWrite(this._ip + " - is now online!");
                     rankHandler.UpdateUptime(this);
                     PeerSwitchedOnline?.Invoke();
                 } else{
-                    Console.WriteLine(this._ip + " - is now offline!");
+                    DiskHelper.ConsoleWrite(this._ip + " - is now offline!");
                     rankHandler.UpdateUptime(this);
                 }
             }
