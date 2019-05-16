@@ -150,7 +150,7 @@ namespace P2P_lib{
                 foreach (var incomingPeer in incoming){
                     if (InPeerList(incomingPeer.GetUuid(), _peers)) break;
                     _peers.TryAdd(incomingPeer.GetUuid(), incomingPeer);
-                    Console.WriteLine("Peer added: " + incomingPeer.GetUuid());
+                    DiskHelper.ConsoleWrite("Peer added: " + incomingPeer.GetUuid());
                 }
 
                 foreach (var outGoingPeer in _peers){
@@ -324,23 +324,21 @@ namespace P2P_lib{
 
         private void ReceivedDeletionRequest(FileDeletionMessage message){
             DiskHelper.ConsoleWrite("Deletion Message Received.");
-            if (message.type.Equals(TypeCode.REQUEST)){
-                if (message.statusCode.Equals(StatusCode.OK)){
-                    string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
-                                  message.fileHash;
-                    if (File.Exists(path)){
-                        File.Delete(path);
-                        
-                        message.statusCode = StatusCode.ACCEPTED;
-                        message.CreateReply();
-                        message.Send();
-                    } else{
-                        message.statusCode = StatusCode.FILE_NOT_FOUND;
-                        message.CreateReply();
-                        message.Send();
-                    }
-                }
-            } 
+            if (!message.type.Equals(TypeCode.REQUEST)) return;
+            if (!message.statusCode.Equals(StatusCode.OK)) return;
+            string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
+                          message.fileHash;
+            DiskHelper.ConsoleWrite(path);
+            if (File.Exists(path)){
+                File.Delete(path);
+                message.statusCode = StatusCode.ACCEPTED;
+                message.CreateReply();
+                message.Send();
+            } else{
+                message.statusCode = StatusCode.FILE_NOT_FOUND;
+                message.CreateReply();
+                message.Send();
+            }
         }
 
         public void Stop(){

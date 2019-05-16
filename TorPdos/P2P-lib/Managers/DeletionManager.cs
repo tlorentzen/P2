@@ -95,14 +95,15 @@ namespace P2P_lib.Managers{
                         client.ReceiveTimeout = 5000;
 
                         using (NetworkStream stream = client.GetStream()){
-                            int i;
-                            using (MemoryStream memory = new MemoryStream()){
+                            using (var memory = new MemoryStream()){
+                                int i;
+                                
                                 while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
                                     memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
                                 }
 
                                 memory.Seek(0, SeekOrigin.Begin);
-                                byte[] messageBytes = new byte[memory.Length];
+                                var messageBytes = new byte[memory.Length];
                                 memory.Read(messageBytes, 0, messageBytes.Length);
                                 memory.Close();
 
