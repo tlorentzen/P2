@@ -15,17 +15,17 @@ namespace P2P_lib
         public readonly List<P2PChunk> Chunks;
 
         public P2PFile(string hash){
+            this.Hash = hash;
             this.Paths = new List<string>();
             this.Chunks = new List<P2PChunk>();
-            this.Hash = hash;
-        }
-        [JsonConstructor]        
-        private P2PFile(string hash,List<P2PChunk> Chunks,List<string> paths){
-            this.Paths = paths;
-            this.Chunks = Chunks;
-            this.Hash = hash;
         }
 
+        [JsonConstructor]        
+        private P2PFile(string hash, List<P2PChunk> Chunks, List<string> paths){
+            this.Hash = hash;
+            this.Paths = paths;
+            this.Chunks = Chunks;
+        }
 
         public void AddPath(string path){
             this.Paths.Add(path);
