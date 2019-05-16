@@ -17,7 +17,7 @@ namespace P2P_lib.Managers{
         private readonly NetworkPorts _ports;
         private readonly ManualResetEvent _waitHandle;
         private readonly ConcurrentDictionary<string, Peer> _peers;
-        private StateSaveConcurrentQueue<P2PFile> _queue;
+        private readonly StateSaveConcurrentQueue<P2PFile> _queue;
         private readonly Index _index;
         private List<string> _fileList;
         private bool isStopped;
@@ -51,7 +51,6 @@ namespace P2P_lib.Managers{
         }
 
         private void PeerWentOnlineCheck(){
-            Console.WriteLine("This is positive?");
             this._waitHandle.Set();
         }
 
@@ -60,9 +59,9 @@ namespace P2P_lib.Managers{
             while (_isRunning){
                 this._waitHandle.WaitOne();
 
-                while (this._queue.TryDequeue(out var file)){
+                while (this._queue.TryDequeue(out P2PFile fileInformation)){
                     if (!_isRunning){
-                        this._queue.Enqueue(file);
+                        this._queue.Enqueue(fileInformation);
                         break;
                     }
 
@@ -70,24 +69,23 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
-                    foreach (var path in _index.GetEntry(file.Hash).paths){
+                    foreach (var path in _index.GetEntry(fileInformation.Hash).paths){
                         if (File.Exists(path)){
                             return;
                         }
                     }
 
-                    _fileHash = file.Hash;
-                    Console.WriteLine("Asking for chunks");
-                    foreach (var chunk in file.Chunks){
-                        if (!_fileDownloader.Fetch(chunk, file.Hash)){
-                            this._queue.Enqueue(file);
-                            break;
-                        }
+                    _fileHash = fileInformation.Hash;
+                    
+                    foreach (var chunk in fileInformation.Chunks){
+                        if (_fileDownloader.Fetch(chunk, fileInformation.Hash)) continue;
+                        this._queue.Enqueue(fileInformation);
+                        break;
                     }
 
-                    Console.WriteLine(file.Downloaded(_path + @".hidden\incoming\"));
-                    if (file.Downloaded(_path + @".hidden\incoming\")){
-                        RestoreOriginalFile(_fileHash,file);
+                    Console.WriteLine(fileInformation.Downloaded(_path + @".hidden\incoming\"));
+                    if (fileInformation.Downloaded(_path + @".hidden\incoming\")){
+                        RestoreOriginalFile(_fileHash,fileInformation);
                     }
                 }
 
@@ -99,6 +97,7 @@ namespace P2P_lib.Managers{
 
         private void RestoreOriginalFile(string path, P2PFile fileInformation){
             DiskHelper.ConsoleWrite("File exist");
+            
             string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);
 
             //Merge files
@@ -119,6 +118,7 @@ namespace P2P_lib.Managers{
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
 
             DiskHelper.ConsoleWrite("File decompressed");
+            
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 if (!Directory.Exists(Path.GetDirectoryName(filePath))){
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));

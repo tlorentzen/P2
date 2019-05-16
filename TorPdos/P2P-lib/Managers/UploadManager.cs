@@ -104,8 +104,9 @@ namespace P2P_lib.Managers{
 
                     List<string> chunks =
                         splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
-                    file.AddChunk(chunks);
-                    
+                    while (!file.AddChunk(chunks)){
+                        //Wait for all chunks to be added to list.
+                    }
 
                     foreach (var chunk in file.Chunks){
                         string currentFileHashPath = _path + @".hidden\splitter\" + chunk.Hash;

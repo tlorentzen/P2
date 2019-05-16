@@ -32,7 +32,6 @@ namespace P2P_lib{
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
         private System.Timers.Timer _pingTimer;
-        private ConcurrentDictionary<string, List<string>> _locationDb;
         private DeletionManager _deletionManager;
         private int _numberOfPrimaryPeers = 10;
         private readonly string _localtionPath;
@@ -72,7 +71,7 @@ namespace P2P_lib{
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.Start();
             
-            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _locationDb);
+            _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _filesList);
             var deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
             _managers.Add(_deletionManager);
@@ -324,7 +323,7 @@ namespace P2P_lib{
         }
 
         private void ReceivedDeletionRequest(FileDeletionMessage message){
-            Console.WriteLine("Deletion Message Received.");
+            DiskHelper.ConsoleWrite("Deletion Message Received.");
             if (message.type.Equals(TypeCode.REQUEST)){
                 if (message.statusCode.Equals(StatusCode.OK)){
                     string path = _path + @".hidden\" + message.fromUuid + @"\" + message.fullFileHash + @"\" +
@@ -341,29 +340,7 @@ namespace P2P_lib{
                         message.Send();
                     }
                 }
-            } else if (message.type.Equals((TypeCode.RESPONSE))){
-                if (message.statusCode.Equals(StatusCode.OK)){
-                    
-                    List<string> updatedList = _locationDb[message.fileHash];
-                    updatedList.Remove(message.fromUuid);
-                    
-                    if (updatedList.Count == 0){
-                        _locationDb.TryRemove(message.fileHash, out _);
-                    } else{
-                        _locationDb.TryAdd(message.fileHash,updatedList);
-                    }
-                } else if (message.statusCode.Equals(StatusCode.FILE_NOT_FOUND)){
-                    List<string> updatedList = _locationDb[message.fileHash];
-                    updatedList.Remove(message.fromUuid);
-                    if (updatedList.Count == 0){
-                        _locationDb.TryRemove(message.fileHash, out _);
-                    } else{
-                        _locationDb.TryAdd(message.fileHash,updatedList);
-                    }
-
-                    Console.WriteLine("File not found at peer");
-                }
-            }
+            } 
         }
 
         public void Stop(){

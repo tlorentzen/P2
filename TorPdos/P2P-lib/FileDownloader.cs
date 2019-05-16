@@ -87,13 +87,13 @@ namespace P2P_lib{
                             download.type = Messages.TypeCode.REQUEST;
                             download.statusCode = StatusCode.ACCEPTED;
                             download.port = receiverPort;
-                            DiskHelper.ConsoleWrite("FileReceiver opened");
                             download.Send();
                             
                             if (!Directory.Exists(_path + fullFileName +@"\")){
                                 Directory.CreateDirectory(_path + fullFileName + @"\");
                             }
                             _server.Stop();
+                            DiskHelper.ConsoleWrite("FileReceiver opened");
                             Downloader(fullFileName,receiverPort);
                            
                             _ports.Release(download.port);

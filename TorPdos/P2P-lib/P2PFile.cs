@@ -42,10 +42,18 @@ namespace P2P_lib
             this.Chunks.Add(chunk);
         }
 
-        public void AddChunk(List<string> chunks){
+        public bool AddChunk(List<string> chunks){
             foreach(String chunk_hash in chunks){
                 this.Chunks.Add(new P2PChunk(chunk_hash));
             }
+
+            return true;
+        }
+        public bool RemoveChunk(string chunk){
+            
+            this.Chunks.Remove(Chunks.First(chunks => Hash.Equals(chunk)));
+            
+            return true;
         }
 
         public Boolean Downloaded(string path){
