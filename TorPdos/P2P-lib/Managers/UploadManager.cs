@@ -24,7 +24,7 @@ namespace P2P_lib.Managers{
         private readonly StateSaveConcurrentQueue<P2PFile> _queue;
         private readonly string _path;
         private bool _pendingReceiver = true;
-        private FileSender _sender;
+        private ChunkSender _sender;
         private Receiver _receiver;
         private readonly Logger _logger = LogManager.GetLogger("UploadLogger");
         private bool _isStopped;

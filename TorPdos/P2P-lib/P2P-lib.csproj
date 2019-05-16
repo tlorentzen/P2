@@ -60,7 +60,7 @@
     <Compile Include="Handlers\FileHandlers\FileDeleter.cs" />
     <Compile Include="Handlers\FileHandlers\FileDownloader.cs" />
     <Compile Include="Handlers\FileHandlers\FileReceiver.cs" />
-    <Compile Include="Handlers\FileHandlers\FileSender.cs" />
+    <Compile Include="Handlers\FileHandlers\ChunkSender.cs" />
     <Compile Include="Handlers\FileHandlers\FileUploader.cs" />
     <Compile Include="Handlers\IDHandler.cs" />
     <Compile Include="Handlers\RankingHandler.cs" />
