@@ -30,7 +30,7 @@ namespace P2P_lib{
         private readonly StateSaveConcurrentQueue<P2PFile> _upload;
         private readonly StateSaveConcurrentQueue<P2PFile> _download;
         private readonly StateSaveConcurrentQueue<string> _deletionQueue;
-        private ConcurrentDictionary<string,P2PFile> _filesList = new ConcurrentDictionary<string, P2PFile>();
+        private ConcurrentDictionary<string, P2PFile> _filesList = new ConcurrentDictionary<string, P2PFile>();
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
         private System.Timers.Timer _pingTimer;
@@ -53,7 +53,6 @@ namespace P2P_lib{
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletion.json");
             _upload = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\upload.json");
             _download = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\download.json");
-            
         }
 
         public List<Peer> GetPeerList(){
@@ -72,7 +71,7 @@ namespace P2P_lib{
             _receive = new Receiver(this._port);
             _receive.MessageReceived += Receive_MessageReceived;
             _receive.Start();
-            
+
             _deletionManager = new DeletionManager(_deletionQueue, _ports, _peers, _filesList);
             var deletionManager = new Thread(_deletionManager.Run);
             deletionManager.Start();
@@ -84,7 +83,7 @@ namespace P2P_lib{
 
                 var uploadThread = new Thread(uploadManager.Run);
                 var downloadThread = new Thread(downloadManager.Run);
-                
+
 
                 uploadThread.Start();
                 downloadThread.Start();
@@ -245,8 +244,8 @@ namespace P2P_lib{
                 uploadMessage.port = _ports.GetAvailablePort();
 
                 _fileReceiver = new FileReceiver(
-                    this._path + @".hidden\" + uuid + @"\" + uploadMessage.chunkHash + @"\",
-                    uploadMessage.fullFilename,
+                    this._path + @".hidden\" + uuid + @"\" + uploadMessage.fullFilename + @"\", uploadMessage.chunkHash
+                    ,
                     uploadMessage.port,
                     true);
                 _fileReceiver.Start();
@@ -263,7 +262,7 @@ namespace P2P_lib{
                     peer.Value.UpdateLastSeen();
                     peer.Value.SetOnline(true);
                     peer.Value.diskSpace = ping.diskSpace;
-                    if(ping.type.Equals(TypeCode.RESPONSE))
+                    if (ping.type.Equals(TypeCode.RESPONSE))
                         peer.Value.AddPingToList(ping.GetElapsedTime());
                 }
             }
@@ -359,9 +358,10 @@ namespace P2P_lib{
         }
 
         private bool Save(){
-            var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects,Formatting = Formatting.Indented};
+            var settings = new JsonSerializerSettings
+                {TypeNameHandling = TypeNameHandling.Objects, Formatting = Formatting.Indented};
             string output = JsonConvert.SerializeObject(_filesList, settings);
-            
+
             using (var fileStream = new FileStream(_localtionPath, FileMode.Create)){
                 byte[] jsonIndex = new UTF8Encoding(true).GetBytes(output);
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
@@ -376,19 +376,18 @@ namespace P2P_lib{
                 var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
                 string json = File.ReadAllText(this._localtionPath ?? throw new NullReferenceException());
                 var input =
-                    JsonConvert.DeserializeObject<ConcurrentDictionary<string, P2PFile>>(json,settings);
+                    JsonConvert.DeserializeObject<ConcurrentDictionary<string, P2PFile>>(json, settings);
                 _filesList = input;
 
                 return true;
-            } 
+            }
 
             return false;
         }
-        
-        
+
 
         public void UploadFile(P2PFile file){
-            _filesList.TryAdd(file.Hash,file);
+            _filesList.TryAdd(file.Hash, file);
             this._upload.Enqueue(file);
         }
 
@@ -396,7 +395,7 @@ namespace P2P_lib{
             _filesList.TryGetValue(file, out var outputFile);
             this._download.Enqueue(outputFile);
         }
-        
+
         public void DeleteFile(string hash){
             this._deletionQueue.Enqueue(hash);
         }
