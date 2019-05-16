@@ -79,7 +79,9 @@ namespace P2P_lib.Managers{
                     }
                     
                     foreach (var currentFileChunk in currentFile.Chunks){
+                        
                         foreach (var receivingPeers in currentFileChunk.Peers){
+                            
                             if (!_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) continue;
 
                             var deletionMessage = new FileDeletionMessage(currentReceiver){
@@ -91,6 +93,7 @@ namespace P2P_lib.Managers{
                             };
                             deletionMessage.Send();
                         }
+                        
                         var client = _server.AcceptTcpClient();
                         client.ReceiveTimeout = 5000;
 

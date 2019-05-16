@@ -103,10 +103,5 @@ namespace P2P_lib.Messages{
             this.toUuid = this.fromUuid;
             this.fromUuid = inputFromUuid;
         }
-
-        public void ForwardMessage(string toIp){
-            this.to = toIp;
-            this.type = TypeCode.REQUEST;
-        }
     }
 }

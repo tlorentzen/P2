@@ -333,11 +333,11 @@ namespace P2P_lib{
                 File.Delete(path);
                 message.statusCode = StatusCode.ACCEPTED;
                 message.CreateReply();
-                message.Send();
+                message.Send(message.port);
             } else{
                 message.statusCode = StatusCode.FILE_NOT_FOUND;
                 message.CreateReply();
-                message.Send();
+                message.Send(message.port);
             }
         }
 
