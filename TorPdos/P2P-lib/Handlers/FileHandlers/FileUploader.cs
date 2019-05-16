@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using Encryption;
-using Newtonsoft.Json;
 using P2P_lib.Messages;
 using System.Linq;
 using P2P_lib.Helpers;
