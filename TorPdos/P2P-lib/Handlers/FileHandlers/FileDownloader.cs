@@ -11,21 +11,17 @@ using P2P_lib.Messages;
 namespace P2P_lib{
     [Serializable]
     public class FileDownloader{
-        private FileReceiver _fileReceiver;
+
         private TcpListener _server;
-        private Thread _listener;
         private string _hash;
         private List<string> _peersToAsk;
         private int _port;
         private readonly IPAddress _ip;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("FileDownloader");
-        private bool _fileReceived;
         private readonly string _path;
         private readonly byte[] _buffer;
-        private readonly Receiver _receiver;
         private NetworkPorts _ports;
         private ConcurrentDictionary<string, Peer> _peers;
-
 
         public FileDownloader(NetworkPorts ports,ConcurrentDictionary<string,Peer> peers,int bufferSize = 1024){
             _ports = ports;
