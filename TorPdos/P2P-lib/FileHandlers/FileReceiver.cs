@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.IO;
 using P2P_lib;
+using P2P_lib.Helpers;
 
 namespace P2P_lib{
     public class FileReceiver{

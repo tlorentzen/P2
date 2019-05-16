@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Win32;
 
-namespace P2P_lib{
+namespace P2P_lib.Helpers{
     public class DiskHelper{
 
         /// <summary>

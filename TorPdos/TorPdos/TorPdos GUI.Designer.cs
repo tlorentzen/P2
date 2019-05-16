@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using Index_lib;
 using P2P_lib;
+using P2P_lib.Handlers;
+using P2P_lib.Helpers;
 
 namespace TorPdos
 { 

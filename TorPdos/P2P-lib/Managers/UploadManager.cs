@@ -13,6 +13,8 @@ using P2P_lib.Messages;
 using Splitter_lib;
 using System.Linq;
 using P2P_lib;
+using P2P_lib.Handlers;
+using P2P_lib.Helpers;
 
 namespace P2P_lib.Managers{
     public class UploadManager : Manager{

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace P2P_lib
+namespace P2P_lib.Handlers
 {
     [Serializable]
     public class RankingHandler {

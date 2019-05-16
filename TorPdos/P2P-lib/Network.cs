@@ -9,6 +9,8 @@ using Index_lib;
 using Newtonsoft.Json;
 using P2P_lib.Messages;
 using System.Timers;
+using P2P_lib.Handlers;
+using P2P_lib.Helpers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
 using Splitter_lib;

@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Net.NetworkInformation;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System;
 
-namespace P2P_lib{
+namespace P2P_lib.Helpers{
     public class NetworkHelper{
         public static string GetLocalIpAddress(){
             // https://stackoverflow.com/questions/6803073/get-local-ip-address

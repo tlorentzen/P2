@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using NLog;
+using P2P_lib.Helpers;
 using P2P_lib.Messages;
 using TypeCode = P2P_lib.Messages.TypeCode;
 
