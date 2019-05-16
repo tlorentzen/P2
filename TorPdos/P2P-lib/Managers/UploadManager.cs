@@ -28,9 +28,7 @@ namespace P2P_lib.Managers{
         private Receiver _receiver;
         private readonly Logger _logger = LogManager.GetLogger("UploadLogger");
         private bool _isStopped;
-        private ConcurrentDictionary<string, List<string>> _sentTo;
         private readonly HiddenFolder _hiddenFolder;
-        private int _numberOfPrimaryPeers = 10;
 
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -63,7 +61,7 @@ namespace P2P_lib.Managers{
                 
                 while (this._queue.TryDequeue(out P2PFile file)){
 
-                    Boolean uploaded = true;
+                    bool uploaded = true;
 
                     if (!_isRunning){
                         this._queue.Enqueue(file);
@@ -106,7 +104,7 @@ namespace P2P_lib.Managers{
                     foreach (var chunk in file.Chunks){
                         string path = _path + @".hidden\splitter\" + chunk.Hash;
 
-                        if(!uploader.push(chunk, path))
+                        if(!uploader.Push(chunk, path))
                         {
                             uploaded = false;
                         }

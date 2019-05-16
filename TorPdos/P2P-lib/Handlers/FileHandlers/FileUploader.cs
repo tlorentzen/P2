@@ -36,13 +36,13 @@ namespace P2P_lib
             this._peers = peers;
         }
 
-        public bool push(P2PChunk chunk, string chunk_path, int num_of_receving_peers=10)
+        public bool Push(P2PChunk chunk, string chunk_path, int num_of_receving_peers=10)
         {
             this._port = _ports.GetAvailablePort();
             List<Peer> peers = this.GetPeers(num_of_receving_peers);
             FileInfo fileInfo = new FileInfo(chunk_path);
             Listener listener = new Listener(this._port);
-            Boolean sendToAll = true;
+            bool sendToAll = true;
 
             foreach (Peer peer in peers){
 

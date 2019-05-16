@@ -16,7 +16,7 @@ namespace P2P_lib{
             this.port = port;
         }
 
-        public Boolean Send(string path){
+        public bool Send(string path){
             if (File.Exists(path)){
                 try{
                     using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
