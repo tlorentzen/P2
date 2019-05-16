@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Win32;
 
 namespace P2P_lib.Helpers{
-    public class DiskHelper{
+    public static class DiskHelper{
 
         /// <summary>
         /// Get how much space is available on the chosen drive
@@ -38,8 +38,8 @@ namespace P2P_lib.Helpers{
                 // Convert the byte array to hexadecimal string
                 StringBuilder sb = new StringBuilder();
 
-                for (int i = 0; i < hashBytes.Length; i++){
-                    sb.Append(hashBytes[i].ToString("X2"));
+                foreach (var currentByte in hashBytes){
+                    sb.Append(currentByte.ToString("X2"));
                 }
 
                 return sb.ToString();
@@ -61,9 +61,7 @@ namespace P2P_lib.Helpers{
         /// <param name="key">The key from the registry we want to work with</param>
         /// <returns>Returns the value stored in the key</returns>
         public static string GetRegistryValue(string key){
-            //Sets the RegistryKey to the TorPdos registry
             RegistryKey registry = Registry.CurrentUser.CreateSubKey("TorPdos\\1.1.1.1");
-            //If there is no current value in the registry the function will return null
             return registry?.GetValue(key) == null ? null : registry.GetValue(key).ToString();
         }
 
