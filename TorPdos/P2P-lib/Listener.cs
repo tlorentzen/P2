@@ -56,7 +56,7 @@ namespace P2P_lib
 
                     var baseMsg = BaseMessage.FromByteArray(messageBytes);
 
-                    if (msg.GetMessageType() == typeof(T) && msg.type == Messages.TypeCode.RESPONSE)
+                    if (baseMsg.GetMessageType() == typeof(T) && baseMsg.type == Messages.TypeCode.RESPONSE)
                     {
                         msg = (T)baseMsg;
                         success = true;
