@@ -77,6 +77,7 @@ namespace P2P_lib.Managers{
                     }
 
                     _fileHash = file.Hash;
+                    DiskHelper.ConsoleWrite("Asking for chunks");
                     
                     foreach (var chunk in file.Chunks){
                         if (_fileDownloader.Fetch(chunk, file.Hash)) continue;

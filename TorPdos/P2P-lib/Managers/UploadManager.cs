@@ -119,8 +119,8 @@ namespace P2P_lib.Managers{
         }
 
         public override bool Shutdown() {
-            _isRunning = false;
-            _waitHandle.Set();
+            this._isRunning = false;
+            this._waitHandle.Set();
 
             Console.Write("Upload thread stopping... ");
             while (!this._isStopped){ }

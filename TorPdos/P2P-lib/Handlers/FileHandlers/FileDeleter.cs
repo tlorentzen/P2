@@ -35,11 +35,11 @@ namespace P2P_lib{
                 Logger.Error(e);
             }
 
-            var client = _server.AcceptTcpClient();
-            client.ReceiveTimeout = 5000;
+
 
             foreach (var receivingPeers in currentFileChunk.peers){
                 if (!_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) continue;
+                
                 var deletionMessage = new FileDeletionMessage(currentReceiver){
                     type = TypeCode.REQUEST,
                     statusCode = StatusCode.OK,
@@ -49,7 +49,8 @@ namespace P2P_lib{
                 };
                 deletionMessage.Send();
             }
-
+            var client = _server.AcceptTcpClient();
+            client.ReceiveTimeout = 5000;
 
             using (NetworkStream stream = client.GetStream()){
                 using (var memory = new MemoryStream()){
@@ -70,6 +71,9 @@ namespace P2P_lib{
 
                     if (!message.type.Equals((TypeCode.RESPONSE))) return false;
                     switch (message.statusCode){
+                        case StatusCode.OK when currentFileChunk.peers.Count == 0:
+                            currentFile.RemoveChunk(currentFileChunk.hash);
+                            break;
                         case StatusCode.OK when currentFileChunk.peers.Count == 0:
                             currentFile.RemoveChunk(currentFileChunk.hash);
                             break;
