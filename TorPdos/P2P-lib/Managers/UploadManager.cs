@@ -43,11 +43,16 @@ namespace P2P_lib.Managers{
             _hiddenFolder = new HiddenFolder(_path + @".hidden");
 
             this._path = DiskHelper.GetRegistryValue("Path");
+            Peer.PeerSwitchedOnline += PeerWentOnline;
         }
 
         private void QueueElementAddedToQueue(){
             this._waitHandle.Set();
         }
+        private void PeerWentOnline(){
+            this._waitHandle.Set();
+        }
+
 
         public void Run(){
             _isStopped = false;
