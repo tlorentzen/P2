@@ -60,9 +60,9 @@ namespace P2P_lib.Managers{
             while (_isRunning){
                 this._waitHandle.WaitOne();
 
-                while (this._queue.TryDequeue(out P2PFile fileInformation)){
+                while (this._queue.TryDequeue(out P2PFile file)){
                     if (!_isRunning){
-                        this._queue.Enqueue(fileInformation);
+                        this._queue.Enqueue(file);
                         break;
                     }
 
@@ -70,23 +70,23 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
-                    foreach (var path in _index.GetEntry(fileInformation.Hash).paths){
+                    foreach (string path in _index.GetEntry(file.Hash).paths){
                         if (File.Exists(path)){
                             return;
                         }
                     }
 
-                    _fileHash = fileInformation.Hash;
+                    _fileHash = file.Hash;
                     
-                    foreach (var chunk in fileInformation.Chunks){
-                        if (_fileDownloader.Fetch(chunk, fileInformation.Hash)) continue;
-                        this._queue.Enqueue(fileInformation);
+                    foreach (var chunk in file.Chunks){
+                        if (_fileDownloader.Fetch(chunk, file.Hash)) continue;
+                        this._queue.Enqueue(file);
                         break;
                     }
 
-                    Console.WriteLine(fileInformation.Downloaded(_path + @".hidden\incoming\"));
-                    if (fileInformation.Downloaded(_path + @".hidden\incoming\")){
-                        RestoreOriginalFile(_fileHash,fileInformation);
+                    //Console.WriteLine(fileInformation.Downloaded(_path + @".hidden\incoming\"));
+                    if (file.Downloaded(_path + @".hidden\incoming\")){
+                        RestoreOriginalFile(_fileHash, file);
                     }
                 }
 

@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Sockets;
 using System.Security.Permissions;
 using System.Threading;
 using Compression;
 using Encryption;
 using Index_lib;
 using NLog;
-using P2P_lib.Messages;
 using Splitter_lib;
-using System.Linq;
 using P2P_lib.Handlers;
 using P2P_lib.Helpers;
 
@@ -23,9 +19,6 @@ namespace P2P_lib.Managers{
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<P2PFile> _queue;
         private readonly string _path;
-        private bool _pendingReceiver = true;
-        private ChunkSender _sender;
-        private Receiver _receiver;
         private readonly Logger _logger = LogManager.GetLogger("UploadLogger");
         private bool _isStopped;
         private readonly HiddenFolder _hiddenFolder;
@@ -107,10 +100,9 @@ namespace P2P_lib.Managers{
                     FileUploader uploader = new FileUploader(_ports, _peers);
 
                     foreach (var chunk in file.Chunks){
-                        string path = _path + @".hidden\splitter\" + chunk.Hash;
+                        string path = _path + @".hidden\splitter\" + chunk.hash;
 
-                        if(!uploader.Push(chunk, path))
-                        {
+                        if(!uploader.Push(chunk, path)) {
                             uploaded = false;
                         }
                     }
@@ -126,7 +118,7 @@ namespace P2P_lib.Managers{
             _isStopped = true;
         }
 
-        public override bool Shutdown(){
+        public override bool Shutdown() {
             _isRunning = false;
             _waitHandle.Set();
 

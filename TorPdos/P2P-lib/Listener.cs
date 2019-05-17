@@ -28,9 +28,9 @@ namespace P2P_lib
             }
         }
 
-        public Boolean SendAndAwaitResponse<T>(ref T msg, int timeout) where T : BaseMessage
+        public bool SendAndAwaitResponse<T>(ref T msg, int timeout) where T : BaseMessage
         {
-            Boolean success = true;
+            bool success = true;
             _listener.Start();
             msg.Send();
 

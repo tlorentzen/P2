@@ -437,7 +437,7 @@ namespace Index_lib{
         public void Save(){
             if (_indexFilePath != null){
                 string json = JsonConvert.SerializeObject(_index);
-                Console.WriteLine(_index.Count);
+                Console.WriteLine($"Index count: { _index.Count}");
 
                 using (var fileStream = _hiddenFolder.WriteToFile(_indexFilePath)){
                     byte[] jsonIndex = new UTF8Encoding(true).GetBytes(json);

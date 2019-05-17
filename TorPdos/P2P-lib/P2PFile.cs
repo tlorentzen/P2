@@ -30,14 +30,13 @@ namespace P2P_lib
         }
 
         public void AddPath(List<string> paths){
-            foreach (string path in paths)
-            {
+            foreach (string path in paths) {
                 this.Paths.Add(path);
             }
         }
 
         public void AddChunk(P2PChunk chunk){
-            chunk.OriginalHash = this.Hash;
+            chunk.originalHash = this.Hash;
             this.Chunks.Add(chunk);
         }
 
@@ -67,7 +66,7 @@ namespace P2P_lib
         public List<string> GetChunksAsString(){
             List<string> output=new List<string>();
             foreach (var chunk in this.Chunks){
-                output.Add(chunk.Hash);
+                output.Add(chunk.hash);
             }
 
             return output;

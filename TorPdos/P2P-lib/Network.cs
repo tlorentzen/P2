@@ -13,7 +13,6 @@ using P2P_lib.Handlers;
 using P2P_lib.Helpers;
 using P2P_lib.Managers;
 using TypeCode = P2P_lib.Messages.TypeCode;
-using Splitter_lib;
 
 namespace P2P_lib{
     public class Network{
@@ -35,7 +34,6 @@ namespace P2P_lib{
         private readonly NetworkPorts _ports = new NetworkPorts();
         private System.Timers.Timer _pingTimer;
         private DeletionManager _deletionManager;
-        private int _numberOfPrimaryPeers = 10;
         private readonly string _localtionPath;
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -232,7 +230,7 @@ namespace P2P_lib{
                 int replyPort = uploadMessage.port;
                 string uuid = uploadMessage.fromUuid;
 
-                if (DiskHelper.GetTotalAvailableSpace("C:\\") > uploadMessage.filesize){
+                if (DiskHelper.GetTotalAvailableSpace(@"C:\") > uploadMessage.filesize){
                     uploadMessage.statusCode = StatusCode.ACCEPTED;
                     Console.WriteLine(@"Request accepted");
                 } else{
