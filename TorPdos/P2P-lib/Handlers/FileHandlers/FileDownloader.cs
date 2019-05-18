@@ -42,11 +42,13 @@ namespace P2P_lib{
             Listener listener = new Listener(this._port);
 
             foreach (var Peer in _peersToAsk){
+                
                 _peers.TryGetValue(Peer, out Peer currentPeer);
+                
                 if (currentPeer.IsOnline()) {
                     var download = new DownloadMessage(currentPeer) {
                         port = this._port,
-                        fullFileName = fullFileName,
+                        fullFileName = chunk.originalHash,
                         filehash = _hash
                     };
 
@@ -71,14 +73,14 @@ namespace P2P_lib{
                                 Directory.CreateDirectory(_path + fullFileName + @"\");
                             }
 
-                            Downloader(fullFileName, receiverPort);
-                            DiskHelper.ConsoleWrite("FileReceiver opened");
-
                             download.Send();
-
+                            DiskHelper.ConsoleWrite("FileReceiver opened");
+                            Downloader(fullFileName, receiverPort);
+                            
                             _ports.Release(download.port);
                         } else if (download.statusCode == StatusCode.FILE_NOT_FOUND) {
                             Console.WriteLine("File not found at peer.");
+                            chunk.peers.Remove(download.fromUuid);
                             //TODO Remove peer from location DB
                         }
                     }

@@ -46,6 +46,7 @@ namespace P2P_lib.Managers{
 
                 while (this._queue.TryDequeue(out string item)){
                     if (!_isRunning){
+                        _queue.Enqueue(item);
                         _waitHandle.Set();
                         break;
                     }
@@ -59,9 +60,14 @@ namespace P2P_lib.Managers{
                         if (!_fileDeleter.ChunkDeleter(currentFileChunk,currentFile)){
                             _queue.Enqueue(currentFile.Hash);
                         }
+
+                        if (currentFile.Chunks.Count == 0){
+                            _filesList.TryRemove(currentFile.Hash, out var _);
+
+                        }
                     }
 
-                    _waitHandle.Reset();
+                    this._waitHandle.Reset();
                 }
 
                 _isStopped = true;

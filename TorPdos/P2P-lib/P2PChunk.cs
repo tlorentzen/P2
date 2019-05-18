@@ -9,7 +9,7 @@ namespace P2P_lib
     public class P2PChunk {
         public readonly string hash;
         public string originalHash;
-        public readonly List<string> peers;
+        public List<string> peers;
         public int fetch_count = 0;
         
         public P2PChunk(string hash, string org_hash) {

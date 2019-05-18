@@ -36,11 +36,16 @@ namespace P2P_lib.Managers{
             _hiddenFolder = new HiddenFolder(_path + @".hidden");
 
             this._path = DiskHelper.GetRegistryValue("Path");
+            Peer.PeerSwitchedOnline += PeerWentOnline;
         }
 
         private void QueueElementAddedToQueue(){
             this._waitHandle.Set();
         }
+        private void PeerWentOnline(){
+            this._waitHandle.Set();
+        }
+
 
         public void Run(){
             _isStopped = false;
@@ -114,8 +119,8 @@ namespace P2P_lib.Managers{
         }
 
         public override bool Shutdown() {
-            _isRunning = false;
-            _waitHandle.Set();
+            this._isRunning = false;
+            this._waitHandle.Set();
 
             Console.Write("Upload thread stopping... ");
             while (!this._isStopped){ }
