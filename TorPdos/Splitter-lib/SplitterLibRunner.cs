@@ -79,7 +79,7 @@ namespace Splitter_lib{
         /// <param name="outputFilePath">Path where the merged file should be outputted</param>
         /// <param name="fileList">List of files</param>
         /// <returns>Returns true if file was merged successfully false if not</returns>
-        public void MergeFiles(string inputDir, string outputFilePath, List<string> fileList){
+        public bool MergeFiles(string inputDir, string outputFilePath, List<string> fileList){
             if (Directory.Exists(inputDir)){
                 if (fileList.Count > 0){
                     if (!File.Exists(outputFilePath)){
@@ -92,10 +92,14 @@ namespace Splitter_lib{
                             output.Write(contentBuffer, 0, contentBuffer.Length);
                         }
                     }
+
+                    return true;
                 }
             } else{
                 throw new FileNotFoundException();
             }
+
+            return false;
         }
 
         /// <summary>

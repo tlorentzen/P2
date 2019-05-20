@@ -42,6 +42,7 @@ namespace P2P_lib.Managers{
         private void QueueElementAddedToQueue(){
             this._waitHandle.Set();
         }
+
         private void PeerWentOnline(){
             this._waitHandle.Set();
         }
@@ -56,9 +57,8 @@ namespace P2P_lib.Managers{
 
                 if (!_isRunning)
                     break;
-                
-                while (this._queue.TryDequeue(out P2PFile file)){
 
+                while (this._queue.TryDequeue(out P2PFile file)){
                     bool uploaded = true;
 
                     if (!_isRunning){
@@ -92,9 +92,10 @@ namespace P2P_lib.Managers{
                     string encryptedFilePath = compressedFilePath + ".aes";
 
                     // Initialize splitter
-                    var splitter = new SplitterLibrary(); 
+                    var splitter = new SplitterLibrary();
 
-                    List<string> chunks = splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
+                    List<string> chunks =
+                        splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
                     file.AddChunk(chunks);
 
                     FileUploader uploader = new FileUploader(_ports, _peers);
@@ -102,13 +103,17 @@ namespace P2P_lib.Managers{
                     foreach (var chunk in file.Chunks){
                         string path = _path + @".hidden\splitter\" + chunk.hash;
 
-                        if(!uploader.Push(chunk, path)) {
+                        if (!uploader.Push(chunk, path)){
                             uploaded = false;
                         }
                     }
-                
-                    if(!uploaded){
+
+                    if (!uploaded){
                         this._queue.Enqueue(file);
+                    }
+
+                    if (uploaded){
+                        DiskHelper.ConsoleWrite($"The file {file.Hash} was successfully sent to all");
                     }
                 }
 
@@ -118,7 +123,7 @@ namespace P2P_lib.Managers{
             _isStopped = true;
         }
 
-        public override bool Shutdown() {
+        public override bool Shutdown(){
             this._isRunning = false;
             this._waitHandle.Set();
 

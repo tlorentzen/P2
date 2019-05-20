@@ -62,7 +62,7 @@ namespace P2P_lib.Managers{
                         }
 
                         if (currentFile.Chunks.Count == 0){
-                            _filesList.TryRemove(currentFile.Hash, out var _);
+                            _filesList.TryRemove(currentFile.Hash, out _);
 
                         }
                     }

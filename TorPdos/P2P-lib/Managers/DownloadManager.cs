@@ -104,10 +104,13 @@ namespace P2P_lib.Managers{
 
             //Merge files
             var splitterLibrary = new SplitterLibrary();
-            splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
-                pathWithoutExtension + ".aes",
-                fileInformation.GetChunksAsString());
+            
 
+            if (!splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
+                pathWithoutExtension + ".aes",
+                fileInformation.GetChunksAsString())){
+                _queue.Enqueue(fileInformation);
+            }
 
             // Decrypt file
             var decryption = new FileEncryption(pathWithoutExtension, ".lzma");

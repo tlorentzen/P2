@@ -47,7 +47,6 @@ namespace P2P_lib
                         ChunkSender sender = new ChunkSender(peer.StringIp, upload.port);
 
                         if(sender.Send(chunk_path)){
-                            DiskHelper.ConsoleWrite($"The chunk {chunk.hash} was sent to {peer.GetUuid()}");
                             chunk.AddPeer(peer.GetUuid());
                         }else{
                             sendToAll = false;
