@@ -38,7 +38,6 @@ namespace TorPdos
             posConfirmW = fullWidth - confirmBtnW - 30,
             posConfirmH = fullHeight - confirmBtnH - 53,
             posCancelW = posConfirmW - confirmBtnW - 15,
-            posAddW = posCancelW - confirmBtnW - 15,
             //Text
             textSizeDefault = 12,
             textSizeInput = 14,
@@ -231,15 +230,6 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
-        Button btnDownload = new Button()
-        {
-            Location = new Point(posCancelW, posConfirmH),
-            Width = confirmBtnW,
-            Height = confirmBtnH,
-            Text = "Donwnload",
-            Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
-            ForeColor = ColorTranslator.FromHtml(btnColour),
-        };
         Button btnLogout = new Button()
         {
             Location = new Point(posConfirmW, posConfirmH),
@@ -260,7 +250,7 @@ namespace TorPdos
         };
         Button btnAddPeer = new Button()
         {
-            Location = new Point(posAddW, posConfirmH),
+            Location = new Point(posCancelW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
             Text = "Add peer",
@@ -343,7 +333,6 @@ namespace TorPdos
             btnLogout.Click += BtnLogOutClick;
             btnOkay.Click += BtnOkayClick;
             btnAddPeer.Click += BtnAddPeerClick;
-            btnDownload.Click += BtnDownloadClick;
         }
 
         void IndexEventHandlers()
@@ -473,7 +462,7 @@ namespace TorPdos
         private void IdxFileMissing(IndexFile file)
         {
             Console.WriteLine(@"File missing init download of " + file.hash);
-            //_p2P.DownloadFile(file.hash);
+            _p2P.DownloadFile(file.hash);
         }
 
         private void IdxFileDeleted(string hash)
@@ -482,10 +471,14 @@ namespace TorPdos
             _p2P.DeleteFile(hash);
         }
 
-        private void IdxFileAdded(IndexFile file)
+        private void IdxFileAdded(IndexFile idxfile)
         {
-            Console.WriteLine(@"Added: " + file.hash);
-            //_p2P.UploadFile(file.hash, file.GetPath(), 5);
+            Console.WriteLine(@"Added: " + idxfile.GetHash());
+
+            P2PFile file = new P2PFile(idxfile.GetHash());
+            file.AddPath(idxfile.paths);
+
+            _p2P.UploadFile(file);
         }
 
         private void IdxFileChanged(IndexFile file)
@@ -609,10 +602,6 @@ namespace TorPdos
             //BTN: Add Peer
             btnAddPeer.TabIndex = tabNumber++;
             Controls.Add(btnAddPeer);
-
-            //BTN: Download
-            btnDownload.TabIndex = tabNumber++;
-            Controls.Add(btnDownload);
 
             //BTN: Logout
             btnLogout.TabIndex = tabNumber++;
