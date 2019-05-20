@@ -40,6 +40,11 @@ namespace P2P_lib.Messages{
             this.statusCode = StatusCode.OK;
         }
 
+        /// <summary>
+        /// Sends the message to the specified receiver.
+        /// </summary>
+        /// <param name="receiverPort">The port, to which the message should be sent</param>
+        /// <returns>Rather the message was sent successfully.</returns>
         public bool Send(int receiverPort = 25565){
             try{
                 var connectionTester = new TcpClient();
@@ -73,6 +78,10 @@ namespace P2P_lib.Messages{
             }
         }
 
+        /// <summary>
+        /// Converts the message to a bytearray
+        /// </summary>
+        /// <returns>The resulting bytearray. Null if it fails.</returns>
         //https://stackoverflow.com/questions/33022660/how-to-convert-byte-array-to-any-type
         private byte[] ToByteArray(){
             if (this == null) {
@@ -85,6 +94,11 @@ namespace P2P_lib.Messages{
             }
         }
 
+        /// <summary>
+        /// Converts a bytearray to a message.
+        /// </summary>
+        /// <param name="data">The bytearray to be converted</param>
+        /// <returns>The resulting message. Null if it fails.</returns>
         public static BaseMessage FromByteArray(byte[] data){
             if (data == null) {
                 return null;
@@ -97,6 +111,10 @@ namespace P2P_lib.Messages{
             }
         }
 
+        /// <summary>
+        /// Takes a message and sets the type to response
+        /// and switches the receiver and sender.
+        /// </summary>
         public void CreateReply(){
             this.type = TypeCode.RESPONSE;
             string fromIp = this.from;

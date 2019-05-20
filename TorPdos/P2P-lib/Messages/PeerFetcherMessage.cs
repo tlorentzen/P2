@@ -16,7 +16,7 @@ namespace P2P_lib.Messages{
         /// <summary>
         /// This is the response function to a request of a list of peers.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The list of peers to be shared</param>
         public void SendPeers(List<Peer> input){
             this.type = TypeCode.RESPONSE;
             this.statusCode = StatusCode.OK;
