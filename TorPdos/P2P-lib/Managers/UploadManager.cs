@@ -116,7 +116,7 @@ namespace P2P_lib.Managers{
                     }
 
                     if (uploaded){
-                        DiskHelper.ConsoleWrite($"The file {file.Hash} was successfully sent to all");
+                        DiskHelper.ConsoleWrite($"The file {file.Hash} was successfully sent to all \n");
                     }
                 }
 

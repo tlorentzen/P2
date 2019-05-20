@@ -149,7 +149,7 @@ namespace P2P_lib{
                             fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
                         }
 
-                        DiskHelper.ConsoleWrite(@"File done downloading");
+                        DiskHelper.ConsoleWrite(@"Chunk done downloading");
                         fileStream.Close();
                     }
 
