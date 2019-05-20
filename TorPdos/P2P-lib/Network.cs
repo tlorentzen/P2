@@ -241,11 +241,7 @@ namespace P2P_lib{
                 uploadMessage.CreateReply();
                 uploadMessage.port = _ports.GetAvailablePort();
 
-                _fileReceiver = new FileReceiver(
-                    this._path + @".hidden\" + uuid + @"\" + uploadMessage.fullFilename + @"\", uploadMessage.chunkHash
-                    ,
-                    uploadMessage.port,
-                    true);
+                _fileReceiver = new FileReceiver(this._path + @".hidden\" + uuid + @"\" + uploadMessage.fullFilename + @"\", uploadMessage.chunkHash, uploadMessage.port, true);
                 _fileReceiver.Start();
                 uploadMessage.Send(replyPort);
             }
