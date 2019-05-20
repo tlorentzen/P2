@@ -28,7 +28,7 @@ namespace P2P_lib
 
         public bool Push(P2PChunk chunk, string chunk_path, int numberOfRecevingPeers = 10, int receiverOffset = 0) {
             this._port = _ports.GetAvailablePort();
-            List<Peer> peers = this.GetPeers(numberOfRecevingPeers);
+            List<Peer> peers = this.GetPeers();
             FileInfo fileInfo = new FileInfo(chunk_path);
             Listener listener = new Listener(this._port);
             bool sendToAll = true;
@@ -63,7 +63,7 @@ namespace P2P_lib
             return sendToAll;
         }
 
-        private List<Peer> GetPeers(int count) {
+        private List<Peer> GetPeers(int count = 100) {
             List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
             topPeers.Sort(new ComparePeersByRating());
             if (topPeers.Count > 0) {
