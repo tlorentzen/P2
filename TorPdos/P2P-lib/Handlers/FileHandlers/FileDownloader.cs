@@ -107,6 +107,8 @@ namespace P2P_lib{
         /// <param name="fullFileName">Full name of the file.</param>
         /// <param name="port">Port for which to download from.</param>
         private bool Downloader(string fullFileName, int port){
+            int timeout = 3000;
+            int currentTimeOut = 0;
             var server = new TcpListener(this._ip, port);
             try{
                 server.AllowNatTraversal(true);
@@ -119,31 +121,40 @@ namespace P2P_lib{
                 return false;
             }
 
-            
+
             try{
-                var client = server.AcceptTcpClient();
-                
-                using (NetworkStream stream = client.GetStream()){
-                    using (var fileStream = File.Open(_path + fullFileName + @"\" + _hash,
-                        FileMode.OpenOrCreate, FileAccess.Write)){
-                        DiskHelper.ConsoleWrite("Creating file: " + this._hash);
+                while (currentTimeOut< timeout){
+                    if (server.Pending()){
+                        var client = server.AcceptTcpClient();
 
-                        int i;
-                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                            fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
+                        using (NetworkStream stream = client.GetStream()){
+                            using (var fileStream = File.Open(_path + fullFileName + @"\" + _hash,
+                                FileMode.OpenOrCreate, FileAccess.Write)){
+                                DiskHelper.ConsoleWrite("Creating file: " + this._hash);
+
+                                int i;
+                                while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
+                                    fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
+                                }
+
+                                DiskHelper.ConsoleWrite(@"File done downloading");
+                                fileStream.Close();
+                            }
+
+                            stream.Close();
+                            _ports.Release(port);
+                            return true;
                         }
-
-                        DiskHelper.ConsoleWrite(@"File done downloading");
-                        fileStream.Close();
                     }
-
-                    stream.Close();
-                    _ports.Release(port);
+                    Thread.Sleep(1000);
+                    currentTimeOut += 1000;
                 }
+
+                return false;
             }
             catch (Exception e){
-                DiskHelper.ConsoleWrite("The peer requested went offline in Downloader."+ e);
-                return false; 
+                DiskHelper.ConsoleWrite("The peer requested went offline in Downloader." + e);
+                return false;
             }
 
             return true;
