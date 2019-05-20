@@ -243,10 +243,9 @@ namespace P2P_lib{
 
                 _fileReceiver = new FileReceiver(this._path + @".hidden\" + uuid + @"\" + uploadMessage.fullFilename + @"\", uploadMessage.chunkHash, uploadMessage.port, true);
                 _fileReceiver.Start();
-
-                _ports.Release(uploadMessage.port);
                 uploadMessage.Send(replyPort);
             }
+            _ports.Release(uploadMessage.port);
         }
 
         private void ReceivedPing(PingMessage ping){
