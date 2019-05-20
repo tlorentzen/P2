@@ -9,7 +9,7 @@ namespace P2P_lib{
         IPAddress ip;
         private int port;
         const int ChunkSize = 1024;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("FileSender");
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("ChunkSender");
 
         public ChunkSender(string ip, int port){
             this.ip = IPAddress.Parse(ip);
