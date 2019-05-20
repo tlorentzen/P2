@@ -6,6 +6,12 @@ namespace P2P_lib {
     public class NetworkPorts {
         private List<int> ports = new List<int>();
 
+        /// <summary>
+        /// Finds a port not in use, within the specified range.
+        /// </summary>
+        /// <param name="beginRange">Start of portrange.</param>
+        /// <param name="endRange">End of portrange.</param>
+        /// <returns>A free port or 0, if non is available within the range.</returns>
         public int GetAvailablePort(int beginRange = 50000, int endRange = 65535) {
             for (int i = beginRange; i <= endRange; i++) {
                 if (IsPortAvailable(i) && !ports.Contains(i)) {
@@ -17,12 +23,21 @@ namespace P2P_lib {
             return 0;
         }
 
+        /// <summary>
+        /// Releases the port, and makes it available for another process.
+        /// </summary>
+        /// <param name="port">The port to be released.</param>
         public void Release(int port) {
             if (this.ports.Contains(port)) {
                 this.ports.Remove(port);
             }
         }
 
+        /// <summary>
+        /// Checks rather the specified port is in use by another process.
+        /// </summary>
+        /// <param name="port">The prot to be checked.</param>
+        /// <returns>Rather the port is in use or not.</returns>
         public static bool IsPortAvailable(int port) {
             bool isAvailable = true;
             // This solution is inspired by:

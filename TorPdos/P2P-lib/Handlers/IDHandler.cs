@@ -15,7 +15,13 @@ namespace P2P_lib.Handlers{
         private static string _keyMold;
         private static string _uuId;
 
-        //Create user file using generated UUID and input password (and UUID, if input)
+        /// <summary>
+        /// Create user file using generated UUID and input password.
+        /// UUID can be sent in as input, for a custom UUID.
+        /// </summary>
+        /// <param name="password">The input password from user.</param>
+        /// <param name="uuid">User UUID (if the user already has an UUID).</param>
+        /// <returns>UUID</returns>
         public static string CreateUser(string password, string uuid = null){
             try{
                 if (uuid == null){
@@ -40,7 +46,12 @@ namespace P2P_lib.Handlers{
             }
         }
 
-        //Generate keymold (hash) from key
+        /// <summary>
+        /// Generate keymold (hash) from key.
+        /// </summary>
+        /// <param name="key1">First string to base keymold off of.</param>
+        /// <param name="key2">Second string to base keymold off of.</param>
+        /// <returns>Keymold.</returns>
         public static string GenerateKeyMold(string key1, string key2 = null){
             string key;
 
@@ -66,7 +77,10 @@ namespace P2P_lib.Handlers{
             return Convert.ToBase64String(hashBytes);
         }
 
-        //Generate UUID based on mac addresses and current time
+        /// <summary>
+        /// Generate UUID based on mac addresses and current time.
+        /// </summary>
+        /// <returns>UUID.</returns>
         private static string GenerateUuid(){
             string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             List<string> macAddresses = NetworkHelper.GetMacAddresses();
@@ -78,9 +92,12 @@ namespace P2P_lib.Handlers{
             return DiskHelper.CreateMd5(guid);
         }
 
-        //Check if UUID and password match existing local user
-        //Compare keymolds (hashes)
-        //Returns true if user details are valid, false if not
+        /// <summary>
+        /// Check if UUID and password match existing local user.
+        /// Compare keymolds (hashes).
+        /// </summary>
+        /// <param name="password">The password input of the user.</param>
+        /// <returns>Returns true if user details are valid, false if not.</returns>
         public static bool IsValidUser(string password){
             try{
                 string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
@@ -94,7 +111,11 @@ namespace P2P_lib.Handlers{
         }
 
 
-        //Return UUID if present, else return null
+        /// <summary>
+        /// Return UUID if present, else return null.
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns>UUID if present, else null.</returns>
         public static string GetUuid(string password){
             string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
             if (UserExists()){
@@ -116,7 +137,10 @@ namespace P2P_lib.Handlers{
             }
         }
 
-
+        /// <summary>
+        /// Gets the UUID, if the user exists.
+        /// </summary>
+        /// <returns>UUID if user exists, else null.</returns>
         public static string GetUuid(){
             if (UserExists()){
                 try{
@@ -130,6 +154,10 @@ namespace P2P_lib.Handlers{
             }
         }
 
+        /// <summary>
+        /// Gets the keymold, if the user exists.
+        /// </summary>
+        /// <returns>Keymold if user exists, else null.</returns>
         public static string GetKeyMold(){
             if (UserExists()){
                 try{
@@ -143,6 +171,10 @@ namespace P2P_lib.Handlers{
             }
         }
 
+        /// <summary>
+        /// Checks rather the user exists.
+        /// </summary>
+        /// <returns>Rather the user exists or not.</returns>
         public static bool UserExists(){
             string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
 
@@ -153,7 +185,10 @@ namespace P2P_lib.Handlers{
             }
         }
 
-        //Removes userdata file, return false if failed
+        /// <summary>
+        /// Removes userdata file.
+        /// </summary>
+        /// <returns>Rather the removal was successful or not.</returns>
         public static bool RemoveUser(){
             try{
                 string path = DiskHelper.GetRegistryValue("Path") + HiddenFolder + UserDataFile;
