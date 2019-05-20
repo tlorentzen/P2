@@ -126,7 +126,8 @@ namespace P2P_lib{
                 while (currentTimeOut< timeout){
                     if (server.Pending()){
                         var client = server.AcceptTcpClient();
-
+                        client.ReceiveTimeout = 1000;
+                        client.SendTimeout = 1000;
                         using (NetworkStream stream = client.GetStream()){
                             using (var fileStream = File.Open(_path + fullFileName + @"\" + _hash,
                                 FileMode.OpenOrCreate, FileAccess.Write)){
