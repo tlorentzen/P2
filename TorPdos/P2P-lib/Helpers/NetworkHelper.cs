@@ -6,6 +6,10 @@ using System.Net.Sockets;
 
 namespace P2P_lib.Helpers{
     public static class NetworkHelper{
+        /// <summary>
+        /// Gets the local IP-address.
+        /// </summary>
+        /// <returns>The local IP-address as a string</returns>
         public static string GetLocalIpAddress(){
             // https://stackoverflow.com/questions/6803073/get-local-ip-address
             string localIp;
@@ -20,11 +24,19 @@ namespace P2P_lib.Helpers{
             return localIp;
         }
 
+        /// <summary>
+        /// Gets the public IP-address.
+        /// </summary>
+        /// <returns>The public IP-address as a string.</returns>
         public static string GetPublicIpAddress(){
             // https://stackoverflow.com/questions/3253701/get-public-external-ip-address/45242105
             return new WebClient().DownloadString("http://icanhazip.com");
         }
 
+        /// <summary>
+        /// Gets the Mac-addresses.
+        /// </summary>
+        /// <returns>The Mac-addresses as a list of strings.</returns>
         public static List<string> GetMacAddresses(){
             List<string> macAddresses = new List<string>();
 
@@ -39,6 +51,11 @@ namespace P2P_lib.Helpers{
             return macAddresses;
         }
 
+        /// <summary>
+        /// Combines every Mac-address and the current time into a string.
+        /// Then hashes the string.
+        /// </summary>
+        /// <returns>The hash of the current time and combined Mac-addresses.</returns>
         public static string MacAddressCombiner()
         {
             string guid = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();

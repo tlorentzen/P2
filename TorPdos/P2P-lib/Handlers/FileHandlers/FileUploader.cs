@@ -26,15 +26,18 @@ namespace P2P_lib
             this._peers = peers;
         }
 
-        public bool Push(P2PChunk chunk, string chunk_path, int num_of_receving_peers=10) {
+        public bool Push(P2PChunk chunk, string chunk_path, int numberOfRecevingPeers = 10, int receiverOffset = 0) {
             this._port = _ports.GetAvailablePort();
-            List<Peer> peers = this.GetPeers(num_of_receving_peers);
+            List<Peer> peers = this.GetPeers(numberOfRecevingPeers);
             FileInfo fileInfo = new FileInfo(chunk_path);
             Listener listener = new Listener(this._port);
             bool sendToAll = true;
+            int listLength = peers.Count;
+            int peerCount = 0;
 
-            foreach (Peer peer in peers){
-                var upload = new UploadMessage(peer){
+            for(peerCount = 0; peerCount < numberOfRecevingPeers; peerCount++){
+                Peer currentPeer = peers[(peerCount + receiverOffset) % listLength];
+                var upload = new UploadMessage(currentPeer){
                     filesize = fileInfo.Length,
                     fullFilename = chunk.originalHash,
                     chunkHash = chunk.hash,
@@ -44,10 +47,12 @@ namespace P2P_lib
 
                 if(listener.SendAndAwaitResponse(ref upload, 2000)) {
                     if(upload.statusCode == StatusCode.ACCEPTED){
-                        ChunkSender sender = new ChunkSender(peer.StringIp, upload.port);
+                        ChunkSender sender = new ChunkSender(currentPeer.StringIp, upload.port);
 
                         if(sender.Send(chunk_path)){
-                            chunk.AddPeer(peer.GetUuid());
+
+                            DiskHelper.ConsoleWrite($"The chunk {chunk.hash} was sent to {currentPeer.GetUuid()}");
+                            chunk.AddPeer(currentPeer.GetUuid());
                         }else{
                             sendToAll = false;
                         }

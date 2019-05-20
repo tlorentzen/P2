@@ -13,7 +13,7 @@ namespace Splitter_lib{
         /// <summary>
         /// Make a path to the hashlist in hidden folder
         /// </summary>
-        /// <param name="inputPath"></param>
+        /// <param name="inputPath">Path to add to hashlist.</param>
         public HashHandler(string inputPath){
             string path;
             if (Directory.Exists(inputPath + @"\.hidden\")){
@@ -26,7 +26,7 @@ namespace Splitter_lib{
         }
 
         /// <summary>
-        /// Loads in the file with the original hash and its splitted parts
+        /// Loads in the file with the original hash and its splitted parts.
         /// </summary>
         private void Load(){
             //If the file doesn't exist the file will be created
@@ -46,7 +46,7 @@ namespace Splitter_lib{
         /// <summary>
         /// Gets the hashed value out of the file in a list.
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">File to to het entry of.</param>
         /// <returns></returns>
         public List<string> GetEntry(string fileName){
             List< string> output = new List<string>();
@@ -59,10 +59,10 @@ namespace Splitter_lib{
 
         /// <summary>
         /// Adds the splitted file hashes to the hashed file list
-        /// Takes the splitted file hash and the list it has to be added to as inputs 
+        /// Takes the splitted file hash and the list it has to be added to as inputs.
         /// </summary>
-        /// <param name="hash">Original file hash</param>
-        /// <param name="splittedFileHashes">List of chunk hashes</param>
+        /// <param name="hash">Original file hash.</param>
+        /// <param name="splittedFileHashes">List of chunk hashes.</param>
         public void Add(string hash, List<string> splittedFileHashes){
             _hashList.TryAdd(hash,splittedFileHashes);
         }

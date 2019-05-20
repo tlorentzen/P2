@@ -100,12 +100,14 @@ namespace P2P_lib.Managers{
 
                     FileUploader uploader = new FileUploader(_ports, _peers);
 
+                    int i = 0;
                     foreach (var chunk in file.Chunks){
                         string path = _path + @".hidden\splitter\" + chunk.hash;
 
-                        if (!uploader.Push(chunk, path)){
+                        if(!uploader.Push(chunk, path, 1, i)) {
                             uploaded = false;
                         }
+                        i++;
                     }
 
                     if (!uploaded){
