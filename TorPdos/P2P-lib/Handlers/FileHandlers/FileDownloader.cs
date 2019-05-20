@@ -107,21 +107,37 @@ namespace P2P_lib{
         /// <param name="fullFileName">Full name of the file.</param>
         /// <param name="port">Port for which to download from.</param>
         private bool Downloader(string fullFileName, int port){
+
+            int timeout = 3000;
+            int timeout_counter = 0;
             var server = new TcpListener(this._ip, port);
+
             try{
                 server.AllowNatTraversal(true);
-                server.Start();
                 server.Server.ReceiveTimeout = 1000;
                 server.Server.SendTimeout = 1000;
-            }
-            catch (Exception e){
+                server.Start();
+            }catch (Exception e){
                 Logger.Error(e);
                 return false;
             }
 
-            
-            try{
+            while (!server.Pending())
+            {
+                if (timeout_counter >= timeout)
+                {
+                    server.Stop();
+                    return false;
+                }
+                timeout_counter++;
+                Thread.Sleep(5);
+            }
+
+            try
+            {
                 var client = server.AcceptTcpClient();
+                client.ReceiveTimeout = 1000;
+                client.Client.ReceiveTimeout = 1000;
                 
                 using (NetworkStream stream = client.GetStream()){
                     using (var fileStream = File.Open(_path + fullFileName + @"\" + _hash,
@@ -139,14 +155,13 @@ namespace P2P_lib{
 
                     stream.Close();
                     _ports.Release(port);
+                    return true;
                 }
             }
             catch (Exception e){
-                DiskHelper.ConsoleWrite("The peer requested went offline in Downloader."+ e);
-                return false; 
+                DiskHelper.ConsoleWrite("The peer requested went offline in Downloader." + e);
+                return false;
             }
-
-            return true;
         }
     }
 }

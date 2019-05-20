@@ -57,7 +57,8 @@ namespace P2P_lib{
                 try{
                     //TcpClient client = _server.AcceptTcpClient();
                     var client = await _server.AcceptTcpClientAsync();
-                    client.ReceiveTimeout = 500;
+                    client.ReceiveTimeout = 1000;
+                    client.Client.ReceiveTimeout = 1000;
 
                     int i;
                     using (NetworkStream stream = client.GetStream()){

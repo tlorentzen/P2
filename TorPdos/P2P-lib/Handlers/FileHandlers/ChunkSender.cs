@@ -9,7 +9,7 @@ namespace P2P_lib{
         IPAddress ip;
         private int port;
         const int ChunkSize = 1024;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("FileSender");
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("ChunkSender");
 
         public ChunkSender(string ip, int port){
             this.ip = IPAddress.Parse(ip);
@@ -21,6 +21,7 @@ namespace P2P_lib{
                 try{
                     using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
                         client.SendTimeout = 500;
+                        client.Client.SendTimeout = 500;
                         using (NetworkStream stream = client.GetStream()){
                             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read,
                                 FileShare.ReadWrite)){

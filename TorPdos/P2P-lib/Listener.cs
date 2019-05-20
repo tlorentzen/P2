@@ -31,8 +31,20 @@ namespace P2P_lib
         public bool SendAndAwaitResponse<T>(ref T msg, int timeout) where T : BaseMessage
         {
             bool success = true;
+            int timeout_counter = 0;
             _listener.Start();
             msg.Send();
+
+            while(!_listener.Pending()){
+                if (timeout_counter >= timeout)
+                {
+                    _listener.Stop();
+                    msg = null;
+                    return false;
+                }
+                timeout_counter++;
+                System.Threading.Thread.Sleep(5);
+            }
 
             var client = _listener.AcceptTcpClient();
             client.ReceiveTimeout = timeout;

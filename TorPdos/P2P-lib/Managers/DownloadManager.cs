@@ -126,9 +126,11 @@ namespace P2P_lib.Managers{
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 }
 
+                if (File.Exists(filePath)) continue;
                 File.Copy(pathToFileForCopying, filePath);
-
                 DiskHelper.ConsoleWrite($"File saved to: {filePath}");
+
+
             }
         }
 
