@@ -104,7 +104,8 @@ namespace P2P_lib.Managers{
                     foreach (var chunk in file.Chunks){
                         string path = _path + @".hidden\splitter\" + chunk.hash;
 
-                        if(!uploader.Push(chunk, path, 1, i)) {
+                        //3 is used, because the network is relatively small. 10 is the default.
+                        if(!uploader.Push(chunk, path, 3, i)) {
                             uploaded = false;
                         }
                         i++;
@@ -115,7 +116,7 @@ namespace P2P_lib.Managers{
                     }
 
                     if (uploaded){
-                        DiskHelper.ConsoleWrite($"The file {file.Hash} was successfully sent to all");
+                        DiskHelper.ConsoleWrite($"The file {file.Hash} was successfully sent to all \n");
                     }
                 }
 
