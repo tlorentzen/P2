@@ -20,7 +20,6 @@ namespace P2P_lib
             {
                 _listener = new TcpListener(IPAddress.Any, port);
                 _listener.AllowNatTraversal(true);
-
             }
             catch (Exception e)
             {
