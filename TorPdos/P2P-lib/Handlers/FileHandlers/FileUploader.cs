@@ -59,10 +59,9 @@ namespace P2P_lib
                         _ports.Release(upload.port);
                     }
                 }
-
-                _ports.Release(this._port);
             }
 
+            _ports.Release(this._port);
             return sendToAll;
         }
 
