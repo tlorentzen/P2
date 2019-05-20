@@ -38,6 +38,7 @@ namespace P2P_lib
             while(!_listener.Pending()){
                 if (timeout_counter >= timeout)
                 {
+                    _listener.Stop();
                     msg = null;
                     return false;
                 }

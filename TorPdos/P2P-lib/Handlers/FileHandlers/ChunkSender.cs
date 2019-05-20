@@ -21,6 +21,7 @@ namespace P2P_lib{
                 try{
                     using (TcpClient client = new TcpClient(this.ip.ToString(), this.port)){
                         client.SendTimeout = 500;
+                        client.Client.SendTimeout = 500;
                         using (NetworkStream stream = client.GetStream()){
                             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read,
                                 FileShare.ReadWrite)){
