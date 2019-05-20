@@ -34,8 +34,9 @@ namespace P2P_lib
             bool sendToAll = true;
             int listLength = peers.Count;
             int peerCount;
+            int numberOfReceivers = Math.Min(numberOfRecevingPeers, listLength);
 
-            for(peerCount = 0; peerCount < numberOfRecevingPeers; peerCount++){
+            for (peerCount = 0; peerCount < numberOfReceivers; peerCount++){
                 Peer currentPeer = peers[(peerCount + receiverOffset) % listLength];
                 var upload = new UploadMessage(currentPeer){
                     filesize = fileInfo.Length,
