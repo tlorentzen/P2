@@ -26,6 +26,8 @@ namespace P2P_lib{
         }
 
         public bool ChunkDeleter(P2PChunk currentFileChunk, P2PFile currentFile){
+            Listener listener = new Listener(this._port);
+
             _server = new TcpListener(this._ip, this._port);
             try{
                 _server.AllowNatTraversal(true);
@@ -38,58 +40,39 @@ namespace P2P_lib{
 
 
             foreach (var receivingPeers in currentFileChunk.peers){
-                if (!_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) continue;
-                
-                var deletionMessage = new FileDeletionMessage(currentReceiver){
-                    type = TypeCode.REQUEST,
-                    statusCode = StatusCode.OK,
-                    port = _port,
-                    fileHash = currentFileChunk.hash,
-                    fullFileHash = currentFile.Hash
-                };
-                deletionMessage.Send();
-            }
-            var client = _server.AcceptTcpClient();
-            client.ReceiveTimeout = 5000;
+                if (_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) {
+                    var deletionMessage = new FileDeletionMessage(currentReceiver) {
+                        type = TypeCode.REQUEST,
+                        statusCode = StatusCode.OK,
+                        port = _port,
+                        fileHash = currentFileChunk.hash,
+                        fullFileHash = currentFile.Hash
+                    };
 
-            using (NetworkStream stream = client.GetStream()){
-                using (var memory = new MemoryStream()){
-                    int i;
+                    if (listener.SendAndAwaitResponse(ref deletionMessage, 2000)) {
+                        if (deletionMessage.type.Equals(TypeCode.RESPONSE)) {
+                            switch (deletionMessage.statusCode) {
+                                case StatusCode.OK when currentFileChunk.peers.Count == 0:
+                                    currentFile.RemoveChunk(currentFileChunk.hash);
+                                    break;
+                                case StatusCode.OK when currentFileChunk.peers.Count == 0:
+                                    currentFile.RemoveChunk(currentFileChunk.hash);
+                                    break;
+                                case StatusCode.OK:
+                                    currentFileChunk.RemovePeer(deletionMessage.fromUuid);
+                                    break;
+                                case StatusCode.FILE_NOT_FOUND: {
+                                    if (currentFileChunk.peers.Count == 0) {
+                                        currentFile.RemoveChunk(currentFileChunk.hash);
+                                    } else {
+                                        currentFileChunk.RemovePeer(deletionMessage.fromUuid);
+                                    }
 
-                    while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                        memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
-                    }
-
-                    memory.Seek(0, SeekOrigin.Begin);
-                    var messageBytes = new byte[memory.Length];
-                    memory.Read(messageBytes, 0, messageBytes.Length);
-                    memory.Close();
-
-                    var msg = BaseMessage.FromByteArray(messageBytes);
-                    if (msg.GetMessageType() != typeof(FileDeletionMessage)) return false;
-                    var message = (FileDeletionMessage) msg;
-
-                    if (!message.type.Equals((TypeCode.RESPONSE))) return false;
-                    switch (message.statusCode){
-                        case StatusCode.OK when currentFileChunk.peers.Count == 0:
-                            currentFile.RemoveChunk(currentFileChunk.hash);
-                            break;
-                        case StatusCode.OK when currentFileChunk.peers.Count == 0:
-                            currentFile.RemoveChunk(currentFileChunk.hash);
-                            break;
-                        case StatusCode.OK:
-                            currentFileChunk.RemovePeer(message.fromUuid);
-                            break;
-                        case StatusCode.FILE_NOT_FOUND:{
-                            if (currentFileChunk.peers.Count == 0){
-                                currentFile.RemoveChunk(currentFileChunk.hash);
-                            } else{
-                                currentFileChunk.RemovePeer(message.fromUuid);
+                                    DiskHelper.ConsoleWrite("File not found at peer");
+                                    _server.Stop();
+                                    return false;
+                                }
                             }
-
-                            DiskHelper.ConsoleWrite("File not found at peer");
-                            _server.Stop();
-                            return false;
                         }
                     }
                 }
