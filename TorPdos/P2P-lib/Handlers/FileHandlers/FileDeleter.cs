@@ -13,7 +13,6 @@ namespace P2P_lib{
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private NetworkPorts _ports;
         private readonly int _port;
-        private TcpListener _server;
         private readonly IPAddress _ip;
         private readonly byte[] _buffer = new byte[1024];
         private static readonly Logger Logger = LogManager.GetLogger("FileDeleter");
@@ -27,17 +26,6 @@ namespace P2P_lib{
 
         public bool ChunkDeleter(P2PChunk currentFileChunk, P2PFile currentFile){
             Listener listener = new Listener(this._port);
-
-            _server = new TcpListener(this._ip, this._port);
-            try{
-                _server.AllowNatTraversal(true);
-                _server.Start();
-            }
-            catch (Exception e){
-                Logger.Error(e);
-            }
-
-
 
             foreach (var receivingPeers in currentFileChunk.peers){
                 if (_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) {
@@ -69,7 +57,6 @@ namespace P2P_lib{
                                     }
 
                                     DiskHelper.ConsoleWrite("File not found at peer");
-                                    _server.Stop();
                                     return false;
                                 }
                             }
@@ -77,8 +64,6 @@ namespace P2P_lib{
                     }
                 }
             }
-
-            _server.Stop();
 
             return true;
         }
