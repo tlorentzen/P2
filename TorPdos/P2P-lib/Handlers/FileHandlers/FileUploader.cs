@@ -33,7 +33,7 @@ namespace P2P_lib
             Listener listener = new Listener(this._port);
             bool sendToAll = true;
             int listLength = peers.Count;
-            int peerCount = 0;
+            int peerCount;
 
             for(peerCount = 0; peerCount < numberOfRecevingPeers; peerCount++){
                 Peer currentPeer = peers[(peerCount + receiverOffset) % listLength];
