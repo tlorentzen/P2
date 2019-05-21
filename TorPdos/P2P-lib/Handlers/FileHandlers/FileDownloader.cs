@@ -60,7 +60,7 @@ namespace P2P_lib{
                     //Then changed 'download' to this message and
                     //returns true. If a response is not received
                     //within time, it returns false.
-                    if (listener.SendAndAwaitResponse(ref download, 2000)){
+                    if (listener.SendAndAwaitResponse(ref download, 3000)){
                         //If the download is accepted, a receiver is
                         //started and the port of the receiver is
                         //sent to the peer.

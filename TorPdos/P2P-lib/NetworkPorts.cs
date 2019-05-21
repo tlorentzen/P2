@@ -16,16 +16,18 @@ namespace P2P_lib {
             if (port == 0){
                 port = beginRange;
             }
-            for (int i = beginRange; i <= endRange; i++) {
-                if (IsPortAvailable(i) && !ports.Contains(i)) {
-                    if (port == 0){
-                        port = i;
+
+            port++;
+            
+            for (int i = port; i <= endRange; i++) {
+                if (!ports.Contains(i) && IsPortAvailable(i)) {
+                    if(port >= endRange){
+                        port = beginRange;
                     }
                     ports.Add(i);
                     return i;
                 }
             }
-
             return 0;
         }
 

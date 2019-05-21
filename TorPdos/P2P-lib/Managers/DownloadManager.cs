@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Permissions;
 using System.Threading;
 using Compression;
 using Encryption;
@@ -31,6 +32,7 @@ namespace P2P_lib.Managers{
         private string _fileHash;
         private FileDownloader _fileDownloader;
 
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public DownloadManagerV2(StateSaveConcurrentQueue<P2PFile> queue, NetworkPorts ports,
             ConcurrentDictionary<string, Peer> peers, Index index){
             this._queue = queue;
@@ -78,7 +80,7 @@ namespace P2P_lib.Managers{
 
                     _fileHash = file.Hash;
                     DiskHelper.ConsoleWrite("Asking for chunks");
-                    
+
                     foreach (var chunk in file.Chunks){
                         if (_fileDownloader.Fetch(chunk, file.Hash)) continue;
                         this._queue.Enqueue(file);
@@ -97,33 +99,40 @@ namespace P2P_lib.Managers{
             isStopped = true;
         }
 
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         private void RestoreOriginalFile(string path, P2PFile fileInformation){
             DiskHelper.ConsoleWrite("File exist");
-            
-            string pathWithoutExtension = (_path + @".hidden\incoming\" + _fileHash);
+
+            string pathWithoutExtension = (_path + @".hidden\incoming\" +  fileInformation.Hash);
 
             //Merge files
             var splitterLibrary = new SplitterLibrary();
-            
 
-            if (!splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + _fileHash + @"\",
+
+            if (!splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + fileInformation.Hash + @"\",
                 pathWithoutExtension + ".aes",
                 fileInformation.GetChunksAsString())){
                 _queue.Enqueue(fileInformation);
+                return;
             }
 
             // Decrypt file
             var decryption = new FileEncryption(pathWithoutExtension, ".lzma");
-            decryption.DoDecrypt(IdHandler.GetKeyMold());
+            if (!decryption.DoDecrypt(IdHandler.GetKeyMold())){
+                _queue.Enqueue(fileInformation);
+                return;
+            }
             DiskHelper.ConsoleWrite("File decrypted");
+            
             File.Delete(path);
 
             // Decompress file
             string pathToFileForCopying =
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
+            
 
             DiskHelper.ConsoleWrite("File decompressed");
-            
+
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 if (!Directory.Exists(Path.GetDirectoryName(filePath))){
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
