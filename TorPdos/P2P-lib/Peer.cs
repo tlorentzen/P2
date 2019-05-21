@@ -16,11 +16,13 @@ namespace P2P_lib{
         private int _pingsWithoutResponse;
         private long _nextPing;
         private bool _online;
-        private long[] _pingList = new long[] {-1, -1, -1, -1, -1};
+        private long[] _pingList = new long[]{-1, -1, -1, -1, -1};
         public long diskSpace = 0, timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
         public double uptimeScore = 50000;
         private RankingHandler rankHandler = new RankingHandler();
+
         public delegate void PeerWentOnline();
+
         public static event PeerWentOnline PeerSwitchedOnline;
 
         public Peer() : this(null, null){ }
@@ -40,6 +42,10 @@ namespace P2P_lib{
         public bool IsOnline(){
             return this._online;
         }
+        /// <summary>
+        /// Toggles whether a peer is online.
+        /// </summary>
+        /// <param name="online">Boolean of whether the peer got online, or offline.</param>
 
         public void SetOnline(bool online){
             if (online != this._online){
@@ -57,7 +63,7 @@ namespace P2P_lib{
             this._pingsWithoutResponse = 0;
         }
 
-        public void Ping(string pathToFolder) {
+        public void Ping(string pathToFolder){
             this.Ping(0, pathToFolder);
         }
 
@@ -103,35 +109,34 @@ namespace P2P_lib{
         public DateTime lastSeen => _lastSeen;
 
         public string StringIp => _ip.ToString();
+        
         public string UUID => _uuid;
-
+        
         public void UpdateLastSeen(){
             _lastSeen = DateTime.Now;
         }
 
+        /// <summary>
+        /// Gets the UUID of the current peer.
+        /// </summary>
+        /// <returns>Returns the UUID of the current peer.</returns>
         public string GetUuid(){
             return this._uuid;
         }
 
+        /// <summary>
+        /// Returns rating of the current peer.
+        /// </summary>
         public int Rating{
             get => _rating;
-            set{
-                _rating = value;
-            }
+            set{ _rating = value; }
         }
-
-        public int CompareTo(object obj){
-            return string.Compare(_uuid, ((Peer) obj)._uuid, StringComparison.Ordinal);
-        }
-
-        public bool Equals(Peer peer){
-            if (peer == null){
-                return false;
-            }
-
-            return this._uuid.Equals(peer._uuid);
-        }
-
+        
+        /// <summary>
+        /// Checks whether the two peers are equal.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>Returns whether the two peers UUID are equal</returns>
         public override bool Equals(object obj){
             if (obj == null){
                 return false;
@@ -144,12 +149,24 @@ namespace P2P_lib{
             return this._uuid.Equals(p._uuid);
         }
 
+        /// <summary>
+        /// Returns hashcode of the UUID.
+        /// </summary>
+        /// <returns>Returns a hashed version of UUID</returns>
         public override int GetHashCode(){
             return (_uuid != null ? _uuid.GetHashCode() : 0);
         }
 
-        //Adds newPing to _pingList by replacing oldest ping
-        public int AddPingToList(long newPing){
+        /// <summary>
+        /// Adds ping to the most recent pings.
+        /// </summary>
+        /// <param name="newPing"> This is the new ping, which should be added to the list.</param>
+        public void AddPingToList(long newPing){
+            // Added cap to ping.
+            if (newPing > 500){
+                newPing = 500;
+            }
+
             if (this._pingList[0] == -1){
                 for (int i = 0; i < _pingList.Length; i++){
                     this._pingList[i] = newPing;
@@ -158,24 +175,30 @@ namespace P2P_lib{
                 for (int i = _pingList.Length - 1; i > 0; i--){
                     this._pingList[i] = this._pingList[i - 1];
                 }
+
                 this._pingList[0] = newPing;
             }
-            return 0;
         }
 
-        //Gets average latency from _pingList
+        /// <summary>
+        /// Gets average latency from _pingList
+        /// </summary>
+        /// <returns>Returns the average of the last 10 pings, in format of a long</returns>
         public long GetAverageLatency(){
             long sum = 0;
             for (int i = 0; i < _pingList.Length; i++){
                 sum += this._pingList[i];
             }
+
             return (sum / _pingList.Length);
         }
-
     }
 
-    public class ComparePeersByRating : IComparer<Peer> {
-        public int Compare(Peer x, Peer y) {
+    /// <summary>
+    /// Compares peers by rating, helper function for sorting top peers.
+    /// </summary>
+    public class ComparePeersByRating : IComparer<Peer>{
+        public int Compare(Peer x, Peer y){
             return (x.Rating < y.Rating ? 1 : (x.Rating > y.Rating ? -1 : 0));
         }
     }

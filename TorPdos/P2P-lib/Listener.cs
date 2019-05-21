@@ -23,6 +23,15 @@ namespace P2P_lib{
             }
         }
 
+        /// <summary>
+        /// Sends a message to an ip, as well as a port.
+        /// The message can be of any type inheriting from the BaseMessage type.
+        /// The function then checks whether the responding message is of the same type.
+        /// </summary>
+        /// <param name="msg">The message for which to be sent, must inherit from BaseMessage. This is a reference, so it will be updated</param>
+        /// <param name="timeout">The milliseconds of timeout to wait before timing out if no message is received.</param>
+        /// <typeparam name="T"> The message class object. Must inherit from BaseMessage</typeparam>
+        /// <returns>Returns a bool of whether the message has been received.</returns>
         public bool SendAndAwaitResponse<T>(ref T msg, int timeout) where T : BaseMessage{
             try{
                 bool success = true;
