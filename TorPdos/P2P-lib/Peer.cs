@@ -42,6 +42,10 @@ namespace P2P_lib{
         public bool IsOnline(){
             return this._online;
         }
+        /// <summary>
+        /// Toggles whether a peer is online.
+        /// </summary>
+        /// <param name="online">Boolean of whether the peer got online, or offline.</param>
 
         public void SetOnline(bool online){
             if (online != this._online){
