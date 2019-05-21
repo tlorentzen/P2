@@ -1,10 +1,16 @@
 ﻿using System;
+using P2P_lib.Helpers;
 
 namespace P2P_lib.Handlers
 {
     [Serializable]
     public class RankingHandler {
-        //Deliberately Amazing Peer Practicality Estimation Ranker
+        
+        /// <summary>
+        /// Calculates the rank of the peer.
+        /// </summary>
+        /// <param name="peer">The peer of which to calculate the ranking.</param>
+        /// <returns>Returns the rating of the peer.</returns>
         public int GetRank(Peer peer) {
             int
                 scoreDiskSpace = ScoreDiskSpace(peer.diskSpace),
@@ -16,7 +22,11 @@ namespace P2P_lib.Handlers
             return scoreTotal;
         }
 
-        //Calc score from disk space
+        /// <summary>
+        /// Calculates score from disk space
+        /// </summary>
+        /// <param name="diskSpaceBytes">The other peers disk-space</param>
+        /// <returns>Returns the score given from the incomming diskspace</returns>
         private int ScoreDiskSpace(long diskSpaceBytes) {
             double diskSpace = diskSpaceBytes / 1e+9; //Convert to GB
 
@@ -28,7 +38,11 @@ namespace P2P_lib.Handlers
             return score;
         }
 
-        //Calc score from average latency
+        /// <summary>
+        /// Calculates score from average latency.
+        /// </summary>
+        /// <param name="ping">The ping value of the peer.</param>
+        /// <returns>Returns the score as an int</returns>
         private int ScoreLatency(long ping) {
             int score = 
                 ping < 0 ? 0 : 
@@ -38,7 +52,12 @@ namespace P2P_lib.Handlers
             return score;
         }
 
-        //Update uptime score
+        /// <summary>
+        /// Updates uptime score of a peer.
+        /// </summary>
+        /// <param name="peer">The peer on which to update.</param>
+        /// <param name="changedSinceLast">A boolean for whether the peer has been changed since last check, defaults to true</param>
+        /// <returns>Returns the uptime score as an int.</returns>
         public int UpdateUptime(Peer peer, bool changedSinceLast = true) {
 
             //Calculate time since last state shift (online/offline) or uptime update
