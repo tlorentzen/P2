@@ -132,8 +132,6 @@ namespace P2P_lib.Managers{
                 if (File.Exists(filePath)) continue;
                 File.Copy(pathToFileForCopying, filePath);
                 DiskHelper.ConsoleWrite($"File saved to: {filePath}");
-
-
             }
         }
 
