@@ -26,6 +26,15 @@ namespace P2P_lib
             this._peers = peers;
         }
 
+        /// <summary>
+        /// Pushes the inputted chunk to the network, sending it the required amount of peers.
+        /// </summary>
+        /// <param name="chunk">The chunk to push to the network</param>
+        /// <param name="chunk_path">String path to the chunks</param>
+        /// <param name="numberOfRecevingPeers">The number of peers to send the file to,
+        /// this will be the amount of receivers, unless the network is smaller than the given input.</param>
+        /// <param name="receiverOffset">The offset for whom to send the files to, this determines the spacing of the chunks on the peerlist.</param>
+        /// <returns>Boolean of whether the push was a success.</returns>
         public bool Push(P2PChunk chunk, string chunk_path, int numberOfRecevingPeers = 10, int receiverOffset = 0) {
             this._port = _ports.GetAvailablePort();
             List<Peer> peers = this.GetPeers();
@@ -65,6 +74,11 @@ namespace P2P_lib
             return sendToAll;
         }
 
+        /// <summary>
+        /// Get a list of peers to send to, helper function to push.
+        /// </summary>
+        /// <param name="count">The amount of peers to get.</param>
+        /// <returns>Return the peers sorted by ranking.</returns>
         private List<Peer> GetPeers(int count = 100) {
             List<Peer> topPeers = _peers.Values.Where(peer => peer.IsOnline() == true).ToList<Peer>();
             topPeers.Sort(new ComparePeersByRating());

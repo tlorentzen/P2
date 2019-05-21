@@ -97,7 +97,7 @@ namespace Encryption{
         /// Function to decrypt 
         /// </summary>
         /// <param name="password">Keymold from our hashes of UUID and user password</param>
-        public void DoDecrypt(string password){
+        public bool DoDecrypt(string password){
             //Setup to read the salt from the start of the file
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] salt = new byte[64];
@@ -140,6 +140,7 @@ namespace Encryption{
                         }
                         catch (Exception e){
                             Logger.Fatal(e);
+                            return false;
                         }
                         finally{
                             fsOut.Close();
@@ -151,6 +152,8 @@ namespace Encryption{
 
                 fsCrypt.Close();
             }
+
+            return true;
         }
 
         /// <summary>

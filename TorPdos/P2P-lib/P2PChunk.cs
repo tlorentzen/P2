@@ -31,19 +31,38 @@ namespace P2P_lib
             fetch_count = fetchCount;
         }
 
+        /// <summary>
+        /// Adds a peer the list of receiving peers.
+        /// </summary>
+        /// <param name="peer">The UUID of the peer to add.</param>
         public void AddPeer(string peer){
             this.peers.Add(peer);
         }
 
+        /// <summary>
+        /// Removes a peer from the list of peers on the chunk.
+        /// </summary>
+        /// <param name="peer">The UUID of the peer to remove</param>
+        /// <returns>Returns boolean on success</returns>
         public bool RemovePeer(string peer){
             this.peers.Remove(peer);
             return true;
         }
 
-        public bool exist(string path){
+        /// <summary>
+        /// Checks whether the chunk exists.
+        /// </summary>
+        /// <param name="path">Base path to where the chunk is placed.</param>
+        /// <returns></returns>
+        public bool Exist(string path){
             return File.Exists(path + @"\" + this.hash);
         }
 
+        /// <summary>
+        /// Gets the path of the file.
+        /// </summary>
+        /// <param name="base_path">The base path to where the chunks are stored.</param>
+        /// <returns></returns>
         public string Path(string base_path){
             return base_path + @"\" + this.originalHash + this.hash;
         }

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Text;
 
 namespace Splitter_lib{
 
-
+    [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     public class SplitterLibrary{
 
         /// <summary>
