@@ -56,7 +56,7 @@ namespace P2P_lib
 
         public Boolean Downloaded(string path){
             foreach(P2PChunk chunk in this.Chunks){
-                if(!chunk.exist(this.GetChunkDirectory(path))){
+                if(!chunk.Exist(this.GetChunkDirectory(path))){
                     return false;
                 }
             }

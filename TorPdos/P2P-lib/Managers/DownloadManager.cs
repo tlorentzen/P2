@@ -57,6 +57,9 @@ namespace P2P_lib.Managers{
             this._waitHandle.Set();
         }
 
+        /// <summary>
+        /// This is the function that needs to be run, for the DownloadManager to watch the queue.
+        /// </summary>
         public void Run(){
             isStopped = false;
             while (_isRunning){
@@ -98,7 +101,12 @@ namespace P2P_lib.Managers{
 
             isStopped = true;
         }
-
+        
+        /// <summary>
+        /// Restores the original file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileInformation"></param>
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         private void RestoreOriginalFile(string path, P2PFile fileInformation){
             DiskHelper.ConsoleWrite("File exist");
@@ -145,6 +153,10 @@ namespace P2P_lib.Managers{
 
             }
         }
+        /// <summary>
+        /// Function shutdown.
+        /// </summary>
+        /// <returns>Returns true when shutdown successful</returns>
 
         public override bool Shutdown(){
             _isRunning = false;

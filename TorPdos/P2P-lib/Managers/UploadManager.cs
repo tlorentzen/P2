@@ -47,7 +47,9 @@ namespace P2P_lib.Managers{
             this._waitHandle.Set();
         }
 
-
+        /// <summary>
+        /// Main running function for UploadManager, needs to be called for it to run.
+        /// </summary>
         public void Run(){
             _isStopped = false;
             this._waitHandle.Set();
@@ -126,6 +128,10 @@ namespace P2P_lib.Managers{
 
             _isStopped = true;
         }
+        /// <summary>
+        /// This shutdowns the UploadManager.
+        /// </summary>
+        /// <returns>Returns true when success.</returns>
 
         public override bool Shutdown(){
             this._isRunning = false;
