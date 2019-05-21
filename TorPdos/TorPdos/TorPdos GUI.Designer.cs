@@ -452,7 +452,7 @@ namespace TorPdos
         }  
         private void BtnLogOutClick(object sender, EventArgs e)
         {
-            _p2P?.SaveFile();
+            _p2P?.SavePeer();
             _p2P?.Stop();
             _idx?.Save();
             _idx?.Stop();

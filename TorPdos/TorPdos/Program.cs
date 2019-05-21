@@ -47,7 +47,7 @@ namespace TorPdos{
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
                         _idx.Stop();
-                        _p2P.SaveFile();
+                        _p2P.SavePeer();
                         _p2P.Stop();
                         running = false;
                         Console.WriteLine("\nPress any button to quit!");
@@ -131,7 +131,7 @@ namespace TorPdos{
                         } else if (console.Equals("idxsave")) {
                             _idx.Save();
                         } else if (console.Equals("peersave")) {
-                            _p2P.SaveFile();
+                            _p2P.SavePeer();
                         } else if (console.Equals("ping")) {
                             _p2P.Ping();
                         } else if (console.Equals("integrity")) {
