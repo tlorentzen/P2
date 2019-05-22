@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Index_lib;
 using P2P_lib;
-using P2P_lib;
 using P2P_lib.Handlers;
 using P2P_lib.Helpers;
 
@@ -16,26 +15,33 @@ namespace TorPdos{
         public static string publicUuid;
         public static string filePath;
 
-
+        /// <summary>
+        /// The main method, which runs the program
+        /// </summary>
         [STAThread]
         static void Main(){
-            //Start of what needs to run at the Absolute start of the program.
+            
             bool running = true;
             bool firstRun = true;
             MyForm torPdos = new MyForm();
 
+            //If the ''Path'' variable is not set, the GUI is run to set this up.
             if (string.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path"))){
                 Application.Run(torPdos);
             }
-            else if(File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
+            //If the ''Path'' variable is set, but the userdata file does not exist,
+            //the GUI is run to create this.
+            else if (File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
             {
                 Application.Run(torPdos);
             }
-            //End of what needs to run at the Absolute start of the program.
 
+            //Gets the local IP and the path to the users TorPDos-folder.
             string ownIp = NetworkHelper.GetLocalIpAddress();
             string path = (DiskHelper.GetRegistryValue("Path"));
 
+            //Starts the communication with the user, and ensures that
+            //the user logs in.
             DiskHelper.ConsoleWrite("Welcome to TorPdos!");
             Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
             while (running){
@@ -53,8 +59,8 @@ namespace TorPdos{
                         Console.WriteLine("\nPress any button to quit!");
 
                     } else {
+                        //Handles the login of the user through the console.
                         while (IdHandler.GetUuid() == null) {
-
                             if (console.StartsWith("login") && param.Length == 2) {
                                 if (IdHandler.GetUuid(param[1]) == "Invalid Password") {
                                     Console.WriteLine();
@@ -63,6 +69,7 @@ namespace TorPdos{
                                     console = Console.ReadLine();
                                     param = console.Split(' ');
                                 }
+                            //Gives the opportunity to open the GUI for login.
                             } else if(console.Equals("gui")){
                                 Application.Run(torPdos);
                             } else {
@@ -73,7 +80,11 @@ namespace TorPdos{
                                 param = console.Split(' ');
                             }
                         }
+
+                        //Handles the creation or loading of all the necessary
+                        //files and directories.
                         if (firstRun) {
+                            
                             // Load Index
                             if (!Directory.Exists(path)) {
                                 Directory.CreateDirectory(path);
@@ -166,17 +177,31 @@ namespace TorPdos{
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Handles a missing file by trying to download it from
+        /// the network.
+        /// </summary>
+        /// <param name="idxfile">The file to be downloaded.</param>
         private static void Idx_FileMissing(IndexFile idxfile){
-            Console.WriteLine(@"File missing init download of " + idxfile.hash);
+            Console.WriteLine(@"File missing initiating download of " + idxfile.hash);
             _p2P.DownloadFile(idxfile.hash);
         }
 
+        /// <summary>
+        /// Handles the deletion of a file by trying to delete
+        /// all copies on the network.
+        /// </summary>
+        /// <param name="hash">The hash of the file to be deleted on the network</param>
         private static void Idx_FileDeleted(string hash){
-            //throw new NotImplementedException();
             Console.WriteLine(@"Deleted: " + hash);
             _p2P.DeleteFile(hash);
         }
 
+        /// <summary>
+        /// Handles new files added by the user by uplaoding
+        /// them to the network.
+        /// </summary>
+        /// <param name="idxfile">The file to be uploaded.</param>
         private static void Idx_FileAdded(IndexFile idxfile){
             Console.WriteLine(@"Added: " + idxfile.GetHash());
 
@@ -184,9 +209,12 @@ namespace TorPdos{
             file.AddPath(idxfile.paths);
 
             _p2P.UploadFile(file);
-            //p2p.UploadFileToNetwork(file.paths[0], 3);
         }
 
+        /// <summary>
+        /// Handles the changes to a file.
+        /// </summary>
+        /// <param name="file">The changed file</param>
         private static void Idx_FileChanged(IndexFile file){
             Console.WriteLine(@"File changed: " + file.hash);
         }

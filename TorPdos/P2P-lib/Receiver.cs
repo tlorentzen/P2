@@ -10,16 +10,21 @@ using LogLevel = NLog.LogLevel;
 
 namespace P2P_lib{
     public class Receiver{
-        //This delegate can be used to point to methods
-        //which return void and take a string.
+        /// <summary>
+        /// This delegate can be used to point to methods without
+        /// a return value and a BaseMessage (or subclass) as input.
+        /// </summary>
+        /// <param name="msg">The message to be handled.</param>
         public delegate void DidReceive(BaseMessage msg);
 
         private static NLog.Logger logger = NLog.LogManager.GetLogger("ReceiverLogging");
         private static NLog.Logger slogger = NLog.LogManager.GetLogger("SocketException");
 
 
-        //This event can cause any method which conforms
-        //to MyEventHandler to be called.
+        /// <summary>
+        /// This event can cause any method which conforms
+        /// to MyEventHandler to be called.
+        /// </summary>
         public event DidReceive MessageReceived;
 
         private IPAddress ip;
@@ -35,6 +40,10 @@ namespace P2P_lib{
             this.port = port;
         }
 
+        /// <summary>
+        /// Starts the functionality of the receiver
+        /// by starting a TCPListener on a new thread.
+        /// </summary>
         public void Start(){
             _server = new TcpListener(this.ip, this.port);
             _server.AllowNatTraversal(true);
@@ -46,16 +55,23 @@ namespace P2P_lib{
             _listener.Start();
         }
 
+        /// <summary>
+        /// Stops the TCPListener.
+        /// </summary>
+        /// <returns>Rather the TCPListener has been stopped.</returns>
         public bool Stop(){
             this._listening = false;
             _server.Stop();
             return true;
         }
 
+        /// <summary>
+        /// A function to handle the TCPListener and receive
+        /// packages from other devices.
+        /// </summary>
         private async void connectionHandler(){
             while (this._listening){
                 try{
-                    //TcpClient client = _server.AcceptTcpClient();
                     var client = await _server.AcceptTcpClientAsync();
                     client.ReceiveTimeout = 1000;
                     client.Client.ReceiveTimeout = 1000;
