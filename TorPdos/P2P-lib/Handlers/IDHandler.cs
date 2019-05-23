@@ -8,9 +8,7 @@ using P2P_lib.Helpers;
 namespace P2P_lib.Handlers{
     public static class IdHandler{
         private const string UserDataFile = "userdata";
-
         private const string HiddenFolder = @".hidden\";
-
         private static readonly int iterations = 10000, hashlength = 20, saltlength = 16;
         private static string _keyMold;
         private static string _uuId;

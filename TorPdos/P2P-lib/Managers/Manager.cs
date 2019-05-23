@@ -3,5 +3,4 @@
     public abstract class Manager{
         public abstract bool Shutdown();
     }
-
 }

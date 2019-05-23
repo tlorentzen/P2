@@ -23,7 +23,6 @@ namespace P2P_lib.Managers{
         private bool _isStopped;
         private readonly HiddenFolder _hiddenFolder;
 
-
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public UploadManager(StateSaveConcurrentQueue<P2PFile> queue, NetworkPorts ports,
             ConcurrentDictionary<string, Peer> peers){
@@ -128,11 +127,11 @@ namespace P2P_lib.Managers{
 
             _isStopped = true;
         }
+
         /// <summary>
         /// This shutdowns the UploadManager.
         /// </summary>
         /// <returns>Returns true when success.</returns>
-
         public override bool Shutdown(){
             this._isRunning = false;
             this._waitHandle.Set();

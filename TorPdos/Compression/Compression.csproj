@@ -33,9 +33,8 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>..\packages\NLog.4.6.2\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.3\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="SevenZip, Version=18.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LZMA-SDK.18.1.0\lib\net20\SevenZip.dll</HintPath>
@@ -61,6 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

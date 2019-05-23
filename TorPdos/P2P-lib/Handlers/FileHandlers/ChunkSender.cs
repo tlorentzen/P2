@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 
-
 namespace P2P_lib{
     public class ChunkSender{
         IPAddress ip;
@@ -15,12 +14,12 @@ namespace P2P_lib{
             this.ip = IPAddress.Parse(ip);
             this.port = port;
         }
+
         /// <summary>
         /// Sends a chunk to a given peer.
         /// </summary>
         /// <param name="path">Path for the chunk to send</param>
         /// <returns>Returns a boolean of whether the sending was a success.</returns>
-
         public bool Send(string path){
             if (File.Exists(path)){
                 try{

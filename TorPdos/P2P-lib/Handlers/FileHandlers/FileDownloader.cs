@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
-using Encryption;
 using P2P_lib.Helpers;
 using P2P_lib.Messages;
 
@@ -86,7 +84,6 @@ namespace P2P_lib{
                                 return false;
                             }
                             
-
                             _ports.Release(download.port);
                             break;
                         } else if (download.statusCode == StatusCode.FILE_NOT_FOUND){

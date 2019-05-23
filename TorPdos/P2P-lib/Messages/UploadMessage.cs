@@ -11,10 +11,7 @@ namespace P2P_lib.Messages
         public string path;
         public int port;
 
-        public UploadMessage(Peer to) : base(to)
-        {
-
-        } 
+        public UploadMessage(Peer to) : base(to) {} 
 
         public override string GetHash()
         {

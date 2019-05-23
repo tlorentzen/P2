@@ -68,6 +68,5 @@ namespace P2P_lib.Helpers{
 
             return DiskHelper.CreateMd5(guid);
         }
-
     }
 }

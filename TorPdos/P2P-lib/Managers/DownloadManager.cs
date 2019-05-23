@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Permissions;
 using System.Threading;
@@ -21,14 +20,8 @@ namespace P2P_lib.Managers{
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<P2PFile> _queue;
         private readonly Index _index;
-        private List<string> _fileList;
         private bool isStopped;
-        private readonly HashHandler _hashList;
-        private List<string> _downloadQueue;
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
-        private int _count = 0;
-        private int _sentCount = 0;
-        private ConcurrentQueue<FileDownloader> _queueBuilder;
         private string _fileHash;
         private FileDownloader _fileDownloader;
 

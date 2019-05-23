@@ -1,6 +1,7 @@
 using System;
 
 namespace P2P_lib.Messages{
+
     [Serializable]
     public class FileDeletionMessage : BaseMessage{
         public string fileHash;

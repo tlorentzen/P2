@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using NLog;
 using P2P_lib.Helpers;
 using P2P_lib.Messages;

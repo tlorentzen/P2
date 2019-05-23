@@ -23,12 +23,12 @@ namespace P2P_lib.Helpers{
 
             return -1;
         }
+
         /// <summary>
         /// This returns a MD5 hash of the given string input.
         /// </summary>
         /// <param name="input">The input for which to return the Hash</param>
         /// <returns></returns>
-
         public static string CreateMd5(string input){
             // Use input string to calculate MD5 hash
             using (MD5 md5 = MD5.Create()){

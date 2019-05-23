@@ -35,6 +35,5 @@ namespace P2P_lib.Messages
         public override string GetHash(){
             return null;
         }
-
     }
 }

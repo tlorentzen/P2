@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
-
 namespace P2P_lib.Managers{
     public class DeletionManager : Manager{
         private bool _isRunning = true;

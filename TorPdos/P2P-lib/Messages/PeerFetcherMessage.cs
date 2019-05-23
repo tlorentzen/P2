@@ -24,6 +24,5 @@ namespace P2P_lib.Messages{
             this.to = fromIp;
             peers = input;
         }
-        
     }
 }

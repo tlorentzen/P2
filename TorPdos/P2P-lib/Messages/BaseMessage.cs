@@ -2,18 +2,17 @@
 using System.Net.Sockets;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using P2P_lib;
 using P2P_lib.Handlers;
 using P2P_lib.Helpers;
 
 namespace P2P_lib.Messages{
+
     public enum StatusCode{
         OK, ERROR, ACCEPTED,
         INSUFFICIENT_STORAGE, FILE_NOT_FOUND
     };
 
     public enum TypeCode{ REQUEST, RESPONSE };
-
 
     [Serializable]
     public abstract class BaseMessage{
