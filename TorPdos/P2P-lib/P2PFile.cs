@@ -68,13 +68,14 @@ namespace P2P_lib
             return true;
         }
 
-        /// <summary>
+        /// <summary>t
         /// Removes the chunk from the file
         /// </summary>
         /// <param name="chunk">Chunk to be added</param>
         /// <returns>Rather the chunk was removed</returns>
         public bool RemoveChunk(string chunk){
-            this.Chunks.Remove(Chunks.First(chunks => Hash.Equals(chunk)));
+            P2PChunk del = Chunks.Find(chunks => Hash.Equals(chunk));
+            this.Chunks.Remove(del);
             return true;
         }
 
