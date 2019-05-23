@@ -18,13 +18,13 @@ namespace Index_lib{
         //This delegate can be used to point to methods
         //which return void and take a string.
         public delegate void FileEventHandler(IndexFile file);
-
         public delegate void FileDeletedHandler(string hash);
+        public delegate void FileChangedHandler(IndexFile file, string oldHash);
 
         // Events
         public event FileEventHandler FileAdded;
         public event FileDeletedHandler FileDeleted;
-        public event FileEventHandler FileChanged;
+        public event FileChangedHandler FileChanged;
         public event FileEventHandler FileMissing;
 
         Dictionary<string, IndexFile> _index = new Dictionary<string, IndexFile>();
@@ -212,6 +212,7 @@ namespace Index_lib{
                     //adding the new one. This is done, because the hash is changed
                     else if (e.ChangeType.Equals(WatcherChangeTypes.Changed)){
                         bool fileRemoved = false;
+                        string oldHash = null;
                         var eventFile = new IndexFile(e.FullPath);
 
                         if (!_index.ContainsKey(eventFile.hash)){
@@ -219,8 +220,10 @@ namespace Index_lib{
                                 if (_index[pair.Key].paths.Contains(e.FullPath)){
                                     if (_index[pair.Key].paths.Count > 1){
                                         _index[pair.Key].paths.Remove(e.FullPath);
+                                        oldHash = null;
                                     } else{
                                         _index.Remove(pair.Key);
+                                        oldHash = pair.Key;
                                     }
                                 }
                             }
@@ -238,8 +241,10 @@ namespace Index_lib{
                                 } else{
                                     foreach (string path in _index[pair.Key].paths){
                                         if (path == eventFile.paths[0] && !eventFile.Equals(_index[pair.Key])){
+                                            
                                             _index.Remove(pair.Key);
                                             fileRemoved = true;
+                                            
                                         }
                                     }
                                 }
@@ -254,7 +259,7 @@ namespace Index_lib{
                             }
                         }
 
-                        FileChanged?.Invoke(eventFile);
+                        FileChanged?.Invoke(eventFile, oldHash);
                     } 
                     
                     //Handles delete events, by deleting file from index or path,

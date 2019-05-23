@@ -215,8 +215,15 @@ namespace TorPdos{
         /// Handles the changes to a file.
         /// </summary>
         /// <param name="file">The changed file</param>
-        private static void Idx_FileChanged(IndexFile file){
-            Console.WriteLine(@"File changed: " + file.hash);
+        private static void Idx_FileChanged(IndexFile idxfile, string oldHash){
+            Console.WriteLine(@"File changed: " + idxfile.GetHash());
+
+            _p2P.DeleteFile(oldHash);
+
+            P2PFile file = new P2PFile(idxfile.GetHash());
+            file.AddPath(idxfile.paths);
+
+            _p2P.UploadFile(file);
         }
     }
 }
