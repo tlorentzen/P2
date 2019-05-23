@@ -188,7 +188,9 @@ namespace TorPdos{
         }
 
         /// <summary>
-        /// Handles the deletion of a file by trying to delete
+        /// Handles the deletion of a file by trying to delete.
+        /// Unlike the other 'Idx_' methods, this takes the hash
+        /// of the file, because the IndexFile does only longer exist.
         /// all copies on the network.
         /// </summary>
         /// <param name="hash">The hash of the file to be deleted on the network</param>
