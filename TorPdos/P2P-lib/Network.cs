@@ -26,8 +26,8 @@ namespace P2P_lib{
         private readonly HiddenFolder _hiddenPath;
         private readonly ConcurrentDictionary<string, Peer> _peers = new ConcurrentDictionary<string, Peer>();
         private readonly string _peerFilePath;
-        private readonly StateSaveConcurrentQueue<P2PFile> _uploadQueue;
-        private readonly StateSaveConcurrentQueue<P2PFile> _downloadQueue;
+        private readonly StateSaveConcurrentQueue<P2PFile> _upload;
+        private readonly StateSaveConcurrentQueue<P2PFile> _download;
         private readonly StateSaveConcurrentQueue<string> _deletionQueue;
         private ConcurrentDictionary<string, P2PFile> _filesList = new ConcurrentDictionary<string, P2PFile>();
         private readonly List<Manager> _managers = new List<Manager>();
@@ -55,8 +55,8 @@ namespace P2P_lib{
             LoadLocation();
 
             _deletionQueue = StateSaveConcurrentQueue<string>.Load(_path + @".hidden\deletion.json");
-            _uploadQueue = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\upload.json");
-            _downloadQueue = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\download.json");
+            _upload = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\upload.json");
+            _download = StateSaveConcurrentQueue<P2PFile>.Load(_path + @".hidden\download.json");
         }
 
         /// <summary>
@@ -91,8 +91,8 @@ namespace P2P_lib{
 
             //For every thread it opens up a new upload and download manager
             for (int i = 0; i < NumOfThreads; i++){
-                var uploadManager = new UploadManager(_uploadQueue, _ports, _peers);
-                var downloadManager = new DownloadManagerV2(_downloadQueue, _ports, _peers, _index);
+                var uploadManager = new UploadManager(_upload, _ports, _peers);
+                var downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index);
 
                 var uploadThread = new Thread(uploadManager.Run);
                 var downloadThread = new Thread(downloadManager.Run);
@@ -413,8 +413,8 @@ namespace P2P_lib{
                 manager.Shutdown();
             }
 
-            _uploadQueue.Save(_path + @".hidden\uploadQueue.json");
-            _downloadQueue.Save(_path + @".hidden\downloadQueue.json");
+            _upload.Save(_path + @".hidden\uploadQueue.json");
+            _download.Save(_path + @".hidden\downloadQueue.json");
             _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
             SaveIndexFile();
 
@@ -463,12 +463,7 @@ namespace P2P_lib{
         /// </summary>
         /// <param name="file">The file which needs to be uploaded</param>
         public void UploadFile(P2PFile file){
-            if (!_filesList.ContainsKey(file.Hash)){
-                _filesList.TryAdd(file.Hash, file);
-            } else{
-                _filesList.TryUpdate(file.Hash, file, file);
-            }
-
+            _filesList.TryAdd(file.Hash, file);
             this._upload.Enqueue(file);
         }
 
@@ -478,7 +473,7 @@ namespace P2P_lib{
         /// <param name="file">The name of the file which needs to be downloaded</param>
         public void DownloadFile(string file){
             _filesList.TryGetValue(file, out var outputFile);
-            this._downloadQueue.Enqueue(outputFile);
+            this._download.Enqueue(outputFile);
         }
 
         /// <summary>
