@@ -1,13 +1,16 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Compression;
 using System.IO;
+using Compression;
+using NUnit.Framework;
 
-namespace TorPdos.TEST{
-    [TestClass]
-    public class CompressorTest{
-        [TestMethod]
-        public void CompressAndDecompressSameArray(){
+namespace TorPdos.TEST
+{
+    [TestFixture]
+    public class CompressorTest
+    {
+        [Test]
+        public void CompressAndDecompressSameArray()
+        {
             byte[] expected = new byte[100];
             Random rand = new Random();
             rand.NextBytes(expected);
@@ -19,8 +22,9 @@ namespace TorPdos.TEST{
             CollectionAssert.AreEqual(expected, result);
         }
 
-        [TestMethod]
-        public void CompressedArrayNotSame(){
+        [Test]
+        public void CompressedArrayNotSame()
+        {
             byte[] notExpected = new byte[100];
             Random rand = new Random();
             rand.NextBytes(notExpected);
@@ -30,8 +34,9 @@ namespace TorPdos.TEST{
             CollectionAssert.AreNotEqual(notExpected, actual);
         }
 
-        [TestMethod]
-        public void CompressAndDecompressSameFile(){
+        [Test]
+        public void CompressAndDecompressSameFile()
+        {
             string FilePath = "TESTFILE.txt";
             Helpers.MakeAFile(FilePath);
 
@@ -48,8 +53,9 @@ namespace TorPdos.TEST{
             CollectionAssert.AreEqual(expected, result);
         }
 
-        [TestMethod]
-        public void CompressedFileNotSame(){
+        [Test]
+        public void CompressedFileNotSame()
+        {
             string FilePath = "TESTFILE.txt";
             Helpers.MakeAFile(FilePath);
 

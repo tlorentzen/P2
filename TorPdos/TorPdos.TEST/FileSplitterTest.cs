@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
 namespace TorPdos.TEST{
-    [TestClass]
+    [TestFixture]
     public class FileSplitterTest{
-        /*[TestMethod]
+        /*[Test]
         public void SplitFileToFolderCorrectNumberOfFiles()
         {
             SplitterLibary Splitter = new SplitterLibary();
@@ -23,7 +23,7 @@ namespace TorPdos.TEST{
         }
 
         /*
-        [TestMethod]
+        [Test]
         public void MergedFilesAreSame()
         {
             SplitterLibary Splitter = new SplitterLibary();

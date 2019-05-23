@@ -24,5 +24,10 @@ namespace TorPdos.TEST{
         public static void MakeDirectory(string path){
             Directory.CreateDirectory(path);
         }
+
+        public static string path()
+        {
+            return null;
+        }
     }
 }

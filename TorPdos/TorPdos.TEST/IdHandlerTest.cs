@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using P2P_lib;
 using P2P_lib.Handlers;
 
 namespace TorPdos.TEST{
-    [TestClass]
+    [TestFixture]
     public class IdHandlerTest{
         public static string path = "TEST/";
         private const string Password = "Password";
 
-        [TestMethod]
-        private void GenerateUuidIsRandom(){
+        [Test]
+        public void GenerateUuidIsRandom(){
             string notExpected = IdHandler.CreateUser(Password);
             System.Threading.Thread.Sleep(5000);
             string actual = IdHandler.CreateUser(Password);
@@ -19,7 +19,7 @@ namespace TorPdos.TEST{
             Assert.AreNotEqual(notExpected, actual);
         }
 
-        /*[TestMethod]
+        /*[Test]
         public void UserDataFileCreated()
         {
             IdHandler.CreateUser(Password);
@@ -30,7 +30,7 @@ namespace TorPdos.TEST{
             Assert.IsTrue(result);
         }*/
 
-        [TestMethod]
+        [Test]
         public void ValidateUser(){
             IdHandler.CreateUser(Password);
             bool result = IdHandler.IsValidUser(Password);
@@ -39,7 +39,7 @@ namespace TorPdos.TEST{
             Assert.IsTrue(result);
         }
 
-        [TestMethod]
+        [Test]
         public void WrongPasswordInvalidUser(){
             IdHandler.CreateUser(Password);
             bool result = IdHandler.IsValidUser( "wrong");
@@ -48,16 +48,16 @@ namespace TorPdos.TEST{
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [Test]
         public void GetUUidIsCorrect(){
             string expected = IdHandler.CreateUser(Password);
-            string result = IdHandler.GetUuid();
+            string result = IdHandler.GetUuid(Password);
             IdHandler.RemoveUser();
 
             Assert.AreEqual(expected, result);
         }
 
-        /*[TestMethod]
+        /*[Test]
         public void RemovedUserNotExists()
         {
             IdHandler.CreateUser(Password);

@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
 namespace TorPdos.TEST{
-    [TestClass]
+    [TestFixture]
     public class NetworkTest{
-        [TestMethod]
+        [Test]
         public void TestMethod1(){
             //NOPE :(
         }
