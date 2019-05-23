@@ -46,7 +46,7 @@ namespace P2P_lib{
                     if (listener.SendAndAwaitResponse(ref deletionMessage, 2000)) {
                         if (deletionMessage.type.Equals(TypeCode.RESPONSE)) {
                             switch (deletionMessage.statusCode) {
-                                case StatusCode.OK:
+                                case StatusCode.ACCEPTED:
                                     currentFileChunk.RemovePeer(deletionMessage.fromUuid);
                                     if (currentFileChunk.peers.Count == 0){
                                         currentFile.RemoveChunk(currentFileChunk.hash);
