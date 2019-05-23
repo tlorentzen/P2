@@ -82,7 +82,10 @@ namespace P2P_lib{
                 _listener.Stop();
                 return success;
             }
-            catch (SocketException e){
+            catch (SocketException){
+                return false;
+            }
+            catch (IOException){
                 return false;
             }
         }
