@@ -35,6 +35,14 @@ namespace P2P_lib{
             this._peer = peer;
         }
 
+        /// <summary>
+        /// Constructor of QueuedFile, which only takes hash, path
+        /// and number of copies of the file, and sets the size and
+        /// name based on actual fileinformation.
+        /// </summary>
+        /// <param name="hash">Hash of the file</param>
+        /// <param name="path">Path of the file</param>
+        /// <param name="copies">Number of copies of the file</param>
         public QueuedFile(string hash, string path, int copies){
             this._hash = hash;
             this.copies = (copies <= 0 ? this.copies : copies);

@@ -15,12 +15,21 @@ namespace P2P_lib{
 
         public event ElementQueued ElementAddedToQueue;
 
+        /// <summary>
+        /// Enqueues an item to the queue.
+        /// </summary>
+        /// <param name="item">The item to be enqueued.</param>
         public new void Enqueue(T item){
             base.Enqueue(item);
             if (ElementAddedToQueue != null)
                 ElementAddedToQueue.Invoke();
         }
 
+        /// <summary>
+        /// Loads a queue saved as a JSON-file into the program.
+        /// </summary>
+        /// <param name="path">The path to the queue saved as a JSON-file.</param>
+        /// <returns>Returns the loaded Queue.</returns>
         public static StateSaveConcurrentQueue<T> Load(string path){
             var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
 
@@ -33,6 +42,11 @@ namespace P2P_lib{
             return new StateSaveConcurrentQueue<T>();
         }
 
+        /// <summary>
+        /// Saves the queue to a JSON-file.
+        /// </summary>
+        /// <param name="path">The path to where the file should be saved.</param>
+        /// <returns>True, when the file is saved.</returns>
         public bool Save(string path){
             var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects,Formatting = Formatting.Indented};
             string output = JsonConvert.SerializeObject(this, settings);
@@ -46,6 +60,10 @@ namespace P2P_lib{
             return true;
         }
 
+        /// <summary>
+        /// Enqueues a file to queue.
+        /// </summary>
+        /// <param name="item">The item to be added.</param>
         public void Add(T item){
             base.Enqueue(item);
         }

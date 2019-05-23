@@ -24,9 +24,16 @@ namespace P2P_lib{
             _ip = IPAddress.Any;
         }
 
+        /// <summary>
+        /// Handles the deletion of a chunk of the file
+        /// </summary>
+        /// <param name="currentFileChunk">The P2PChunk to be deleted</param>
+        /// <param name="currentFile">The P2PFile to wich the chunk belongs</param>
+        /// <returns></returns>
         public bool ChunkDeleter(P2PChunk currentFileChunk, P2PFile currentFile){
             Listener listener = new Listener(this._port);
 
+            //Sends a delete message to every peer with the chunk
             foreach (var receivingPeers in currentFileChunk.peers){
                 if (_peers.TryGetValue(receivingPeers, out Peer currentReceiver)) {
                     var deletionMessage = new FileDeletionMessage(currentReceiver) {
@@ -37,6 +44,8 @@ namespace P2P_lib{
                         fullFileHash = currentFile.Hash
                     };
 
+                    //Sends the message and waits for a response,
+                    //which will then overwrite the original sent message
                     if (listener.SendAndAwaitResponse(ref deletionMessage, 2000)) {
                         if (deletionMessage.type.Equals(TypeCode.RESPONSE)) {
                             switch (deletionMessage.statusCode) {

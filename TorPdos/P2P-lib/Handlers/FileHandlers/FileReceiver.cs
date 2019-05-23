@@ -28,10 +28,10 @@ namespace P2P_lib{
                 Directory.CreateDirectory(this._path);
             }
         }
+
         /// <summary>
         /// Starts the receiver.
         /// </summary>
-
         public void Start(){
             try{             
                 _server = new TcpListener(this._ip, this._port);
@@ -50,13 +50,14 @@ namespace P2P_lib{
                 logger.Error(e);
             }
         }
+
         /// <summary>
         /// Stops the receiver.
         /// </summary>
-
         private void Stop(){
             _server.Stop();
         }
+
         /// <summary>
         /// Handles the connection, creates and downloads the file.
         /// </summary>
