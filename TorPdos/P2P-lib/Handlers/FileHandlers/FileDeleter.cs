@@ -46,16 +46,13 @@ namespace P2P_lib{
                     if (listener.SendAndAwaitResponse(ref deletionMessage, 2000)) {
                         if (deletionMessage.type.Equals(TypeCode.RESPONSE)) {
                             switch (deletionMessage.statusCode) {
-                                case StatusCode.OK when currentFileChunk.peers.Count == 0:
-                                    currentFile.RemoveChunk(currentFileChunk.hash);
-                                    break;
-                                case StatusCode.OK when currentFileChunk.peers.Count == 0:
-                                    currentFile.RemoveChunk(currentFileChunk.hash);
-                                    break;
                                 case StatusCode.OK:
                                     currentFileChunk.RemovePeer(deletionMessage.fromUuid);
+                                    if (currentFileChunk.peers.Count == 0){
+                                        currentFile.RemoveChunk(currentFileChunk.hash);
+                                    }
                                     break;
-                                case StatusCode.FILE_NOT_FOUND: {
+                                case StatusCode.FILE_NOT_FOUND:
                                     if (currentFileChunk.peers.Count == 0) {
                                         currentFile.RemoveChunk(currentFileChunk.hash);
                                     } else {
@@ -64,7 +61,6 @@ namespace P2P_lib{
 
                                     DiskHelper.ConsoleWrite("File not found at peer");
                                     return false;
-                                }
                             }
                         }
                     }
