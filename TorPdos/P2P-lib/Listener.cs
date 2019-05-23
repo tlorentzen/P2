@@ -8,7 +8,7 @@ namespace P2P_lib{
     public class Listener{
         private TcpListener _listener;
         private int _buffer_size;
-
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetLogger("ListenerLogger");
         public Listener(int port) : this(port, 1024){ }
 
         public Listener(int port, int bufferSize){
@@ -19,7 +19,7 @@ namespace P2P_lib{
                 _listener.AllowNatTraversal(true);
             }
             catch (Exception e){
-                //Logger.Error(e);
+                _logger.Fatal(e);
             }
         }
 
@@ -82,10 +82,12 @@ namespace P2P_lib{
                 _listener.Stop();
                 return success;
             }
-            catch (SocketException){
+            catch (SocketException e){
+                _logger.Warn(e);
                 return false;
             }
-            catch (IOException){
+            catch (IOException e){
+                _logger.Warn(e);
                 return false;
             }
         }
