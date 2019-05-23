@@ -88,7 +88,7 @@ namespace P2P_lib
                 if(!chunk.Exist(this.GetChunkDirectory(path))){
                     return false;
                 } 
-                if (!CalculateMD5(this.GetChunkDirectory(path)+"\\"+chunk.hash,chunk.hash)){
+                if (!CheckMD5Chunk(this.GetChunkDirectory(path)+"\\"+chunk.hash,chunk.hash)){
                     return false;
                 }
             }
@@ -116,14 +116,21 @@ namespace P2P_lib
         private string GetChunkDirectory(string path){
             return path + this.Hash;
         }
-        private bool CalculateMD5(string filename,string inputHash)
+        
+        /// <summary>
+        /// Checks MD5 of chunk.
+        /// </summary>
+        /// <param name="filename">File path</param>
+        /// <param name="inputHash">Hash of the chunk</param>
+        /// <returns>True if they are equal</returns>
+        private bool CheckMD5Chunk(string filename,string inputHash)
         {
             using (var md5 = MD5.Create())
             {
                 using (var stream = File.OpenRead(filename))
                 {
                     var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant() == inputHash;
+                    return BitConverter.ToString(hash).Replace("-", "") == inputHash;
                 }
             }
         }

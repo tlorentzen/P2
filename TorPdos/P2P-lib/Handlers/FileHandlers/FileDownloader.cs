@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Threading;
 using P2P_lib.Helpers;
 using P2P_lib.Messages;
@@ -95,7 +96,27 @@ namespace P2P_lib{
                 }
             }
 
-            return File.Exists(_path + fullFileName + @"\" + _hash);
+            if (File.Exists(_path + fullFileName + @"\" + _hash)){
+                if (CheckDownloadHash(_path + fullFileName + @"\" + _hash,_hash)){
+                    DiskHelper.ConsoleWrite(@"Chunk done downloading");
+                    return true;
+                }   
+            }
+
+            return false;
+        }
+        
+        private bool CheckDownloadHash(string filename,string inputHash)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    string stringHash = BitConverter.ToString(hash).Replace("-", "");
+                    return  stringHash == inputHash;
+                }
+            }
         }
 
         /// <summary>
@@ -146,7 +167,7 @@ namespace P2P_lib{
                             fileStream.Write(_buffer, 0, (i < _buffer.Length) ? i : _buffer.Length);
                         }
 
-                        DiskHelper.ConsoleWrite(@"Chunk done downloading");
+                        
                         fileStream.Close();
                     }
 
