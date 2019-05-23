@@ -53,15 +53,15 @@ namespace P2P_lib{
                         filehash = _hash
                     };
 
-                    //Sends the download message and waits for a
-                    //"response" download message to be received.
-                    //Then changed 'download' to this message and
-                    //returns true. If a response is not received
-                    //within time, it returns false.
+                    // Sends the download message and waits for a
+                    // "response" download message to be received.
+                    // Then changed 'download' to this message and
+                    // returns true. If a response is not received
+                    // within time, it returns false.
                     if (listener.SendAndAwaitResponse(ref download, 3000)){
-                        //If the download is accepted, a receiver is
-                        //started and the port of the receiver is
-                        //sent to the peer.
+                        // If the download is accepted, a receiver is
+                        // started and the port of the receiver is
+                        // sent to the peer.
                         if (download.statusCode == StatusCode.ACCEPTED){
                             int receiverPort = _ports.GetAvailablePort();
                             download.CreateReply();

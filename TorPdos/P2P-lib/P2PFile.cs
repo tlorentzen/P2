@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
+using P2P_lib.Helpers;
 
 namespace P2P_lib
 {
@@ -84,6 +87,9 @@ namespace P2P_lib
             foreach(P2PChunk chunk in this.Chunks){
                 if(!chunk.Exist(this.GetChunkDirectory(path))){
                     return false;
+                } 
+                if (!CalculateMD5(this.GetChunkDirectory(path)+"\\"+chunk.hash,chunk.hash)){
+                    return false;
                 }
             }
             return true;
@@ -109,6 +115,17 @@ namespace P2P_lib
         /// <returns>The path to the folder with downloaded chunks</returns>
         private string GetChunkDirectory(string path){
             return path + this.Hash;
+        }
+        private bool CalculateMD5(string filename,string inputHash)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant() == inputHash;
+                }
+            }
         }
     }
 }
