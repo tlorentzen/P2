@@ -467,10 +467,9 @@ namespace P2P_lib{
         /// <param name="file">The file which needs to be uploaded</param>
         public void UploadFile(P2PFile file){
             if (_filesList.ContainsKey(file.Hash)){
-                _filesList.TryUpdate(file.Hash, file, file);
-            } else{
-                _filesList.TryAdd(file.Hash, file);
+                _filesList.TryRemove(file.Hash, out _);
             }
+            _filesList.TryAdd(file.Hash, file);
 
             this._upload.Enqueue(file);
         }

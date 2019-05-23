@@ -55,8 +55,9 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
-                    foreach (var currentFileChunk in currentFile.Chunks){
-                        if (!_fileDeleter.ChunkDeleter(currentFileChunk,currentFile)){
+                    int lastIndexInChunks = currentFile.Chunks.Count - 1;
+                    for (int i = lastIndexInChunks; i >= 0; i--){
+                        if (!_fileDeleter.ChunkDeleter(currentFile.Chunks[i], currentFile)){
                             _queue.Enqueue(currentFile.Hash);
                         }
 

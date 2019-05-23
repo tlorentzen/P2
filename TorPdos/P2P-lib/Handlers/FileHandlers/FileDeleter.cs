@@ -30,10 +30,9 @@ namespace P2P_lib{
         public bool ChunkDeleter(P2PChunk currentFileChunk, P2PFile currentFile){
             Listener listener = new Listener(this._port);
 
-            int numberOfPeersWithChunk = currentFileChunk.peers.Count;
-
+            int lastIndex = currentFileChunk.peers.Count - 1;
             //Sends a delete message to every peer with the chunk
-            for (int i = 0; i < numberOfPeersWithChunk; ){
+            for (int i = lastIndex; i >= 0; i--) {
                 if (_peers.TryGetValue(currentFileChunk.peers[i], out Peer currentReceiver)) {
                     var deletionMessage = new FileDeletionMessage(currentReceiver) {
                         type = TypeCode.REQUEST,
@@ -49,18 +48,11 @@ namespace P2P_lib{
                         if (deletionMessage.type.Equals(TypeCode.RESPONSE)) {
                             switch (deletionMessage.statusCode) {
                                 case StatusCode.ACCEPTED:
-                                    currentFileChunk.RemovePeer(deletionMessage.fromUuid);
-                                    if (currentFileChunk.peers.Count == 0){
-                                        currentFile.RemoveChunk(currentFileChunk.hash);
-                                    }
-                                    numberOfPeersWithChunk--;
-                                    break;
                                 case StatusCode.FILE_NOT_FOUND:
                                     currentFileChunk.RemovePeer(deletionMessage.fromUuid);
                                     if (currentFileChunk.peers.Count == 0) {
                                         currentFile.RemoveChunk(currentFileChunk.hash);
                                     }
-                                    numberOfPeersWithChunk--;
 
                                     DiskHelper.ConsoleWrite("File not found at peer");
                                     return false;
