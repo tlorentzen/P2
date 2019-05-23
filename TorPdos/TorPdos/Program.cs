@@ -20,7 +20,6 @@ namespace TorPdos{
         /// </summary>
         [STAThread]
         static void Main(){
-            
             bool running = true;
             bool firstRun = true;
             MyForm torPdos = new MyForm();
@@ -31,8 +30,7 @@ namespace TorPdos{
             }
             //If the ''Path'' variable is set, but the userdata file does not exist,
             //the GUI is run to create this.
-            else if (File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
-            {
+            else if (File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false){
                 Application.Run(torPdos);
             }
 
@@ -49,7 +47,7 @@ namespace TorPdos{
                 if (console != null){
                     string[] param = console.Split(' ');
                     //Close program
-                    if (console.Equals("quit") || console.Equals("q")) {
+                    if (console.Equals("quit") || console.Equals("q")){
                         Console.WriteLine(@"Quitting...");
                         _idx.Save();
                         _idx.Stop();
@@ -57,22 +55,22 @@ namespace TorPdos{
                         _p2P.Stop();
                         running = false;
                         Console.WriteLine("\nPress any button to quit!");
-
-                    } else {
+                    } else{
                         //Handles the login of the user through the console.
-                        while (IdHandler.GetUuid() == null) {
-                            if (console.StartsWith("login") && param.Length == 2) {
-                                if (IdHandler.GetUuid(param[1]) == "Invalid Password") {
+                        while (IdHandler.GetUuid() == null){
+                            if (console.StartsWith("login") && param.Length == 2){
+                                if (IdHandler.GetUuid(param[1]) == "Invalid Password"){
                                     Console.WriteLine();
                                     Console.WriteLine("Invalid password, try again");
                                     Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
                                     console = Console.ReadLine();
                                     param = console.Split(' ');
                                 }
-                            //Gives the opportunity to open the GUI for login.
-                            } else if(console.Equals("gui")){
+
+                                //Gives the opportunity to open the GUI for login.
+                            } else if (console.Equals("gui")){
                                 Application.Run(torPdos);
-                            } else {
+                            } else{
                                 Console.WriteLine();
                                 Console.WriteLine("Error! Try again");
                                 Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
@@ -83,22 +81,21 @@ namespace TorPdos{
 
                         //Handles the creation or loading of all the necessary
                         //files and directories.
-                        if (firstRun) {
-                            
+                        if (firstRun){
                             // Load Index
-                            if (!Directory.Exists(path)) {
+                            if (!Directory.Exists(path)){
                                 Directory.CreateDirectory(path);
                             }
 
                             _idx = new Index(path);
 
                             // Prepare P2PNetwork
-                            try {
+                            try{
                                 _p2P = new Network(25565, _idx, path);
                                 _p2P.Start();
                                 torPdos._p2P = _p2P;
                             }
-                            catch (SocketException) {
+                            catch (SocketException){
                                 Application.Run(torPdos);
                             }
 
@@ -108,8 +105,7 @@ namespace TorPdos{
                             _idx.FileDeleted += Idx_FileDeleted;
                             _idx.FileMissing += Idx_FileMissing;
 
-                            if (!_idx.Load())
-                            {
+                            if (!_idx.Load()){
                                 _idx.BuildIndex();
                             }
 
@@ -126,48 +122,47 @@ namespace TorPdos{
 
                             //Restart loop to take input
                             continue;
-
                         }
 
                         // Handle input
-                        if (console.StartsWith("add") && param.Length == 3) {
+                        if (console.StartsWith("add") && param.Length == 3){
                             _p2P.AddPeer(param[1].Trim(), param[2].Trim());
-                        } else if (console.Equals("reindex")) {
+                        } else if (console.Equals("reindex")){
                             _idx.ReIndex();
-                        } else if (console.Equals("gui")) {
+                        } else if (console.Equals("gui")){
                             MyForm torPdos2 = new MyForm();
                             Application.Run(torPdos2);
-                        } else if (console.Equals("status")) {
+                        } else if (console.Equals("status")){
                             _idx.Status();
-                        } else if (console.Equals("idxsave")) {
+                        } else if (console.Equals("idxsave")){
                             _idx.Save();
-                        } else if (console.Equals("peersave")) {
+                        } else if (console.Equals("peersave")){
                             _p2P.SavePeer();
-                        } else if (console.Equals("ping")) {
+                        } else if (console.Equals("ping")){
                             _p2P.Ping();
-                        } else if (console.Equals("integrity")) {
+                        } else if (console.Equals("integrity")){
                             _idx.MakeIntegrityCheck();
                         } else if (console.Equals("list")){
                             List<Peer> peers = _p2P.GetPeerList();
 
                             Console.WriteLine();
                             Console.WriteLine(@"### Your Peerlist contains ###");
-                            if (peers.Count > 0) {
-                                foreach (Peer peer in peers) {
+                            if (peers.Count > 0){
+                                foreach (Peer peer in peers){
                                     RankingHandler rankingHandler = new RankingHandler();
                                     rankingHandler.GetRank(peer);
-                                    Console.WriteLine("(R:" + peer.Rating + ") " + peer.GetUuid() + @" - " + peer.GetIp() + @" - " +
+                                    Console.WriteLine("(R:" + peer.Rating + ") " + peer.GetUuid() + @" - " +
+                                                      peer.GetIp() + @" - " +
                                                       (peer.IsOnline() ? "Online" : "Offline"));
-                                    Console.WriteLine("disk: " + Convert.ToInt32((peer.diskSpace / 1e+9)) + "GB | avgPing: " + peer.GetAverageLatency() + "\n");
+                                    Console.WriteLine("disk: " + Convert.ToInt32((peer.diskSpace / 1e+9)) +
+                                                      "GB | avgPing: " + peer.GetAverageLatency() + "\n");
                                 }
-                            } else {
+                            } else{
                                 Console.WriteLine(@"The list is empty...");
                             }
 
                             Console.WriteLine();
-                        } else if (console.Trim().Equals("")){
-
-                        }else{
+                        } else if (console.Trim().Equals("")){ } else{
                             Console.WriteLine(@"Unknown command");
                         }
                     }
@@ -220,12 +215,15 @@ namespace TorPdos{
         /// <param name="file">The changed file</param>
         private static void Idx_FileChanged(IndexFile idxfile, string oldHash){
             Console.WriteLine(@"File changed: " + idxfile.GetHash());
-            if(oldHash != null) {
-                _p2P.DeleteFile(oldHash);
-            }
-            P2PFile file = new P2PFile(idxfile.GetHash());
-            file.AddPath(idxfile.paths);
-            _p2P.UploadFile(file);
+            
+            //Implementation not finished. Therefor the leftover code.
+            //if (oldHash != null){
+            //    _p2P.DeleteFile(oldHash);
+            //}
+
+            //P2PFile file = new P2PFile(idxfile.GetHash());
+            //file.AddPath(idxfile.paths);
+            //_p2P.UploadFile(file);
         }
     }
 }
