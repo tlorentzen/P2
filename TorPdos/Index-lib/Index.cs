@@ -50,7 +50,6 @@ namespace Index_lib{
                 throw new DirectoryNotFoundException();
             }
 
-
             watcher.Path = _path;
             watcher.IncludeSubdirectories = true;
             //TODO watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
@@ -74,10 +73,7 @@ namespace Index_lib{
 
             _fileHandlerThread = new Thread(HandleFileEvent);
             _fileHandlerThread.Start();
-            /*
-            _fileIndexThread = new Thread(BuildIntegrity);
-            _fileIndexThread.Start();
-            */
+
             watcher.EnableRaisingEvents = true;
         }
 
@@ -90,13 +86,14 @@ namespace Index_lib{
             _waitHandle.Set();
 
             while (!isStopped){
-                
+                // Wait for alle threads to stop...
             }
         }
 
         public string GetPath(){
             return _path;
         }
+
         /// <summary>
         /// Clears the index and rebuilds it
         /// </summary>
@@ -304,7 +301,6 @@ namespace Index_lib{
             }
         }
 
-
         // Define the event handlers.
         public void OnChanged(object source, FileSystemEventArgs e){
             //IgnoreHidden
@@ -316,7 +312,6 @@ namespace Index_lib{
             if (e.ChangeType.Equals(WatcherChangeTypes.Deleted)){
                 Console.WriteLine("Deleting: " + e.FullPath);
             }
-
 
             _waitHandle.Set();
         }
@@ -485,7 +480,5 @@ namespace Index_lib{
                 Console.WriteLine("Size: {0}", _index[pair.Key].size);
             }
         }
-
-        // TODO: https://codereview.stackexchange.com/questions/59385/filesystemwatcher-with-threaded-fifo-processing
     }
 }

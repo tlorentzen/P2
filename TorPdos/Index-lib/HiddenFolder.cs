@@ -6,7 +6,6 @@ namespace Index_lib{
         private readonly string _path;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("HiddenFolderLogger");
 
-        
         /// <summary>
         /// Creates a hidden folder
         /// </summary>
@@ -28,7 +27,6 @@ namespace Index_lib{
                 directory.Attributes |= FileAttributes.Hidden;
             }
         }
-
 
         /// <summary>
         /// Deletes file or directory form the relative path from hidden directory

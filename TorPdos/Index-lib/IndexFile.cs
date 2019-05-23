@@ -14,7 +14,6 @@ namespace Index_lib
         public bool ghost;
 
         public List<string> paths = new List<string>();
-
         public IndexFile():this(null) { }
 
         public IndexFile(string path) {
