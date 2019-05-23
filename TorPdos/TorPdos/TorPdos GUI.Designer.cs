@@ -481,10 +481,11 @@ namespace TorPdos
             _p2P.UploadFile(file);
         }
 
-        private void IdxFileChanged(IndexFile file)
+        private void IdxFileChanged(IndexFile file, string oldHash)
         {
             Console.WriteLine(@"File changed: " + file.hash);
         }
+
         void MyFormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)

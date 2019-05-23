@@ -72,6 +72,15 @@ namespace P2P_lib{
         private async void connectionHandler(){
             while (this._listening){
                 try{
+
+                    while (!_server.Pending())
+                    {
+                        if(!this._listening)
+                        {
+                            break;
+                        }
+                    }
+
                     var client = await _server.AcceptTcpClientAsync();
                     client.ReceiveTimeout = 1000;
                     client.Client.ReceiveTimeout = 1000;

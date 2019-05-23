@@ -222,8 +222,8 @@ namespace Index_lib{
                                         _index[pair.Key].paths.Remove(e.FullPath);
                                         oldHash = null;
                                     } else{
-                                        _index.Remove(pair.Key);
                                         oldHash = pair.Key;
+                                        _index.Remove(pair.Key);
                                     }
                                 }
                             }
