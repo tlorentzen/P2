@@ -89,6 +89,7 @@ namespace P2P_lib
                     return false;
                 } 
                 if (!CheckMD5Chunk(this.GetChunkDirectory(path)+"\\"+chunk.hash,chunk.hash)){
+                    File.Delete(this.GetChunkDirectory(path) + "\\" + chunk.hash);
                     return false;
                 }
             }
@@ -130,7 +131,7 @@ namespace P2P_lib
                 using (var stream = File.OpenRead(filename))
                 {
                     var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "") == inputHash;
+                    return BitConverter.ToString(hash).Replace("-", "").Equals(inputHash);
                 }
             }
         }
