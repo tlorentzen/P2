@@ -68,12 +68,21 @@ namespace P2P_lib{
             base.Enqueue(item);
         }
 
+        /// <summary>
+        /// ICollection demands this method.
+        /// </summary>
         public void Clear(){ }
 
+        /// <summary>
+        /// ICollection demands this method.
+        /// </summary>
         public bool Contains(T item){
             return false;
         }
 
+        /// <summary>
+        /// ICollection demands this method.
+        /// </summary>
         public bool Remove(T item){
             return true;
         }
