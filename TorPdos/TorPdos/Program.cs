@@ -12,8 +12,6 @@ namespace TorPdos{
     static class Program{
         static Index _idx;
         static Network _p2P;
-        public static string publicUuid;
-        public static string filePath;
 
         /// <summary>
         /// The main method, which runs the program

@@ -26,7 +26,6 @@ namespace Splitter_lib{
             }
 
             List<string> currentFiles = new List<string>();
-
             // https://stackoverflow.com/questions/3967541/how-to-split-large-files-efficiently
 
             //If the file to be splitted exists it will begin splitting the file and hashing it

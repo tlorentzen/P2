@@ -97,7 +97,6 @@ namespace P2P_lib{
                 var uploadThread = new Thread(uploadManager.Run);
                 var downloadThread = new Thread(downloadManager.Run);
 
-
                 uploadThread.Start();
                 downloadThread.Start();
 

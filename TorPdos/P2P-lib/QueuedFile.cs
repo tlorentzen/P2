@@ -24,6 +24,7 @@ namespace P2P_lib{
         public QueuedFile(string hash) : this(hash, null, 0){
             this._ghost = false;
         }
+
         [JsonConstructor]
         private QueuedFile(string hash, string path, int copies,long fileSize, string filename, bool ghost, int port, Peer peer){
             _hash = hash;
