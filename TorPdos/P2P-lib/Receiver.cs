@@ -7,9 +7,9 @@ using System.Threading;
 using P2P_lib.Messages;
 using LogLevel = NLog.LogLevel;
 
-
 namespace P2P_lib{
     public class Receiver{
+
         /// <summary>
         /// This delegate can be used to point to methods without
         /// a return value and a BaseMessage (or subclass) as input.
@@ -19,7 +19,6 @@ namespace P2P_lib{
 
         private static NLog.Logger logger = NLog.LogManager.GetLogger("ReceiverLogging");
         private static NLog.Logger slogger = NLog.LogManager.GetLogger("SocketException");
-
 
         /// <summary>
         /// This event can cause any method which conforms
@@ -33,7 +32,6 @@ namespace P2P_lib{
         private bool _listening;
         private Thread _listener;
         private byte[] _buffer = new byte[1024];
-
 
         public Receiver(int port){
             this.ip = IPAddress.Any;

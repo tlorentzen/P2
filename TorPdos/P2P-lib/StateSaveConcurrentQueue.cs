@@ -5,14 +5,11 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-
 namespace P2P_lib{
     [Serializable]
     public class StateSaveConcurrentQueue<T> : ConcurrentQueue<T>, ICollection<T>{
         public bool IsReadOnly => false;
-
         public delegate void ElementQueued();
-
         public event ElementQueued ElementAddedToQueue;
 
         /// <summary>

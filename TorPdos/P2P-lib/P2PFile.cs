@@ -71,9 +71,7 @@ namespace P2P_lib
         /// <param name="chunk">Chunk to be added</param>
         /// <returns>Rather the chunk was removed</returns>
         public bool RemoveChunk(string chunk){
-            
             this.Chunks.Remove(Chunks.First(chunks => Hash.Equals(chunk)));
-            
             return true;
         }
 
