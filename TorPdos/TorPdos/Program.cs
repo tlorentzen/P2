@@ -214,17 +214,17 @@ namespace TorPdos{
         }
 
         /// <summary>
-        /// Handles the changes to a file.
+        /// Handles the changes to a file, by deleting the old file
+        /// from the network and uploading the new file.
         /// </summary>
         /// <param name="file">The changed file</param>
         private static void Idx_FileChanged(IndexFile idxfile, string oldHash){
             Console.WriteLine(@"File changed: " + idxfile.GetHash());
-
-            _p2P.DeleteFile(oldHash);
-
+            if(oldHash != null) {
+                _p2P.DeleteFile(oldHash);
+            }
             P2PFile file = new P2PFile(idxfile.GetHash());
             file.AddPath(idxfile.paths);
-
             _p2P.UploadFile(file);
         }
     }
