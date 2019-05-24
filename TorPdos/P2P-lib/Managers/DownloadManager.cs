@@ -135,7 +135,7 @@ namespace P2P_lib.Managers{
 
             DiskHelper.ConsoleWrite("File decompressed");
 
-            foreach (string filePath in fileInformation.Paths){
+            foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 if (!Directory.Exists(Path.GetDirectoryName(filePath))){
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 }

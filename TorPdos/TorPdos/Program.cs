@@ -188,7 +188,6 @@ namespace TorPdos{
         /// </summary>
         /// <param name="hash">The hash of the file to be deleted on the network</param>
         private static void Idx_FileDeleted(string hash){
-            Console.WriteLine(@"Deleted: " + hash);
             _p2P.DeleteFile(hash);
         }
 
