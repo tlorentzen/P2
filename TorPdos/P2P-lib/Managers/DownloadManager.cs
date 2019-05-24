@@ -145,11 +145,11 @@ namespace P2P_lib.Managers{
                 DiskHelper.ConsoleWrite($"File saved to: {filePath}");
             }
         }
+        
         /// <summary>
         /// Function shutdown.
         /// </summary>
         /// <returns>Returns true when shutdown successful</returns>
-
         public override bool Shutdown(){
             _isRunning = false;
             _waitHandle.Set();
