@@ -9,7 +9,7 @@ using System.Threading;
 using P2P_lib.Helpers;
 using P2P_lib.Messages;
 
-namespace P2P_lib{
+namespace P2P_lib.Handlers.FileHandlers{
     [Serializable]
     public class FileDownloader{
         private string _hash;
@@ -42,8 +42,8 @@ namespace P2P_lib{
             _peersToAsk = chunk.peers;
             Listener listener = new Listener(this._port);
 
-            foreach (var Peer in _peersToAsk){
-                if (!_peers.TryGetValue(Peer, out Peer currentPeer)){
+            foreach (var peer in _peersToAsk){
+                if (!_peers.TryGetValue(peer, out Peer currentPeer)){
                     break;
                 }
 
@@ -126,7 +126,7 @@ namespace P2P_lib{
         private bool Downloader(string fullFileName, int port){
 
             int timeout = 3000;
-            int timeout_counter = 0;
+            int timeoutCounter = 0;
             var server = new TcpListener(this._ip, port);
 
             try{
@@ -141,12 +141,12 @@ namespace P2P_lib{
 
             while (!server.Pending())
             {
-                if (timeout_counter >= timeout)
+                if (timeoutCounter >= timeout)
                 {
                     server.Stop();
                     return false;
                 }
-                timeout_counter++;
+                timeoutCounter++;
                 Thread.Sleep(5);
             }
 

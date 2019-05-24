@@ -7,21 +7,20 @@ using Compression;
 using Encryption;
 using Index_lib;
 using P2P_lib.Handlers;
+using P2P_lib.Handlers.FileHandlers;
 using P2P_lib.Helpers;
 using Splitter_lib;
 
 namespace P2P_lib.Managers{
     class DownloadManagerV2 : Manager{
         private bool _isRunning = true;
-        private readonly int _port;
         private readonly string _path;
         private readonly NetworkPorts _ports;
         private readonly ManualResetEvent _waitHandle;
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<P2PFile> _queue;
         private readonly Index _index;
-        private bool isStopped;
-        private static NLog.Logger _logger = NLog.LogManager.GetLogger("DownloadLogger");
+        private bool _isStopped;
         private string _fileHash;
         private FileDownloader _fileDownloader;
 
@@ -35,7 +34,7 @@ namespace P2P_lib.Managers{
             this._waitHandle = new ManualResetEvent(false);
             this._index = index;
             this._queue.ElementAddedToQueue += QueueElementAddedToQueue;
-            this._port = _ports.GetAvailablePort();
+            _ports.GetAvailablePort();
             this._fileDownloader = new FileDownloader(ports, _peers);
 
 
@@ -54,7 +53,7 @@ namespace P2P_lib.Managers{
         /// This is the function that needs to be run, for the DownloadManager to watch the queue.
         /// </summary>
         public void Run(){
-            isStopped = false;
+            _isStopped = false;
             while (_isRunning){
                 this._waitHandle.WaitOne();
 
@@ -68,16 +67,16 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
-                    foreach (string path in _index.GetEntry(file.Hash).paths){
+                    foreach (string path in _index.GetEntry(file.hash).paths){
                         if (File.Exists(path)){
                             return;
                         }
                     }
 
-                    _fileHash = file.Hash;
+                    _fileHash = file.hash;
 
-                    foreach (var chunk in file.Chunks){
-                        if (_fileDownloader.Fetch(chunk, file.Hash)) {
+                    foreach (var chunk in file.chunks){
+                        if (_fileDownloader.Fetch(chunk, file.hash)) {
                             continue;
                         }
                         this._queue.Enqueue(file);
@@ -93,7 +92,7 @@ namespace P2P_lib.Managers{
                 this._waitHandle.Reset();
             }
 
-            isStopped = true;
+            _isStopped = true;
         }
         
         /// <summary>
@@ -105,13 +104,13 @@ namespace P2P_lib.Managers{
         private void RestoreOriginalFile(string path, P2PFile fileInformation){
             DiskHelper.ConsoleWrite("File exist");
 
-            string pathWithoutExtension = (_path + @".hidden\incoming\" +  fileInformation.Hash);
+            string pathWithoutExtension = (_path + @".hidden\incoming\" +  fileInformation.hash);
 
             //Merge files
             var splitterLibrary = new SplitterLibrary();
 
 
-            if (!splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + fileInformation.Hash + @"\",
+            if (!splitterLibrary.MergeFiles(_path + @".hidden\incoming\" + fileInformation.hash + @"\",
                 pathWithoutExtension + ".aes",
                 fileInformation.GetChunksAsString())){
                 _queue.Enqueue(fileInformation);
@@ -137,7 +136,7 @@ namespace P2P_lib.Managers{
 
             foreach (string filePath in _index.GetEntry(_fileHash).paths){
                 if (!Directory.Exists(Path.GetDirectoryName(filePath))){
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath) ?? throw new NullReferenceException());
                 }
 
                 if (!File.Exists(filePath)){
@@ -156,7 +155,7 @@ namespace P2P_lib.Managers{
             _waitHandle.Set();
 
             Console.Write("Download thread stopping... ");
-            while (!this.isStopped){ }
+            while (!this._isStopped){ }
 
             Console.Write("Stopped!");
             return true;

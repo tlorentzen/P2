@@ -1,24 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
+using System.Timers;
 using Index_lib;
 using Newtonsoft.Json;
-using P2P_lib.Messages;
-using System.Timers;
 using P2P_lib.Handlers;
+using P2P_lib.Handlers.FileHandlers;
 using P2P_lib.Helpers;
 using P2P_lib.Managers;
+using P2P_lib.Messages;
+using Timer = System.Timers.Timer;
 using TypeCode = P2P_lib.Messages.TypeCode;
 
 namespace P2P_lib{
     public class Network{
         private const int NumOfThreads = 5;
         private readonly int _port;
-        private bool _running;
+        public bool running;
         private readonly Index _index;
         private Receiver _receive;
         private FileReceiver _fileReceiver;
@@ -32,7 +34,7 @@ namespace P2P_lib{
         private ConcurrentDictionary<string, P2PFile> _filesList = new ConcurrentDictionary<string, P2PFile>();
         private readonly List<Manager> _managers = new List<Manager>();
         private readonly NetworkPorts _ports = new NetworkPorts();
-        private System.Timers.Timer _pingTimer;
+        private Timer _pingTimer;
         private DeletionManager _deletionManager;
         private readonly string _localtionPath;
 
@@ -78,7 +80,7 @@ namespace P2P_lib{
         /// Starts the actual P2P network
         /// </summary>
         public void Start(){
-            this._running = true;
+            this.running = true;
 
             _receive = new Receiver(this._port);
             _receive.MessageReceived += Receive_MessageReceived;
@@ -104,7 +106,7 @@ namespace P2P_lib{
                 _managers.Add(downloadManager);
             }
 
-            _pingTimer = new System.Timers.Timer();
+            _pingTimer = new Timer();
             _pingTimer.Interval = 10000;
 
             // Hook up the Elapsed event for the timer. 
@@ -220,7 +222,7 @@ namespace P2P_lib{
         /// Loads the peer from peer list
         /// </summary>
         /// <returns>Returns true if there is a peerlist otherwise returns false</returns>
-        private bool LoadPeer(){
+        private void LoadPeer(){
             if (_peerFilePath != null && File.Exists(this._peerFilePath)){
                 string json = File.ReadAllText(this._peerFilePath ?? throw new NullReferenceException());
                 var input =
@@ -228,11 +230,7 @@ namespace P2P_lib{
                 foreach (var peer in input){
                     _peers.TryAdd(peer.Value.GetUuid(), peer.Value);
                 }
-
-                return true;
             }
-
-            return false;
         }
 
         /// <summary>
@@ -294,7 +292,7 @@ namespace P2P_lib{
 
                 _fileReceiver =
                     new FileReceiver(this._path + @".hidden\" + uuid + @"\" + uploadMessage.fullFilename + @"\",
-                        uploadMessage.chunkHash, uploadMessage.port, true);
+                        uploadMessage.chunkHash, uploadMessage.port);
                 _fileReceiver.Start();
                 uploadMessage.Send(replyPort);
             }
@@ -421,7 +419,7 @@ namespace P2P_lib{
             _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
             SaveLocationFile();
 
-            this._running = false;
+            this.running = false;
             _receive.Stop();
         }
 
@@ -429,7 +427,7 @@ namespace P2P_lib{
         /// Saves the location file
         /// </summary>
         /// <returns>Returns true</returns>
-        private bool SaveLocationFile(){
+        private void SaveLocationFile(){
             var settings = new JsonSerializerSettings
                 {TypeNameHandling = TypeNameHandling.Objects, Formatting = Formatting.Indented};
             string output = JsonConvert.SerializeObject(_filesList, settings);
@@ -439,26 +437,20 @@ namespace P2P_lib{
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
                 fileStream.Close();
             }
-
-            return true;
         }
 
         /// <summary>
         /// Function to load a location file where all the chunks are saved and at what peers
         /// </summary>
         /// <returns>Returns if the peer has the file</returns>
-        private bool LoadLocation(){
+        private void LoadLocation(){
             if (_filesList != null && File.Exists(this._localtionPath)){
                 var settings = new JsonSerializerSettings{TypeNameHandling = TypeNameHandling.Objects};
                 string json = File.ReadAllText(this._localtionPath ?? throw new NullReferenceException());
                 var input =
                     JsonConvert.DeserializeObject<ConcurrentDictionary<string, P2PFile>>(json, settings);
                 _filesList = input;
-
-                return true;
             }
-
-            return false;
         }
 
         /// <summary>
@@ -466,10 +458,10 @@ namespace P2P_lib{
         /// </summary>
         /// <param name="file">The file which needs to be uploaded</param>
         public void UploadFile(P2PFile file){
-            if (_filesList.ContainsKey(file.Hash)){
-                _filesList.TryRemove(file.Hash, out _);
+            if (_filesList.ContainsKey(file.hash)){
+                _filesList.TryRemove(file.hash, out _);
             }
-            _filesList.TryAdd(file.Hash, file);
+            _filesList.TryAdd(file.hash, file);
 
             this._upload.Enqueue(file);
         }

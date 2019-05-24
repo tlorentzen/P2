@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using P2P_lib.Handlers.FileHandlers;
 
 namespace P2P_lib.Managers{
     public class DeletionManager : Manager{
@@ -55,16 +56,16 @@ namespace P2P_lib.Managers{
                         return;
                     }
 
-                    int lastIndexInChunks = currentFile.Chunks.Count - 1;
+                    int lastIndexInChunks = currentFile.chunks.Count - 1;
                     for (int i = lastIndexInChunks; i >= 0; i--){
-                        if (!_fileDeleter.ChunkDeleter(currentFile.Chunks[i], currentFile)){
-                            _queue.Enqueue(currentFile.Hash);
+                        if (!_fileDeleter.ChunkDeleter(currentFile.chunks[i], currentFile)){
+                            _queue.Enqueue(currentFile.hash);
                             continue;
                         }
-                        Console.WriteLine(@"Deleted: " + currentFile.Hash);
+                        Console.WriteLine(@"Deleted: " + currentFile.hash);
 
-                        if (currentFile.Chunks.Count == 0){
-                            _filesList.TryRemove(currentFile.Hash, out _);
+                        if (currentFile.chunks.Count == 0){
+                            _filesList.TryRemove(currentFile.hash, out _);
 
                         }
                     }

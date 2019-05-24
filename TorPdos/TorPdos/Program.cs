@@ -52,17 +52,17 @@ namespace TorPdos{
                         _p2P.SavePeer();
                         _p2P.Stop();
                         running = false;
-                        Console.WriteLine("\nPress any button to quit!");
+                        Console.WriteLine(" \n Press any button to quit!");
                     } else{
                         //Handles the login of the user through the console.
                         while (IdHandler.GetUuid() == null){
                             if (console.StartsWith("login") && param.Length == 2){
                                 if (IdHandler.GetUuid(param[1]) == "Invalid Password"){
                                     Console.WriteLine();
-                                    Console.WriteLine("Invalid password, try again");
+                                    Console.WriteLine(@"Invalid password, try again");
                                     Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
                                     console = Console.ReadLine();
-                                    param = console.Split(' ');
+                                    if (console != null) param = console.Split(' ');
                                 }
 
                                 //Gives the opportunity to open the GUI for login.
@@ -70,7 +70,7 @@ namespace TorPdos{
                                 Application.Run(torPdos);
                             } else{
                                 Console.WriteLine();
-                                Console.WriteLine("Error! Try again");
+                                Console.WriteLine(@"Error! Try again");
                                 Console.WriteLine(@"Please login by typing: login [PASSWORD] or gui");
                                 console = Console.ReadLine();
                                 param = console.Split(' ');
@@ -149,11 +149,11 @@ namespace TorPdos{
                                 foreach (Peer peer in peers){
                                     RankingHandler rankingHandler = new RankingHandler();
                                     rankingHandler.GetRank(peer);
-                                    Console.WriteLine("(R:" + peer.Rating + ") " + peer.GetUuid() + @" - " +
+                                    Console.WriteLine(@"(R:" + peer.Rating + @") " + peer.GetUuid() + @" - " +
                                                       peer.GetIp() + @" - " +
                                                       (peer.IsOnline() ? "Online" : "Offline"));
-                                    Console.WriteLine("disk: " + Convert.ToInt32((peer.diskSpace / 1e+9)) +
-                                                      "GB | avgPing: " + peer.GetAverageLatency() + "\n");
+                                    Console.WriteLine(@"disk: " + Convert.ToInt32((peer.diskSpace / 1e+9)) +
+                                                      @"GB | avgPing: " + peer.GetAverageLatency() + "\n");
                                 }
                             } else{
                                 Console.WriteLine(@"The list is empty...");
@@ -209,7 +209,6 @@ namespace TorPdos{
         /// Handles the changes to a file, by deleting the old file
         /// from the network and uploading the new file.
         /// </summary>
-        /// <param name="file">The changed file</param>
         private static void Idx_FileChanged(IndexFile idxfile, string oldHash){
             Console.WriteLine(@"File changed: " + idxfile.GetHash());
             

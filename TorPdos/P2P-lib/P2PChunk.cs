@@ -9,18 +9,17 @@ namespace P2P_lib
     public class P2PChunk {
         public readonly string hash;
         public string originalHash;
-        public List<string> peers;
-        public int fetch_count = 0;
-        
-        public P2PChunk(string hash, string org_hash) {
+        public readonly List<string> peers;
+
+        public P2PChunk(string hash, string orgHash) {
             this.hash = hash;
-            this.originalHash = org_hash;
+            this.originalHash = orgHash;
             this.peers = new List<string>();
         }
 
-        public P2PChunk(string chunk_hash, string org_hash, List<string> peers){
-            this.hash = chunk_hash;
-            this.originalHash = org_hash;
+        public P2PChunk(string chunkHash, string orgHash, List<string> peers){
+            this.hash = chunkHash;
+            this.originalHash = orgHash;
             this.peers = peers;
         }
         
@@ -28,7 +27,6 @@ namespace P2P_lib
         private P2PChunk(string hash, List<string> peers,int fetchCount){
             this.hash = hash;
             this.peers = peers;
-            fetch_count = fetchCount;
         }
 
         /// <summary>
@@ -61,10 +59,10 @@ namespace P2P_lib
         /// <summary>
         /// Gets the path of the file.
         /// </summary>
-        /// <param name="base_path">The base path to where the chunks are stored.</param>
+        /// <param name="basePath">The base path to where the chunks are stored.</param>
         /// <returns></returns>
-        public string Path(string base_path){
-            return base_path + @"\" + this.originalHash + this.hash;
+        public string Path(string basePath){
+            return basePath + @"\" + this.originalHash + this.hash;
         }
     }
 }

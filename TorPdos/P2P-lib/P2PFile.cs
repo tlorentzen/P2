@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
-using P2P_lib.Helpers;
 
 namespace P2P_lib
 {
     [Serializable]
     public class P2PFile
     {
-        public readonly string Hash;
-        public readonly List<string> Paths;
-        public readonly List<P2PChunk> Chunks;
+        public readonly string hash;
+        public readonly List<string> paths;
+        public readonly List<P2PChunk> chunks;
 
         public P2PFile(string hash){
-            this.Hash = hash;
-            this.Paths = new List<string>();
-            this.Chunks = new List<P2PChunk>();
+            this.hash = hash;
+            this.paths = new List<string>();
+            this.chunks = new List<P2PChunk>();
         }
 
         [JsonConstructor]        
-        private P2PFile(string hash, List<P2PChunk> Chunks, List<string> paths){
-            this.Hash = hash;
-            this.Paths = paths;
-            this.Chunks = Chunks;
+        private P2PFile(string hash, List<P2PChunk> chunks, List<string> paths){
+            this.hash = hash;
+            this.paths = paths;
+            this.chunks = chunks;
         }
 
         /// <summary>
@@ -33,16 +31,16 @@ namespace P2P_lib
         /// </summary>
         /// <param name="path">Path to be added to the file</param>
         public void AddPath(string path){
-            this.Paths.Add(path);
+            this.paths.Add(path);
         }
 
         /// <summary>
         /// Adds a list of paths to the file
         /// </summary>
-        /// <param name="paths">List of paths to be added to the file</param>
-        public void AddPath(List<string> paths){
-            foreach (string path in paths) {
-                this.Paths.Add(path);
+        /// <param name="pathList">List of paths to be added to the file</param>
+        public void AddPath(List<string> pathList){
+            foreach (string path in pathList) {
+                this.paths.Add(path);
             }
         }
 
@@ -51,18 +49,18 @@ namespace P2P_lib
         /// </summary>
         /// <param name="chunk">Chunk to be added to the file</param>
         public void AddChunk(P2PChunk chunk){
-            chunk.originalHash = this.Hash;
-            this.Chunks.Add(chunk);
+            chunk.originalHash = this.hash;
+            this.chunks.Add(chunk);
         }
 
         /// <summary>
         /// Adds a list of chunks to the file
         /// </summary>
-        /// <param name="chunks">List of chunks to be added to the file</param>
+        /// <param name="chunkList">List of chunks to be added to the file</param>
         /// <returns>Rather the chunks where added</returns>
-        public bool AddChunk(List<string> chunks){
-            foreach(String chunk_hash in chunks){
-                this.Chunks.Add(new P2PChunk(chunk_hash, this.Hash));
+        public bool AddChunk(List<string> chunkList){
+            foreach(String chunkHash in chunkList){
+                this.chunks.Add(new P2PChunk(chunkHash, this.hash));
             }
 
             return true;
@@ -75,14 +73,14 @@ namespace P2P_lib
         /// <returns>Rather the chunk was removed</returns>
         public bool RemoveChunk(string chunkHash){
             P2PChunk correctChunk = null;
-            foreach (P2PChunk currentChunkInListOfChunks in this.Chunks) {
+            foreach (P2PChunk currentChunkInListOfChunks in this.chunks) {
                 if (currentChunkInListOfChunks.hash.Equals(chunkHash)) {
                     correctChunk = currentChunkInListOfChunks;
                     break;
                 }
             }
             if(correctChunk != null) {
-                this.Chunks.Remove(correctChunk);
+                this.chunks.Remove(correctChunk);
                 return true;
             }
             return false;
@@ -94,7 +92,7 @@ namespace P2P_lib
         /// <param name="path">Path to the folder of the downloadedchunks</param>
         /// <returns>Rather all the chunks have been downloaded</returns>
         public bool Downloaded(string path){
-            foreach(P2PChunk chunk in this.Chunks){
+            foreach(P2PChunk chunk in this.chunks){
                 if(!chunk.Exist(this.GetChunkDirectory(path))){
                     return false;
                 } 
@@ -112,7 +110,7 @@ namespace P2P_lib
         /// <returns>A list consisting of all chnuk hashes of the file</returns>
         public List<string> GetChunksAsString(){
             List<string> output=new List<string>();
-            foreach (var chunk in this.Chunks){
+            foreach (var chunk in this.chunks){
                 output.Add(chunk.hash);
             }
 
@@ -125,7 +123,7 @@ namespace P2P_lib
         /// <param name="path">Path of the downloaded files</param>
         /// <returns>The path to the folder with downloaded chunks</returns>
         private string GetChunkDirectory(string path){
-            return path + this.Hash;
+            return path + this.hash;
         }
         
         /// <summary>
@@ -140,8 +138,8 @@ namespace P2P_lib
             {
                 using (var stream = File.OpenRead(filename))
                 {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").Equals(inputHash);
+                    var fileHash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(fileHash).Replace("-", "").Equals(inputHash);
                 }
             }
         }

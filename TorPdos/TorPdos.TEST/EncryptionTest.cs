@@ -1,5 +1,4 @@
-﻿using System;
-using Encryption;
+﻿using Encryption;
 using System.IO;
 using NUnit.Framework;
 

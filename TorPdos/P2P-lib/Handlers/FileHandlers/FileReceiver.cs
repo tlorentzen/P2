@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Net;
-using System.Threading;
 using System.IO;
-using P2P_lib;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 using P2P_lib.Helpers;
 
-namespace P2P_lib{
+namespace P2P_lib.Handlers.FileHandlers{
     public class FileReceiver{
         private IPAddress _ip;
         private string _path;
@@ -17,7 +16,7 @@ namespace P2P_lib{
         private readonly string _filename;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
 
-        public FileReceiver(string path, string filename, int port, bool hidden = false, int bufferSize = 1024){
+        public FileReceiver(string path, string filename, int port, int bufferSize = 1024){
             this._ip = IPAddress.Any;
             this._buffer = new byte[bufferSize];
             this._filename = filename;

@@ -4,8 +4,8 @@ using System.Net.NetworkInformation;
 
 namespace P2P_lib {
     public class NetworkPorts {
-        private List<int> ports = new List<int>();
-        private int port = 0;
+        private readonly List<int> _ports = new List<int>();
+        private int _port;
         /// <summary>
         /// Finds a port not in use, within the specified range.
         /// </summary>
@@ -13,18 +13,18 @@ namespace P2P_lib {
         /// <param name="endRange">End of portrange.</param>
         /// <returns>A free port or 0, if non is available within the range.</returns>
         public int GetAvailablePort(int beginRange = 50000, int endRange = 65535) {
-            if (port == 0){
-                port = beginRange;
+            if (_port == 0){
+                _port = beginRange;
             }
 
-            port++;
+            _port++;
             
-            for (int i = port; i <= endRange; i++) {
-                if (!ports.Contains(i) && IsPortAvailable(i)) {
-                    if(port >= endRange){
-                        port = beginRange;
+            for (int i = _port; i <= endRange; i++) {
+                if (!_ports.Contains(i) && IsPortAvailable(i)) {
+                    if(_port >= endRange){
+                        _port = beginRange;
                     }
-                    ports.Add(i);
+                    _ports.Add(i);
                     return i;
                 }
             }
@@ -36,8 +36,8 @@ namespace P2P_lib {
         /// </summary>
         /// <param name="port">The port to be released.</param>
         public void Release(int port) {
-            if (this.ports.Contains(port)) {
-                this.ports.Remove(port);
+            if (this._ports.Contains(port)) {
+                this._ports.Remove(port);
             }
         }
 

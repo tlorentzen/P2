@@ -52,7 +52,6 @@
     <Compile Include="EncryptionTest.cs" />
     <Compile Include="FileSplitterTest.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="HiddenFolderTest.cs" />
     <Compile Include="IdHandlerTest.cs" />
     <Compile Include="IndexTest.cs" />
     <Compile Include="NetworkTest.cs" />

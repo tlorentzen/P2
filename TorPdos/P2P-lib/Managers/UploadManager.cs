@@ -7,9 +7,9 @@ using System.Threading;
 using Compression;
 using Encryption;
 using Index_lib;
-using NLog;
 using Splitter_lib;
 using P2P_lib.Handlers;
+using P2P_lib.Handlers.FileHandlers;
 using P2P_lib.Helpers;
 
 namespace P2P_lib.Managers{
@@ -20,7 +20,6 @@ namespace P2P_lib.Managers{
         private readonly ConcurrentDictionary<string, Peer> _peers;
         private readonly StateSaveConcurrentQueue<P2PFile> _queue;
         private readonly string _path;
-        private readonly Logger _logger = LogManager.GetLogger("UploadLogger");
         private bool _isStopped;
         private readonly HiddenFolder _hiddenFolder;
 
@@ -75,8 +74,8 @@ namespace P2P_lib.Managers{
                         break;
                     }
 
-                    string filePath = file.Paths[0];
-                    string compressedFilePath = this._path + @".hidden\" + file.Hash;
+                    string filePath = file.paths[0];
+                    string compressedFilePath = this._path + @".hidden\" + file.hash;
 
                     // Compress file
                     bool compressionCompleted = Compressor.CompressFile(filePath, compressedFilePath);
@@ -104,13 +103,13 @@ namespace P2P_lib.Managers{
                     var splitter = new SplitterLibrary();
 
                     List<string> chunks =
-                        splitter.SplitFile(encryptedFilePath, file.Hash, _path + @".hidden\splitter\");
+                        splitter.SplitFile(encryptedFilePath, file.hash, _path + @".hidden\splitter\");
                     file.AddChunk(chunks);
 
                     FileUploader uploader = new FileUploader(_ports, _peers);
 
                     int i = 0;
-                    foreach (var chunk in file.Chunks){
+                    foreach (var chunk in file.chunks){
                         string path = _path + @".hidden\splitter\" + chunk.hash;
 
                         //3 is used, because the network is relatively small. 10 is the default.
@@ -126,7 +125,7 @@ namespace P2P_lib.Managers{
 
                     if (uploaded){
                         Console.WriteLine();
-                        DiskHelper.ConsoleWrite($"The file {file.Hash} was successfully sent to all \n");
+                        DiskHelper.ConsoleWrite($"The file {file.hash} was successfully sent to all \n");
                     }
                 }
 

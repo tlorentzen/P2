@@ -8,7 +8,7 @@ namespace P2P_lib{
     public class Listener{
         private TcpListener _listener;
         private int _buffer_size;
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetLogger("ListenerLogger");
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("ListenerLogger");
         public Listener(int port) : this(port, 1024){ }
 
         public Listener(int port, int bufferSize){
@@ -19,7 +19,7 @@ namespace P2P_lib{
                 _listener.AllowNatTraversal(true);
             }
             catch (Exception e){
-                _logger.Fatal(e);
+                Logger.Fatal(e);
             }
         }
 
@@ -35,31 +35,31 @@ namespace P2P_lib{
         public bool SendAndAwaitResponse<T>(ref T msg, int timeout) where T : BaseMessage{
             try{
                 bool success = true;
-                int timeout_counter = 0;
+                int timeoutCounter = 0;
                 _listener.Start();
                 msg.Send();
 
                 while (!_listener.Pending()){
-                    if (timeout_counter >= timeout){
+                    if (timeoutCounter >= timeout){
                         _listener.Stop();
                         msg = null;
                         return false;
                     }
 
-                    timeout_counter++;
+                    timeoutCounter++;
                     System.Threading.Thread.Sleep(5);
                 }
 
                 var client = _listener.AcceptTcpClient();
                 client.ReceiveTimeout = timeout;
 
-                byte[] _buffer = new byte[this._buffer_size];
+                byte[] buffer = new byte[this._buffer_size];
 
                 using (NetworkStream stream = client.GetStream()){
                     int i;
                     using (MemoryStream memory = new MemoryStream()){
-                        while ((i = stream.Read(_buffer, 0, _buffer.Length)) > 0){
-                            memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
+                        while ((i = stream.Read(buffer, 0, buffer.Length)) > 0){
+                            memory.Write(buffer, 0, Math.Min(i, buffer.Length));
                         }
 
                         memory.Seek(0, SeekOrigin.Begin);
@@ -83,11 +83,11 @@ namespace P2P_lib{
                 return success;
             }
             catch (SocketException e){
-                _logger.Warn(e);
+                Logger.Warn(e);
                 return false;
             }
             catch (IOException e){
-                _logger.Warn(e);
+                Logger.Warn(e);
                 return false;
             }
         }

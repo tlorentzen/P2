@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 
-namespace P2P_lib{
+namespace P2P_lib.Handlers.FileHandlers{
     public class ChunkSender{
         IPAddress ip;
         private int port;

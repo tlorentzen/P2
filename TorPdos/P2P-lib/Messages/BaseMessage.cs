@@ -16,7 +16,7 @@ namespace P2P_lib.Messages{
 
     [Serializable]
     public abstract class BaseMessage{
-        private string toUuid;
+        private string _toUuid;
         public string fromUuid;
         public string to;
         public string from;
@@ -31,7 +31,7 @@ namespace P2P_lib.Messages{
         public abstract string GetHash();
 
         public BaseMessage(Peer to){
-            this.toUuid = to.GetUuid();
+            this._toUuid = to.GetUuid();
             this.to = to.GetIp();
             this.fromUuid = IdHandler.GetUuid();
             this.from = NetworkHelper.GetLocalIpAddress();
@@ -121,8 +121,8 @@ namespace P2P_lib.Messages{
             string fromIp = this.from;
             this.from = this.to;
             this.to = fromIp;
-            string inputFromUuid = this.toUuid;
-            this.toUuid = this.fromUuid;
+            string inputFromUuid = this._toUuid;
+            this._toUuid = this.fromUuid;
             this.fromUuid = inputFromUuid;
         }
     }

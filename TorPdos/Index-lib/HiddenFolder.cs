@@ -4,7 +4,6 @@ using System.IO;
 namespace Index_lib{
     public class HiddenFolder{
         private readonly string _path;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("HiddenFolderLogger");
 
         /// <summary>
         /// Creates a hidden folder

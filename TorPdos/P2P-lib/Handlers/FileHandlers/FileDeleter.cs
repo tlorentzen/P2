@@ -1,24 +1,17 @@
 using System.Collections.Concurrent;
 using System.Net;
-using NLog;
 using P2P_lib.Helpers;
 using P2P_lib.Messages;
 using TypeCode = P2P_lib.Messages.TypeCode;
 
-namespace P2P_lib{
+namespace P2P_lib.Handlers.FileHandlers{
     public class FileDeleter{
         private readonly ConcurrentDictionary<string, Peer> _peers;
-        private NetworkPorts _ports;
         private readonly int _port;
-        private readonly IPAddress _ip;
-        private readonly byte[] _buffer = new byte[1024];
-        private static readonly Logger Logger = LogManager.GetLogger("FileDeleter");
 
         public FileDeleter(ConcurrentDictionary<string, Peer> peers, NetworkPorts ports){
-            _ports = ports;
             _peers = peers;
-            _port = _ports.GetAvailablePort();
-            _ip = IPAddress.Any;
+            _port = ports.GetAvailablePort();
         }
 
         /// <summary>
@@ -42,7 +35,7 @@ namespace P2P_lib{
                         statusCode = StatusCode.OK,
                         port = _port,
                         fileHash = currentFileChunk.hash,
-                        fullFileHash = currentFile.Hash
+                        fullFileHash = currentFile.hash
                     };
 
                     //Sends the message and waits for a response,
