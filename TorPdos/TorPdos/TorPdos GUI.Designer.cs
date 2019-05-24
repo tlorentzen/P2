@@ -334,7 +334,6 @@ namespace TorPdos
             btnOkay.Click += BtnOkayClick;
             btnAddPeer.Click += BtnAddPeerClick;
         }
-
         void IndexEventHandlers()
         {
             _idx.FileAdded += IdxFileAdded;
@@ -342,12 +341,6 @@ namespace TorPdos
             _idx.FileDeleted += IdxFileDeleted;
             _idx.FileMissing += IdxFileMissing;
         }
-
-        private void BtnDownloadClick(object sender, EventArgs e)
-        {
-            //_p2P.DownloadAllFiles();
-        }
-
         private void BtnAddPeerClick(object sender, EventArgs e)
         {
             Controls.Clear();
