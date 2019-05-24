@@ -46,22 +46,17 @@ namespace P2P_lib{
                     //which will then overwrite the original sent message
                     if (listener.SendAndAwaitResponse(ref deletionMessage, 2000)) {
                         if (deletionMessage.type.Equals(TypeCode.RESPONSE)) {
-                            switch (deletionMessage.statusCode) {
-                                case StatusCode.ACCEPTED:
-                                case StatusCode.FILE_NOT_FOUND:
-                                    currentFileChunk.RemovePeer(deletionMessage.fromUuid);
-                                    if (currentFileChunk.peers.Count == 0) {
-                                        currentFile.RemoveChunk(currentFileChunk.hash);
-                                    }
-
-                                    DiskHelper.ConsoleWrite("File not found at peer");
-                                    return false;
+                            currentFileChunk.RemovePeer(deletionMessage.fromUuid);
+                            if (currentFileChunk.peers.Count == 0) {
+                                currentFile.RemoveChunk(currentFileChunk.hash);
+                            }
+                            if (deletionMessage.statusCode.Equals(StatusCode.FILE_NOT_FOUND)) {
+                                DiskHelper.ConsoleWrite("File not found at peer");
                             }
                         }
                     }
                 }
             }
-
             return true;
         }
     }

@@ -77,7 +77,9 @@ namespace P2P_lib.Managers{
                     _fileHash = file.Hash;
 
                     foreach (var chunk in file.Chunks){
-                        if (_fileDownloader.Fetch(chunk, file.Hash)) continue;
+                        if (_fileDownloader.Fetch(chunk, file.Hash)) {
+                            continue;
+                        }
                         this._queue.Enqueue(file);
                         break;
                     }

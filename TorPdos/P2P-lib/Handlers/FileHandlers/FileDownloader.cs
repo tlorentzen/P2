@@ -90,7 +90,6 @@ namespace P2P_lib{
                         } else if (download.statusCode == StatusCode.FILE_NOT_FOUND){
                             Console.WriteLine("File not found at peer.");
                             chunk.peers.Remove(download.fromUuid);
-                            //TODO Remove peer from location DB
                         }
                     }
                 }
