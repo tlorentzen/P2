@@ -193,7 +193,7 @@ namespace TorPdos{
         }
 
         /// <summary>
-        /// Handles new files added by the user by uplaoding
+        /// Handles new files added by the user by uploading
         /// them to the network.
         /// </summary>
         /// <param name="idxfile">The file to be uploaded.</param>
@@ -215,6 +215,7 @@ namespace TorPdos{
             Console.WriteLine(@"File changed: " + idxfile.GetHash());
             
             //Implementation not finished. Therefor the leftover code.
+            
             //if (oldHash != null){
             //    _p2P.DeleteFile(oldHash);
             //}
