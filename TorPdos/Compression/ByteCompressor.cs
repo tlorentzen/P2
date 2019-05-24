@@ -114,12 +114,10 @@ namespace Compression{
                     logger.Error(e);
                     return false;
                 }
-            }
-            else{
+            } else{
                 logger.Fatal(new FileNotFoundException());
                 return false;
             }
-
             return true;
         }
 
