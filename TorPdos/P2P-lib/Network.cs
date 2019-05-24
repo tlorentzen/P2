@@ -192,8 +192,8 @@ namespace P2P_lib{
                 message.peers = outgoing;
                 message.Send();
             } else{
+               
                 // Rechieved response
-
                 foreach (Peer incomingPeer in message.peers){
                     if (InPeerList(incomingPeer.GetUuid(), _peers)) break;
 
