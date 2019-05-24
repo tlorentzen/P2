@@ -30,7 +30,7 @@ namespace P2P_lib.Handlers
             double diskSpace = diskSpaceBytes / 1e+9; //Convert to GB
 
             int score =
-                diskSpace < 0 ? 0:
+                diskSpace < 1 ? 0:
                 diskSpace < 5 ? 10000 : 
                 diskSpace < 10 ? 20000 : 
                 30000;

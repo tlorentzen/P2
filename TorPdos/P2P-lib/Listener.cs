@@ -67,13 +67,18 @@ namespace P2P_lib{
                         memory.Read(messageBytes, 0, messageBytes.Length);
                         memory.Close();
 
-                        var baseMsg = BaseMessage.FromByteArray(messageBytes);
+                        try{
+                            var baseMsg = BaseMessage.FromByteArray(messageBytes);
 
-                        if (baseMsg.GetMessageType() == typeof(T) && baseMsg.type == Messages.TypeCode.RESPONSE){
-                            msg = (T) baseMsg;
-                            success = true;
-                        } else{
-                            success = false;
+                            if (baseMsg.GetMessageType() == typeof(T) && baseMsg.type == Messages.TypeCode.RESPONSE){
+                                msg = (T) baseMsg;
+                                success = true;
+                            } else{
+                                success = false;
+                            }
+                        }
+                        catch (Exception){
+                            return false;
                         }
                     }
                 }
