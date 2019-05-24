@@ -7,8 +7,7 @@ using Newtonsoft.Json;
 namespace P2P_lib
 {
     [Serializable]
-    public class P2PFile
-    {
+    public class P2PFile{
         public readonly string hash;
         public readonly List<string> paths;
         public readonly List<P2PChunk> chunks;
@@ -39,7 +38,7 @@ namespace P2P_lib
         /// </summary>
         /// <param name="pathList">List of paths to be added to the file</param>
         public void AddPath(List<string> pathList){
-            foreach (string path in pathList) {
+            foreach (string path in pathList){
                 this.paths.Add(path);
             }
         }
@@ -73,13 +72,14 @@ namespace P2P_lib
         /// <returns>Rather the chunk was removed</returns>
         public bool RemoveChunk(string chunkHash){
             P2PChunk correctChunk = null;
-            foreach (P2PChunk currentChunkInListOfChunks in this.chunks) {
-                if (currentChunkInListOfChunks.hash.Equals(chunkHash)) {
+            foreach (P2PChunk currentChunkInListOfChunks in this.chunks){
+                if (currentChunkInListOfChunks.hash.Equals(chunkHash)){
                     correctChunk = currentChunkInListOfChunks;
                     break;
                 }
             }
-            if(correctChunk != null) {
+
+            if(correctChunk != null){
                 this.chunks.Remove(correctChunk);
                 return true;
             }
@@ -96,6 +96,7 @@ namespace P2P_lib
                 if(!chunk.Exist(this.GetChunkDirectory(path))){
                     return false;
                 } 
+
                 if (!CheckMD5Chunk(this.GetChunkDirectory(path)+"\\"+chunk.hash,chunk.hash)){
                     File.Delete(this.GetChunkDirectory(path) + "\\" + chunk.hash);
                     return false;
@@ -132,12 +133,9 @@ namespace P2P_lib
         /// <param name="filename">File path</param>
         /// <param name="inputHash">Hash of the chunk</param>
         /// <returns>True if they are equal</returns>
-        private bool CheckMD5Chunk(string filename,string inputHash)
-        {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(filename))
-                {
+        private bool CheckMD5Chunk(string filename,string inputHash){
+            using (var md5 = MD5.Create()){
+                using (var stream = File.OpenRead(filename)){
                     var fileHash = md5.ComputeHash(stream);
                     return BitConverter.ToString(fileHash).Replace("-", "").Equals(inputHash);
                 }

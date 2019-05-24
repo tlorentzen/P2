@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace P2P_lib
-{
+namespace P2P_lib{
     [Serializable]
-    public class P2PChunk {
+    public class P2PChunk{
         public readonly string hash;
         public string originalHash;
         public readonly List<string> peers;
 
-        public P2PChunk(string hash, string orgHash) {
+        public P2PChunk(string hash, string orgHash){
             this.hash = hash;
             this.originalHash = orgHash;
             this.peers = new List<string>();

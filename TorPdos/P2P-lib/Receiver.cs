@@ -77,7 +77,6 @@ namespace P2P_lib{
                             break;
                         }
                     }
-
                     var client = await _server.AcceptTcpClientAsync();
                     client.ReceiveTimeout = 1000;
                     client.Client.ReceiveTimeout = 1000;
@@ -90,7 +89,6 @@ namespace P2P_lib{
                             {
                                 memory.Write(_buffer, 0, Math.Min(i, _buffer.Length));
                             }
-
                             memory.Seek(0, SeekOrigin.Begin);
                             byte[] messageBytes = new byte[memory.Length];
                             memory.Read(messageBytes, 0, messageBytes.Length);
@@ -100,7 +98,6 @@ namespace P2P_lib{
                             if (MessageReceived != null) MessageReceived.Invoke(message);
                         }
                     }
-
                     client.Close();
                 }
                 catch (SocketException e){
