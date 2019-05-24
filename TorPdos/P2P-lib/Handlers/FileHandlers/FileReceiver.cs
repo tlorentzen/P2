@@ -16,7 +16,7 @@ namespace P2P_lib.Handlers.FileHandlers{
         private readonly string _filename;
         private static NLog.Logger logger = NLog.LogManager.GetLogger("FileReceiver");
 
-        public FileReceiver(string path, string filename, int port, int bufferSize = 1024){
+        public FileReceiver(string path, string filename, int port,bool hidden = false, int bufferSize = 1024){
             this._ip = IPAddress.Any;
             this._buffer = new byte[bufferSize];
             this._filename = filename;
