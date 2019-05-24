@@ -34,6 +34,9 @@ namespace P2P_lib{
             //Sends a delete message to every peer with the chunk
             for (int i = lastIndex; i >= 0; i--) {
                 if (_peers.TryGetValue(currentFileChunk.peers[i], out Peer currentReceiver)) {
+                    if (!currentReceiver.IsOnline()){
+                        return false;
+                    }
                     var deletionMessage = new FileDeletionMessage(currentReceiver) {
                         type = TypeCode.REQUEST,
                         statusCode = StatusCode.OK,

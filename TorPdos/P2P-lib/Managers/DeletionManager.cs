@@ -59,7 +59,9 @@ namespace P2P_lib.Managers{
                     for (int i = lastIndexInChunks; i >= 0; i--){
                         if (!_fileDeleter.ChunkDeleter(currentFile.Chunks[i], currentFile)){
                             _queue.Enqueue(currentFile.Hash);
+                            continue;
                         }
+                        Console.WriteLine(@"Deleted: " + currentFile.Hash);
 
                         if (currentFile.Chunks.Count == 0){
                             _filesList.TryRemove(currentFile.Hash, out _);

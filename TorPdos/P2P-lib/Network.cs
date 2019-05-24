@@ -419,17 +419,17 @@ namespace P2P_lib{
             _upload.Save(_path + @".hidden\uploadQueue.json");
             _download.Save(_path + @".hidden\downloadQueue.json");
             _deletionQueue.Save(_path + @".hidden\deletionQueue.json");
-            SaveIndexFile();
+            SaveLocationFile();
 
             this._running = false;
             _receive.Stop();
         }
 
         /// <summary>
-        /// Saves the index file
+        /// Saves the location file
         /// </summary>
         /// <returns>Returns true</returns>
-        private bool SaveIndexFile(){
+        private bool SaveLocationFile(){
             var settings = new JsonSerializerSettings
                 {TypeNameHandling = TypeNameHandling.Objects, Formatting = Formatting.Indented};
             string output = JsonConvert.SerializeObject(_filesList, settings);
