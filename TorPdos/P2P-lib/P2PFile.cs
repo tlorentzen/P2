@@ -114,7 +114,6 @@ namespace P2P_lib
             foreach (var chunk in this.chunks){
                 output.Add(chunk.hash);
             }
-
             return output;
         }
 
