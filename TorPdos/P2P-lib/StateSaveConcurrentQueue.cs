@@ -53,7 +53,6 @@ namespace P2P_lib{
                 fileStream.Write(jsonIndex, 0, jsonIndex.Length);
                 fileStream.Close();
             }
-
             return true;
         }
 

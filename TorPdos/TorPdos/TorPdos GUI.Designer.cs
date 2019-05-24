@@ -8,10 +8,8 @@ using P2P_lib;
 using P2P_lib.Handlers;
 using P2P_lib.Helpers;
 
-namespace TorPdos
-{ 
-    public class MyForm : Form
-    {
+namespace TorPdos{ 
+    public class MyForm : Form{
         private static readonly string
             logoColour = "#4D5762",
             backgroundColour = "#FBF9FF",
@@ -47,8 +45,7 @@ namespace TorPdos
         public Network _p2P;
         public Index _idx;
 
-        Label lblPassword = new Label
-        {
+        Label lblPassword = new Label{
             Location = new Point(leftAlign, posFirst),
             Height = 25,
             Width = 150,
@@ -56,8 +53,7 @@ namespace TorPdos
             Text = "Password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblConfirmPassword = new Label()
-        {
+        Label lblConfirmPassword = new Label(){
             Location = new Point(leftAlign, posSecond),
             Height = 25,
             Width = 150,
@@ -65,8 +61,7 @@ namespace TorPdos
             Text = "Confirm password:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblBrowse = new Label()
-        {
+        Label lblBrowse = new Label(){
             Location = new Point(leftAlign, posSecond),
             Height = 20,
             Width = 150,
@@ -74,8 +69,7 @@ namespace TorPdos
             Text = "Choose path:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblYouDidIt = new Label()
-        {
+        Label lblYouDidIt = new Label(){
             Location = new Point(100, 100),
             Height = 40,
             Width = 250,
@@ -83,8 +77,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(lblColour),
             Font = new Font("Consolas", 20, FontStyle.Regular)
         };
-        Label lblNope = new Label()
-        {
+        Label lblNope = new Label(){
             Location = new Point(leftAlign, posThird),
             Height = 40,
             Width = 350,
@@ -92,8 +85,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(errorColour),
             Font = new Font("Consolas", textSizeDefault, FontStyle.Regular)
         };
-        Label lblNope2 = new Label()
-        {
+        Label lblNope2 = new Label(){
             Location = new Point(50, 110),
             Height = 40,
             Width = 350,
@@ -101,8 +93,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 15, FontStyle.Regular)
         };
-        Label lblCreate = new Label()
-        {
+        Label lblCreate = new Label(){
             Location = new Point(275, 240),
             Height = 100,
             Width = 200,
@@ -110,8 +101,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(btnColour),
             Font = new Font("Consolas", 8, FontStyle.Regular)
         };
-        Label lblLogOut = new Label
-        {
+        Label lblLogOut = new Label{
             Location = new Point(300, 230),
             Height = 40,
             Width = 150,
@@ -119,8 +109,7 @@ namespace TorPdos
             Text = "Log out",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblUUID = new Label
-        {
+        Label lblUUID = new Label{
             Location = new Point(leftAlign, posFirst),
             Height = 25,
             Width = 150,
@@ -128,8 +117,7 @@ namespace TorPdos
             Text = "UUID:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        Label lblIP = new Label()
-        {
+        Label lblIP = new Label(){
             Location = new Point(leftAlign, posSecond),
             Height = 25,
             Width = 150,
@@ -137,8 +125,7 @@ namespace TorPdos
             Text = "IP-address:",
             ForeColor = ColorTranslator.FromHtml(lblColour)
         };
-        TextBox txtPassword = new TextBox()
-        {
+        TextBox txtPassword = new TextBox(){
             Location = new Point(leftAlign, posFirst + 20),
             Height = boxHeight,
             Width = boxWidth,
@@ -147,8 +134,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtConfirmPassword = new TextBox()
-        {
+        TextBox txtConfirmPassword = new TextBox(){
             Location = new Point(leftAlign, posSecond + 20),
             Height = boxHeight,
             Width = boxWidth,
@@ -157,8 +143,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtPath = new TextBox()
-        {
+        TextBox txtPath = new TextBox(){
             Location = new Point(leftAlign, posSecond + 20),
             Height = boxHeight,
             Width = boxWidth - boxBtnWidth,
@@ -167,8 +152,7 @@ namespace TorPdos
             BackColor = ColorTranslator.FromHtml(txtColour),
             Text = ""
         };
-        TextBox txtUUID = new TextBox()
-        {
+        TextBox txtUUID = new TextBox(){
             Location = new Point(leftAlign, posFirst + 20),
             Height = boxHeight,
             Width = boxWidth,
@@ -176,8 +160,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        TextBox txtIP = new TextBox()
-        {
+        TextBox txtIP = new TextBox(){
             Location = new Point(leftAlign, posSecond + 20),
             Height = boxHeight,
             Width = boxWidth,
@@ -185,8 +168,7 @@ namespace TorPdos
             ForeColor = ColorTranslator.FromHtml(backgroundColour),
             BackColor = ColorTranslator.FromHtml(txtColour)
         };
-        Button btnConfirmPath = new Button()
-        {
+        Button btnConfirmPath = new Button(){
             Location = new Point(posConfirmW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -194,8 +176,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnLogin = new Button()
-        {
+        Button btnLogin = new Button(){
             Location = new Point(posConfirmW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -203,8 +184,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnChangePath = new Button()
-        {
+        Button btnChangePath = new Button(){
             Location = new Point(posCancelW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -212,8 +192,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnCreate = new Button()
-        {
+        Button btnCreate = new Button(){
             Location = new Point(posConfirmW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -221,8 +200,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnBrowse = new Button()
-        {
+        Button btnBrowse = new Button(){
             Location = new Point(leftAlign + boxWidth - boxBtnWidth, posSecond + 20),
             Width = boxBtnWidth,
             Height = 27,
@@ -230,8 +208,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeInput, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
-        Button btnLogout = new Button()
-        {
+        Button btnLogout = new Button(){
             Location = new Point(posConfirmW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -239,8 +216,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
-        Button btnOkay = new Button()
-        {
+        Button btnOkay = new Button(){
             Location = new Point(posConfirmW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -248,8 +224,7 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour)
         };
-        Button btnAddPeer = new Button()
-        {
+        Button btnAddPeer = new Button(){
             Location = new Point(posCancelW, posConfirmH),
             Width = confirmBtnW,
             Height = confirmBtnH,
@@ -257,14 +232,12 @@ namespace TorPdos
             Font = new Font("Consolas", textSizeBtn, FontStyle.Regular),
             ForeColor = ColorTranslator.FromHtml(btnColour),
         };
-        NotifyIcon noiTorPdos = new NotifyIcon()
-        {
+        NotifyIcon noiTorPdos = new NotifyIcon(){
             Text = "TorPdos",
             Icon = new Icon("TorPdos.ico"),
             Visible = false,
         };
-        CheckBox chkCreateFolder = new CheckBox()
-        {
+        CheckBox chkCreateFolder = new CheckBox(){
             Text = "Create new folder?",
             Location = new Point(leftAlign, posThird),
             Font = new Font("Consolas", textSizeDefault, FontStyle.Regular),
@@ -274,41 +247,26 @@ namespace TorPdos
             Checked = true
         };
 
-
-        public MyForm()
-        {
+        public MyForm(){
             EventHandlers();
             GuiLayout();
 
-            if(!string.IsNullOrEmpty(IdHandler.GetUuid()))
-            {
+            if(!string.IsNullOrEmpty(IdHandler.GetUuid())){
                 LoggedIn();
-            }
-            else
-            {
-                if (NetworkPorts.IsPortAvailable(25565) == false)
-                {
+            } else{
+                if (NetworkPorts.IsPortAvailable(25565) == false){
                     Sorry();
-                }
-                else if (String.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path")) == true || Directory.Exists(DiskHelper.GetRegistryValue("Path")) == false)
-                {
+                } else if (String.IsNullOrEmpty(DiskHelper.GetRegistryValue("Path")) == true 
+                           || Directory.Exists(DiskHelper.GetRegistryValue("Path")) == false){
                     FirstStartUp();
-                }
-                else if (File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false)
-                {
+                } else if (File.Exists(DiskHelper.GetRegistryValue("Path") + @".hidden\userdata") == false){
                     Create();
-                }
-                else
-                {
+                } else{
                     Login();
                 }
             }
-            
-            
         }
-
-        void GuiLayout()
-        {
+        void GuiLayout(){
             SuspendLayout();
             FormBorderStyle = FormBorderStyle.FixedSingle;
             StartPosition = FormStartPosition.CenterScreen;
@@ -321,8 +279,7 @@ namespace TorPdos
             BackColor = ColorTranslator.FromHtml(backgroundColour);
             Icon = new Icon("TorPdos.ico");
         }
-        void EventHandlers()
-        {
+        void EventHandlers(){
             noiTorPdos.Click += noiTorPdosClick;
             FormClosing += MyFormClosing;
             btnLogin.Click += BtnLoginClick;
@@ -334,15 +291,13 @@ namespace TorPdos
             btnOkay.Click += BtnOkayClick;
             btnAddPeer.Click += BtnAddPeerClick;
         }
-        void IndexEventHandlers()
-        {
+        void IndexEventHandlers(){
             _idx.FileAdded += IdxFileAdded;
             _idx.FileChanged += IdxFileChanged;
             _idx.FileDeleted += IdxFileDeleted;
             _idx.FileMissing += IdxFileMissing;
         }
-        private void BtnAddPeerClick(object sender, EventArgs e)
-        {
+        private void BtnAddPeerClick(object sender, EventArgs e){
             Controls.Clear();
             Controls.Add(txtUUID);
             Controls.Add(txtIP);
@@ -350,32 +305,23 @@ namespace TorPdos
             Controls.Add(lblIP);
             Controls.Add(btnOkay);
         }
-
-        private void BtnOkayClick(object sender, EventArgs e)
-        {
+        private void BtnOkayClick(object sender, EventArgs e){
             _p2P?.AddPeer(txtUUID.Text, txtIP.Text);
             LoggedIn();
         }
-
-        private void BtnCreateClick(object sender, EventArgs e)
-        {
-            if (txtPassword.Text == txtConfirmPassword.Text)
-            {
+        private void BtnCreateClick(object sender, EventArgs e){
+            if (txtPassword.Text == txtConfirmPassword.Text){
                 IdHandler.CreateUser(txtPassword.Text);
                 Login();
-            }
-            else
-            {
+            } else{
                 Controls.Add(lblNope2);
             }
         }
-
-        void BtnLoginClick(object sender, EventArgs e)
-        {
+        void BtnLoginClick(object sender, EventArgs e){
             string pass = txtPassword.Text;
             string path = DiskHelper.GetRegistryValue("Path");
-            if (IdHandler.IsValidUser(pass))
-            {
+
+            if (IdHandler.IsValidUser(pass)){
                 
                 IdHandler.GetUuid(pass);
                 LoggedIn();
@@ -388,63 +334,46 @@ namespace TorPdos
                 IndexEventHandlers();
                 _idx.MakeIntegrityCheck();
                 
-                if (!_idx.Load())
-                {
+                if (!_idx.Load()){
                     _idx.BuildIndex();
                 }
-            }
-            else
-            {
+            } else{
                 Controls.Add(lblNope);
             }
         }
-        private void BtnConfirmPathClick(object sender, EventArgs e)
-        {
+        private void BtnConfirmPathClick(object sender, EventArgs e){
 
             string hiddenPath = PathName() + @".hidden\", newPath = PathName() + @"TorPdos\";
-            if (Directory.Exists(PathName()) == true)
-            {
-                if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
-                {
+            if (Directory.Exists(PathName()) == true){
+                if (!Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false){
                     DiskHelper.SetRegistryValue("Path", PathName());
                     HiddenFolder dih = new HiddenFolder(hiddenPath);
-                }
-                else if (Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false)
-                {
+                } else if (Directory.Exists(hiddenPath) && chkCreateFolder.Checked == false){
                     DiskHelper.SetRegistryValue("Path", PathName());
-                }
-                else if (chkCreateFolder.Checked == true)
-                {
+                } else if (chkCreateFolder.Checked == true){
                     DiskHelper.SetRegistryValue("Path", newPath);
                     DirectoryInfo di = Directory.CreateDirectory(newPath);
                     HiddenFolder dih = new HiddenFolder(newPath + @".hidden\");
                 }
 
-                if (IdHandler.UserExists())
-                {
+                if (IdHandler.UserExists()){
                     Login();
-                }
-                else
-                {
+                } else{
                     Create();
                 }
             }
         }
-        private void BtnBrowseClick(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
-            {
+        private void BtnBrowseClick(object sender, EventArgs e){
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog()){
                 if (fbd.ShowDialog() == DialogResult.OK)
                     txtPath.Text = fbd.SelectedPath;
             }
         }
-        private void BtnChangePathClick(object sender, EventArgs e)
-        {
+        private void BtnChangePathClick(object sender, EventArgs e){
             FirstStartUp();
             chkCreateFolder.Checked = false;
         }  
-        private void BtnLogOutClick(object sender, EventArgs e)
-        {
+        private void BtnLogOutClick(object sender, EventArgs e){
             _p2P?.SavePeer();
             _p2P?.Stop();
             _idx?.Save();
@@ -452,20 +381,15 @@ namespace TorPdos
             loggedIn = false;
             Login();
         }
-        private void IdxFileMissing(IndexFile file)
-        {
+        private void IdxFileMissing(IndexFile file){
             Console.WriteLine(@"File missing init download of " + file.hash);
             _p2P.DownloadFile(file.hash);
         }
-
-        private void IdxFileDeleted(string hash)
-        {
+        private void IdxFileDeleted(string hash){
             Console.WriteLine(@"Deleted: " + hash);
             _p2P.DeleteFile(hash);
         }
-
-        private void IdxFileAdded(IndexFile idxfile)
-        {
+        private void IdxFileAdded(IndexFile idxfile){
             Console.WriteLine(@"Added: " + idxfile.GetHash());
 
             P2PFile file = new P2PFile(idxfile.GetHash());
@@ -473,41 +397,29 @@ namespace TorPdos
 
             _p2P.UploadFile(file);
         }
-
-        private void IdxFileChanged(IndexFile file, string oldHash)
-        {
+        private void IdxFileChanged(IndexFile file, string oldHash){
             Console.WriteLine(@"File changed: " + file.hash);
         }
-
-        void MyFormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true)
-            {
+        void MyFormClosing(object sender, FormClosingEventArgs e){
+            if (e.CloseReason == CloseReason.UserClosing && loggedIn == true){
                 e.Cancel = true;
                 Hide();
                 noiTorPdos.Visible = true;
-            }
-            else
-            {
+            } else{
                 noiTorPdos.Visible = false;
                 Environment.Exit(0);
             }
         }
-
-        void noiTorPdosClick(object sender, EventArgs e)
-        {
+        void noiTorPdosClick(object sender, EventArgs e){
             Show();
             WindowState = FormWindowState.Normal;
             noiTorPdos.Visible = false;
         }
-
-        private void Sorry()
-        {
+        private void Sorry(){
             Controls.Clear();
             MessageBox.Show("Sorry that port is unavailable, the program will now close.");
         }
-        public void FirstStartUp()
-        {
+        public void FirstStartUp(){
             Controls.Clear();
             int tabNumber = 0;
 
@@ -532,13 +444,11 @@ namespace TorPdos
 
             AcceptButton = btnConfirmPath;
 
-            if (DiskHelper.GetRegistryValue("Path") != null)
-            {
+            if (DiskHelper.GetRegistryValue("Path") != null){
                 txtPath.Text = DiskHelper.GetRegistryValue("Path");
             }
         }
-        public void Create()
-        {
+        public void Create(){
             Controls.Clear();
             int tabNumber = 0;
 
@@ -565,8 +475,7 @@ namespace TorPdos
 
             AcceptButton = btnCreate;
         }
-        public void Login()
-        {
+        public void Login(){
             Controls.Clear();
             int tabNumber = 0;
 
@@ -588,9 +497,9 @@ namespace TorPdos
 
             AcceptButton = btnLogin;
         }
-        public void LoggedIn()
-        {
+        public void LoggedIn(){
             Controls.Clear();
+            loggedIn = true;
             int tabNumber = 0;
 
             //BTN: Add Peer
@@ -601,14 +510,11 @@ namespace TorPdos
             btnLogout.TabIndex = tabNumber++;
             Controls.Add(btnLogout);
         }
-        public string PathName()
-        {
-            if (txtPath.Text.EndsWith(@"\"))
-            {
+        public string PathName(){
+            if (txtPath.Text.EndsWith(@"\")){
                 return txtPath.Text;
             }
-            else
-            {
+            else{
                 return txtPath.Text + @"\";
             }
 

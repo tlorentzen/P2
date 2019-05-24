@@ -72,7 +72,6 @@ namespace P2P_lib{
             foreach (var peer in _peers){
                 newPeerList.Add(peer.Value);
             }
-
             return newPeerList;
         }
 
@@ -198,7 +197,6 @@ namespace P2P_lib{
                 // Rechieved response
                 foreach (Peer incomingPeer in message.peers){
                     if (InPeerList(incomingPeer.GetUuid(), _peers)) break;
-
                     if ((IdHandler.GetUuid().Equals(incomingPeer.GetUuid()))) break;
                     _peers.TryAdd(incomingPeer.GetUuid(), incomingPeer);
                     Console.WriteLine("Peer added: " + incomingPeer.GetUuid());
@@ -248,7 +246,6 @@ namespace P2P_lib{
                     break;
                 }
             }
-
             return inPeers;
         }
 
@@ -266,7 +263,6 @@ namespace P2P_lib{
                     break;
                 }
             }
-
             return inPeers;
         }
 
@@ -286,7 +282,6 @@ namespace P2P_lib{
                     Console.WriteLine(@"Not enough space");
                     uploadMessage.statusCode = StatusCode.INSUFFICIENT_STORAGE;
                 }
-
                 uploadMessage.CreateReply();
                 uploadMessage.port = _ports.GetAvailablePort();
 
@@ -296,7 +291,6 @@ namespace P2P_lib{
                 _fileReceiver.Start();
                 uploadMessage.Send(replyPort);
             }
-
             _ports.Release(uploadMessage.port);
         }
 
@@ -334,7 +328,6 @@ namespace P2P_lib{
                         break;
                     }
                 }
-
                 peerFetch.Send();
             }
         }
@@ -350,7 +343,6 @@ namespace P2P_lib{
                     return peer.Value;
                 }
             }
-
             return null;
         }
 

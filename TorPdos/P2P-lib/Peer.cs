@@ -35,7 +35,6 @@ namespace P2P_lib{
             } else{
                 this.SetIp(ip);
             }
-
             Rating = 0;
         }
 
@@ -58,7 +57,6 @@ namespace P2P_lib{
                     rankHandler.UpdateUptime(this);
                 }
             }
-
             this._online = online;
             this._pingsWithoutResponse = 0;
         }
@@ -145,7 +143,6 @@ namespace P2P_lib{
             if (!(obj is Peer p)){
                 return false;
             }
-
             return this._uuid.Equals(p._uuid);
         }
 
@@ -175,7 +172,6 @@ namespace P2P_lib{
                 for (int i = _pingList.Length - 1; i > 0; i--){
                     this._pingList[i] = this._pingList[i - 1];
                 }
-
                 this._pingList[0] = newPing;
             }
         }
@@ -189,7 +185,6 @@ namespace P2P_lib{
             for (int i = 0; i < _pingList.Length; i++){
                 sum += this._pingList[i];
             }
-
             return (sum / _pingList.Length);
         }
     }

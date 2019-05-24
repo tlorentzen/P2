@@ -53,38 +53,29 @@ namespace P2P_lib{
                 this._fileSize = new FileInfo(this._path).Length;
                 this._filename = new FileInfo(this._path).Name;
             }
-
             this._ghost = true;
         }
-
         public string GetHash(){
             return this._hash;
         }
-
         public string GetPath(){
             return this._path;
         }
-
         public int GetCopies(){
             return this.copies;
         }
-
         public long GetFilesize(){
             return this._fileSize;
         }
-
         public void SetFilesize(long filesize){
             this._fileSize = filesize;
         }
-
         public string GetFilename(){
             return this._filename;
         }
-
         public void SetFilename(string filename){
             this._filename = filename;
         }
-
         public bool IsGhostFile(){
             return this._ghost;
         }
