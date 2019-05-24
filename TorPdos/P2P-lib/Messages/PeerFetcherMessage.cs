@@ -20,8 +20,8 @@ namespace P2P_lib.Messages{
         public void SendPeers(List<Peer> input){
             this.type = TypeCode.RESPONSE;
             this.statusCode = StatusCode.OK;
-            string fromIp = this.from;
-            this.to = fromIp;
+            string fromIp = this.fromIp;
+            this.toIp = fromIp;
             peers = input;
         }
     }

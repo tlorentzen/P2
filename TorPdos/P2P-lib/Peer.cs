@@ -70,7 +70,7 @@ namespace P2P_lib{
 
             if (this._nextPing < time){
                 PingMessage ping = new PingMessage(this);
-                ping.from = NetworkHelper.GetLocalIpAddress();
+                ping.fromIp = NetworkHelper.GetLocalIpAddress();
                 ping.type = Messages.TypeCode.REQUEST;
                 ping.statusCode = StatusCode.OK;
                 ping.diskSpace = DiskHelper.GetTotalAvailableSpace(pathToFolder);

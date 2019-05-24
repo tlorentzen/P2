@@ -4,7 +4,7 @@
         public string filehash;
         public TransferStatusMessage(Peer to) : base(to)
         {
-            this.to = to.GetIp();
+            this.toIp = to.GetIp();
         }
 
         public override string GetHash() {

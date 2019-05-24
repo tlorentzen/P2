@@ -173,7 +173,7 @@ namespace P2P_lib{
                 var incoming = message.peers;
                 // Adding sender to list
                 if (!InPeerList(message.fromUuid, _peers)){
-                    _peers.TryAdd(message.fromUuid, new Peer(message.fromUuid, message.from));
+                    _peers.TryAdd(message.fromUuid, new Peer(message.fromUuid, message.fromIp));
                 }
 
                 //Checks whether a incomming peer exists in the peerlist.
@@ -302,7 +302,7 @@ namespace P2P_lib{
             // Update peer
             foreach (var peer in _peers){
                 if (peer.Value.GetUuid().Equals(ping.fromUuid)){
-                    peer.Value.SetIp(ping.from);
+                    peer.Value.SetIp(ping.fromIp);
                     peer.Value.UpdateLastSeen();
                     peer.Value.SetOnline(true);
                     peer.Value.diskSpace = ping.diskSpace;
@@ -323,7 +323,7 @@ namespace P2P_lib{
                     new PeerFetcherMessage(GetAPeer(ping.fromUuid)){peers = this.GetPeerList()};
                 // Removed the receiver from the list, as he should not add himself
                 foreach (Peer peer in peerFetch.peers){
-                    if (string.Compare(peer.GetIp().Trim(), peerFetch.to.Trim(), StringComparison.Ordinal) == 0){
+                    if (string.Compare(peer.GetIp().Trim(), peerFetch.toIp.Trim(), StringComparison.Ordinal) == 0){
                         peerFetch.peers.Remove(peer);
                         break;
                     }
@@ -367,7 +367,7 @@ namespace P2P_lib{
                         downloadMessage.Send(downloadMessage.port);
                     }
                 } else if (downloadMessage.statusCode.Equals(StatusCode.ACCEPTED)){
-                    var sender = new ChunkSender(downloadMessage.from, downloadMessage.port);
+                    var sender = new ChunkSender(downloadMessage.fromIp, downloadMessage.port);
                     sender.Send(path);
                     DiskHelper.ConsoleWrite("File send " + downloadMessage.filehash);
                 }

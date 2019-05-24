@@ -18,8 +18,8 @@ namespace P2P_lib.Messages{
     public abstract class BaseMessage{
         private string _toUuid;
         public string fromUuid;
-        public string to;
-        public string from;
+        public string toIp;
+        public string fromIp;
         public StatusCode statusCode;
         public TypeCode type;
         private static NLog.Logger _logger = NLog.LogManager.GetLogger("NetworkLogging");
@@ -32,9 +32,9 @@ namespace P2P_lib.Messages{
 
         public BaseMessage(Peer to){
             this._toUuid = to.GetUuid();
-            this.to = to.GetIp();
+            this.toIp = to.GetIp();
             this.fromUuid = IdHandler.GetUuid();
-            this.from = NetworkHelper.GetLocalIpAddress();
+            this.fromIp = NetworkHelper.GetLocalIpAddress();
             this.type = TypeCode.REQUEST;
             this.statusCode = StatusCode.OK;
         }
@@ -49,7 +49,7 @@ namespace P2P_lib.Messages{
                 var connectionTester = new TcpClient();
                 connectionTester.SendTimeout = 500;
                 connectionTester.Client.SendTimeout = 500;
-                var result = connectionTester.BeginConnect(this.to, receiverPort, null, null);
+                var result = connectionTester.BeginConnect(this.toIp, receiverPort, null, null);
 
                 var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
 
@@ -118,9 +118,9 @@ namespace P2P_lib.Messages{
         /// </summary>
         public void CreateReply(){
             this.type = TypeCode.RESPONSE;
-            string fromIp = this.from;
-            this.from = this.to;
-            this.to = fromIp;
+            string fromIp = this.fromIp;
+            this.fromIp = this.toIp;
+            this.toIp = fromIp;
             string inputFromUuid = this._toUuid;
             this._toUuid = this.fromUuid;
             this.fromUuid = inputFromUuid;
