@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
 using Compression;
@@ -62,6 +63,13 @@ namespace P2P_lib.Managers{
                 while (this._queue.TryDequeue(out P2PFile file)){
                     bool uploaded = true;
 
+                    if (!_peers.Any(p => p.Value.IsOnline())){
+                        this._queue.Enqueue(file);
+                        break;
+                    }
+
+                    
+                    
                     if (!_isRunning){
                         this._queue.Enqueue(file);
                         break;

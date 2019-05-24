@@ -188,12 +188,11 @@ namespace TorPdos{
         /// </summary>
         /// <param name="hash">The hash of the file to be deleted on the network</param>
         private static void Idx_FileDeleted(string hash){
-            Console.WriteLine(@"Deleted: " + hash);
             _p2P.DeleteFile(hash);
         }
 
         /// <summary>
-        /// Handles new files added by the user by uplaoding
+        /// Handles new files added by the user by uploading
         /// them to the network.
         /// </summary>
         /// <param name="idxfile">The file to be uploaded.</param>
@@ -215,6 +214,7 @@ namespace TorPdos{
             Console.WriteLine(@"File changed: " + idxfile.GetHash());
             
             //Implementation not finished. Therefor the leftover code.
+            
             //if (oldHash != null){
             //    _p2P.DeleteFile(oldHash);
             //}
