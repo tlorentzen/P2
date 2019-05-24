@@ -327,16 +327,16 @@ namespace TorPdos{
                 LoggedIn();
                 loggedIn = true;
                 _idx = new Index(path);
-                _idx.Load();
-                _idx.Start();
                 _p2P = new Network(25565, _idx, path);
                 _p2P.Start();
+                _idx.Load();
                 IndexEventHandlers();
-                _idx.MakeIntegrityCheck();
                 
                 if (!_idx.Load()){
                     _idx.BuildIndex();
                 }
+                _idx.Start();
+                _idx.MakeIntegrityCheck();
             } else{
                 Controls.Add(lblNope);
             }
@@ -382,23 +382,19 @@ namespace TorPdos{
             Login();
         }
         private void IdxFileMissing(IndexFile file){
-            Console.WriteLine(@"File missing init download of " + file.hash);
             _p2P.DownloadFile(file.hash);
         }
         private void IdxFileDeleted(string hash){
-            Console.WriteLine(@"Deleted: " + hash);
             _p2P.DeleteFile(hash);
         }
         private void IdxFileAdded(IndexFile idxfile){
-            Console.WriteLine(@"Added: " + idxfile.GetHash());
-
             P2PFile file = new P2PFile(idxfile.GetHash());
             file.AddPath(idxfile.paths);
-
             _p2P.UploadFile(file);
         }
         private void IdxFileChanged(IndexFile file, string oldHash){
             Console.WriteLine(@"File changed: " + file.hash);
+            //Currently not implemented
         }
         void MyFormClosing(object sender, FormClosingEventArgs e){
             if (e.CloseReason == CloseReason.UserClosing && loggedIn == true){

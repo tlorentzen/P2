@@ -86,6 +86,7 @@ namespace TorPdos{
                             }
 
                             _idx = new Index(path);
+                            torPdos._idx = _idx;
 
                             // Prepare P2PNetwork
                             try{
