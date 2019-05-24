@@ -12,7 +12,7 @@ using P2P_lib.Helpers;
 using Splitter_lib;
 
 namespace P2P_lib.Managers{
-    class DownloadManagerV2 : Manager{
+    class DownloadManager : Manager{
         private bool _isRunning = true;
         private readonly string _path;
         private readonly NetworkPorts _ports;
@@ -23,9 +23,10 @@ namespace P2P_lib.Managers{
         private bool _isStopped;
         private string _fileHash;
         private FileDownloader _fileDownloader;
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("DownloadLoger");
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public DownloadManagerV2(StateSaveConcurrentQueue<P2PFile> queue, NetworkPorts ports,
+        public DownloadManager(StateSaveConcurrentQueue<P2PFile> queue, NetworkPorts ports,
             ConcurrentDictionary<string, Peer> peers, Index index){
             this._queue = queue;
             this._ports = ports;
@@ -76,9 +77,10 @@ namespace P2P_lib.Managers{
                     _fileHash = file.hash;
 
                     foreach (var chunk in file.chunks){
-                        if (_fileDownloader.Fetch(chunk, file.hash)) {
+                        if (_fileDownloader.Fetch(chunk, file.hash)){
                             continue;
                         }
+
                         this._queue.Enqueue(file);
                         break;
                     }
@@ -94,7 +96,7 @@ namespace P2P_lib.Managers{
 
             _isStopped = true;
         }
-        
+
         /// <summary>
         /// Restores the original file
         /// </summary>
@@ -104,7 +106,7 @@ namespace P2P_lib.Managers{
         private void RestoreOriginalFile(string path, P2PFile fileInformation){
             DiskHelper.ConsoleWrite("File exist");
 
-            string pathWithoutExtension = (_path + @".hidden\incoming\" +  fileInformation.hash);
+            string pathWithoutExtension = (_path + @".hidden\incoming\" + fileInformation.hash);
 
             //Merge files
             var splitterLibrary = new SplitterLibrary();
@@ -123,14 +125,15 @@ namespace P2P_lib.Managers{
                 _queue.Enqueue(fileInformation);
                 return;
             }
+
             DiskHelper.ConsoleWrite("File decrypted");
-            
+
             File.Delete(path);
 
             // Decompress file
             string pathToFileForCopying =
                 Compressor.DecompressFile(pathWithoutExtension + ".lzma", pathWithoutExtension);
-            
+
 
             DiskHelper.ConsoleWrite("File decompressed");
 
@@ -139,13 +142,18 @@ namespace P2P_lib.Managers{
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath) ?? throw new NullReferenceException());
                 }
 
-                if (!File.Exists(filePath)){
-                    File.Copy(pathToFileForCopying, filePath);
-                    DiskHelper.ConsoleWrite($"File saved to: {filePath}");
+                try{
+                    if (!File.Exists(filePath)){
+                        File.Copy(pathToFileForCopying, filePath);
+                        DiskHelper.ConsoleWrite($"File saved to: {filePath}");
+                    }
+                }
+                catch (Exception e){
+                    logger.Error(e);
                 }
             }
         }
-        
+
         /// <summary>
         /// Function shutdown.
         /// </summary>

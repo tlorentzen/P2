@@ -94,7 +94,7 @@ namespace P2P_lib{
             //For every thread it opens up a new upload and download manager
             for (int i = 0; i < NumOfThreads; i++){
                 var uploadManager = new UploadManager(_upload, _ports, _peers);
-                var downloadManager = new DownloadManagerV2(_download, _ports, _peers, _index);
+                var downloadManager = new DownloadManager(_download, _ports, _peers, _index);
 
                 var uploadThread = new Thread(uploadManager.Run);
                 var downloadThread = new Thread(downloadManager.Run);
