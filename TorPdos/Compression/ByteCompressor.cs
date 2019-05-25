@@ -85,9 +85,8 @@ namespace Compression{
                                     int bytesRead = inStream.Read(buffer, 0, bytesToRead);
 
                                     if (bytesRead != bytesToRead){
-                                        //throw exception
-                                        //TODO throw an actual exception
-                                        Console.WriteLine(@"Woopsie :)");
+                                        logger.Fatal("Error occoured when encrypting.");
+                                        return false;
                                     } else{
                                         //Compress buffer and write to outfile
                                         Console.WriteLine($"Compressing {compressed} out of {pakg}");
