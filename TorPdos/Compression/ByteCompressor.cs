@@ -160,9 +160,8 @@ namespace Compression{
                                     int bytesRead = inStream.Read(buffer, 0, bytesToRead);
 
                                     if (bytesRead != bytesToRead){
-                                        //throw exception
-                                        //TODO throw an actual exception
-                                        Console.WriteLine(@"Woopsie :)");
+                                        logger.Fatal("Error occoured while decompressing");
+                                        throw new Exception("Error while decompression.");
                                     } else{
                                         //Decompress buffer
                                         byte[] decompressed = DecompressBytes(buffer);
